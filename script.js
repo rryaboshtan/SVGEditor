@@ -346,31 +346,138 @@ function scheduleSelection() {
   selectFrame = requestAnimationFrame(selectionFromCaret);
 }
 
-editor.addEventListener("input", scheduleRender);
+const MAX_HISTORY = 80;
+const HISTORY_IDLE_MS = 400;
+let history = [];
+let historyIndex = -1;
+let applyingHistory = false;
+let historyTimer = 0;
+
+function snapshotEditor() {
+  return {
+    value: editor.value,
+    selectionStart: editor.selectionStart,
+    selectionEnd: editor.selectionEnd,
+  };
+}
+
+function commitHistory() {
+  if (applyingHistory) return;
+  const snap = snapshotEditor();
+  const current = history[historyIndex];
+  if (current && current.value === snap.value) return;
+
+  history = history.slice(0, historyIndex + 1);
+  history.push(snap);
+  if (history.length > MAX_HISTORY) {
+    history.shift();
+  }
+  historyIndex = history.length - 1;
+}
+
+function scheduleCommitHistory() {
+  if (applyingHistory) return;
+  clearTimeout(historyTimer);
+  historyTimer = setTimeout(commitHistory, HISTORY_IDLE_MS);
+}
+
+function flushHistory() {
+  clearTimeout(historyTimer);
+  commitHistory();
+}
+
+function applyEditorState(state) {
+  editor.value = state.value;
+  const max = editor.value.length;
+  const start = Math.min(state.selectionStart ?? max, max);
+  const end = Math.min(state.selectionEnd ?? max, max);
+  editor.focus();
+  editor.setSelectionRange(start, end);
+  empty.textContent = "Your SVG preview will appear here.";
+  clearHighlight();
+  scheduleRender();
+}
+
+function undoEdit() {
+  flushHistory();
+  if (historyIndex <= 0) return false;
+  historyIndex -= 1;
+  applyingHistory = true;
+  applyEditorState(history[historyIndex]);
+  applyingHistory = false;
+  return true;
+}
+
+function redoEdit() {
+  clearTimeout(historyTimer);
+  if (historyIndex >= history.length - 1) return false;
+  historyIndex += 1;
+  applyingHistory = true;
+  applyEditorState(history[historyIndex]);
+  applyingHistory = false;
+  return true;
+}
+
+function canUndo() {
+  if (historyIndex > 0) return true;
+  const current = history[historyIndex];
+  return Boolean(current && current.value !== editor.value);
+}
+
+function canRedo() {
+  return historyIndex < history.length - 1;
+}
+
+editor.addEventListener("input", function () {
+  scheduleRender();
+  scheduleCommitHistory();
+});
 editor.addEventListener("click", scheduleSelection);
 editor.addEventListener("keyup", scheduleSelection);
 editor.addEventListener("select", scheduleSelection);
 editor.addEventListener("mouseup", scheduleSelection);
 
 editor.addEventListener("keydown", function (event) {
+  const mod = event.ctrlKey || event.metaKey;
+  const key = event.key.toLowerCase();
+
+  if (mod && key === "z" && !event.shiftKey && !event.altKey) {
+    event.preventDefault();
+    if (canUndo()) undoEdit();
+    return;
+  }
+
+  if (mod && ((key === "z" && event.shiftKey) || key === "y") && !event.altKey) {
+    event.preventDefault();
+    if (canRedo()) redoEdit();
+    return;
+  }
+
   if (event.key === "Tab") {
     event.preventDefault();
+    flushHistory();
     const selectionStart = editor.selectionStart;
     const selectionEnd = editor.selectionEnd;
     const value = editor.value;
     editor.value = value.slice(0, selectionStart) + "  " + value.slice(selectionEnd);
     editor.selectionStart = editor.selectionEnd = selectionStart + 2;
+    commitHistory();
     scheduleRender();
     return;
   }
-  // Arrow keys etc. update selection only if already inspecting or moving into a tag
+
   scheduleSelection();
 });
 
 clearBtn.addEventListener("click", function () {
+  flushHistory();
+  if (!editor.value.length) return;
   editor.value = "";
   empty.textContent = "Your SVG preview will appear here.";
+  clearHighlight();
   editor.focus();
+  editor.setSelectionRange(0, 0);
+  commitHistory();
   scheduleRender();
 });
 
@@ -417,4 +524,5 @@ previewStage.addEventListener("scroll", function () {
 });
 
 editor.value = DEFAULT_SVG;
+commitHistory();
 renderPreview(DEFAULT_SVG);
