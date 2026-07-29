@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SVG Viewer — Free Online SVG Preview &amp; Code Editor</title>
+    <meta
+      name="description"
+      content="Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor — no upload, no signup, runs in your browser."
+    />
+    <meta
+      name="keywords"
+      content="SVG viewer, SVG preview, online SVG editor, view SVG code, SVG renderer, free SVG tool"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="SVGViewer" />
+    <meta name="theme-color" content="#0b1220" />
+    <link rel="canonical" href="https://your-domain.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SVGViewer" />
+    <meta property="og:title" content="SVG Viewer — Free Online SVG Preview &amp; Code Editor" />
+    <meta
+      property="og:description"
+      content="Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor."
+    />
+    <meta property="og:url" content="https://your-domain.com/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://your-domain.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SVGViewer — paste SVG code on the left, see the preview on the right" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SVG Viewer — Free Online SVG Preview &amp; Code Editor" />
+    <meta
+      name="twitter:description"
+      content="Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor."
+    />
+    <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SVGViewer",
+        "alternateName": "SVG Viewer",
+        "url": "https://your-domain.com/",
+        "description": "Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor — no upload, no signup, runs in your browser.",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires a modern browser with JavaScript enabled",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Live SVG preview",
+          "Side-by-side code editor",
+          "Runs entirely in the browser",
+          "No account required"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div class="ambiance" aria-hidden="true">
+      <div class="ambiance-glow ambiance-glow-a"></div>
+      <div class="ambiance-glow ambiance-glow-b"></div>
+      <div class="ambiance-glow ambiance-glow-c"></div>
+      <div class="ambiance-grid"></div>
+      <div class="ambiance-noise"></div>
+    </div>
+
+    <a class="skip-link" href="#editor">Skip to SVG editor</a>
+
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="brand-bg" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1d4ed8" />
+                <stop offset="0.55" stop-color="#2563eb" />
+                <stop offset="1" stop-color="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="brand-shine" x1="8" y1="4" x2="22" y2="18" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#fff" stop-opacity="0.28" />
+                <stop offset="1" stop-color="#fff" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="9" fill="url(#brand-bg)" />
+            <rect width="32" height="32" rx="9" fill="url(#brand-shine)" />
+            <path
+              d="M7.5 22.5 L13.1 13.4c.45-.75 1.6-.75 2.05 0L18.2 19.2l1.55-2.45c.45-.72 1.55-.72 2 0L26.5 22.5H7.5z"
+              fill="#fff"
+              fill-opacity="0.95"
+            />
+            <circle cx="22" cy="10.5" r="2.6" fill="#e0f2fe" />
+            <circle cx="22" cy="10.5" r="1.15" fill="#1e3a8a" fill-opacity="0.35" />
+          </svg>
+        </span>
+        <div class="brand-text">
+          <h1 class="brand-name">SVGViewer</h1>
+          <p class="brand-tagline">Paste code · see it live</p>
+        </div>
+      </div>
+      <p class="header-note">Free · private · browser-only</p>
+    </header>
+
+    <main class="workspace" id="tool">
+      <section class="panel panel-editor" aria-labelledby="editor-heading">
+        <div class="panel-bar">
+          <p id="editor-heading" class="panel-title">SVG code</p>
+          <div class="panel-actions">
+            <button type="button" class="btn btn-ghost" id="btn-clear" title="Clear editor">
+              Clear
+            </button>
+          </div>
+        </div>
+        <label class="sr-only" for="editor">SVG markup</label>
+        <textarea
+          id="editor"
+          class="editor"
+          spellcheck="false"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          wrap="off"
+          aria-describedby="editor-hint"
+          placeholder="Paste your SVG markup here…"
+        ></textarea>
+        <p id="editor-hint" class="sr-only">
+          Type or paste SVG markup. The preview on the right updates as you type.
+        </p>
+      </section>
+
+      <section class="panel panel-preview" aria-labelledby="preview-heading">
+        <div class="panel-bar panel-bar-light">
+          <p id="preview-heading" class="panel-title">Preview</p>
+          <p class="preview-status" id="preview-status" aria-live="polite">Ready</p>
+        </div>
+        <div class="preview-stage" id="preview-stage">
+          <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
+          <p class="preview-empty" id="preview-empty" hidden>Your SVG preview will appear here.</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
