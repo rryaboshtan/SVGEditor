@@ -386,6 +386,7 @@ textarea {
   flex: 1;
   min-height: 0;
   overflow: auto;
+  isolation: isolate;
   background-color: #dbe4f0;
   background-image:
     linear-gradient(45deg, #c9d5e6 25%, transparent 25%),
@@ -414,6 +415,50 @@ textarea {
   height: auto;
   filter: drop-shadow(0 10px 28px rgba(15, 23, 42, 0.18));
   animation: svg-fade 0.35s var(--ease);
+}
+
+.preview-canvas > svg.is-inspecting .is-selected {
+  outline: none;
+  filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.85))
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.95));
+}
+
+.svg-highlight-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.svg-highlight {
+  position: absolute;
+  border: 3px solid #60a5fa;
+  border-radius: 8px;
+  background: rgba(96, 165, 250, 0.14);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.95),
+    0 0 28px 4px rgba(59, 130, 246, 0.65),
+    0 0 0 9999px rgba(8, 15, 30, 0.62);
+  animation: highlight-pulse 1.35s var(--ease) infinite;
+}
+
+@keyframes highlight-pulse {
+  0%,
+  100% {
+    border-color: #60a5fa;
+    box-shadow:
+      0 0 0 3px rgba(255, 255, 255, 0.95),
+      0 0 28px 4px rgba(59, 130, 246, 0.65),
+      0 0 0 9999px rgba(8, 15, 30, 0.62);
+  }
+  50% {
+    border-color: #93c5fd;
+    box-shadow:
+      0 0 0 3px rgba(255, 255, 255, 1),
+      0 0 36px 8px rgba(96, 165, 250, 0.8),
+      0 0 0 9999px rgba(8, 15, 30, 0.7);
+  }
 }
 
 .preview-empty {
