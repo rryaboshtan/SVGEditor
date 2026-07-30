@@ -39,6 +39,9 @@ const canvas = document.getElementById("preview-canvas");
 const empty = document.getElementById("preview-empty");
 const status = document.getElementById("preview-status");
 const clearBtn = document.getElementById("btn-clear");
+const uploadBtn = document.getElementById("btn-upload");
+const downloadSvgBtn = document.getElementById("btn-download-svg");
+const fileUpload = document.getElementById("file-upload");
 const previewStage = document.getElementById("preview-stage");
 const zoomInBtn = document.getElementById("zoom-in");
 const zoomOutBtn = document.getElementById("zoom-out");
@@ -153,6 +156,45 @@ function parseSvg(markup) {
   }
 
   return document.importNode(svg, true);
+}
+
+/** Format SVG with Prettier (html parser). Falls back to raw on failure. */
+function prettifySvg(raw) {
+  const markup = extractSvgMarkup(raw) || String(raw || "").trim();
+  if (!markup) return String(raw || "");
+
+  if (typeof prettier === "undefined" || typeof prettierPlugins === "undefined") {
+    return markup;
+  }
+
+  try {
+    // Keep each tag on one logical line; editor soft-wraps at the visible edge.
+    return prettier.format(markup, {
+      parser: "html",
+      plugins: prettierPlugins,
+      tabWidth: 2,
+      useTabs: false,
+      printWidth: 10000,
+      htmlWhitespaceSensitivity: "ignore",
+    });
+  } catch (err) {
+    return markup;
+  }
+}
+
+function getEditorContentWidth() {
+  const style = window.getComputedStyle(editor);
+  const paddingLeft = parseFloat(style.paddingLeft) || 0;
+  const paddingRight = parseFloat(style.paddingRight) || 0;
+  return Math.max(1, editor.clientWidth - paddingLeft - paddingRight);
+}
+
+/** Visual rows a logical line occupies with soft-wrap. */
+function countVisualRows(lineText) {
+  if (!lineText) return 1;
+  const width = measureEditorLineWidth(editor, lineText);
+  const contentWidth = getEditorContentWidth();
+  return Math.max(1, Math.ceil(width / contentWidth));
 }
 
 /**
@@ -542,12 +584,17 @@ function renderPreview(source) {
 
 function updateLineNumbers() {
   if (!lineNumbers) return;
-  const count = editor.value.split("\n").length;
-  let html = "";
-  for (let i = 1; i <= count; i += 1) {
-    html += i + (i === count ? "" : "\n");
+  const lines = editor.value.split("\n");
+  const parts = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    const rows = countVisualRows(lines[i]);
+    let block = String(i + 1);
+    for (let r = 1; r < rows; r += 1) {
+      block += "\n";
+    }
+    parts.push(block);
   }
-  lineNumbers.textContent = html || "1";
+  lineNumbers.textContent = parts.join("\n") || "1";
 }
 
 function syncLineNumbersScroll() {
@@ -868,6 +915,57 @@ clearBtn.addEventListener("click", function () {
   updateLineNumbers();
 });
 
+if (uploadBtn && fileUpload) {
+  uploadBtn.addEventListener("click", function () {
+    fileUpload.value = "";
+    fileUpload.click();
+  });
+
+  fileUpload.addEventListener("change", function () {
+    const file = fileUpload.files && fileUpload.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function () {
+      const text = typeof reader.result === "string" ? reader.result : "";
+      const formatted = prettifySvg(text);
+      markUserEdited();
+      flushHistory();
+      editor.value = formatted;
+      editor.focus();
+      editor.setSelectionRange(0, 0);
+      commitHistory();
+      updateLineNumbers();
+      scheduleRender();
+      clearHighlight();
+      setStatus("ok", "Uploaded " + file.name);
+    };
+    reader.onerror = function () {
+      setStatus("error", "Upload failed");
+    };
+    reader.readAsText(file);
+  });
+}
+
+if (downloadSvgBtn) {
+  downloadSvgBtn.addEventListener("click", function () {
+    const markup = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!markup) {
+      setStatus("empty", "Nothing to download");
+      return;
+    }
+
+    const blob = new Blob([markup], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "svgviewer-export.svg";
+    link.click();
+    URL.revokeObjectURL(url);
+    setStatus("ok", "SVG downloaded");
+  });
+}
+
 canvas.addEventListener("click", function (event) {
   if (!previewSvg) return;
   let node = event.target;
@@ -904,8 +1002,15 @@ canvas.addEventListener("click", function (event) {
 });
 
 window.addEventListener("resize", function () {
+  updateLineNumbers();
   if (inspectActive) scheduleSelection();
 });
+
+if (typeof ResizeObserver !== "undefined") {
+  new ResizeObserver(function () {
+    updateLineNumbers();
+  }).observe(editor);
+}
 previewStage.addEventListener("scroll", function () {
   if (inspectActive) scheduleSelection();
 });
@@ -925,6 +1030,8 @@ previewStage.addEventListener(
 const reactOutput = document.getElementById("react-output");
 const rnOutput = document.getElementById("rn-output");
 const dataUriOutput = document.getElementById("data-uri-output");
+const dataUriSize = document.getElementById("data-uri-size");
+const dataUriFormatBtns = document.querySelectorAll("[data-uri-format]");
 const pngCanvas = document.getElementById("png-canvas");
 const pngEmpty = document.getElementById("png-empty");
 const downloadPngBtn = document.getElementById("btn-download-png");
@@ -934,6 +1041,7 @@ const exportViews = document.querySelectorAll(".export-view");
 let activeTab = "preview";
 let latestMarkup = null;
 let latestPngUrl = null;
+let dataUriFormat = "css";
 
 const ATTR_MAP = {
   class: "className",
@@ -1165,8 +1273,58 @@ function svgToReactNativeComponent(markup) {
   );
 }
 
-function toDataUri(markup) {
-  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(markup);
+function toUrlEncodedDataUri(svgString) {
+  const minifiedSvg = svgString.replace(/\s+/g, " ").trim();
+  const encoded = encodeURIComponent(minifiedSvg).replace(/'/g, "%27").replace(/"/g, "%22");
+  return "data:image/svg+xml," + encoded;
+}
+
+function toBase64DataUri(svgString) {
+  const base64 = window.btoa(unescape(encodeURIComponent(svgString)));
+  return "data:image/svg+xml;base64," + base64;
+}
+
+function formatByteSize(bytes) {
+  if (!bytes || bytes < 0) return "0 B";
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " kB";
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function byteLengthUtf8(text) {
+  return new TextEncoder().encode(text).length;
+}
+
+function buildDataUri(markup) {
+  if (dataUriFormat === "base64") return toBase64DataUri(markup);
+  return toUrlEncodedDataUri(markup);
+}
+
+function refreshDataUriOutput(markup) {
+  if (!dataUriOutput) return;
+  if (!markup) {
+    dataUriOutput.textContent = "";
+    if (dataUriSize) dataUriSize.textContent = "0 B";
+    return;
+  }
+  try {
+    const uri = buildDataUri(markup);
+    dataUriOutput.textContent = uri;
+    if (dataUriSize) dataUriSize.textContent = formatByteSize(byteLengthUtf8(uri));
+  } catch (err) {
+    dataUriOutput.textContent = "";
+    if (dataUriSize) dataUriSize.textContent = "0 B";
+  }
+}
+
+function setDataUriFormat(format) {
+  dataUriFormat = format === "base64" ? "base64" : "css";
+  dataUriFormatBtns.forEach(function (btn) {
+    const on = btn.getAttribute("data-uri-format") === dataUriFormat;
+    btn.classList.toggle("is-active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  refreshDataUriOutput(latestMarkup);
 }
 
 function clearPngPreview() {
@@ -1232,7 +1390,7 @@ function updateExports(markup) {
   if (!markup) {
     reactOutput.textContent = "// Paste valid SVG to generate a React component.";
     rnOutput.textContent = "// Paste valid SVG to generate a React Native component.";
-    dataUriOutput.textContent = "";
+    refreshDataUriOutput(null);
     clearPngPreview();
     return;
   }
@@ -1249,11 +1407,7 @@ function updateExports(markup) {
     rnOutput.textContent = "// Couldn’t convert SVG to React Native.\n// " + (err && err.message ? err.message : "Unknown error");
   }
 
-  try {
-    dataUriOutput.textContent = toDataUri(markup);
-  } catch (err) {
-    dataUriOutput.textContent = "";
-  }
+  refreshDataUriOutput(markup);
 
   try {
     renderPngPreview(markup);
@@ -1289,6 +1443,12 @@ function setActiveTab(tab) {
 exportTabs.forEach(function (btn) {
   btn.addEventListener("click", function () {
     setActiveTab(btn.getAttribute("data-tab"));
+  });
+});
+
+dataUriFormatBtns.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    setDataUriFormat(btn.getAttribute("data-uri-format"));
   });
 });
 

@@ -165,6 +165,19 @@
             <p id="editor-heading" class="panel-title">Source</p>
           </div>
           <div class="panel-actions">
+            <input
+              type="file"
+              id="file-upload"
+              class="sr-only"
+              accept=".svg,image/svg+xml"
+              tabindex="-1"
+            />
+            <button type="button" class="btn btn-ghost" id="btn-upload" title="Upload SVG file">
+              Upload
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-download-svg" title="Download SVG file">
+              Download
+            </button>
             <button type="button" class="btn btn-ghost" id="btn-clear" title="Clear editor">
               Clear
             </button>
@@ -326,8 +339,30 @@
             data-view="data-uri"
             hidden
           >
-            <div class="code-output-bar">
-              <p class="code-output-label">Data URI</p>
+            <div class="code-output-bar data-uri-bar">
+              <div class="data-uri-controls">
+                <div class="format-switch" role="group" aria-label="Data URI format">
+                  <button
+                    type="button"
+                    class="format-chip is-active"
+                    id="data-uri-format-css"
+                    data-uri-format="css"
+                    aria-pressed="true"
+                  >
+                    CSS (URL-Encoded)
+                  </button>
+                  <button
+                    type="button"
+                    class="format-chip"
+                    id="data-uri-format-base64"
+                    data-uri-format="base64"
+                    aria-pressed="false"
+                  >
+                    Base64
+                  </button>
+                </div>
+                <span class="size-badge" id="data-uri-size" aria-live="polite">0 B</span>
+              </div>
               <button type="button" class="btn btn-copy" data-copy="data-uri-output">Copy</button>
             </div>
             <pre class="code-output code-output-wrap" id="data-uri-output" tabindex="0"></pre>
@@ -336,6 +371,8 @@
       </section>
     </main>
 
+    <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/parser-html.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
