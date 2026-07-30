@@ -588,6 +588,10 @@ let history = [];
 let historyIndex = -1;
 let applyingHistory = false;
 let historyTimer = 0;
+/** Becomes true only after a real edit (type / clear / tab). */
+let userEdited = false;
+/** Skip inspect updates while restoring history or handling undo keys. */
+let suppressSelectionSync = false;
 
 function snapshotEditor() {
   return {
@@ -627,6 +631,7 @@ function applyEditorState(state) {
   const max = editor.value.length;
   const start = Math.min(state.selectionStart ?? max, max);
   const end = Math.min(state.selectionEnd ?? max, max);
+  suppressSelectionSync = true;
   editor.focus();
   editor.setSelectionRange(start, end);
   empty.textContent = "Your SVG preview will appear here.";
@@ -634,10 +639,24 @@ function applyEditorState(state) {
   clearHighlight();
   updateLineNumbers();
   scheduleRender();
+  requestAnimationFrame(function () {
+    suppressSelectionSync = false;
+  });
 }
 
 function undoEdit() {
-  flushHistory();
+  clearTimeout(historyTimer);
+  const current = history[historyIndex];
+  const snap = snapshotEditor();
+
+  // Revert uncommitted typing to the last committed snapshot
+  if (current && snap.value !== current.value) {
+    applyingHistory = true;
+    applyEditorState(current);
+    applyingHistory = false;
+    return true;
+  }
+
   if (historyIndex <= 0) return false;
   historyIndex -= 1;
   applyingHistory = true;
@@ -657,26 +676,41 @@ function redoEdit() {
 }
 
 function canUndo() {
+  if (!userEdited) return false;
   if (historyIndex > 0) return true;
   const current = history[historyIndex];
   return Boolean(current && current.value !== editor.value);
 }
 
 function canRedo() {
-  return historyIndex < history.length - 1;
+  return userEdited && historyIndex < history.length - 1;
+}
+
+function markUserEdited() {
+  userEdited = true;
+}
+
+function scheduleSelectionSafe() {
+  if (suppressSelectionSync || applyingHistory) return;
+  scheduleSelection();
 }
 
 editor.addEventListener("input", function () {
+  markUserEdited();
   updateLineNumbers();
   scheduleRender();
   scheduleCommitHistory();
 });
 editor.addEventListener("scroll", syncLineNumbersScroll);
-editor.addEventListener("keyup", function () {
+editor.addEventListener("keyup", function (event) {
   updateLineNumbers();
-  scheduleSelection();
+  const key = event.key.toLowerCase();
+  if (event.ctrlKey || event.metaKey || key === "control" || key === "meta" || key === "z" || key === "y") {
+    return;
+  }
+  scheduleSelectionSafe();
 });
-editor.addEventListener("select", scheduleSelection);
+editor.addEventListener("select", scheduleSelectionSafe);
 
 let measureCtx = null;
 let clearBecauseEmptyClick = false;
@@ -733,7 +767,7 @@ editor.addEventListener("mouseup", function () {
     clearHighlight();
     return;
   }
-  scheduleSelection();
+  scheduleSelectionSafe();
 });
 
 editor.addEventListener("click", function () {
@@ -741,7 +775,7 @@ editor.addEventListener("click", function () {
     suppressEditorSelect = false;
     return;
   }
-  scheduleSelection();
+  scheduleSelectionSafe();
 });
 
 document.addEventListener("pointerdown", function (event) {
@@ -770,6 +804,7 @@ editor.addEventListener("keydown", function (event) {
 
   if (event.key === "Tab") {
     event.preventDefault();
+    markUserEdited();
     flushHistory();
     const selectionStart = editor.selectionStart;
     const selectionEnd = editor.selectionEnd;
@@ -782,7 +817,8 @@ editor.addEventListener("keydown", function (event) {
     return;
   }
 
-  scheduleSelection();
+  if (mod) return;
+  scheduleSelectionSafe();
 });
 
 if (zoomInBtn) {
@@ -808,6 +844,7 @@ bgButtons.forEach(function (btn) {
 });
 
 clearBtn.addEventListener("click", function () {
+  markUserEdited();
   flushHistory();
   if (!editor.value.length) return;
   editor.value = "";
