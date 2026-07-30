@@ -169,6 +169,7 @@ function collectElementRanges(source) {
       for (let i = stack.length - 1; i >= 0; i -= 1) {
         if (stack[i].name === name) {
           const opened = stack.splice(i, 1)[0];
+          opened.closeStart = start;
           opened.end = end;
           break;
         }
@@ -179,6 +180,8 @@ function collectElementRanges(source) {
     const entry = {
       name: name,
       start: start,
+      openEnd: end,
+      closeStart: selfClosing ? start : -1,
       end: end,
       index: ranges.length,
     };
@@ -190,6 +193,34 @@ function collectElementRanges(source) {
   }
 
   return ranges;
+}
+
+function caretOnTagText(range, caret, selEnd) {
+  function inOpening(pos) {
+    return pos >= range.start && pos <= range.openEnd;
+  }
+
+  function inClosing(pos) {
+    if (range.closeStart < 0) return false;
+    return pos >= range.closeStart && pos <= range.end;
+  }
+
+  function onTag(pos) {
+    if (range.closeStart < 0) {
+      return pos >= range.start && pos <= range.end;
+    }
+    return inOpening(pos) || inClosing(pos);
+  }
+
+  if (selEnd === caret) {
+    return onTag(caret);
+  }
+
+  const openOverlaps = range.start < selEnd && range.openEnd > caret;
+  const closeOverlaps =
+    range.closeStart >= 0 && range.closeStart < selEnd && range.end > caret;
+  const selfOverlaps = range.closeStart < 0 && range.start < selEnd && range.end > caret;
+  return openOverlaps || closeOverlaps || selfOverlaps;
 }
 
 function listPreviewElements(svgRoot) {
@@ -403,11 +434,8 @@ function selectionFromCaret() {
   let best = -1;
   for (let i = 0; i < elementRanges.length; i += 1) {
     const range = elementRanges[i];
-    const insideCaret = caret >= range.start && caret <= range.end;
-    const overlapsSelection = selEnd !== caret && range.start < selEnd && range.end > caret;
-    if (insideCaret || overlapsSelection) {
-      best = i;
-    }
+    if (!caretOnTagText(range, caret, selEnd)) continue;
+    best = i;
   }
 
   if (!isSpotlightIndex(best)) {
@@ -446,10 +474,13 @@ function renderPreview(source) {
     }
 
     const ranges = collectElementRanges(markup).map(function (range) {
+      const offset = Math.max(sourceOffset, 0);
       return {
         name: range.name,
-        start: range.start + Math.max(sourceOffset, 0),
-        end: range.end + Math.max(sourceOffset, 0),
+        start: range.start + offset,
+        openEnd: range.openEnd + offset,
+        closeStart: range.closeStart < 0 ? -1 : range.closeStart + offset,
+        end: range.end + offset,
         index: range.index,
       };
     });
@@ -587,10 +618,82 @@ editor.addEventListener("input", function () {
   scheduleRender();
   scheduleCommitHistory();
 });
-editor.addEventListener("click", scheduleSelection);
 editor.addEventListener("keyup", scheduleSelection);
 editor.addEventListener("select", scheduleSelection);
-editor.addEventListener("mouseup", scheduleSelection);
+
+let measureCtx = null;
+let clearBecauseEmptyClick = false;
+let suppressEditorSelect = false;
+
+function getMeasureContext(textarea) {
+  if (!measureCtx) {
+    measureCtx = document.createElement("canvas").getContext("2d");
+  }
+  const style = window.getComputedStyle(textarea);
+  measureCtx.font = style.fontWeight + " " + style.fontSize + " " + style.fontFamily;
+  return measureCtx;
+}
+
+function measureEditorLineWidth(textarea, lineText) {
+  const ctx = getMeasureContext(textarea);
+  const tabSize = 2;
+  const expanded = lineText.replace(/\t/g, Array(tabSize + 1).join(" "));
+  return ctx.measureText(expanded).width;
+}
+
+function isClickPastLineText(textarea, clientX, clientY) {
+  const rect = textarea.getBoundingClientRect();
+  const style = window.getComputedStyle(textarea);
+  const paddingLeft = parseFloat(style.paddingLeft) || 0;
+  const paddingTop = parseFloat(style.paddingTop) || 0;
+  const paddingBottom = parseFloat(style.paddingBottom) || 0;
+
+  const x = clientX - rect.left + textarea.scrollLeft - paddingLeft;
+  const y = clientY - rect.top + textarea.scrollTop - paddingTop;
+
+  const fontSize = parseFloat(style.fontSize) || 14;
+  let lineHeight = parseFloat(style.lineHeight);
+  if (!lineHeight || Number.isNaN(lineHeight)) lineHeight = fontSize * 1.7;
+
+  const lines = textarea.value.split("\n");
+  const lineIndex = Math.floor(y / lineHeight);
+
+  if (lineIndex < 0 || lineIndex >= lines.length) return true;
+
+  const lineText = lines[lineIndex];
+  const textWidth = measureEditorLineWidth(textarea, lineText);
+  return x > textWidth + 8;
+}
+
+editor.addEventListener("pointerdown", function (event) {
+  clearBecauseEmptyClick = isClickPastLineText(editor, event.clientX, event.clientY);
+});
+
+editor.addEventListener("mouseup", function () {
+  if (clearBecauseEmptyClick) {
+    clearBecauseEmptyClick = false;
+    suppressEditorSelect = true;
+    clearHighlight();
+    return;
+  }
+  scheduleSelection();
+});
+
+editor.addEventListener("click", function () {
+  if (suppressEditorSelect) {
+    suppressEditorSelect = false;
+    return;
+  }
+  scheduleSelection();
+});
+
+document.addEventListener("pointerdown", function (event) {
+  if (!inspectActive) return;
+  if (event.target === editor) return;
+  if (previewSvg && previewSvg.contains(event.target) && event.target !== previewSvg) return;
+  if (event.target === canvas) return;
+  clearHighlight();
+});
 
 editor.addEventListener("keydown", function (event) {
   const mod = event.ctrlKey || event.metaKey;
