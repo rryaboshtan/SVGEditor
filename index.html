@@ -76,7 +76,7 @@
       }
     </script>
   </head>
-  <body>
+  <body class="app-page">
     <div class="ambiance" aria-hidden="true">
       <div class="ambiance-wash"></div>
       <div class="ambiance-glow ambiance-glow-a"></div>
@@ -132,6 +132,26 @@
       <div class="header-meta">
         <span class="meta-chip">Live</span>
         <span class="meta-chip meta-chip-quiet">Local</span>
+        <nav class="legal-nav" aria-label="Legal">
+          <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>
+          <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>
+        </nav>
+        <a
+          class="github-link"
+          href="https://github.com/rryaboshtan/SvgViewer"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open source on GitHub"
+          aria-label="Open source repository on GitHub"
+        >
+          <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+          <span>Open Source</span>
+        </a>
       </div>
     </header>
 
@@ -151,17 +171,20 @@
           </div>
         </div>
         <label class="sr-only" for="editor">SVG markup</label>
-        <textarea
-          id="editor"
-          class="editor"
-          spellcheck="false"
-          autocomplete="off"
-          autocapitalize="off"
-          autocorrect="off"
-          wrap="off"
-          aria-describedby="editor-hint"
-          placeholder="Paste your SVG markup here…"
-        ></textarea>
+        <div class="code-editor">
+          <div class="line-numbers" id="line-numbers" aria-hidden="true"></div>
+          <textarea
+            id="editor"
+            class="editor"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            wrap="off"
+            aria-describedby="editor-hint"
+            placeholder="Paste your SVG markup here…"
+          ></textarea>
+        </div>
         <p id="editor-hint" class="sr-only">
           Type or paste SVG markup. The preview on the right updates as you type.
         </p>
@@ -174,9 +197,52 @@
           </div>
           <p class="preview-status" id="preview-status" aria-live="polite">Ready</p>
         </div>
-        <div class="preview-stage" id="preview-stage">
+        <div class="preview-stage" id="preview-stage" data-bg="transparent">
           <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
           <p class="preview-empty" id="preview-empty" hidden>Your SVG preview will appear here.</p>
+          <div class="preview-toolbar" role="toolbar" aria-label="Preview controls">
+            <div class="toolbar-group" role="group" aria-label="Zoom">
+              <button type="button" class="toolbar-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+              <button type="button" class="toolbar-btn toolbar-zoom-value" id="zoom-reset" title="Reset zoom">100%</button>
+              <button type="button" class="toolbar-btn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+            </div>
+            <div class="toolbar-divider" aria-hidden="true"></div>
+            <div class="toolbar-group" role="group" aria-label="Canvas background">
+              <button
+                type="button"
+                class="toolbar-btn toolbar-swatch is-active"
+                id="bg-transparent"
+                data-bg="transparent"
+                title="Transparent canvas"
+                aria-label="Transparent canvas"
+                aria-pressed="true"
+              >
+                <span class="swatch swatch-checker" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="toolbar-btn toolbar-swatch"
+                id="bg-black"
+                data-bg="black"
+                title="Black canvas"
+                aria-label="Black canvas"
+                aria-pressed="false"
+              >
+                <span class="swatch swatch-black" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="toolbar-btn toolbar-swatch"
+                id="bg-white"
+                data-bg="white"
+                title="White canvas"
+                aria-label="White canvas"
+                aria-pressed="false"
+              >
+                <span class="swatch swatch-white" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>

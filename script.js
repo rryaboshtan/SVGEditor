@@ -34,13 +34,23 @@ const DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 20
 </svg>`;
 
 const editor = document.getElementById("editor");
+const lineNumbers = document.getElementById("line-numbers");
 const canvas = document.getElementById("preview-canvas");
 const empty = document.getElementById("preview-empty");
 const status = document.getElementById("preview-status");
 const clearBtn = document.getElementById("btn-clear");
 const previewStage = document.getElementById("preview-stage");
+const zoomInBtn = document.getElementById("zoom-in");
+const zoomOutBtn = document.getElementById("zoom-out");
+const zoomResetBtn = document.getElementById("zoom-reset");
+const bgButtons = document.querySelectorAll(".toolbar-swatch[data-bg]");
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+const ZOOM_MIN = 0.25;
+const ZOOM_MAX = 4;
+const ZOOM_STEP = 0.25;
+
+let previewZoom = 1;
 
 /** Definition / non-painted tags — highlight via elements that reference them. */
 const DEF_TAGS = new Set([
@@ -497,6 +507,7 @@ function renderPreview(source) {
     empty.hidden = true;
     previewSvg = svg;
     elementRanges = ranges;
+    applyPreviewZoom();
     setStatus("ok", "Live preview");
 
     if (wasInspecting) {
@@ -516,6 +527,45 @@ function renderPreview(source) {
     clearHighlight();
     setStatus("error", "Invalid SVG");
   }
+}
+
+function updateLineNumbers() {
+  if (!lineNumbers) return;
+  const count = editor.value.split("\n").length;
+  let html = "";
+  for (let i = 1; i <= count; i += 1) {
+    html += i + (i === count ? "" : "\n");
+  }
+  lineNumbers.textContent = html || "1";
+}
+
+function syncLineNumbersScroll() {
+  if (!lineNumbers) return;
+  lineNumbers.scrollTop = editor.scrollTop;
+}
+
+function applyPreviewZoom() {
+  canvas.style.setProperty("--preview-zoom", String(previewZoom));
+  if (zoomResetBtn) {
+    zoomResetBtn.textContent = Math.round(previewZoom * 100) + "%";
+  }
+  if (inspectActive) {
+    positionHighlightTargets(selectedPaintTargets);
+  }
+}
+
+function setPreviewZoom(next) {
+  previewZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(next * 100) / 100));
+  applyPreviewZoom();
+}
+
+function setCanvasBackground(mode) {
+  previewStage.dataset.bg = mode;
+  bgButtons.forEach(function (btn) {
+    const active = btn.getAttribute("data-bg") === mode;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", active ? "true" : "false");
+  });
 }
 
 let frame = 0;
@@ -580,7 +630,9 @@ function applyEditorState(state) {
   editor.focus();
   editor.setSelectionRange(start, end);
   empty.textContent = "Your SVG preview will appear here.";
+  empty.hidden = !state.value.trim();
   clearHighlight();
+  updateLineNumbers();
   scheduleRender();
 }
 
@@ -615,10 +667,15 @@ function canRedo() {
 }
 
 editor.addEventListener("input", function () {
+  updateLineNumbers();
   scheduleRender();
   scheduleCommitHistory();
 });
-editor.addEventListener("keyup", scheduleSelection);
+editor.addEventListener("scroll", syncLineNumbersScroll);
+editor.addEventListener("keyup", function () {
+  updateLineNumbers();
+  scheduleSelection();
+});
 editor.addEventListener("select", scheduleSelection);
 
 let measureCtx = null;
@@ -721,10 +778,33 @@ editor.addEventListener("keydown", function (event) {
     editor.selectionStart = editor.selectionEnd = selectionStart + 2;
     commitHistory();
     scheduleRender();
+    updateLineNumbers();
     return;
   }
 
   scheduleSelection();
+});
+
+if (zoomInBtn) {
+  zoomInBtn.addEventListener("click", function () {
+    setPreviewZoom(previewZoom + ZOOM_STEP);
+  });
+}
+if (zoomOutBtn) {
+  zoomOutBtn.addEventListener("click", function () {
+    setPreviewZoom(previewZoom - ZOOM_STEP);
+  });
+}
+if (zoomResetBtn) {
+  zoomResetBtn.addEventListener("click", function () {
+    setPreviewZoom(1);
+  });
+}
+
+bgButtons.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    setCanvasBackground(btn.getAttribute("data-bg"));
+  });
 });
 
 clearBtn.addEventListener("click", function () {
@@ -737,6 +817,7 @@ clearBtn.addEventListener("click", function () {
   editor.setSelectionRange(0, 0);
   commitHistory();
   scheduleRender();
+  updateLineNumbers();
 });
 
 canvas.addEventListener("click", function (event) {
@@ -781,6 +862,19 @@ previewStage.addEventListener("scroll", function () {
   if (inspectActive) scheduleSelection();
 });
 
+previewStage.addEventListener(
+  "wheel",
+  function (event) {
+    if (!(event.ctrlKey || event.metaKey)) return;
+    event.preventDefault();
+    const direction = event.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+    setPreviewZoom(previewZoom + direction);
+  },
+  { passive: false }
+);
+
 editor.value = DEFAULT_SVG;
 commitHistory();
+updateLineNumbers();
+applyPreviewZoom();
 renderPreview(DEFAULT_SVG);
