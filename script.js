@@ -34,7 +34,10 @@ const DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 20
 </svg>`;
 
 const editor = document.getElementById("editor");
+const editorHighlight = document.getElementById("editor-highlight");
 const lineNumbers = document.getElementById("line-numbers");
+const workspace = document.getElementById("tool");
+const splitter = document.getElementById("splitter");
 const canvas = document.getElementById("preview-canvas");
 const empty = document.getElementById("preview-empty");
 const status = document.getElementById("preview-status");
@@ -597,9 +600,107 @@ function updateLineNumbers() {
   lineNumbers.textContent = parts.join("\n") || "1";
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function highlightAttrs(attrs) {
+  if (!attrs) return "";
+  return attrs.replace(
+    /([^\s=<>/]+)(\s*=\s*)("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s"'=<>`]+)|(\s+)|([^\s])/g,
+    function (full, name, eq, val, ws, other) {
+      if (name) {
+        return (
+          '<span class="tok-attr">' +
+          escapeHtml(name) +
+          '</span><span class="tok-punct">' +
+          escapeHtml(eq) +
+          '</span><span class="tok-string">' +
+          escapeHtml(val) +
+          "</span>"
+        );
+      }
+      if (ws) return ws;
+      return '<span class="tok-punct">' + escapeHtml(other) + "</span>";
+    }
+  );
+}
+
+function highlightTag(tag) {
+  const m = tag.match(/^(<\/?)([A-Za-z_][\w:.-]*)([\s\S]*?)(\/?>)$/);
+  if (!m) return escapeHtml(tag);
+  return (
+    '<span class="tok-punct">' +
+    escapeHtml(m[1]) +
+    '</span><span class="tok-tag">' +
+    escapeHtml(m[2]) +
+    "</span>" +
+    highlightAttrs(m[3]) +
+    '<span class="tok-punct">' +
+    escapeHtml(m[4]) +
+    "</span>"
+  );
+}
+
+function highlightMarkup(source) {
+  let out = "";
+  let i = 0;
+  const code = String(source || "");
+
+  while (i < code.length) {
+    if (code.startsWith("<!--", i)) {
+      const end = code.indexOf("-->", i + 4);
+      const endIdx = end === -1 ? code.length : end + 3;
+      out += '<span class="tok-comment">' + escapeHtml(code.slice(i, endIdx)) + "</span>";
+      i = endIdx;
+      continue;
+    }
+
+    if (code[i] === "<") {
+      const close = code.indexOf(">", i + 1);
+      if (close === -1) {
+        out += escapeHtml(code.slice(i));
+        break;
+      }
+      out += highlightTag(code.slice(i, close + 1));
+      i = close + 1;
+      continue;
+    }
+
+    const next = code.indexOf("<", i);
+    const end = next === -1 ? code.length : next;
+    out += '<span class="tok-text">' + escapeHtml(code.slice(i, end)) + "</span>";
+    i = end;
+  }
+
+  return out;
+}
+
+function updateSyntaxHighlight() {
+  if (!editorHighlight) return;
+  editorHighlight.innerHTML = highlightMarkup(editor.value) + "\n";
+}
+
+function syncEditorChromeScroll() {
+  if (lineNumbers) lineNumbers.scrollTop = editor.scrollTop;
+  if (editorHighlight) {
+    editorHighlight.scrollTop = editor.scrollTop;
+    editorHighlight.scrollLeft = editor.scrollLeft;
+  }
+}
+
+function refreshEditorChrome() {
+  updateLineNumbers();
+  updateSyntaxHighlight();
+  syncEditorChromeScroll();
+}
+
 function syncLineNumbersScroll() {
-  if (!lineNumbers) return;
-  lineNumbers.scrollTop = editor.scrollTop;
+  syncEditorChromeScroll();
 }
 
 function applyPreviewZoom() {
@@ -695,7 +796,7 @@ function applyEditorState(state) {
   empty.textContent = "Your SVG preview will appear here.";
   empty.hidden = !state.value.trim();
   clearHighlight();
-  updateLineNumbers();
+  refreshEditorChrome();
   scheduleRender();
   requestAnimationFrame(function () {
     suppressSelectionSync = false;
@@ -755,11 +856,11 @@ function scheduleSelectionSafe() {
 
 editor.addEventListener("input", function () {
   markUserEdited();
-  updateLineNumbers();
+  refreshEditorChrome();
   scheduleRender();
   scheduleCommitHistory();
 });
-editor.addEventListener("scroll", syncLineNumbersScroll);
+editor.addEventListener("scroll", syncEditorChromeScroll);
 editor.addEventListener("keyup", function (event) {
   updateLineNumbers();
   const key = event.key.toLowerCase();
@@ -871,7 +972,7 @@ editor.addEventListener("keydown", function (event) {
     editor.selectionStart = editor.selectionEnd = selectionStart + 2;
     commitHistory();
     scheduleRender();
-    updateLineNumbers();
+    refreshEditorChrome();
     return;
   }
 
@@ -912,7 +1013,7 @@ clearBtn.addEventListener("click", function () {
   editor.setSelectionRange(0, 0);
   commitHistory();
   scheduleRender();
-  updateLineNumbers();
+  refreshEditorChrome();
 });
 
 if (uploadBtn && fileUpload) {
@@ -935,7 +1036,7 @@ if (uploadBtn && fileUpload) {
       editor.focus();
       editor.setSelectionRange(0, 0);
       commitHistory();
-      updateLineNumbers();
+      refreshEditorChrome();
       scheduleRender();
       clearHighlight();
       setStatus("ok", "Uploaded " + file.name);
@@ -1489,6 +1590,87 @@ if (downloadPngBtn) {
 setActiveTab("preview");
 editor.value = DEFAULT_SVG;
 commitHistory();
-updateLineNumbers();
+refreshEditorChrome();
 applyPreviewZoom();
 renderPreview(DEFAULT_SVG);
+
+/* ——— Resizable panels ——— */
+const SPLIT_MIN = 20;
+const SPLIT_MAX = 80;
+let splitPercent = 52;
+let splitDragging = false;
+
+function applySplit(percent) {
+  splitPercent = Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, percent));
+  if (workspace) {
+    workspace.style.setProperty("--editor-split", splitPercent + "%");
+  }
+  if (splitter) {
+    splitter.setAttribute("aria-valuenow", String(Math.round(splitPercent)));
+  }
+  updateLineNumbers();
+  syncEditorChromeScroll();
+}
+
+function splitFromPointer(clientX) {
+  if (!workspace) return;
+  const rect = workspace.getBoundingClientRect();
+  if (rect.width <= 0) return;
+  applySplit(((clientX - rect.left) / rect.width) * 100);
+}
+
+if (splitter && workspace) {
+  applySplit(splitPercent);
+
+  splitter.addEventListener("pointerdown", function (event) {
+    if (window.matchMedia("(max-width: 900px)").matches) return;
+    splitDragging = true;
+    splitter.classList.add("is-active");
+    document.body.classList.add("is-resizing");
+    try {
+      splitter.setPointerCapture(event.pointerId);
+    } catch (err) {
+      /* ignore */
+    }
+    splitFromPointer(event.clientX);
+    event.preventDefault();
+  });
+
+  splitter.addEventListener("pointermove", function (event) {
+    if (!splitDragging) return;
+    splitFromPointer(event.clientX);
+  });
+
+  function endSplitDrag(event) {
+    if (!splitDragging) return;
+    splitDragging = false;
+    splitter.classList.remove("is-active");
+    document.body.classList.remove("is-resizing");
+    if (event && event.pointerId != null) {
+      try {
+        splitter.releasePointerCapture(event.pointerId);
+      } catch (err) {
+        /* ignore */
+      }
+    }
+  }
+
+  splitter.addEventListener("pointerup", endSplitDrag);
+  splitter.addEventListener("pointercancel", endSplitDrag);
+
+  splitter.addEventListener("keydown", function (event) {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      applySplit(splitPercent - 2);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      applySplit(splitPercent + 2);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      applySplit(SPLIT_MIN);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      applySplit(SPLIT_MAX);
+    }
+  });
+}

@@ -186,22 +186,36 @@
         <label class="sr-only" for="editor">SVG markup</label>
         <div class="code-editor">
           <div class="line-numbers" id="line-numbers" aria-hidden="true"></div>
-          <textarea
-            id="editor"
-            class="editor"
-            spellcheck="false"
-            autocomplete="off"
-            autocapitalize="off"
-            autocorrect="off"
-            wrap="off"
-            aria-describedby="editor-hint"
-            placeholder="Paste your SVG markup here…"
-          ></textarea>
+          <div class="editor-pane">
+            <pre class="editor-highlight" id="editor-highlight" aria-hidden="true"></pre>
+            <textarea
+              id="editor"
+              class="editor"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              aria-describedby="editor-hint"
+              placeholder="Paste your SVG markup here…"
+            ></textarea>
+          </div>
         </div>
         <p id="editor-hint" class="sr-only">
           Type or paste SVG markup. The preview on the right updates as you type.
         </p>
       </section>
+
+      <div
+        class="splitter"
+        id="splitter"
+        role="separator"
+        aria-orientation="vertical"
+        aria-valuemin="20"
+        aria-valuemax="80"
+        aria-valuenow="52"
+        aria-label="Resize editor and preview panels"
+        tabindex="0"
+      ></div>
 
       <section class="panel panel-preview" aria-labelledby="preview-heading">
         <div class="panel-bar panel-bar-light panel-bar-tabs">
