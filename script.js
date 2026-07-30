@@ -42,8 +42,8 @@ const previewStage = document.getElementById("preview-stage");
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-/** Tags that are not drawable shapes — still trackable, but outline is often empty. */
-const NON_VISUAL = new Set([
+/** Definition / non-painted tags — highlight via elements that reference them. */
+const DEF_TAGS = new Set([
   "defs",
   "style",
   "script",
@@ -59,10 +59,57 @@ const NON_VISUAL = new Set([
   "marker",
   "symbol",
   "filter",
+  "fegaussianblur",
+  "feoffset",
+  "femerge",
+  "femergenode",
+  "feflood",
+  "feblend",
+  "fecomposite",
+  "fecolormatrix",
+  "feturbulence",
+  "fedisplacementmap",
+  "femorphology",
+  "feconvolvematrix",
+  "fespecularlighting",
+  "fediffuselighting",
+  "feimage",
+  "fetile",
+  "fecomponenttransfer",
+  "fefunca",
+  "fefuncr",
+  "fefuncg",
+  "fefuncb",
 ]);
+
+const SKIP_SELECT = new Set(["defs", "style", "script", "title", "desc", "metadata"]);
+
+const RESOURCE_TAGS = new Set([
+  "lineargradient",
+  "radialgradient",
+  "filter",
+  "clippath",
+  "mask",
+  "pattern",
+  "marker",
+]);
+
+const REF_ATTRS = [
+  "fill",
+  "stroke",
+  "filter",
+  "clip-path",
+  "mask",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "href",
+  "xlink:href",
+];
 
 let elementRanges = [];
 let selectedIndex = -1;
+let selectedPaintTargets = [];
 let highlightEl = null;
 let highlightLayer = null;
 let previewSvg = null;
@@ -156,6 +203,70 @@ function listPreviewElements(svgRoot) {
   return list;
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function resolveResourceNode(node) {
+  if (!(node instanceof Element)) return null;
+  if (node.id) return node;
+
+  let parent = node.parentElement;
+  while (parent && parent !== previewSvg) {
+    const name = parent.localName.toLowerCase();
+    if (RESOURCE_TAGS.has(name) && parent.id) return parent;
+    parent = parent.parentElement;
+  }
+  return node.id ? node : null;
+}
+
+function elementReferencesId(el, id) {
+  const pattern = new RegExp("url\\(\\s*['\"]?#" + escapeRegExp(id) + "['\"]?\\s*\\)", "i");
+  const hashPattern = new RegExp("^#" + escapeRegExp(id) + "$", "i");
+
+  for (let i = 0; i < REF_ATTRS.length; i += 1) {
+    const attr = REF_ATTRS[i];
+    const value = el.getAttribute(attr);
+    if (!value) continue;
+    if (pattern.test(value) || hashPattern.test(value.trim())) return true;
+  }
+
+  // presentation attributes sometimes live in style=""
+  const style = el.getAttribute("style");
+  if (style && pattern.test(style)) return true;
+
+  return false;
+}
+
+function findPaintTargets(defNode) {
+  const resource = resolveResourceNode(defNode);
+  if (!resource || !resource.id || !previewSvg) return [];
+
+  const id = resource.id;
+  const targets = [];
+  const nodes = listPreviewElements(previewSvg);
+
+  for (let i = 0; i < nodes.length; i += 1) {
+    const el = nodes[i];
+    if (el === resource || resource.contains(el)) continue;
+    if (DEF_TAGS.has(el.localName.toLowerCase())) continue;
+    if (elementReferencesId(el, id)) targets.push(el);
+  }
+
+  return targets;
+}
+
+function getHighlightTargets(node) {
+  if (!(node instanceof Element)) return [];
+  const name = node.localName.toLowerCase();
+
+  if (DEF_TAGS.has(name)) {
+    return findPaintTargets(node);
+  }
+
+  return [node];
+}
+
 function ensureHighlightBox() {
   if (highlightEl && highlightLayer) return highlightEl;
 
@@ -174,6 +285,7 @@ function ensureHighlightBox() {
 
 function clearHighlight() {
   selectedIndex = -1;
+  selectedPaintTargets = [];
   inspectActive = false;
   if (previewSvg) {
     previewSvg.classList.remove("is-inspecting");
@@ -186,41 +298,55 @@ function clearHighlight() {
   if (previewSvg) setStatus("ok", "Live preview");
 }
 
-function positionHighlight(target) {
+function positionHighlightTargets(targets) {
   const box = ensureHighlightBox();
-  if (!target || !previewStage.contains(target)) {
-    box.hidden = true;
-    return;
-  }
-
-  let rect;
-  try {
-    rect = target.getBoundingClientRect();
-  } catch {
-    box.hidden = true;
-    return;
-  }
-
-  if (!rect || (rect.width < 0.5 && rect.height < 0.5)) {
+  if (!targets || !targets.length) {
     box.hidden = true;
     return;
   }
 
   const stageRect = previewStage.getBoundingClientRect();
+  let minL = Infinity;
+  let minT = Infinity;
+  let maxR = -Infinity;
+  let maxB = -Infinity;
+  let any = false;
+
+  for (let i = 0; i < targets.length; i += 1) {
+    const target = targets[i];
+    if (!previewStage.contains(target)) continue;
+    let rect;
+    try {
+      rect = target.getBoundingClientRect();
+    } catch {
+      continue;
+    }
+    if (!rect || (rect.width < 0.5 && rect.height < 0.5)) continue;
+    any = true;
+    minL = Math.min(minL, rect.left);
+    minT = Math.min(minT, rect.top);
+    maxR = Math.max(maxR, rect.right);
+    maxB = Math.max(maxB, rect.bottom);
+  }
+
+  if (!any) {
+    box.hidden = true;
+    return;
+  }
+
   const pad = 6;
-  box.style.left = rect.left - stageRect.left - pad + "px";
-  box.style.top = rect.top - stageRect.top - pad + "px";
-  box.style.width = Math.max(rect.width + pad * 2, 8) + "px";
-  box.style.height = Math.max(rect.height + pad * 2, 8) + "px";
+  box.style.left = minL - stageRect.left - pad + "px";
+  box.style.top = minT - stageRect.top - pad + "px";
+  box.style.width = Math.max(maxR - minL + pad * 2, 8) + "px";
+  box.style.height = Math.max(maxB - minT + pad * 2, 8) + "px";
   box.hidden = false;
 }
 
 function isSpotlightIndex(index) {
   if (index < 0 || index >= elementRanges.length) return false;
   const range = elementRanges[index];
-  // Root <svg> or non-visual tags = no spotlight / clear dimming
   if (index === 0 && range.name === "svg") return false;
-  if (NON_VISUAL.has(range.name)) return false;
+  if (SKIP_SELECT.has(range.name)) return false;
   return true;
 }
 
@@ -231,24 +357,38 @@ function applySelection(index) {
   }
 
   const nodes = listPreviewElements(previewSvg);
-  const target = nodes[index];
-  if (!target) {
+  const sourceNode = nodes[index];
+  if (!sourceNode) {
     clearHighlight();
     return;
   }
 
+  const paintTargets = getHighlightTargets(sourceNode);
+  if (!paintTargets.length) {
+    clearHighlight();
+    const tag = elementRanges[index].name;
+    setStatus("ok", "No painted use of <" + tag + ">");
+    return;
+  }
+
   selectedIndex = index;
+  selectedPaintTargets = paintTargets;
   inspectActive = true;
   previewSvg.classList.add("is-inspecting");
   previewSvg.querySelectorAll(".is-selected").forEach(function (node) {
     node.classList.remove("is-selected");
   });
-  target.classList.add("is-selected");
+  paintTargets.forEach(function (node) {
+    node.classList.add("is-selected");
+  });
 
-  positionHighlight(target);
+  positionHighlightTargets(paintTargets);
 
   const tag = elementRanges[index].name;
-  setStatus("ok", "Selected <" + tag + ">");
+  const resource = resolveResourceNode(sourceNode);
+  const idLabel = resource && resource.id ? " #" + resource.id : "";
+  const via = DEF_TAGS.has(sourceNode.localName.toLowerCase()) ? " → usage" : "";
+  setStatus("ok", "Selected <" + tag + ">" + idLabel + via);
 }
 
 function selectionFromCaret() {
@@ -276,8 +416,7 @@ function selectionFromCaret() {
   }
 
   if (best === selectedIndex && inspectActive) {
-    const nodes = listPreviewElements(previewSvg);
-    positionHighlight(nodes[best]);
+    positionHighlightTargets(selectedPaintTargets);
     return;
   }
 
@@ -318,7 +457,7 @@ function renderPreview(source) {
     const nodes = listPreviewElements(svg);
     nodes.forEach(function (node, index) {
       node.setAttribute("data-el-index", String(index));
-      if (!NON_VISUAL.has(node.localName.toLowerCase())) {
+      if (!DEF_TAGS.has(node.localName.toLowerCase())) {
         node.style.cursor = "pointer";
       }
     });
