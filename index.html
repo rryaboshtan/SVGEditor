@@ -191,57 +191,146 @@
       </section>
 
       <section class="panel panel-preview" aria-labelledby="preview-heading">
-        <div class="panel-bar panel-bar-light">
-          <div class="panel-bar-left">
-            <p id="preview-heading" class="panel-title">Live preview</p>
+        <div class="panel-bar panel-bar-light panel-bar-tabs">
+          <div class="export-tabs" role="tablist" aria-label="Output formats">
+            <button type="button" class="export-tab is-active" role="tab" id="tab-preview" data-tab="preview" aria-selected="true" aria-controls="panel-view-preview">
+              Preview
+            </button>
+            <button type="button" class="export-tab" role="tab" id="tab-react" data-tab="react" aria-selected="false" aria-controls="panel-view-react">
+              React
+            </button>
+            <button type="button" class="export-tab" role="tab" id="tab-react-native" data-tab="react-native" aria-selected="false" aria-controls="panel-view-react-native">
+              React Native
+            </button>
+            <button type="button" class="export-tab" role="tab" id="tab-png" data-tab="png" aria-selected="false" aria-controls="panel-view-png">
+              PNG
+            </button>
+            <button type="button" class="export-tab" role="tab" id="tab-data-uri" data-tab="data-uri" aria-selected="false" aria-controls="panel-view-data-uri">
+              Data URI
+            </button>
           </div>
           <p class="preview-status" id="preview-status" aria-live="polite">Ready</p>
         </div>
-        <div class="preview-stage" id="preview-stage" data-bg="transparent">
-          <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
-          <p class="preview-empty" id="preview-empty" hidden>Your SVG preview will appear here.</p>
-          <div class="preview-toolbar" role="toolbar" aria-label="Preview controls">
-            <div class="toolbar-group" role="group" aria-label="Zoom">
-              <button type="button" class="toolbar-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
-              <button type="button" class="toolbar-btn toolbar-zoom-value" id="zoom-reset" title="Reset zoom">100%</button>
-              <button type="button" class="toolbar-btn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+
+        <div class="export-views">
+          <div
+            class="export-view is-active"
+            id="panel-view-preview"
+            role="tabpanel"
+            aria-labelledby="tab-preview"
+            data-view="preview"
+          >
+            <h2 id="preview-heading" class="sr-only">Live preview</h2>
+            <div class="preview-stage" id="preview-stage" data-bg="transparent">
+              <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
+              <p class="preview-empty" id="preview-empty" hidden>Your SVG preview will appear here.</p>
+              <div class="preview-toolbar" role="toolbar" aria-label="Preview controls">
+                <div class="toolbar-group" role="group" aria-label="Zoom">
+                  <button type="button" class="toolbar-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+                  <button type="button" class="toolbar-btn toolbar-zoom-value" id="zoom-reset" title="Reset zoom">100%</button>
+                  <button type="button" class="toolbar-btn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+                </div>
+                <div class="toolbar-divider" aria-hidden="true"></div>
+                <div class="toolbar-group" role="group" aria-label="Canvas background">
+                  <button
+                    type="button"
+                    class="toolbar-btn toolbar-swatch is-active"
+                    id="bg-transparent"
+                    data-bg="transparent"
+                    title="Transparent canvas"
+                    aria-label="Transparent canvas"
+                    aria-pressed="true"
+                  >
+                    <span class="swatch swatch-checker" aria-hidden="true"></span>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn toolbar-swatch"
+                    id="bg-black"
+                    data-bg="black"
+                    title="Black canvas"
+                    aria-label="Black canvas"
+                    aria-pressed="false"
+                  >
+                    <span class="swatch swatch-black" aria-hidden="true"></span>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn toolbar-swatch"
+                    id="bg-white"
+                    data-bg="white"
+                    title="White canvas"
+                    aria-label="White canvas"
+                    aria-pressed="false"
+                  >
+                    <span class="swatch swatch-white" aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="toolbar-divider" aria-hidden="true"></div>
-            <div class="toolbar-group" role="group" aria-label="Canvas background">
-              <button
-                type="button"
-                class="toolbar-btn toolbar-swatch is-active"
-                id="bg-transparent"
-                data-bg="transparent"
-                title="Transparent canvas"
-                aria-label="Transparent canvas"
-                aria-pressed="true"
-              >
-                <span class="swatch swatch-checker" aria-hidden="true"></span>
-              </button>
-              <button
-                type="button"
-                class="toolbar-btn toolbar-swatch"
-                id="bg-black"
-                data-bg="black"
-                title="Black canvas"
-                aria-label="Black canvas"
-                aria-pressed="false"
-              >
-                <span class="swatch swatch-black" aria-hidden="true"></span>
-              </button>
-              <button
-                type="button"
-                class="toolbar-btn toolbar-swatch"
-                id="bg-white"
-                data-bg="white"
-                title="White canvas"
-                aria-label="White canvas"
-                aria-pressed="false"
-              >
-                <span class="swatch swatch-white" aria-hidden="true"></span>
-              </button>
+          </div>
+
+          <div
+            class="export-view"
+            id="panel-view-react"
+            role="tabpanel"
+            aria-labelledby="tab-react"
+            data-view="react"
+            hidden
+          >
+            <div class="code-output-bar">
+              <p class="code-output-label">React component</p>
+              <button type="button" class="btn btn-copy" data-copy="react-output">Copy</button>
             </div>
+            <pre class="code-output" id="react-output" tabindex="0"></pre>
+          </div>
+
+          <div
+            class="export-view"
+            id="panel-view-react-native"
+            role="tabpanel"
+            aria-labelledby="tab-react-native"
+            data-view="react-native"
+            hidden
+          >
+            <div class="code-output-bar">
+              <p class="code-output-label">React Native (react-native-svg)</p>
+              <button type="button" class="btn btn-copy" data-copy="rn-output">Copy</button>
+            </div>
+            <pre class="code-output" id="rn-output" tabindex="0"></pre>
+          </div>
+
+          <div
+            class="export-view"
+            id="panel-view-png"
+            role="tabpanel"
+            aria-labelledby="tab-png"
+            data-view="png"
+            hidden
+          >
+            <div class="code-output-bar">
+              <p class="code-output-label">PNG export</p>
+              <button type="button" class="btn btn-copy" id="btn-download-png">Download PNG</button>
+            </div>
+            <div class="png-stage" id="png-stage" data-bg="transparent">
+              <canvas id="png-canvas" class="png-canvas" aria-label="PNG preview"></canvas>
+              <p class="preview-empty" id="png-empty" hidden>Paste valid SVG to export PNG.</p>
+            </div>
+          </div>
+
+          <div
+            class="export-view"
+            id="panel-view-data-uri"
+            role="tabpanel"
+            aria-labelledby="tab-data-uri"
+            data-view="data-uri"
+            hidden
+          >
+            <div class="code-output-bar">
+              <p class="code-output-label">Data URI</p>
+              <button type="button" class="btn btn-copy" data-copy="data-uri-output">Copy</button>
+            </div>
+            <pre class="code-output code-output-wrap" id="data-uri-output" tabindex="0"></pre>
           </div>
         </div>
       </section>

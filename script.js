@@ -473,6 +473,7 @@ function renderPreview(source) {
     elementRanges = [];
     clearHighlight();
     setStatus("empty", "Waiting for SVG");
+    updateExports(null);
     return;
   }
 
@@ -508,7 +509,12 @@ function renderPreview(source) {
     previewSvg = svg;
     elementRanges = ranges;
     applyPreviewZoom();
-    setStatus("ok", "Live preview");
+    try {
+      updateExports(markup);
+    } catch (err) {
+      console.error(err);
+    }
+    setStatus("ok", typeof activeTab !== "undefined" ? tabStatusLabel(activeTab) : "Live preview");
 
     if (wasInspecting) {
       requestAnimationFrame(selectionFromCaret);
@@ -526,6 +532,11 @@ function renderPreview(source) {
     elementRanges = [];
     clearHighlight();
     setStatus("error", "Invalid SVG");
+    try {
+      updateExports(null);
+    } catch (err) {
+      /* ignore */
+    }
   }
 }
 
@@ -910,6 +921,412 @@ previewStage.addEventListener(
   { passive: false }
 );
 
+/* ——— Export tabs: React / RN / PNG / Data URI ——— */
+const reactOutput = document.getElementById("react-output");
+const rnOutput = document.getElementById("rn-output");
+const dataUriOutput = document.getElementById("data-uri-output");
+const pngCanvas = document.getElementById("png-canvas");
+const pngEmpty = document.getElementById("png-empty");
+const downloadPngBtn = document.getElementById("btn-download-png");
+const exportTabs = document.querySelectorAll(".export-tab");
+const exportViews = document.querySelectorAll(".export-view");
+
+let activeTab = "preview";
+let latestMarkup = null;
+let latestPngUrl = null;
+
+const ATTR_MAP = {
+  class: "className",
+  classname: "className",
+  "stroke-width": "strokeWidth",
+  "stroke-linecap": "strokeLinecap",
+  "stroke-linejoin": "strokeLinejoin",
+  "stroke-miterlimit": "strokeMiterlimit",
+  "stroke-dasharray": "strokeDasharray",
+  "stroke-dashoffset": "strokeDashoffset",
+  "stroke-opacity": "strokeOpacity",
+  "fill-opacity": "fillOpacity",
+  "fill-rule": "fillRule",
+  "clip-path": "clipPath",
+  "clip-rule": "clipRule",
+  "font-family": "fontFamily",
+  "font-size": "fontSize",
+  "font-style": "fontStyle",
+  "font-weight": "fontWeight",
+  "letter-spacing": "letterSpacing",
+  "text-anchor": "textAnchor",
+  "text-decoration": "textDecoration",
+  "stop-color": "stopColor",
+  "stop-opacity": "stopOpacity",
+  "flood-color": "floodColor",
+  "flood-opacity": "floodOpacity",
+  "color-interpolation-filters": "colorInterpolationFilters",
+  "gradienttransform": "gradientTransform",
+  "gradientunits": "gradientUnits",
+  "gradientTransform": "gradientTransform",
+  "gradientUnits": "gradientUnits",
+  "patternunits": "patternUnits",
+  "patternUnits": "patternUnits",
+  "patterntransform": "patternTransform",
+  "patternTransform": "patternTransform",
+  "stddeviation": "stdDeviation",
+  "stdDeviation": "stdDeviation",
+  "xlink:href": "href",
+  "xml:space": "xmlSpace",
+  "xmlns:xlink": "xmlnsXlink",
+  tabindex: "tabIndex",
+  readonly: "readOnly",
+  crossorigin: "crossOrigin",
+};
+
+const RN_TAG_MAP = {
+  svg: "Svg",
+  g: "G",
+  path: "Path",
+  rect: "Rect",
+  circle: "Circle",
+  ellipse: "Ellipse",
+  line: "Line",
+  polyline: "Polyline",
+  polygon: "Polygon",
+  text: "Text",
+  tspan: "TSpan",
+  defs: "Defs",
+  clippath: "ClipPath",
+  lineargradient: "LinearGradient",
+  radialgradient: "RadialGradient",
+  stop: "Stop",
+  mask: "Mask",
+  pattern: "Pattern",
+  image: "Image",
+  use: "Use",
+  symbol: "Symbol",
+  foreignobject: "ForeignObject",
+  marker: "Marker",
+  filter: "Filter",
+  fegaussianblur: "FeGaussianBlur",
+  feoffset: "FeOffset",
+  femerge: "FeMerge",
+  femergenode: "FeMergeNode",
+  feflood: "FeFlood",
+  feblend: "FeBlend",
+  fecomposite: "FeComposite",
+  fecolormatrix: "FeColorMatrix",
+};
+
+function tabStatusLabel(tab) {
+  if (tab === "preview") return "Live preview";
+  if (tab === "react") return "React output";
+  if (tab === "react-native") return "RN output";
+  if (tab === "png") return "PNG export";
+  if (tab === "data-uri") return "Data URI";
+  return "Ready";
+}
+
+function toCamelAttr(name) {
+  const lower = name.toLowerCase();
+  if (ATTR_MAP[name]) return ATTR_MAP[name];
+  if (ATTR_MAP[lower]) return ATTR_MAP[lower];
+  if (name.startsWith("aria-") || name.startsWith("data-")) return name;
+  if (name.includes("-")) {
+    return name.replace(/-([a-z])/g, function (_, c) {
+      return c.toUpperCase();
+    });
+  }
+  return name;
+}
+
+function serializeStyleObject(styleText) {
+  const parts = styleText
+    .split(";")
+    .map(function (part) {
+      return part.trim();
+    })
+    .filter(Boolean);
+  if (!parts.length) return null;
+  const entries = parts
+    .map(function (part) {
+      const idx = part.indexOf(":");
+      if (idx < 0) return null;
+      const key = toCamelAttr(part.slice(0, idx).trim());
+      const value = part.slice(idx + 1).trim();
+      return key + ": \"" + value.replace(/"/g, '\\"') + "\"";
+    })
+    .filter(Boolean);
+  return "{ " + entries.join(", ") + " }";
+}
+
+function serializeJsxAttrs(el, forNative) {
+  const chunks = [];
+  Array.from(el.attributes).forEach(function (attr) {
+    let name = attr.name;
+    if (name === "xmlns" && el.localName.toLowerCase() === "svg" && !forNative) {
+      // keep xmlns optional for DOM svg in react; skip for cleaner JSX
+      return;
+    }
+    if (name === "xmlns" && forNative) return;
+
+    let jsName = toCamelAttr(name);
+    if (forNative && jsName === "className") jsName = "className";
+
+    const raw = attr.value;
+    if (jsName === "style") {
+      const obj = serializeStyleObject(raw);
+      if (obj) chunks.push("style={" + obj + "}");
+      return;
+    }
+
+    if (raw === "") {
+      chunks.push(jsName);
+      return;
+    }
+
+    if (/^\d+(\.\d+)?$/.test(raw) && !["id"].includes(jsName)) {
+      chunks.push(jsName + "={" + raw + "}");
+      return;
+    }
+
+    chunks.push(jsName + "=\"" + raw.replace(/"/g, "&quot;") + "\"");
+  });
+  return chunks;
+}
+
+function nodeToJsx(node, indent, forNative, usedRnTags) {
+  const pad = Array(indent + 1).join("  ");
+
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = node.textContent.replace(/\s+/g, " ").trim();
+    if (!text) return "";
+    return pad + text + "\n";
+  }
+
+  if (node.nodeType !== Node.ELEMENT_NODE) return "";
+
+  const local = node.localName.toLowerCase();
+  let tag = local;
+  if (forNative) {
+    tag = RN_TAG_MAP[local] || local.replace(/(^|-)([a-z])/g, function (_, __, c) {
+      return c.toUpperCase();
+    });
+    usedRnTags.add(tag);
+  }
+
+  const attrs = serializeJsxAttrs(node, forNative);
+  const attrText = attrs.length ? " " + attrs.join(" ") : "";
+  const children = Array.from(node.childNodes);
+  const hasElementChildren = children.some(function (child) {
+    return child.nodeType === Node.ELEMENT_NODE;
+  });
+
+  if (!children.length || (!hasElementChildren && !node.textContent.trim())) {
+    return pad + "<" + tag + attrText + " />\n";
+  }
+
+  let out = pad + "<" + tag + attrText + ">\n";
+  children.forEach(function (child) {
+    out += nodeToJsx(child, indent + 1, forNative, usedRnTags);
+  });
+  out += pad + "</" + tag + ">\n";
+  return out;
+}
+
+function svgToReactComponent(markup) {
+  const svg = parseSvg(markup);
+  const body = nodeToJsx(svg, 2, false, new Set()).trimEnd();
+  return (
+    "export default function Icon(props) {\n" +
+    "  return (\n" +
+    body.replace(/^(\s*)<svg\b/, "$1<svg {...props}") +
+    "\n  );\n" +
+    "}\n"
+  );
+}
+
+function svgToReactNativeComponent(markup) {
+  const svg = parseSvg(markup);
+  const used = new Set();
+  const body = nodeToJsx(svg, 2, true, used).trimEnd();
+  const components = Array.from(used)
+    .filter(function (tag) {
+      return tag !== "Svg";
+    })
+    .sort();
+  const importLine = components.length
+    ? "import Svg, { " + components.join(", ") + " } from \"react-native-svg\";\n\n"
+    : "import Svg from \"react-native-svg\";\n\n";
+
+  return (
+    importLine +
+    "export default function Icon(props) {\n" +
+    "  return (\n" +
+    body.replace(/^(\s*)<Svg\b/, "$1<Svg {...props}") +
+    "\n  );\n" +
+    "}\n"
+  );
+}
+
+function toDataUri(markup) {
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(markup);
+}
+
+function clearPngPreview() {
+  if (latestPngUrl) {
+    URL.revokeObjectURL(latestPngUrl);
+    latestPngUrl = null;
+  }
+  const ctx = pngCanvas.getContext("2d");
+  ctx.clearRect(0, 0, pngCanvas.width, pngCanvas.height);
+  pngCanvas.width = 1;
+  pngCanvas.height = 1;
+  pngEmpty.hidden = false;
+  downloadPngBtn.disabled = true;
+}
+
+function renderPngPreview(markup) {
+  clearPngPreview();
+  const svg = parseSvg(markup);
+  if (!svg.getAttribute("xmlns")) svg.setAttribute("xmlns", SVG_NS);
+
+  let width = parseFloat(svg.getAttribute("width")) || 0;
+  let height = parseFloat(svg.getAttribute("height")) || 0;
+  const viewBox = svg.getAttribute("viewBox");
+  if ((!width || !height) && viewBox) {
+    const parts = viewBox.trim().split(/[\s,]+/);
+    if (parts.length === 4) {
+      width = width || parseFloat(parts[2]) || 512;
+      height = height || parseFloat(parts[3]) || 512;
+    }
+  }
+  width = width || 512;
+  height = height || 512;
+
+  const serialized = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  latestPngUrl = url;
+
+  const img = new Image();
+  img.onload = function () {
+    const scale = 2;
+    pngCanvas.width = Math.max(1, Math.round(width * scale));
+    pngCanvas.height = Math.max(1, Math.round(height * scale));
+    const ctx = pngCanvas.getContext("2d");
+    ctx.clearRect(0, 0, pngCanvas.width, pngCanvas.height);
+    ctx.drawImage(img, 0, 0, pngCanvas.width, pngCanvas.height);
+    pngEmpty.hidden = true;
+    downloadPngBtn.disabled = false;
+    URL.revokeObjectURL(url);
+    if (latestPngUrl === url) latestPngUrl = null;
+  };
+  img.onerror = function () {
+    pngEmpty.hidden = false;
+    pngEmpty.textContent = "Couldn’t rasterize this SVG to PNG.";
+    downloadPngBtn.disabled = true;
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+}
+
+function updateExports(markup) {
+  latestMarkup = markup;
+  if (!markup) {
+    reactOutput.textContent = "// Paste valid SVG to generate a React component.";
+    rnOutput.textContent = "// Paste valid SVG to generate a React Native component.";
+    dataUriOutput.textContent = "";
+    clearPngPreview();
+    return;
+  }
+
+  try {
+    reactOutput.textContent = svgToReactComponent(markup);
+  } catch (err) {
+    reactOutput.textContent = "// Couldn’t convert SVG to React.\n// " + (err && err.message ? err.message : "Unknown error");
+  }
+
+  try {
+    rnOutput.textContent = svgToReactNativeComponent(markup);
+  } catch (err) {
+    rnOutput.textContent = "// Couldn’t convert SVG to React Native.\n// " + (err && err.message ? err.message : "Unknown error");
+  }
+
+  try {
+    dataUriOutput.textContent = toDataUri(markup);
+  } catch (err) {
+    dataUriOutput.textContent = "";
+  }
+
+  try {
+    renderPngPreview(markup);
+  } catch (err) {
+    clearPngPreview();
+    pngEmpty.hidden = false;
+    pngEmpty.textContent = "Couldn’t rasterize this SVG to PNG.";
+  }
+}
+
+function setActiveTab(tab) {
+  activeTab = tab;
+  exportTabs.forEach(function (btn) {
+    const on = btn.getAttribute("data-tab") === tab;
+    btn.classList.toggle("is-active", on);
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  exportViews.forEach(function (view) {
+    const on = view.getAttribute("data-view") === tab;
+    view.classList.toggle("is-active", on);
+    view.hidden = !on;
+  });
+  if (previewSvg || latestMarkup) {
+    setStatus("ok", tabStatusLabel(tab));
+  }
+  if (tab !== "preview") {
+    clearHighlight();
+  } else if (inspectActive) {
+    requestAnimationFrame(selectionFromCaret);
+  }
+}
+
+exportTabs.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    setActiveTab(btn.getAttribute("data-tab"));
+  });
+});
+
+document.querySelectorAll(".btn-copy[data-copy]").forEach(function (btn) {
+  btn.addEventListener("click", async function () {
+    const targetId = btn.getAttribute("data-copy");
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    const text = el.textContent || "";
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.classList.add("is-copied");
+      btn.textContent = "Copied";
+      setTimeout(function () {
+        btn.classList.remove("is-copied");
+        btn.textContent = "Copy";
+      }, 1200);
+    } catch (err) {
+      btn.textContent = "Failed";
+      setTimeout(function () {
+        btn.textContent = "Copy";
+      }, 1200);
+    }
+  });
+});
+
+if (downloadPngBtn) {
+  downloadPngBtn.disabled = true;
+  downloadPngBtn.addEventListener("click", function () {
+    if (!pngCanvas.width || !pngCanvas.height || pngEmpty && !pngEmpty.hidden) return;
+    const link = document.createElement("a");
+    link.download = "svgviewer-export.png";
+    link.href = pngCanvas.toDataURL("image/png");
+    link.click();
+  });
+}
+
+setActiveTab("preview");
 editor.value = DEFAULT_SVG;
 commitHistory();
 updateLineNumbers();
