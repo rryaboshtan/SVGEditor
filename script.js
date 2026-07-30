@@ -1,20 +1,36 @@
 const DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
   <defs>
-    <linearGradient id="bg" x1="24" y1="12" x2="176" y2="188" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#1d4ed8"/>
-      <stop offset="0.55" stop-color="#2563eb"/>
-      <stop offset="1" stop-color="#38bdf8"/>
+    <linearGradient id="plate" x1="24" y1="12" x2="176" y2="188" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1B33"/>
+      <stop offset="0.55" stop-color="#102A4A"/>
+      <stop offset="1" stop-color="#0E3A5C"/>
     </linearGradient>
-    <linearGradient id="shine" x1="48" y1="24" x2="140" y2="120" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#fff" stop-opacity="0.28"/>
-      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    <linearGradient id="ring" x1="48" y1="42" x2="152" y2="158" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FC"/>
+      <stop offset="0.45" stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#2563EB"/>
     </linearGradient>
+    <linearGradient id="core" x1="74" y1="68" x2="132" y2="136" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0F9FF"/>
+      <stop offset="1" stop-color="#BAE6FD"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
-  <rect width="200" height="200" rx="44" fill="url(#bg)"/>
-  <rect width="200" height="200" rx="44" fill="url(#shine)"/>
-  <path d="M46 142 L82 82c4-8 16-8 20 0l22 36 14-22c4-7 15-7 19 0L166 142H46z" fill="#fff" fill-opacity="0.95"/>
-  <circle cx="138" cy="64" r="16" fill="#e0f2fe"/>
-  <circle cx="138" cy="64" r="7" fill="#1e3a8a" fill-opacity="0.35"/>
+  <rect width="200" height="200" rx="52" fill="url(#plate)"/>
+  <rect x="5" y="5" width="190" height="190" rx="48" stroke="#67E8F9" stroke-opacity="0.22" fill="none"/>
+  <circle cx="100" cy="100" r="64" stroke="url(#ring)" stroke-width="10" fill="none" filter="url(#glow)"/>
+  <circle cx="100" cy="100" r="41" stroke="#E0F2FE" stroke-opacity="0.35" stroke-width="5" fill="none"/>
+  <path d="M100 56c20 13.2 32 26.4 32 42.4S120 141.2 100 154.4C80 141.2 68 128 68 98.4S80 69.2 100 56Z" fill="url(#core)"/>
+  <circle cx="100" cy="100" r="13.5" fill="#0284C7"/>
+  <circle cx="100" cy="100" r="6" fill="#F0F9FF"/>
+  <circle cx="143" cy="62" r="8.5" fill="#38BDF8" filter="url(#glow)"/>
+  <circle cx="58" cy="130" r="6.5" fill="#7DD3FC" fill-opacity="0.85"/>
 </svg>`;
 
 const editor = document.getElementById("editor");
