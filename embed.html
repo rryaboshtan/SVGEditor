@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SVGViewer Embed</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#061018" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #061018 !important;
+        color: #dff6ff;
+        font-family: Syne, system-ui, sans-serif;
+        opacity: 1;
+        isolation: isolate;
+      }
+
+      .embed-shell {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #061018 !important;
+        border: 1px solid rgba(125, 211, 252, 0.18);
+        overflow: hidden;
+      }
+
+      .embed-bar,
+      .embed-toolbar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        background: #0b1522 !important;
+        pointer-events: auto;
+      }
+
+      .embed-bar {
+        top: 0;
+        height: 40px;
+        padding: 0 0.65rem;
+        border-bottom: 1px solid rgba(125, 211, 252, 0.14);
+      }
+
+      .embed-toolbar {
+        bottom: 0;
+        height: 36px;
+        padding: 0 0.65rem;
+        border-top: 1px solid rgba(125, 211, 252, 0.14);
+      }
+
+      .embed-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        color: #dff6ff;
+        text-decoration: none;
+        min-width: 0;
+      }
+
+      .embed-brand:hover {
+        color: #fff;
+      }
+
+      .embed-brand-mark {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      .embed-brand-name {
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .embed-btn {
+        appearance: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 0.35rem 0.65rem;
+        background: #0284c7;
+        color: #f0f9ff;
+        font: 700 0.62rem/1 Syne, system-ui, sans-serif;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .embed-btn:hover {
+        background: #0ea5e9;
+        color: #fff;
+      }
+
+      .embed-stage {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        bottom: 36px;
+        left: 0;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        padding: 0.75rem;
+        overflow: hidden;
+        background: #0b1220 !important;
+      }
+
+      .embed-stage[data-bg="checker"] {
+        background-color: #0b1220 !important;
+        background-image:
+          linear-gradient(45deg, #141c2c 25%, transparent 25%),
+          linear-gradient(-45deg, #141c2c 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #141c2c 75%),
+          linear-gradient(-45deg, transparent 75%, #141c2c 75%);
+        background-size: 16px 16px;
+        background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      }
+
+      .embed-stage[data-bg="dark"] {
+        background: #0b1220 !important;
+        background-image: none;
+      }
+
+      .embed-stage[data-bg="white"] {
+        background: #f8fafc !important;
+        background-image: none;
+      }
+
+      .embed-canvas {
+        max-width: 100%;
+        max-height: 100%;
+        display: grid;
+        place-items: center;
+      }
+
+      .embed-canvas svg {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        transform-origin: center center;
+      }
+
+      .embed-empty {
+        margin: 0;
+        max-width: 14rem;
+        text-align: center;
+        color: #8aa4c0;
+        font: 500 0.78rem/1.4 system-ui, sans-serif;
+      }
+
+      .embed-toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .embed-tool {
+        appearance: none;
+        border: 0;
+        border-radius: 7px;
+        width: 1.7rem;
+        height: 1.7rem;
+        display: inline-grid;
+        place-items: center;
+        background: #132536;
+        color: #b6d7ef;
+        box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.14);
+        cursor: pointer;
+        font: 700 0.78rem/1 "IBM Plex Mono", monospace;
+      }
+
+      .embed-tool:hover {
+        background: #1a3348;
+        color: #fff;
+      }
+
+      .embed-tool.is-active {
+        box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.7);
+        background: #1d3f5c;
+      }
+
+      .embed-zoom-value {
+        width: auto;
+        min-width: 2.8rem;
+        padding: 0 0.3rem;
+        font-size: 0.62rem;
+      }
+
+      .embed-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        display: block;
+      }
+
+      .embed-swatch-checker {
+        background-color: #dbe7f3;
+        background-image:
+          linear-gradient(45deg, #94a3b8 25%, transparent 25%),
+          linear-gradient(-45deg, #94a3b8 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #94a3b8 75%),
+          linear-gradient(-45deg, transparent 75%, #94a3b8 75%);
+        background-size: 5px 5px;
+        background-position: 0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0;
+      }
+
+      .embed-swatch-black {
+        background: #05070d;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+      }
+
+      .embed-swatch-white {
+        background: #f8fafc;
+        box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.2);
+      }
+
+      .embed-footer-note {
+        color: #8aa4c0;
+        font-size: 0.58rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      @media (max-width: 420px) {
+        .embed-footer-note {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="embed-shell">
+      <header class="embed-bar">
+        <a class="embed-brand" id="embed-home" href="./" target="_blank" rel="noopener">
+          <svg class="embed-brand-mark" viewBox="0 0 32 32" width="18" height="18" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="9" fill="#102A4A" />
+            <circle cx="16" cy="16" r="10.25" stroke="#38BDF8" stroke-width="1.75" />
+            <path
+              d="M16 9.2c3.2 2.1 5.1 4.2 5.1 6.8S19.2 20.7 16 22.8C12.8 20.7 10.9 18.6 10.9 16S12.8 11.3 16 9.2Z"
+              fill="#BAE6FD"
+            />
+            <circle cx="16" cy="16" r="2.1" fill="#0284C7" />
+          </svg>
+          <span class="embed-brand-name">SVGViewer</span>
+        </a>
+        <a class="embed-btn" id="embed-edit" href="./" target="_blank" rel="noopener">Edit on SVGViewer</a>
+      </header>
+
+      <div class="embed-stage" id="embed-stage" data-bg="dark">
+        <div class="embed-canvas" id="embed-canvas" role="img" aria-label="Embedded SVG preview"></div>
+        <p class="embed-empty" id="embed-empty">Loading embed…</p>
+      </div>
+
+      <footer class="embed-toolbar">
+        <div class="embed-toolbar-group" role="group" aria-label="Zoom">
+          <button type="button" class="embed-tool" id="embed-zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+          <button type="button" class="embed-tool embed-zoom-value" id="embed-zoom-reset" title="Reset zoom">100%</button>
+          <button type="button" class="embed-tool" id="embed-zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+        </div>
+        <p class="embed-footer-note">Live preview</p>
+        <div class="embed-toolbar-group" role="group" aria-label="Canvas background">
+          <button type="button" class="embed-tool is-active" data-bg="dark" title="Dark" aria-label="Dark canvas" aria-pressed="true">
+            <span class="embed-swatch embed-swatch-black" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="embed-tool" data-bg="checker" title="Checker" aria-label="Checker canvas" aria-pressed="false">
+            <span class="embed-swatch embed-swatch-checker" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="embed-tool" data-bg="white" title="White" aria-label="White canvas" aria-pressed="false">
+            <span class="embed-swatch embed-swatch-white" aria-hidden="true"></span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+    <script src="share-codec.js"></script>
+    <script src="embed.js"></script>
+  </body>
+</html>

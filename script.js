@@ -44,6 +44,8 @@ const status = document.getElementById("preview-status");
 const clearBtn = document.getElementById("btn-clear");
 const uploadBtn = document.getElementById("btn-upload");
 const downloadSvgBtn = document.getElementById("btn-download-svg");
+const copyLinkBtn = document.getElementById("btn-copy-link");
+const copyIframeBtn = document.getElementById("btn-copy-iframe");
 const fileUpload = document.getElementById("file-upload");
 const previewStage = document.getElementById("preview-stage");
 const zoomInBtn = document.getElementById("zoom-in");
@@ -1067,6 +1069,103 @@ if (downloadSvgBtn) {
   });
 }
 
+function getShareMarkup() {
+  return extractSvgMarkup(editor.value) || editor.value.trim();
+}
+
+function encodeSharePayload() {
+  if (typeof ShareCodec === "undefined") {
+    return { ok: false, error: "missing_codec" };
+  }
+  return ShareCodec.encodeSvg(getShareMarkup());
+}
+
+function shareErrorMessage(result) {
+  if (!result || result.error === "empty") return "Nothing to share";
+  if (result.error === "too_large") {
+    return "SVG too large for a share link (try a simpler file)";
+  }
+  if (result.error === "missing_codec") return "Share is unavailable";
+  return "Couldn’t create share link";
+}
+
+function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  return new Promise(function (resolve, reject) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.top = "-9999px";
+    document.body.appendChild(area);
+    area.select();
+    try {
+      const ok = document.execCommand("copy");
+      document.body.removeChild(area);
+      if (ok) resolve();
+      else reject(new Error("copy failed"));
+    } catch (err) {
+      document.body.removeChild(area);
+      reject(err);
+    }
+  });
+}
+
+function flashShareButton(btn, label) {
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.classList.add("is-copied");
+  btn.textContent = label;
+  window.setTimeout(function () {
+    btn.classList.remove("is-copied");
+    btn.textContent = original;
+  }, 1400);
+}
+
+if (copyLinkBtn) {
+  copyLinkBtn.addEventListener("click", function () {
+    const encoded = encodeSharePayload();
+    if (!encoded.ok) {
+      setStatus("empty", shareErrorMessage(encoded));
+      return;
+    }
+
+    const url = ShareCodec.buildEditorUrl(encoded.payload);
+    copyTextToClipboard(url)
+      .then(function () {
+        flashShareButton(copyLinkBtn, "Copied");
+        setStatus("ok", "Link copied");
+      })
+      .catch(function () {
+        setStatus("error", "Copy failed");
+      });
+  });
+}
+
+if (copyIframeBtn) {
+  copyIframeBtn.addEventListener("click", function () {
+    const encoded = encodeSharePayload();
+    if (!encoded.ok) {
+      setStatus("empty", shareErrorMessage(encoded));
+      return;
+    }
+
+    const embedUrl = ShareCodec.buildEmbedUrl(encoded.payload);
+    const snippet = ShareCodec.buildIframeSnippet(embedUrl);
+    copyTextToClipboard(snippet)
+      .then(function () {
+        flashShareButton(copyIframeBtn, "Copied");
+        setStatus("ok", "iframe code copied");
+      })
+      .catch(function () {
+        setStatus("error", "Copy failed");
+      });
+  });
+}
+
 canvas.addEventListener("click", function (event) {
   if (!previewSvg) return;
   let node = event.target;
@@ -1588,11 +1687,20 @@ if (downloadPngBtn) {
 }
 
 setActiveTab("preview");
-editor.value = DEFAULT_SVG;
+
+const sharedSvg =
+  typeof ShareCodec !== "undefined" ? ShareCodec.decodeFromLocation(window.location) : "";
+const startupSvg = sharedSvg && extractSvgMarkup(sharedSvg) ? sharedSvg : DEFAULT_SVG;
+
+editor.value = startupSvg;
 commitHistory();
 refreshEditorChrome();
 applyPreviewZoom();
-renderPreview(DEFAULT_SVG);
+renderPreview(startupSvg);
+
+if (sharedSvg && extractSvgMarkup(sharedSvg)) {
+  setStatus("ok", "Loaded from share link");
+}
 
 /* ——— Resizable panels ——— */
 const SPLIT_MIN = 20;
