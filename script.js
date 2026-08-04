@@ -138,6 +138,14 @@ function extractSvgMarkup(raw) {
   return match ? match[0] : trimmed;
 }
 
+/** Clean markup string for share / download / data-URI (may re-serialize). */
+function sanitizeSvgSource(raw) {
+  const markup = extractSvgMarkup(raw) || String(raw || "").trim();
+  if (!markup) return null;
+  if (typeof SvgSanitize === "undefined") return markup;
+  return SvgSanitize.sanitizeMarkupOrThrow(markup);
+}
+
 function parseSvg(markup) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(markup, "image/svg+xml");
@@ -151,7 +159,14 @@ function parseSvg(markup) {
     throw new Error("Root element must be <svg>");
   }
 
-  return document.importNode(svg, true);
+  let stripped = 0;
+  if (typeof SvgSanitize !== "undefined") {
+    stripped = SvgSanitize.sanitizeElement(svg) || 0;
+  }
+
+  const node = document.importNode(svg, true);
+  node.__svgStripped = stripped;
+  return node;
 }
 
 /** Format SVG with Prettier (html parser). Falls back to raw on failure. */
@@ -517,6 +532,7 @@ function renderPreview(source) {
 
   try {
     const svg = parseSvg(markup);
+    const stripped = svg.__svgStripped || 0;
 
     if (!svg.hasAttribute("xmlns")) {
       svg.setAttribute("xmlns", SVG_NS);
@@ -535,26 +551,45 @@ function renderPreview(source) {
     });
 
     const nodes = listPreviewElements(svg);
-    nodes.forEach(function (node, index) {
-      node.setAttribute("data-el-index", String(index));
-      if (!DEF_TAGS.has(node.localName.toLowerCase())) {
-        node.style.cursor = "pointer";
-      }
-    });
+    // Element→editor mapping is only safe if we didn't remove nodes mid-tree
+    if (stripped === 0) {
+      nodes.forEach(function (node, index) {
+        node.setAttribute("data-el-index", String(index));
+        if (!DEF_TAGS.has(node.localName.toLowerCase())) {
+          node.style.cursor = "pointer";
+        }
+      });
+      elementRanges = ranges;
+    } else {
+      elementRanges = [];
+      clearHighlight();
+    }
 
     canvas.replaceChildren(svg);
     empty.hidden = true;
     previewSvg = svg;
-    elementRanges = ranges;
     applyPreviewZoom();
+
+    let exportMarkup = markup;
     try {
-      updateExports(markup);
+      exportMarkup = sanitizeSvgSource(markup) || markup;
+    } catch (err) {
+      exportMarkup = new XMLSerializer().serializeToString(svg);
+    }
+
+    try {
+      updateExports(exportMarkup);
     } catch (err) {
       console.error(err);
     }
-    setStatus("ok", typeof activeTab !== "undefined" ? tabStatusLabel(activeTab) : "Live preview");
 
-    if (wasInspecting) {
+    if (stripped > 0) {
+      setStatus("ok", "Unsafe SVG parts stripped");
+    } else {
+      setStatus("ok", typeof activeTab !== "undefined" ? tabStatusLabel(activeTab) : "Live preview");
+    }
+
+    if (wasInspecting && stripped === 0) {
       requestAnimationFrame(selectionFromCaret);
     } else {
       selectedIndex = -1;
@@ -1022,7 +1057,14 @@ if (uploadBtn && fileUpload) {
     const reader = new FileReader();
     reader.onload = function () {
       const text = typeof reader.result === "string" ? reader.result : "";
-      const formatted = prettifySvg(text);
+      let formatted = prettifySvg(text);
+      try {
+        formatted = sanitizeSvgSource(formatted) || formatted;
+        formatted = prettifySvg(formatted);
+      } catch (err) {
+        setStatus("error", "Upload blocked: unsafe SVG");
+        return;
+      }
       markUserEdited();
       flushHistory();
       editor.value = formatted;
@@ -1043,9 +1085,16 @@ if (uploadBtn && fileUpload) {
 
 if (downloadSvgBtn) {
   downloadSvgBtn.addEventListener("click", function () {
-    const markup = extractSvgMarkup(editor.value) || editor.value.trim();
+    let markup = extractSvgMarkup(editor.value) || editor.value.trim();
     if (!markup) {
       setStatus("empty", "Nothing to download");
+      return;
+    }
+
+    try {
+      markup = sanitizeSvgSource(markup) || markup;
+    } catch (err) {
+      setStatus("error", "Download blocked: unsafe SVG");
       return;
     }
 
@@ -1061,7 +1110,13 @@ if (downloadSvgBtn) {
 }
 
 function getShareMarkup() {
-  return extractSvgMarkup(editor.value) || editor.value.trim();
+  const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+  if (!raw) return "";
+  try {
+    return sanitizeSvgSource(raw) || "";
+  } catch (err) {
+    return "";
+  }
 }
 
 function encodeSharePayload() {
@@ -1703,9 +1758,17 @@ if (downloadPngBtn) {
 
 setActiveTab("preview");
 
-const sharedSvg =
+const sharedRaw =
   typeof ShareCodec !== "undefined" ? ShareCodec.decodeFromLocation(window.location) : "";
-const startupSvg = sharedSvg && extractSvgMarkup(sharedSvg) ? sharedSvg : DEFAULT_SVG;
+let sharedSvg = "";
+if (sharedRaw && extractSvgMarkup(sharedRaw)) {
+  try {
+    sharedSvg = sanitizeSvgSource(sharedRaw) || "";
+  } catch (err) {
+    sharedSvg = "";
+  }
+}
+const startupSvg = sharedSvg || DEFAULT_SVG;
 
 editor.value = startupSvg;
 commitHistory();
@@ -1713,8 +1776,10 @@ refreshEditorChrome();
 applyPreviewZoom();
 renderPreview(startupSvg);
 
-if (sharedSvg && extractSvgMarkup(sharedSvg)) {
+if (sharedSvg) {
   setStatus("ok", "Loaded from share link");
+} else if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {
+  setStatus("error", "Share link blocked: unsafe SVG");
 }
 
 /* ——— Resizable panels ——— */

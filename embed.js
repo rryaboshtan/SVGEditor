@@ -26,11 +26,21 @@
     return match ? match[0] : "";
   }
 
+  function sanitizeMarkup(markup) {
+    if (!markup) return "";
+    if (typeof SvgSanitize === "undefined") return markup;
+    return SvgSanitize.sanitizeMarkupOrThrow(markup);
+  }
+
   function parseSvg(markup) {
-    var doc = new DOMParser().parseFromString(markup, "image/svg+xml");
+    var cleaned = sanitizeMarkup(markup);
+    var doc = new DOMParser().parseFromString(cleaned, "image/svg+xml");
     var svg = doc.documentElement;
     if (!svg || svg.nodeName.toLowerCase() !== "svg" || doc.querySelector("parsererror")) {
       throw new Error("Invalid SVG");
+    }
+    if (typeof SvgSanitize !== "undefined") {
+      SvgSanitize.sanitizeElement(svg);
     }
     return document.importNode(svg, true);
   }
@@ -95,7 +105,7 @@
     } catch (err) {
       canvas.replaceChildren();
       empty.hidden = false;
-      empty.textContent = "Couldn’t parse this SVG.";
+      empty.textContent = "Couldn’t display this SVG (invalid or blocked).";
       return false;
     }
   }

@@ -15,6 +15,10 @@
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGViewer" />
     <meta name="theme-color" content="#061018" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com; form-action 'none'"
+    />
     <link rel="canonical" href="https://your-domain.com/" />
 
     <meta property="og:type" content="website" />
@@ -401,6 +405,7 @@
     <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
     <script src="https://unpkg.com/prettier@2.8.8/parser-html.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+    <script src="svg-sanitize.js"></script>
     <script src="share-codec.js"></script>
     <script src="script.js"></script>
   </body>
