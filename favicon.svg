@@ -1,34 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <defs>
-    <linearGradient id="plate" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0B1B33"/>
-      <stop offset="0.55" stop-color="#102A4A"/>
+    <linearGradient id="f-plate" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071526"/>
+      <stop offset="0.55" stop-color="#0B1B33"/>
       <stop offset="1" stop-color="#0E3A5C"/>
     </linearGradient>
-    <linearGradient id="ring" x1="8" y1="7" x2="24" y2="25" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7DD3FC"/>
+    <linearGradient id="f-bracket" x1="6" y1="7" x2="26" y2="25" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A5F3FC"/>
       <stop offset="0.45" stop-color="#38BDF8"/>
       <stop offset="1" stop-color="#2563EB"/>
     </linearGradient>
-    <linearGradient id="core" x1="12" y1="11" x2="21" y2="22" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F0F9FF"/>
-      <stop offset="1" stop-color="#BAE6FD"/>
-    </linearGradient>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="1.1" result="b"/>
-      <feMerge>
-        <feMergeNode in="b"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
-  <rect width="32" height="32" rx="9" fill="url(#plate)"/>
-  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="8.25" stroke="#67E8F9" stroke-opacity="0.22"/>
-  <circle cx="16" cy="16" r="10.25" stroke="url(#ring)" stroke-width="1.75" opacity="0.95" filter="url(#glow)"/>
-  <circle cx="16" cy="16" r="6.6" stroke="#E0F2FE" stroke-opacity="0.35" stroke-width="1"/>
-  <path d="M16 9.2c3.2 2.1 5.1 4.2 5.1 6.8S19.2 20.7 16 22.8C12.8 20.7 10.9 18.6 10.9 16S12.8 11.3 16 9.2Z" fill="url(#core)"/>
-  <circle cx="16" cy="16" r="2.15" fill="#0284C7"/>
-  <circle cx="16" cy="16" r="0.95" fill="#F0F9FF"/>
-  <circle cx="22.8" cy="10.2" r="1.35" fill="#38BDF8" filter="url(#glow)"/>
-  <circle cx="9.4" cy="20.6" r="1.05" fill="#7DD3FC" fill-opacity="0.85"/>
+  <rect width="32" height="32" rx="8" fill="url(#f-plate)"/>
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="7.25" stroke="#67E8F9" stroke-opacity="0.18"/>
+  <!-- brackets pulled outward for clearance from ring -->
+  <path d="M10.2 8.2L5.4 16L10.2 23.8" stroke="url(#f-bracket)" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M21.8 8.2L26.6 16L21.8 23.8" stroke="url(#f-bracket)" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- soft outer orbit + crisp viewer ring -->
+  <circle cx="16" cy="16" r="5.55" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="1"/>
+  <circle cx="16" cy="16" r="3.85" stroke="#7DD3FC" stroke-width="1.4"/>
+  <circle cx="16" cy="16" r="1.85" fill="#F0F9FF"/>
+  <circle cx="16" cy="16" r="0.8" fill="#0369A1"/>
 </svg>

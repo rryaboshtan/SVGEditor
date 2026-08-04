@@ -1,36 +1,24 @@
 const DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
   <defs>
     <linearGradient id="plate" x1="24" y1="12" x2="176" y2="188" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0B1B33"/>
-      <stop offset="0.55" stop-color="#102A4A"/>
+      <stop stop-color="#071526"/>
+      <stop offset="0.55" stop-color="#0B1B33"/>
       <stop offset="1" stop-color="#0E3A5C"/>
     </linearGradient>
-    <linearGradient id="ring" x1="48" y1="42" x2="152" y2="158" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7DD3FC"/>
+    <linearGradient id="bracket" x1="36" y1="44" x2="164" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A5F3FC"/>
       <stop offset="0.45" stop-color="#38BDF8"/>
       <stop offset="1" stop-color="#2563EB"/>
     </linearGradient>
-    <linearGradient id="core" x1="74" y1="68" x2="132" y2="136" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F0F9FF"/>
-      <stop offset="1" stop-color="#BAE6FD"/>
-    </linearGradient>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="3.2" result="b"/>
-      <feMerge>
-        <feMergeNode in="b"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
-  <rect width="200" height="200" rx="52" fill="url(#plate)"/>
-  <rect x="5" y="5" width="190" height="190" rx="48" stroke="#67E8F9" stroke-opacity="0.22" fill="none"/>
-  <circle cx="100" cy="100" r="64" stroke="url(#ring)" stroke-width="10" fill="none" filter="url(#glow)"/>
-  <circle cx="100" cy="100" r="41" stroke="#E0F2FE" stroke-opacity="0.35" stroke-width="5" fill="none"/>
-  <path d="M100 56c20 13.2 32 26.4 32 42.4S120 141.2 100 154.4C80 141.2 68 128 68 98.4S80 69.2 100 56Z" fill="url(#core)"/>
-  <circle cx="100" cy="100" r="13.5" fill="#0284C7"/>
-  <circle cx="100" cy="100" r="6" fill="#F0F9FF"/>
-  <circle cx="143" cy="62" r="8.5" fill="#38BDF8" filter="url(#glow)"/>
-  <circle cx="58" cy="130" r="6.5" fill="#7DD3FC" fill-opacity="0.85"/>
+  <rect width="200" height="200" rx="50" fill="url(#plate)"/>
+  <rect x="5" y="5" width="190" height="190" rx="45" stroke="#67E8F9" stroke-opacity="0.18" fill="none"/>
+  <path d="M64 51L34 100L64 149" stroke="url(#bracket)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M136 51L166 100L136 149" stroke="url(#bracket)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="100" cy="100" r="35" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="6" fill="none"/>
+  <circle cx="100" cy="100" r="24" stroke="#7DD3FC" stroke-width="9" fill="none"/>
+  <circle cx="100" cy="100" r="11.5" fill="#F0F9FF"/>
+  <circle cx="100" cy="100" r="5" fill="#0369A1"/>
 </svg>`;
 
 const editor = document.getElementById("editor");
@@ -137,6 +125,9 @@ let inspectActive = false;
 function setStatus(state, message) {
   status.dataset.state = state;
   status.textContent = message;
+  status.classList.remove("is-flashing");
+  void status.offsetWidth;
+  status.classList.add("is-flashing");
 }
 
 function extractSvgMarkup(raw) {
@@ -1114,14 +1105,21 @@ function copyTextToClipboard(text) {
   });
 }
 
+const shareMenu = document.getElementById("share-menu");
+
+function closeShareMenu() {
+  if (shareMenu) shareMenu.open = false;
+}
+
 function flashShareButton(btn, label) {
   if (!btn) return;
-  const original = btn.textContent;
+  const labelEl = btn.querySelector(".share-menu-item-label") || btn;
+  const original = labelEl.textContent;
   btn.classList.add("is-copied");
-  btn.textContent = label;
+  labelEl.textContent = label;
   window.setTimeout(function () {
     btn.classList.remove("is-copied");
-    btn.textContent = original;
+    labelEl.textContent = original;
   }, 1400);
 }
 
@@ -1130,6 +1128,7 @@ if (copyLinkBtn) {
     const encoded = encodeSharePayload();
     if (!encoded.ok) {
       setStatus("empty", shareErrorMessage(encoded));
+      closeShareMenu();
       return;
     }
 
@@ -1138,6 +1137,7 @@ if (copyLinkBtn) {
       .then(function () {
         flashShareButton(copyLinkBtn, "Copied");
         setStatus("ok", "Link copied");
+        window.setTimeout(closeShareMenu, 650);
       })
       .catch(function () {
         setStatus("error", "Copy failed");
@@ -1150,6 +1150,7 @@ if (copyIframeBtn) {
     const encoded = encodeSharePayload();
     if (!encoded.ok) {
       setStatus("empty", shareErrorMessage(encoded));
+      closeShareMenu();
       return;
     }
 
@@ -1159,10 +1160,24 @@ if (copyIframeBtn) {
       .then(function () {
         flashShareButton(copyIframeBtn, "Copied");
         setStatus("ok", "iframe code copied");
+        window.setTimeout(closeShareMenu, 650);
       })
       .catch(function () {
         setStatus("error", "Copy failed");
       });
+  });
+}
+
+if (shareMenu) {
+  document.addEventListener("pointerdown", function (event) {
+    if (!shareMenu.open) return;
+    if (shareMenu.contains(event.target)) return;
+    closeShareMenu();
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && shareMenu.open) {
+      closeShareMenu();
+    }
   });
 }
 
