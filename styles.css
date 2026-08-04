@@ -290,21 +290,29 @@ textarea {
 }
 
 .github-link {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  height: 2.1rem;
-  padding: 0 0.8rem 0 0.65rem;
+  gap: 0.45rem;
+  height: 2.25rem;
+  padding: 0 0.95rem 0 0.75rem;
   border-radius: 999px;
-  color: #9ec0dc;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px rgba(148, 197, 232, 0.16);
+  color: #04111c;
+  background: linear-gradient(135deg, #e0f2fe 0%, #7dd3fc 48%, #38bdf8 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px rgba(186, 230, 253, 0.45),
+    0 8px 22px -10px rgba(14, 165, 233, 0.9);
   text-decoration: none;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
   transition:
     color 0.18s var(--ease),
     background 0.18s var(--ease),
@@ -312,21 +320,41 @@ textarea {
     transform 0.18s var(--ease);
 }
 
+.github-link::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(56, 189, 248, 0.4);
+  filter: blur(10px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .github-link svg {
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .github-link:hover {
-  color: #fff;
-  background: rgba(34, 211, 238, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.45);
+  color: #020617;
+  background: linear-gradient(135deg, #f8fafc 0%, #bae6fd 42%, #38bdf8 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 0 0 1px rgba(224, 242, 254, 0.55),
+    0 10px 26px -8px rgba(34, 211, 238, 0.95);
   transform: translateY(-1px);
 }
 
+.github-link:hover::before {
+  opacity: 0.9;
+  filter: blur(12px);
+}
+
 .github-link:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #a5f3fc;
   outline-offset: 2px;
 }
 
@@ -954,6 +982,10 @@ body.is-resizing .preview-stage {
   position: relative;
 }
 
+.panel-actions .btn-quiet {
+  margin-left: 0.15rem;
+}
+
 .btn {
   appearance: none;
   border: 0;
@@ -990,24 +1022,53 @@ body.is-resizing .preview-stage {
 }
 
 .btn-accent {
-  background: rgba(34, 211, 238, 0.14);
-  color: #ecfeff;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  background: linear-gradient(135deg, #67e8f9 0%, #22d3ee 40%, #0ea5e9 100%);
+  color: #031018;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.48rem 1.1rem;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
   box-shadow:
-    inset 0 0 0 1px rgba(103, 232, 249, 0.38),
-    0 6px 18px -10px rgba(34, 211, 238, 0.55);
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 0 0 1px rgba(165, 243, 252, 0.35),
+    0 10px 28px -8px rgba(34, 211, 238, 0.95);
+}
+
+/* Glow behind the pill — keeps label sharp */
+.btn-accent::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(34, 211, 238, 0.45);
+  filter: blur(12px);
+  opacity: 0.75;
+  pointer-events: none;
 }
 
 .btn-accent:hover {
-  background: rgba(34, 211, 238, 0.22);
-  color: #fff;
+  background: linear-gradient(135deg, #a5f3fc 0%, #22d3ee 45%, #38bdf8 100%);
+  color: #02080f;
   box-shadow:
-    inset 0 0 0 1px rgba(103, 232, 249, 0.55),
-    0 8px 22px -10px rgba(34, 211, 238, 0.7);
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 0 0 1px rgba(186, 230, 253, 0.55),
+    0 12px 32px -6px rgba(34, 211, 238, 1);
   transform: translateY(-1px);
 }
 
+.btn-accent:hover::before {
+  opacity: 0.95;
+  filter: blur(14px);
+}
+
 .btn-accent:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #a5f3fc;
   outline-offset: 2px;
 }
 
@@ -1033,15 +1094,27 @@ body.is-resizing .preview-stage {
 
 .share-menu {
   position: relative;
+  margin-left: 0.35rem;
+  margin-right: 0.15rem;
 }
 
 .share-menu-toggle {
   list-style: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
   cursor: pointer;
   user-select: none;
+  min-height: 2.15rem;
+  padding-inline: 1.1rem;
+}
+
+.share-icon {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  opacity: 1;
+  shape-rendering: geometricPrecision;
 }
 
 .share-menu-toggle::-webkit-details-marker {
@@ -1055,7 +1128,7 @@ body.is-resizing .preview-stage {
   border-left: 3.5px solid transparent;
   border-right: 3.5px solid transparent;
   border-top: 4.5px solid currentColor;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: transform 0.18s var(--ease);
 }
 
@@ -1064,9 +1137,17 @@ body.is-resizing .preview-stage {
 }
 
 .share-menu[open] .share-menu-toggle {
-  background: rgba(34, 211, 238, 0.22);
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.5);
+  background: linear-gradient(135deg, #ecfeff 0%, #67e8f9 45%, #22d3ee 100%);
+  color: #031018;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 0 0 1px rgba(186, 230, 253, 0.6),
+    0 12px 32px -6px rgba(34, 211, 238, 1);
+}
+
+.share-menu[open] .share-menu-toggle::before {
+  opacity: 1;
+  filter: blur(16px);
 }
 
 .share-menu-panel {
@@ -1748,9 +1829,14 @@ body.is-resizing .preview-stage {
     font-size: 1.15rem;
   }
 
-  .panel-actions .btn {
+  .panel-actions .btn:not(.btn-accent) {
     padding: 0.34rem 0.65rem;
     font-size: 0.66rem;
+  }
+
+  .panel-actions .btn-accent {
+    padding: 0.42rem 0.9rem;
+    font-size: 0.72rem;
   }
 
   .share-menu-panel {
