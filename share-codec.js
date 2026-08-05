@@ -108,7 +108,7 @@
       '    allow="clipboard-write"\n' +
       '    loading="eager"\n' +
       '    referrerpolicy="no-referrer"\n' +
-      '    title="SVGViewer embed"\n' +
+      '    title="SVGEditor embed"\n' +
       "  ></iframe>\n" +
       "</div>"
     );

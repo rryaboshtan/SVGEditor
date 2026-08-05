@@ -1088,7 +1088,7 @@ if (downloadSvgBtn) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "svgviewer-export.svg";
+    link.download = "svgeditor-export.svg";
     link.click();
     URL.revokeObjectURL(url);
     setStatus("ok", "SVG downloaded");
@@ -1846,7 +1846,7 @@ if (downloadPngBtn) {
   downloadPngBtn.addEventListener("click", function () {
     if (!pngCanvas.width || !pngCanvas.height || pngEmpty && !pngEmpty.hidden) return;
     const link = document.createElement("a");
-    link.download = "svgviewer-export.png";
+    link.download = "svgeditor-export.png";
     link.href = pngCanvas.toDataURL("image/png");
     link.click();
   });
