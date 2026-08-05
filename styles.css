@@ -543,6 +543,28 @@ body.legal-page {
   opacity: 0.5;
 }
 
+.legal-card-404 {
+  text-align: left;
+}
+
+.legal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1.5rem 0 0;
+}
+
+.legal-actions .btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legal-actions .btn-ghost {
+  color: #b6d4ef;
+}
+
 /* ——— Workspace ——— */
 .workspace {
   flex: 1 1 auto;
