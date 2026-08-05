@@ -1,0 +1,6 @@
+# Cloudflare Pages / Workers static site (SvgViewer)
+name = "svgviewer"
+compatibility_date = "2025-04-01"
+
+# Root of the repo is the site (index.html, app.min.js, …)
+pages_build_output_dir = "."
