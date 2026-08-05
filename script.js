@@ -169,30 +169,6 @@ function parseSvg(markup) {
   return node;
 }
 
-/** Format SVG with Prettier (html parser). Falls back to raw on failure. */
-function prettifySvg(raw) {
-  const markup = extractSvgMarkup(raw) || String(raw || "").trim();
-  if (!markup) return String(raw || "");
-
-  if (typeof prettier === "undefined" || typeof prettierPlugins === "undefined") {
-    return markup;
-  }
-
-  try {
-    // Keep each tag on one logical line; editor soft-wraps at the visible edge.
-    return prettier.format(markup, {
-      parser: "html",
-      plugins: prettierPlugins,
-      tabWidth: 2,
-      useTabs: false,
-      printWidth: 10000,
-      htmlWhitespaceSensitivity: "ignore",
-    });
-  } catch (err) {
-    return markup;
-  }
-}
-
 function getEditorContentWidth() {
   const style = window.getComputedStyle(editor);
   const paddingLeft = parseFloat(style.paddingLeft) || 0;
@@ -1057,17 +1033,16 @@ if (uploadBtn && fileUpload) {
     const reader = new FileReader();
     reader.onload = function () {
       const text = typeof reader.result === "string" ? reader.result : "";
-      let formatted = prettifySvg(text);
+      let markup = extractSvgMarkup(text) || text.trim();
       try {
-        formatted = sanitizeSvgSource(formatted) || formatted;
-        formatted = prettifySvg(formatted);
+        markup = sanitizeSvgSource(markup) || markup;
       } catch (err) {
         setStatus("error", "Upload blocked: unsafe SVG");
         return;
       }
       markUserEdited();
       flushHistory();
-      editor.value = formatted;
+      editor.value = markup;
       editor.focus();
       editor.setSelectionRange(0, 0);
       commitHistory();

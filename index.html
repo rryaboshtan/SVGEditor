@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#061018" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com; form-action 'none'"
+      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https: http:; connect-src 'self'; form-action 'none'"
     />
     <link rel="canonical" href="https://your-domain.com/" />
 
@@ -26,7 +26,7 @@
     />
     <meta property="og:url" content="https://your-domain.com/" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="https://your-domain.com/og-image.png" />
+    <meta property="og:image" content="https://your-domain.com/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="SVGViewer — paste SVG code on the left, see the preview on the right" />
@@ -37,18 +37,26 @@
       name="twitter:description"
       content="Paste or upload SVG and preview it live. Share links, export React or PNG — free, no account, runs in your browser."
     />
-    <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
+    <meta name="twitter:image" content="https://your-domain.com/og-image.jpg" />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="fonts/syne-700-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
-
+    <link
+      rel="preload"
+      href="fonts/ibm-plex-mono-400-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="fonts.css" />
     <link rel="stylesheet" href="styles.css" />
 
     <script type="application/ld+json">
@@ -433,11 +441,9 @@
       </section>
     </main>
 
-    <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
-    <script src="https://unpkg.com/prettier@2.8.8/parser-html.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
-    <script src="svg-sanitize.js"></script>
-    <script src="share-codec.js"></script>
-    <script src="script.js"></script>
+    <script defer src="vendor/lz-string.min.js"></script>
+    <script defer src="svg-sanitize.js"></script>
+    <script defer src="share-codec.js"></script>
+    <script defer src="script.js"></script>
   </body>
 </html>

@@ -39,7 +39,7 @@ Then open `http://localhost:8000` (or the URL `serve` prints). Opening `index.ht
 
 ## Stack
 
-HTML, CSS, and JavaScript. Prettier (CDN) formats SVG on upload.
+HTML, CSS, and JavaScript. Fonts are self-hosted (woff2). LZ-String is vendored locally for share/embed links.
 
 ## License
 

@@ -1787,6 +1787,16 @@ body.is-resizing .preview-stage {
 }
 
 @media (max-width: 900px) {
+  .ambiance-glow,
+  .ambiance-beam,
+  .ambiance-noise {
+    display: none;
+  }
+
+  .site-header {
+    backdrop-filter: none;
+  }
+
   .mobile-mode-switch {
     position: relative;
     z-index: 2;
