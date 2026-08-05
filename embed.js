@@ -160,6 +160,18 @@
         },
         true
       );
+
+      // Ctrl/Cmd + wheel zooms when pointer is over the embed (works on host pages too)
+      stage.addEventListener(
+        "wheel",
+        function (event) {
+          if (!(event.ctrlKey || event.metaKey)) return;
+          event.preventDefault();
+          var direction = event.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+          setZoom(zoom + direction);
+        },
+        { passive: false }
+      );
     }
   }
 
