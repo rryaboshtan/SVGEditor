@@ -1,6 +1,9 @@
 /**
  * SVG XSS sanitizer — strips executable / active content before DOM insert,
  * share encoding, data-URI export, and downloads.
+ *
+ * Defense-in-depth with page CSP (script-src 'self'). SMIL that can retarget
+ * URLs or inject handlers is removed, not merely rewritten.
  */
 (function (global) {
   "use strict";
@@ -31,6 +34,17 @@
     audio: true,
     source: true,
     track: true,
+    // Legacy / active content
+    solidcolor: true,
+  };
+
+  /** SMIL elements that can mutate attributes (incl. href → javascript:). */
+  var SMIL_TAGS = {
+    animate: true,
+    set: true,
+    animatetransform: true,
+    animatemotion: true,
+    animatecolor: true,
   };
 
   var URL_ATTRS = {
@@ -43,13 +57,18 @@
     formaction: true,
     poster: true,
     srcset: true,
+    begin: true,
+    end: true,
   };
 
-  var ANIM_VALUE_ATTRS = {
-    from: true,
-    to: true,
-    values: true,
-    by: true,
+  var DANGEROUS_ANIM_ATTRS = {
+    href: true,
+    "xlink:href": true,
+    xlinkhref: true,
+    src: true,
+    style: true,
+    class: true,
+    classname: true,
   };
 
   function localName(node) {
@@ -74,6 +93,17 @@
     return normalizeUrl(value).replace(/\s+/g, "").toLowerCase();
   }
 
+  function looksLikeScriptUrl(value) {
+    var lower = compactUrl(value);
+    if (!lower) return false;
+    if (lower.indexOf("javascript:") === 0) return true;
+    if (lower.indexOf("vbscript:") === 0) return true;
+    if (lower.indexOf("data:text/html") === 0) return true;
+    if (lower.indexOf("data:image/svg") === 0) return true;
+    if (lower.indexOf("data:application/") === 0) return true;
+    return false;
+  }
+
   /**
    * @param {string} value
    * @param {"use"|"image"|"link"|"css"|"generic"} kind
@@ -84,8 +114,7 @@
 
     var lower = compactUrl(raw);
 
-    if (lower.indexOf("javascript:") === 0) return false;
-    if (lower.indexOf("vbscript:") === 0) return false;
+    if (looksLikeScriptUrl(raw)) return false;
     if (lower.indexOf("file:") === 0) return false;
 
     if (lower.indexOf("data:") === 0) {
@@ -121,7 +150,9 @@
       .replace(/@import\b[^;]*/gi, "/* blocked import */")
       .replace(/expression\s*\(/gi, "blocked(")
       .replace(/-moz-binding\s*:/gi, "blocked:")
-      .replace(/behavior\s*:/gi, "blocked:");
+      .replace(/behavior\s*:/gi, "blocked:")
+      .replace(/javascript\s*:/gi, "blocked:")
+      .replace(/vbscript\s*:/gi, "blocked:");
     return sanitizeCssUrls(text);
   }
 
@@ -188,11 +219,56 @@
   function shouldDropUrlAttr(tag, attr, value) {
     var kind = urlKindForElement(tag, attr);
     if (kind === "generic") {
-      // Unknown URL-bearing attr: only allow fragments / empty.
       var lower = compactUrl(value);
       return !(lower === "" || lower.charAt(0) === "#");
     }
     return !isSafeUrl(value, kind);
+  }
+
+  function animationTargetsDangerousAttr(el) {
+    var name = String(el.getAttribute("attributeName") || "")
+      .replace(/^.*:/, "")
+      .toLowerCase();
+    if (DANGEROUS_ANIM_ATTRS[name]) return true;
+    var type = String(el.getAttribute("attributeType") || "").toLowerCase();
+    // CSS animations can inject expression()/url(javascript:) via style
+    if (type === "css" || type === "xml") {
+      if (name === "style" || name === "href" || name === "src") return true;
+    }
+    return false;
+  }
+
+  function animationHasScriptPayload(el) {
+    var attrs = ["from", "to", "values", "by", "href", "xlink:href", "begin", "end"];
+    for (var i = 0; i < attrs.length; i++) {
+      if (!el.hasAttribute(attrs[i])) continue;
+      var raw = String(el.getAttribute(attrs[i]) || "");
+      var parts = raw.split(";");
+      for (var j = 0; j < parts.length; j++) {
+        if (looksLikeScriptUrl(parts[j])) return true;
+        if (/^\s*url\s*\(\s*['"]?\s*javascript:/i.test(parts[j])) return true;
+      }
+    }
+    return false;
+  }
+
+  function hasEventHandlerAttr(el) {
+    var attrs = Array.prototype.slice.call(el.attributes || []);
+    for (var i = 0; i < attrs.length; i++) {
+      var key = attrKey(attrs[i].name);
+      if (/^on/i.test(key)) return true;
+    }
+    return false;
+  }
+
+  function shouldRemoveSmilElement(el) {
+    if (hasEventHandlerAttr(el)) return true;
+    if (animationTargetsDangerousAttr(el)) return true;
+    if (animationHasScriptPayload(el)) return true;
+    var begin = String(el.getAttribute("begin") || "");
+    var end = String(el.getAttribute("end") || "");
+    if (/javascript:|vbscript:|<script/i.test(begin + end)) return true;
+    return false;
   }
 
   function sanitizeAttributes(el) {
@@ -204,8 +280,8 @@
       var key = attrKey(name);
       var value = attr.value;
 
-      // Event handlers: onclick, onload, on* (incl. namespaced)
-      if (/^on/i.test(key) || /^on/i.test(name.replace(/^.*:/, ""))) {
+      // Event handlers: onclick, onload, onbegin, onend, on*
+      if (/^on/i.test(key) || /^on/i.test(String(name).replace(/^.*:/, ""))) {
         el.removeAttribute(name);
         return;
       }
@@ -218,47 +294,32 @@
       }
 
       if (URL_ATTRS[key] || URL_ATTRS[name.toLowerCase()]) {
+        // begin/end on SMIL are timing, not always URLs — only drop if script-like
+        if (key === "begin" || key === "end") {
+          if (looksLikeScriptUrl(value) || /javascript:|vbscript:/i.test(value)) {
+            el.removeAttribute(name);
+          }
+          return;
+        }
         if (shouldDropUrlAttr(tag, key, value)) {
           el.removeAttribute(name);
         }
         return;
       }
 
-      // Animations that retarget href/src to javascript:
-      if (ANIM_VALUE_ATTRS[key]) {
-        var attrName = (el.getAttribute("attributeName") || el.getAttribute("attributeType") || "").toLowerCase();
-        if (/href|src|xlink:href/.test(attrName) || /javascript:|vbscript:|data:/i.test(value)) {
-          if (!isSafeUrl(value.split(";")[0], "generic") && /javascript:|vbscript:|data:/i.test(compactUrl(value))) {
-            el.removeAttribute(name);
-          } else if (/href|src/.test(attrName) && shouldDropUrlAttr(tag, "href", value.split(";")[0])) {
-            el.removeAttribute(name);
-          }
+      // Animation value attrs: drop script payloads
+      if (key === "from" || key === "to" || key === "values" || key === "by") {
+        if (looksLikeScriptUrl(value) || /javascript\s*:|vbscript\s*:/i.test(value)) {
+          el.removeAttribute(name);
         }
       }
     });
-
-    // If animate/set targets a URL attribute with no remaining safe values, drop element later via empty check — optional.
-    if ((tag === "animate" || tag === "set" || tag === "animatetransform") && el.hasAttribute("attributeName")) {
-      var target = String(el.getAttribute("attributeName") || "").toLowerCase();
-      if (target === "href" || target === "xlink:href" || target === "src") {
-        ["from", "to", "values", "by"].forEach(function (a) {
-          if (!el.hasAttribute(a)) return;
-          var parts = String(el.getAttribute(a)).split(";");
-          var unsafe = parts.some(function (part) {
-            return shouldDropUrlAttr("use", "href", part);
-          });
-          if (unsafe) el.removeAttribute(a);
-        });
-      }
-    }
   }
 
   function sanitizeTree(root) {
     var removed = 0;
     var walker = [];
-    var node = root;
 
-    // Depth-first collect elements (snapshot) so removals are safe.
     function collect(el) {
       walker.push(el);
       var child = el.firstElementChild;
@@ -269,20 +330,35 @@
     }
     collect(root);
 
-    // Remove forbidden tags from deepest first
+    // Remove forbidden / dangerous SMIL from deepest first
     for (var i = walker.length - 1; i >= 0; i--) {
       var el = walker[i];
       if (el === root) continue;
       var tag = localName(el);
+
       if (FORBIDDEN_TAGS[tag]) {
         if (el.parentNode) el.parentNode.removeChild(el);
         removed += 1;
         continue;
       }
+
+      if (SMIL_TAGS[tag] && shouldRemoveSmilElement(el)) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        removed += 1;
+        continue;
+      }
+
       if (tag === "style") {
         el.textContent = sanitizeCssText(el.textContent || "");
       }
+
       sanitizeAttributes(el);
+
+      // After attr cleanup: drop SMIL that still targets href/src/style
+      if (SMIL_TAGS[tag] && animationTargetsDangerousAttr(el)) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        removed += 1;
+      }
     }
 
     sanitizeAttributes(root);

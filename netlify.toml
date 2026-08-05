@@ -19,6 +19,24 @@
     Cache-Control = "public, max-age=604800"
 
 [[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+    Content-Security-Policy = "default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self'; form-action 'none'; upgrade-insecure-requests; frame-ancestors 'none'"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+    Content-Security-Policy = "default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self'; form-action 'none'; upgrade-insecure-requests; frame-ancestors 'none'"
+
+[[headers]]
+  for = "/embed.html"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+    Content-Security-Policy = "default-src 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src data: blob: https:; connect-src 'self'; form-action 'none'; upgrade-insecure-requests"
+
+[[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=300"
