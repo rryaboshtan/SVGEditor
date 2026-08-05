@@ -953,16 +953,6 @@ editor.addEventListener("keydown", function (event) {
   const mod = event.ctrlKey || event.metaKey;
   const key = event.key.toLowerCase();
 
-  if (editor.readOnly) {
-    if (mod && (key === "z" || key === "y")) {
-      event.preventDefault();
-    }
-    if (event.key === "Tab") {
-      event.preventDefault();
-    }
-    return;
-  }
-
   if (mod && key === "z" && !event.shiftKey && !event.altKey) {
     event.preventDefault();
     if (canUndo()) undoEdit();
@@ -1017,7 +1007,6 @@ bgButtons.forEach(function (btn) {
 });
 
 clearBtn.addEventListener("click", function () {
-  if (editor.readOnly) return;
   markUserEdited();
   flushHistory();
   if (!editor.value.length) return;
@@ -1033,7 +1022,6 @@ clearBtn.addEventListener("click", function () {
 
 if (uploadBtn && fileUpload) {
   uploadBtn.addEventListener("click", function () {
-    if (editor.readOnly) return;
     fileUpload.value = "";
     fileUpload.click();
   });
@@ -1825,39 +1813,6 @@ if (typeof mobileMq.addEventListener === "function") {
 setMobileMode(document.body.getAttribute("data-mobile-mode") || "edit");
 
 const shareNotice = document.getElementById("share-notice");
-const shareNoticeText = document.getElementById("share-notice-text");
-const shareNoticeEdit = document.getElementById("share-notice-edit");
-let shareReadOnly = false;
-
-function setShareReadOnly(on) {
-  shareReadOnly = !!on;
-  editor.readOnly = shareReadOnly;
-  editor.classList.toggle("is-readonly", shareReadOnly);
-  document.body.classList.toggle("share-readonly", shareReadOnly);
-  if (uploadBtn) uploadBtn.disabled = shareReadOnly;
-  if (clearBtn) clearBtn.disabled = shareReadOnly;
-  if (shareNoticeEdit) shareNoticeEdit.hidden = !shareReadOnly;
-  if (shareNoticeText) {
-    shareNoticeText.textContent = shareReadOnly
-      ? "From a share link · read-only — don’t trust the preview alone"
-      : "From a share link — editing enabled";
-  }
-}
-
-function unlockShareEditing() {
-  if (!shareReadOnly) return;
-  setShareReadOnly(false);
-  try {
-    const url = new URL(window.location.href);
-    url.searchParams.delete("s");
-    url.hash = "";
-    window.history.replaceState(null, "", url.pathname + url.search);
-  } catch (err) {
-    /* ignore */
-  }
-  setStatus("ok", "Editing unlocked");
-  editor.focus();
-}
 
 function applyStartupSvg(markup, statusMsg) {
   empty.textContent = "Paste markup on the left to preview.";
@@ -1885,13 +1840,6 @@ applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : null);
 
 if (shareNotice) {
   shareNotice.hidden = !sharedSvg;
-}
-if (sharedSvg) {
-  setShareReadOnly(true);
-}
-
-if (shareNoticeEdit) {
-  shareNoticeEdit.addEventListener("click", unlockShareEditing);
 }
 
 if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {
