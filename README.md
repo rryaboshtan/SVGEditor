@@ -2,7 +2,7 @@
 
 Free online SVG viewer and live editor. Paste or upload SVG, preview it side-by-side, share a link or embed, and export to React, React Native, PNG, or Data URI. Runs entirely in the browser — no account required.
 
-**Live demo:** [https://your-domain.com](https://your-domain.com) *(replace with your real domain)*
+**Live demo:** [https://svgviewer-5tl.pages.dev](https://svgviewer-5tl.pages.dev) *(replace with your real domain)*
 
 ## Features
 
