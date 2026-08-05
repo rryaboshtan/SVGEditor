@@ -15,6 +15,7 @@
   var zoomOutBtn = document.getElementById("embed-zoom-out");
   var zoomResetBtn = document.getElementById("embed-zoom-reset");
   var bgButtons = document.querySelectorAll(".embed-tool[data-bg]");
+  var footerNote = document.querySelector(".embed-footer-note");
 
   var zoom = 1;
   var previewSvg = null;
@@ -29,7 +30,7 @@
   function sanitizeMarkup(markup) {
     if (!markup) return "";
     if (typeof SvgSanitize === "undefined") return markup;
-    return SvgSanitize.sanitizeMarkupOrThrow(markup);
+    return SvgSanitize.sanitizeMarkupOrThrow(markup, { share: true });
   }
 
   function parseSvg(markup) {
@@ -40,7 +41,7 @@
       throw new Error("Invalid SVG");
     }
     if (typeof SvgSanitize !== "undefined") {
-      SvgSanitize.sanitizeElement(svg);
+      SvgSanitize.sanitizeElement(svg, { share: true });
     }
     return document.importNode(svg, true);
   }
@@ -142,6 +143,24 @@
         setBackground(btn.getAttribute("data-bg"));
       });
     });
+
+    if (stage) {
+      stage.addEventListener(
+        "click",
+        function (event) {
+          var el = event.target;
+          while (el && el !== stage) {
+            if (el.localName && String(el.localName).toLowerCase() === "a") {
+              event.preventDefault();
+              event.stopPropagation();
+              return;
+            }
+            el = el.parentElement || el.parentNode;
+          }
+        },
+        true
+      );
+    }
   }
 
   wireChrome();
@@ -149,5 +168,8 @@
   applyZoom();
 
   var svgText = typeof ShareCodec !== "undefined" ? ShareCodec.decodeFromLocation(window.location) : "";
-  render(svgText);
+  var ok = render(svgText);
+  if (footerNote) {
+    footerNote.textContent = ok ? "Share link · untrusted preview" : "Embed";
+  }
 })();

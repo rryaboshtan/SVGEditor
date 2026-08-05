@@ -139,11 +139,11 @@ function extractSvgMarkup(raw) {
 }
 
 /** Clean markup string for share / download / data-URI (may re-serialize). */
-function sanitizeSvgSource(raw) {
+function sanitizeSvgSource(raw, options) {
   const markup = extractSvgMarkup(raw) || String(raw || "").trim();
   if (!markup) return null;
   if (typeof SvgSanitize === "undefined") return markup;
-  return SvgSanitize.sanitizeMarkupOrThrow(markup);
+  return SvgSanitize.sanitizeMarkupOrThrow(markup, options);
 }
 
 function parseSvg(markup) {
@@ -953,6 +953,16 @@ editor.addEventListener("keydown", function (event) {
   const mod = event.ctrlKey || event.metaKey;
   const key = event.key.toLowerCase();
 
+  if (editor.readOnly) {
+    if (mod && (key === "z" || key === "y")) {
+      event.preventDefault();
+    }
+    if (event.key === "Tab") {
+      event.preventDefault();
+    }
+    return;
+  }
+
   if (mod && key === "z" && !event.shiftKey && !event.altKey) {
     event.preventDefault();
     if (canUndo()) undoEdit();
@@ -1007,6 +1017,7 @@ bgButtons.forEach(function (btn) {
 });
 
 clearBtn.addEventListener("click", function () {
+  if (editor.readOnly) return;
   markUserEdited();
   flushHistory();
   if (!editor.value.length) return;
@@ -1022,6 +1033,7 @@ clearBtn.addEventListener("click", function () {
 
 if (uploadBtn && fileUpload) {
   uploadBtn.addEventListener("click", function () {
+    if (editor.readOnly) return;
     fileUpload.value = "";
     fileUpload.click();
   });
@@ -1088,7 +1100,8 @@ function getShareMarkup() {
   const raw = extractSvgMarkup(editor.value) || editor.value.trim();
   if (!raw) return "";
   try {
-    return sanitizeSvgSource(raw) || "";
+    // Encode with share rules so recipients never get outbound links / remote images
+    return sanitizeSvgSource(raw, { share: true }) || "";
   } catch (err) {
     return "";
   }
@@ -1210,6 +1223,35 @@ if (shareMenu) {
     }
   });
 }
+
+/* Block navigation from SVG <a> in preview (phishing / drive-by links). */
+previewStage.addEventListener(
+  "click",
+  function (event) {
+    const path = typeof event.composedPath === "function" ? event.composedPath() : [];
+    let el = event.target;
+    if (path && path.length) {
+      for (let i = 0; i < path.length; i++) {
+        const n = path[i];
+        if (n === previewStage || n === document || n === window) break;
+        if (n && n.localName && String(n.localName).toLowerCase() === "a") {
+          el = n;
+          break;
+        }
+      }
+    }
+    while (el && el !== previewStage) {
+      if (el.localName && String(el.localName).toLowerCase() === "a") {
+        event.preventDefault();
+        event.stopPropagation();
+        setStatus("empty", "Links in preview are disabled");
+        return;
+      }
+      el = el.parentElement || el.parentNode;
+    }
+  },
+  true
+);
 
 canvas.addEventListener("click", function (event) {
   if (!previewSvg) return;
@@ -1782,22 +1824,79 @@ if (typeof mobileMq.addEventListener === "function") {
 
 setMobileMode(document.body.getAttribute("data-mobile-mode") || "edit");
 
+const shareNotice = document.getElementById("share-notice");
+const shareNoticeText = document.getElementById("share-notice-text");
+const shareNoticeEdit = document.getElementById("share-notice-edit");
+let shareReadOnly = false;
+
+function setShareReadOnly(on) {
+  shareReadOnly = !!on;
+  editor.readOnly = shareReadOnly;
+  editor.classList.toggle("is-readonly", shareReadOnly);
+  document.body.classList.toggle("share-readonly", shareReadOnly);
+  if (uploadBtn) uploadBtn.disabled = shareReadOnly;
+  if (clearBtn) clearBtn.disabled = shareReadOnly;
+  if (shareNoticeEdit) shareNoticeEdit.hidden = !shareReadOnly;
+  if (shareNoticeText) {
+    shareNoticeText.textContent = shareReadOnly
+      ? "From a share link · read-only — don’t trust the preview alone"
+      : "From a share link — editing enabled";
+  }
+}
+
+function unlockShareEditing() {
+  if (!shareReadOnly) return;
+  setShareReadOnly(false);
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("s");
+    url.hash = "";
+    window.history.replaceState(null, "", url.pathname + url.search);
+  } catch (err) {
+    /* ignore */
+  }
+  setStatus("ok", "Editing unlocked");
+  editor.focus();
+}
+
+function applyStartupSvg(markup, statusMsg) {
+  empty.textContent = "Paste markup on the left to preview.";
+  editor.value = markup;
+  commitHistory();
+  applyPreviewZoom();
+  renderPreview(markup);
+  refreshEditorChrome();
+  if (statusMsg) setStatus("ok", statusMsg);
+}
+
 const sharedRaw =
   typeof ShareCodec !== "undefined" ? ShareCodec.decodeFromLocation(window.location) : "";
 let sharedSvg = "";
 if (sharedRaw && extractSvgMarkup(sharedRaw)) {
   try {
-    sharedSvg = sanitizeSvgSource(sharedRaw) || "";
+    sharedSvg = sanitizeSvgSource(sharedRaw, { share: true }) || "";
   } catch (err) {
     sharedSvg = "";
   }
 }
-const startupSvg = sharedSvg || DEFAULT_SVG;
 
-editor.value = startupSvg;
-commitHistory();
-applyPreviewZoom();
-renderPreview(startupSvg);
+const startupSvg = sharedSvg || DEFAULT_SVG;
+applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : null);
+
+if (shareNotice) {
+  shareNotice.hidden = !sharedSvg;
+}
+if (sharedSvg) {
+  setShareReadOnly(true);
+}
+
+if (shareNoticeEdit) {
+  shareNoticeEdit.addEventListener("click", unlockShareEditing);
+}
+
+if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {
+  setStatus("error", "Share link blocked: unsafe SVG");
+}
 
 function warmEditorChrome() {
   refreshEditorChrome();
@@ -1807,12 +1906,6 @@ if (typeof requestIdleCallback === "function") {
   requestIdleCallback(warmEditorChrome, { timeout: 900 });
 } else {
   window.setTimeout(warmEditorChrome, 120);
-}
-
-if (sharedSvg) {
-  setStatus("ok", "Loaded from share link");
-} else if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {
-  setStatus("error", "Share link blocked: unsafe SVG");
 }
 
 /* ——— Resizable panels ——— */

@@ -216,13 +216,38 @@
     return "generic";
   }
 
-  function shouldDropUrlAttr(tag, attr, value) {
+  /**
+   * Share/embed payloads: no outbound links or remote images (phishing chrome).
+   * Local fragments + raster data: URIs still allowed.
+   */
+  function isSafeUrlForShare(value, kind) {
+    if (!isSafeUrl(value, kind)) return false;
+    if (kind !== "image" && kind !== "link" && kind !== "css") return true;
+    var lower = compactUrl(value);
+    if (lower.charAt(0) === "#") return true;
+    if (lower.indexOf("data:image/") === 0) return kind === "image" || kind === "css";
+    // Block http(s) / relative remote assets in shared content
+    return false;
+  }
+
+  function shouldDropUrlAttr(tag, attr, value, options) {
     var kind = urlKindForElement(tag, attr);
+    var share = options && options.share;
     if (kind === "generic") {
       var lower = compactUrl(value);
       return !(lower === "" || lower.charAt(0) === "#");
     }
+    if (share) return !isSafeUrlForShare(value, kind);
     return !isSafeUrl(value, kind);
+  }
+
+  function unwrapElement(el) {
+    var parent = el.parentNode;
+    if (!parent) return;
+    while (el.firstChild) {
+      parent.insertBefore(el.firstChild, el);
+    }
+    parent.removeChild(el);
   }
 
   function animationTargetsDangerousAttr(el) {
@@ -271,7 +296,7 @@
     return false;
   }
 
-  function sanitizeAttributes(el) {
+  function sanitizeAttributes(el, options) {
     var tag = localName(el);
     var attrs = Array.prototype.slice.call(el.attributes || []);
 
@@ -301,7 +326,7 @@
           }
           return;
         }
-        if (shouldDropUrlAttr(tag, key, value)) {
+        if (shouldDropUrlAttr(tag, key, value, options)) {
           el.removeAttribute(name);
         }
         return;
@@ -316,7 +341,8 @@
     });
   }
 
-  function sanitizeTree(root) {
+  function sanitizeTree(root, options) {
+    options = options || {};
     var removed = 0;
     var walker = [];
 
@@ -342,6 +368,13 @@
         continue;
       }
 
+      // Share/embed: unwrap <a> so fake CTAs cannot navigate away
+      if (options.share && tag === "a") {
+        unwrapElement(el);
+        removed += 1;
+        continue;
+      }
+
       if (SMIL_TAGS[tag] && shouldRemoveSmilElement(el)) {
         if (el.parentNode) el.parentNode.removeChild(el);
         removed += 1;
@@ -352,7 +385,7 @@
         el.textContent = sanitizeCssText(el.textContent || "");
       }
 
-      sanitizeAttributes(el);
+      sanitizeAttributes(el, options);
 
       // After attr cleanup: drop SMIL that still targets href/src/style
       if (SMIL_TAGS[tag] && animationTargetsDangerousAttr(el)) {
@@ -361,7 +394,7 @@
       }
     }
 
-    sanitizeAttributes(root);
+    sanitizeAttributes(root, options);
     return removed;
   }
 
@@ -378,21 +411,25 @@
     return { doc: doc, svg: svg };
   }
 
-  function sanitizeMarkup(markup) {
+  /**
+   * @param {string} markup
+   * @param {{ share?: boolean }} [options] share: strip phishing chrome (links, remote images)
+   */
+  function sanitizeMarkup(markup, options) {
     var parsed = parseSvgDocument(markup);
-    var removed = sanitizeTree(parsed.svg);
+    var removed = sanitizeTree(parsed.svg, options);
     var out = new XMLSerializer().serializeToString(parsed.svg);
     return { ok: true, markup: out, removed: removed };
   }
 
-  function sanitizeMarkupOrThrow(markup) {
-    var result = sanitizeMarkup(markup);
+  function sanitizeMarkupOrThrow(markup, options) {
+    var result = sanitizeMarkup(markup, options);
     return result.markup;
   }
 
-  function sanitizeElement(svgEl) {
+  function sanitizeElement(svgEl, options) {
     if (!svgEl) return 0;
-    return sanitizeTree(svgEl);
+    return sanitizeTree(svgEl, options);
   }
 
   global.SvgSanitize = {

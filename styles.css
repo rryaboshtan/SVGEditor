@@ -2127,3 +2127,25 @@ body.is-resizing .preview-stage {
     transition: none !important;
   }
 }
+
+/* ——— Shared SVG notice (subtle) ——— */
+.share-notice {
+  position: relative;
+  z-index: 4;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.32rem clamp(1rem, 2.5vw, 1.75rem);
+  border-bottom: 1px solid rgba(125, 211, 252, 0.12);
+  background: rgba(8, 28, 48, 0.78);
+  color: #9ec8e6;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+
+.share-notice[hidden] {
+  display: none !important;
+}
