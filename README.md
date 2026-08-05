@@ -1,38 +1,40 @@
-# SVG Viewer — Free Online SVG Preview & Code Editor
+# SVGViewer
 
-> A fast, free online SVG viewer and live editor. Paste your SVG code into the editor and get an instant rendered preview — no uploads, no signups, 100% in-browser processing.
+Free online SVG viewer and live editor. Paste or upload SVG, preview it side-by-side, share a link or embed, and export to React, React Native, PNG, or Data URI. Runs entirely in the browser — no account required.
 
-🚀 **Live Demo:** [https://your-domain.com](https://your-domain.com)
+**Live demo:** [https://your-domain.com](https://your-domain.com) *(replace with your real domain)*
 
----
+## Features
 
-## ⚡️ Why SVG Viewer?
+- Live preview with zoom and canvas backgrounds
+- Paste, upload, or download SVG
+- Share link and iframe embed (payload in the URL, not on a server)
+- Export: React, React Native, PNG, Data URI
+- Client-side sanitizer for unsafe SVG before preview and share
+- Privacy Policy and Terms included
 
-- **Instant SVG preview** — see your markup render as you type
-- **Side-by-side SVG editor** — code and live canvas on one screen
-- **Private by design** — SVG stays in your browser, nothing is uploaded
-- **Free & open source** — no account, no paywall
+## Run locally
 
-## 🧭 How to preview SVG online
+No build step. From the project root:
 
-1. Copy SVG markup from Figma, Illustrator, or your codebase
-2. Paste it into the editor panel
-3. Review the live preview on the checkerboard canvas
+```bash
+npx --yes serve .
+```
 
-## ✨ Features
+Or with Python 3:
 
-| Feature | Description |
-|--------|-------------|
-| SVG Viewer | Render any valid SVG markup instantly |
-| Live Preview | Side-by-side editor and canvas |
-| Element inspect | Click a tag to spotlight it in preview |
-| Browser-only | No server upload required |
-| Responsive | Works on desktop and mobile |
+```bash
+python3 -m http.server 8000
+```
 
-## 🛠️ Tech
+(`python` may not exist on Linux — use `python3`.)
 
-Plain HTML, CSS, and JavaScript. No build step, no frameworks.
+Then open `http://localhost:8000` (or the URL `serve` prints). Opening `index.html` as a file also works; share/embed are more reliable over `http://localhost`.
 
-## 📄 License
+## Stack
+
+HTML, CSS, and JavaScript. Prettier (CDN) formats SVG on upload.
+
+## License
 
 MIT

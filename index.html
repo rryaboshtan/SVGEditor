@@ -6,11 +6,7 @@
     <title>SVG Viewer — Free Online SVG Preview &amp; Code Editor</title>
     <meta
       name="description"
-      content="Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor — no upload, no signup, runs in your browser."
-    />
-    <meta
-      name="keywords"
-      content="SVG viewer, SVG preview, online SVG editor, view SVG code, SVG renderer, free SVG tool"
+      content="Paste or upload SVG and preview it live. Free online SVG viewer with share, React/PNG export, and a side-by-side editor — no account, runs in your browser."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGViewer" />
@@ -26,7 +22,7 @@
     <meta property="og:title" content="SVG Viewer — Free Online SVG Preview &amp; Code Editor" />
     <meta
       property="og:description"
-      content="Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor."
+      content="Paste or upload SVG and preview it live. Share links, export React or PNG — free, no account, runs in your browser."
     />
     <meta property="og:url" content="https://your-domain.com/" />
     <meta property="og:locale" content="en_US" />
@@ -39,7 +35,7 @@
     <meta name="twitter:title" content="SVG Viewer — Free Online SVG Preview &amp; Code Editor" />
     <meta
       name="twitter:description"
-      content="Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor."
+      content="Paste or upload SVG and preview it live. Share links, export React or PNG — free, no account, runs in your browser."
     />
     <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
 
@@ -62,7 +58,7 @@
         "name": "SVGViewer",
         "alternateName": "SVG Viewer",
         "url": "https://your-domain.com/",
-        "description": "Paste SVG code and preview it instantly. Free online SVG viewer with a live side-by-side editor — no upload, no signup, runs in your browser.",
+        "description": "Paste or upload SVG and preview it live. Free online SVG viewer with share, React/PNG export, and a side-by-side editor — no account, runs in your browser.",
         "applicationCategory": "DesignApplication",
         "operatingSystem": "Any",
         "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -74,13 +70,15 @@
         "featureList": [
           "Live SVG preview",
           "Side-by-side code editor",
+          "Share link and embed",
+          "Export to React, React Native, PNG, and Data URI",
           "Runs entirely in the browser",
           "No account required"
         ]
       }
     </script>
   </head>
-  <body class="app-page">
+  <body class="app-page" data-mobile-mode="edit">
     <div class="ambiance" aria-hidden="true">
       <div class="ambiance-wash"></div>
       <div class="ambiance-glow ambiance-glow-a"></div>
@@ -161,6 +159,29 @@
         </a>
       </div>
     </header>
+
+    <div class="mobile-mode-switch" role="tablist" aria-label="Mobile workspace mode">
+      <button
+        type="button"
+        class="mobile-mode-btn is-active"
+        id="mobile-mode-edit"
+        role="tab"
+        data-mobile-mode="edit"
+        aria-selected="true"
+      >
+        Edit
+      </button>
+      <button
+        type="button"
+        class="mobile-mode-btn"
+        id="mobile-mode-preview"
+        role="tab"
+        data-mobile-mode="preview"
+        aria-selected="false"
+      >
+        Preview
+      </button>
+    </div>
 
     <main class="workspace" id="tool">
       <section class="panel panel-editor" aria-labelledby="editor-heading">
@@ -252,13 +273,15 @@
               React
             </button>
             <button type="button" class="export-tab" role="tab" id="tab-react-native" data-tab="react-native" aria-selected="false" aria-controls="panel-view-react-native">
-              React Native
+              <span class="tab-label-full">React Native</span>
+              <span class="tab-label-short">RN</span>
             </button>
             <button type="button" class="export-tab" role="tab" id="tab-png" data-tab="png" aria-selected="false" aria-controls="panel-view-png">
               PNG
             </button>
             <button type="button" class="export-tab" role="tab" id="tab-data-uri" data-tab="data-uri" aria-selected="false" aria-controls="panel-view-data-uri">
-              Data URI
+              <span class="tab-label-full">Data URI</span>
+              <span class="tab-label-short">URI</span>
             </button>
           </div>
           <p class="preview-status" id="preview-status" data-state="ok" aria-live="polite">Ready</p>

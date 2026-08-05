@@ -1758,6 +1758,55 @@ if (downloadPngBtn) {
 
 setActiveTab("preview");
 
+/* ——— Mobile: Edit | Preview (single panel under 900px) ——— */
+const mobileModeBtns = document.querySelectorAll(".mobile-mode-btn");
+const mobileMq = window.matchMedia("(max-width: 900px)");
+
+function setMobileMode(mode) {
+  const next = mode === "preview" ? "preview" : "edit";
+  document.body.setAttribute("data-mobile-mode", next);
+  mobileModeBtns.forEach(function (btn) {
+    const on = btn.getAttribute("data-mobile-mode") === next;
+    btn.classList.toggle("is-active", on);
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  if (next === "preview") {
+    window.requestAnimationFrame(function () {
+      updateLineNumbers();
+      if (latestMarkup) {
+        if (activeTab === "png" || activeTab === "preview") {
+          updateExports(latestMarkup);
+        }
+      }
+      if (inspectActive) scheduleSelection();
+    });
+  } else {
+    window.requestAnimationFrame(function () {
+      updateLineNumbers();
+      if (mobileMq.matches) editor.focus();
+    });
+  }
+}
+
+mobileModeBtns.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    setMobileMode(btn.getAttribute("data-mobile-mode"));
+  });
+});
+
+function onMobileMqChange() {
+  if (!mobileMq.matches) return;
+  setMobileMode(document.body.getAttribute("data-mobile-mode") || "edit");
+}
+
+if (typeof mobileMq.addEventListener === "function") {
+  mobileMq.addEventListener("change", onMobileMqChange);
+} else if (typeof mobileMq.addListener === "function") {
+  mobileMq.addListener(onMobileMqChange);
+}
+
+setMobileMode(document.body.getAttribute("data-mobile-mode") || "edit");
+
 const sharedRaw =
   typeof ShareCodec !== "undefined" ? ShareCodec.decodeFromLocation(window.location) : "";
 let sharedSvg = "";

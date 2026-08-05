@@ -1770,6 +1770,14 @@ body.is-resizing .preview-stage {
   animation: status-pulse 0.55s var(--ease) 1;
 }
 
+.tab-label-short {
+  display: none;
+}
+
+.mobile-mode-switch {
+  display: none;
+}
+
 @media (max-width: 1100px) {
   .panel-actions {
     flex-wrap: wrap;
@@ -1779,27 +1787,102 @@ body.is-resizing .preview-stage {
 }
 
 @media (max-width: 900px) {
+  .mobile-mode-switch {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+    flex: 0 0 auto;
+    margin: 0.45rem 0.4rem 0;
+    padding: 0.28rem;
+    border-radius: 14px;
+    background: rgba(8, 18, 32, 0.72);
+    box-shadow:
+      inset 0 0 0 1px rgba(125, 211, 252, 0.14),
+      0 10px 28px -18px rgba(0, 0, 0, 0.8);
+  }
+
+  .mobile-mode-btn {
+    appearance: none;
+    border: 0;
+    border-radius: 11px;
+    min-height: 2.55rem;
+    padding: 0.45rem 0.75rem;
+    background: transparent;
+    color: #8eb4d4;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background 0.18s var(--ease),
+      color 0.18s var(--ease),
+      box-shadow 0.18s var(--ease);
+  }
+
+  .mobile-mode-btn:hover {
+    color: #e8f4ff;
+    background: rgba(125, 211, 252, 0.06);
+  }
+
+  .mobile-mode-btn.is-active {
+    color: #031018;
+    background: linear-gradient(135deg, #67e8f9 0%, #22d3ee 45%, #0ea5e9 100%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.35) inset,
+      0 8px 20px -10px rgba(34, 211, 238, 0.9);
+  }
+
+  .mobile-mode-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .workspace {
     grid-template-columns: 1fr !important;
-    grid-template-rows: 1fr 1fr;
-    margin: var(--space-3);
+    grid-template-rows: minmax(0, 1fr);
+    margin: 0.4rem;
+    border-radius: 14px;
   }
 
   .splitter {
     display: none;
   }
 
+  body[data-mobile-mode="edit"] .panel-preview {
+    display: none !important;
+  }
+
+  body[data-mobile-mode="preview"] .panel-editor {
+    display: none !important;
+  }
+
+  body[data-mobile-mode="edit"] .panel-editor,
+  body[data-mobile-mode="preview"] .panel-preview {
+    min-height: 0;
+    height: 100%;
+  }
+
   .panel-editor {
-    border-bottom: 1px solid rgba(4, 10, 18, 0.95);
+    border-bottom: 0;
   }
 
   .site-header {
-    height: 3.5rem;
-    padding: 0 0.85rem;
+    height: 3.25rem;
+    padding: 0 0.7rem;
+    gap: 0.5rem;
   }
 
   .brand {
-    gap: 0.65rem;
+    gap: 0.55rem;
+  }
+
+  .brand-mark svg {
+    width: 28px;
+    height: 28px;
   }
 
   .brand-tagline {
@@ -1811,8 +1894,8 @@ body.is-resizing .preview-stage {
   }
 
   .legal-nav a {
-    padding: 0.3rem 0.4rem;
-    font-size: 0.62rem;
+    padding: 0.35rem 0.35rem;
+    font-size: 0.6rem;
   }
 
   .github-link span {
@@ -1820,28 +1903,88 @@ body.is-resizing .preview-stage {
   }
 
   .github-link {
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
     padding: 0;
   }
 
   .brand-name {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
 
-  .panel-actions .btn:not(.btn-accent) {
-    padding: 0.34rem 0.65rem;
-    font-size: 0.66rem;
+  /* Source bar: title row + full-width action row */
+  .panel-bar {
+    height: auto;
+    min-height: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.55rem;
   }
 
-  .panel-actions .btn-accent {
-    padding: 0.42rem 0.9rem;
-    font-size: 0.72rem;
+  .panel-bar-left {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .panel-actions {
+    flex: 1 1 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.15fr auto;
+    gap: 0.35rem;
+    width: 100%;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  .panel-actions .btn-quiet {
+    margin-left: 0;
+  }
+
+  .panel-actions .share-menu {
+    margin-left: 0;
+    margin-right: 0;
+    min-width: 0;
+  }
+
+  .panel-actions .btn,
+  .panel-actions .share-menu-toggle {
+    width: 100%;
+    justify-content: center;
+    min-height: 2.55rem;
+    padding: 0.45rem 0.45rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.03em;
+  }
+
+  .panel-actions .btn-accent,
+  .panel-actions .share-menu-toggle {
+    font-size: 0.68rem;
+    padding-inline: 0.5rem;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.35) inset,
+      0 0 0 1px rgba(165, 243, 252, 0.3),
+      0 6px 16px -6px rgba(34, 211, 238, 0.75);
+  }
+
+  /* Soften Share glow so it does not blow out the bar */
+  .btn-accent::before,
+  .share-menu-toggle::before {
+    inset: 0;
+    filter: blur(8px);
+    opacity: 0.45;
+  }
+
+  .share-menu-toggle .share-icon {
+    width: 13px;
+    height: 13px;
   }
 
   .share-menu-panel {
-    right: auto;
-    left: 0;
+    right: 0;
+    left: auto;
+    min-width: min(16rem, calc(100vw - 1.5rem));
   }
 
   .legal-shell {
@@ -1849,13 +1992,89 @@ body.is-resizing .preview-stage {
     margin-top: 0.85rem;
   }
 
+  .panel-bar-tabs {
+    padding: 0.35rem 0.45rem;
+    overflow: hidden;
+  }
+
+  .export-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-radius: 12px;
+    gap: 0.2rem;
+  }
+
+  .export-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
   .export-tab {
-    padding: 0.35rem 0.55rem;
-    font-size: 0.64rem;
+    flex: 0 0 auto;
+    min-height: 2.35rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.68rem;
+  }
+
+  .tab-label-full {
+    display: none;
+  }
+
+  .tab-label-short {
+    display: inline;
   }
 
   .panel-bar-tabs .preview-status {
     display: none;
+  }
+
+  .preview-toolbar {
+    gap: 0.35rem;
+    padding: 0.35rem 0.45rem;
+  }
+
+  .toolbar-btn {
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+  }
+
+  .code-editor {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .mobile-mode-switch {
+    margin: 0.35rem 0.28rem 0;
+  }
+
+  .workspace {
+    margin: 0.28rem;
+    border-radius: 12px;
+  }
+
+  .legal-nav a {
+    padding: 0.3rem 0.28rem;
+  }
+
+  .panel-actions {
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 0.28rem;
+  }
+
+  .panel-actions .btn,
+  .panel-actions .share-menu-toggle {
+    font-size: 0.58rem;
+    min-height: 2.25rem;
+  }
+
+  .export-tab {
+    padding: 0.38rem 0.62rem;
+    font-size: 0.64rem;
   }
 }
 
