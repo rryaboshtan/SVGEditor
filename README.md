@@ -21,13 +21,19 @@ No build step. From the project root:
 npx --yes serve .
 ```
 
-Or with Python 3:
+Or with Python:
+
+**Linux / macOS**
 
 ```bash
 python3 -m http.server 8000
 ```
 
-(`python` may not exist on Linux — use `python3`.)
+**Windows**
+
+```bash
+python -m http.server 8000
+```
 
 Then open `http://localhost:8000` (or the URL `serve` prints). Opening `index.html` as a file also works; share/embed are more reliable over `http://localhost`.
 
