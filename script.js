@@ -47,6 +47,8 @@ const ZOOM_MAX = 4;
 const ZOOM_STEP = 0.25;
 
 let previewZoom = 1;
+let previewPanX = 0;
+let previewPanY = 0;
 
 /** Definition / non-painted tags — highlight via elements that reference them. */
 const DEF_TAGS = new Set([
@@ -709,6 +711,8 @@ function syncLineNumbersScroll() {
 
 function applyPreviewZoom() {
   canvas.style.setProperty("--preview-zoom", String(previewZoom));
+  canvas.style.setProperty("--preview-x", previewPanX + "px");
+  canvas.style.setProperty("--preview-y", previewPanY + "px");
   if (zoomResetBtn) {
     zoomResetBtn.textContent = Math.round(previewZoom * 100) + "%";
   }
@@ -719,6 +723,13 @@ function applyPreviewZoom() {
 
 function setPreviewZoom(next) {
   previewZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(next * 100) / 100));
+  applyPreviewZoom();
+}
+
+function resetPreviewView() {
+  previewZoom = 1;
+  previewPanX = 0;
+  previewPanY = 0;
   applyPreviewZoom();
 }
 
@@ -996,7 +1007,7 @@ if (zoomOutBtn) {
 }
 if (zoomResetBtn) {
   zoomResetBtn.addEventListener("click", function () {
-    setPreviewZoom(1);
+    resetPreviewView();
   });
 }
 
@@ -1243,7 +1254,16 @@ previewStage.addEventListener(
 
 canvas.addEventListener("click", function (event) {
   if (!previewSvg) return;
-  let node = event.target;
+  // Drag just finished — don't treat as element pick
+  if (previewPanMoved) {
+    previewPanMoved = false;
+    panDownTarget = null;
+    return;
+  }
+
+  // Prefer the element under the original pointerdown (capture can retarget click to canvas)
+  let node = panDownTarget || event.target;
+  panDownTarget = null;
 
   // Free area / root <svg> → remove spotlight
   if (node === canvas || node === previewSvg) {
@@ -1275,6 +1295,77 @@ canvas.addEventListener("click", function (event) {
   editor.focus();
   editor.setSelectionRange(range.start, Math.min(range.start + ("<" + range.name).length + 1, range.end));
 });
+
+/* ——— Preview pan (drag icon) ——— */
+const PAN_THRESHOLD = 4;
+let previewPanDragging = false;
+let previewPanMoved = false;
+let panPointerId = null;
+let panStartClientX = 0;
+let panStartClientY = 0;
+let panOriginX = 0;
+let panOriginY = 0;
+let panDownTarget = null;
+let panHasCapture = false;
+
+function endPreviewPan(event) {
+  if (!previewPanDragging) return;
+  if (event && panPointerId != null && event.pointerId !== panPointerId) return;
+  previewPanDragging = false;
+  panPointerId = null;
+  previewStage.classList.remove("is-panning");
+  canvas.classList.remove("is-panning");
+  if (panHasCapture) {
+    panHasCapture = false;
+    try {
+      if (event && event.pointerId != null) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    } catch (err) {
+      /* ignore */
+    }
+  }
+}
+
+canvas.addEventListener("pointerdown", function (event) {
+  if (event.button !== 0 || !previewSvg) return;
+  previewPanDragging = true;
+  previewPanMoved = false;
+  panHasCapture = false;
+  panPointerId = event.pointerId;
+  panDownTarget = event.target;
+  panStartClientX = event.clientX;
+  panStartClientY = event.clientY;
+  panOriginX = previewPanX;
+  panOriginY = previewPanY;
+  // Capture only after drag starts — early capture breaks element click targeting
+});
+
+canvas.addEventListener("pointermove", function (event) {
+  if (!previewPanDragging || event.pointerId !== panPointerId) return;
+  const dx = event.clientX - panStartClientX;
+  const dy = event.clientY - panStartClientY;
+  if (!previewPanMoved && dx * dx + dy * dy < PAN_THRESHOLD * PAN_THRESHOLD) return;
+
+  if (!panHasCapture) {
+    panHasCapture = true;
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch (err) {
+      /* ignore */
+    }
+  }
+
+  previewPanMoved = true;
+  previewStage.classList.add("is-panning");
+  canvas.classList.add("is-panning");
+  previewPanX = panOriginX + dx;
+  previewPanY = panOriginY + dy;
+  applyPreviewZoom();
+});
+
+canvas.addEventListener("pointerup", endPreviewPan);
+canvas.addEventListener("pointercancel", endPreviewPan);
 
 window.addEventListener("resize", function () {
   updateLineNumbers();
