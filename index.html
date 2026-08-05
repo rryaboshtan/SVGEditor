@@ -49,15 +49,7 @@
       type="font/woff2"
       crossorigin
     />
-    <link
-      rel="preload"
-      href="fonts/ibm-plex-mono-400-latin.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="fonts.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.min.css" />
 
     <script type="application/ld+json">
       {
@@ -77,11 +69,9 @@
         },
         "featureList": [
           "Live SVG preview",
-          "Side-by-side code editor",
           "Share link and embed",
           "Export to React, React Native, PNG, and Data URI",
-          "Runs entirely in the browser",
-          "No account required"
+          "Runs entirely in the browser"
         ]
       }
     </script>
@@ -441,9 +431,6 @@
       </section>
     </main>
 
-    <script defer src="vendor/lz-string.min.js"></script>
-    <script defer src="svg-sanitize.js"></script>
-    <script defer src="share-codec.js"></script>
-    <script defer src="script.js"></script>
+    <script defer src="app.min.js"></script>
   </body>
 </html>

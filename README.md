@@ -15,7 +15,7 @@ Free online SVG viewer and live editor. Paste or upload SVG, preview it side-by-
 
 ## Run locally
 
-No build step. From the project root:
+From the project root (uses prebuilt `*.min.js` / `styles.min.css`):
 
 ```bash
 npx --yes serve .
@@ -37,9 +37,17 @@ python -m http.server 8000
 
 Then open `http://localhost:8000` (or the URL `serve` prints). Opening `index.html` as a file also works; share/embed are more reliable over `http://localhost`.
 
+## Build (after editing source JS/CSS)
+
+```bash
+./build.sh
+```
+
+Regenerates `app.min.js`, `embed.min.js`, `styles.min.css`, and `fonts.min.css` via esbuild.
+
 ## Stack
 
-HTML, CSS, and JavaScript. Fonts are self-hosted (woff2). LZ-String is vendored locally for share/embed links.
+HTML, CSS, and JavaScript. Fonts are self-hosted (woff2). LZ-String is vendored locally for share/embed links. Production pages load minified bundles.
 
 ## License
 

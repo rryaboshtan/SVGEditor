@@ -1,0 +1,34 @@
+# Long-lived cache for hashed-static-like assets (Cloudflare Pages / compatible hosts)
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/app.min.js
+  Cache-Control: public, max-age=604800
+
+/embed.min.js
+  Cache-Control: public, max-age=604800
+
+/styles.min.css
+  Cache-Control: public, max-age=604800
+
+/fonts.min.css
+  Cache-Control: public, max-age=604800
+
+/favicon.svg
+  Cache-Control: public, max-age=604800
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800
+
+/og-image.jpg
+  Cache-Control: public, max-age=604800
+
+# HTML stays fresher
+/*.html
+  Cache-Control: public, max-age=300
+
+/
+  Cache-Control: public, max-age=300

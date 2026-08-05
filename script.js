@@ -1796,9 +1796,18 @@ const startupSvg = sharedSvg || DEFAULT_SVG;
 
 editor.value = startupSvg;
 commitHistory();
-refreshEditorChrome();
 applyPreviewZoom();
 renderPreview(startupSvg);
+
+function warmEditorChrome() {
+  refreshEditorChrome();
+}
+
+if (typeof requestIdleCallback === "function") {
+  requestIdleCallback(warmEditorChrome, { timeout: 900 });
+} else {
+  window.setTimeout(warmEditorChrome, 120);
+}
 
 if (sharedSvg) {
   setStatus("ok", "Loaded from share link");
