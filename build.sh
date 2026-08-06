@@ -17,5 +17,28 @@ npx --yes esbuild "$TMP_APP" --minify --outfile=app.min.js
 cat vendor/lz-string.min.js svg-sanitize.js share-codec.js embed.js >"$TMP_EMBED"
 npx --yes esbuild "$TMP_EMBED" --minify --outfile=embed.min.js
 
+# Cache-bust query from content hash so CDN/browsers never keep stale JS/CSS
+ASSET_V="$(cat app.min.js embed.min.js styles.min.css fonts.min.css | sha256sum | cut -c1-10)"
+
+stamp_assets() {
+  local file="$1"
+  local tmp
+  tmp="$(mktemp)"
+  sed -E \
+    -e "s|(href=\"/?styles\\.min\\.css)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
+    -e "s|(href=\"/?fonts\\.min\\.css)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
+    -e "s|(src=\"/?app\\.min\\.js)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
+    -e "s|(src=\"/?embed\\.min\\.js)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
+    "$file" >"$tmp"
+  mv "$tmp" "$file"
+}
+
+for html in index.html embed.html privacy.html terms.html 404.html; do
+  if [[ -f "$html" ]]; then
+    stamp_assets "$html"
+  fi
+done
+
 echo "Built app.min.js embed.min.js styles.min.css fonts.min.css"
+echo "Asset cache version: v=${ASSET_V}"
 wc -c app.min.js embed.min.js styles.min.css fonts.min.css
