@@ -1296,7 +1296,7 @@ canvas.addEventListener("click", function (event) {
   editor.setSelectionRange(range.start, Math.min(range.start + ("<" + range.name).length + 1, range.end));
 });
 
-/* ——— Preview pan (drag icon) ——— */
+/* ——— Preview pan (drag) + pinch zoom ——— */
 const PAN_THRESHOLD = 4;
 let previewPanDragging = false;
 let previewPanMoved = false;
@@ -1307,6 +1307,61 @@ let panOriginX = 0;
 let panOriginY = 0;
 let panDownTarget = null;
 let panHasCapture = false;
+
+let pinchActive = false;
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let pinchStartPanX = 0;
+let pinchStartPanY = 0;
+let pinchMidX = 0;
+let pinchMidY = 0;
+let pinchCenterX = 0;
+let pinchCenterY = 0;
+let shiftHeld = false;
+const activePointers = new Map();
+
+window.addEventListener("keydown", function (event) {
+  if (event.key === "Shift") shiftHeld = true;
+});
+window.addEventListener("keyup", function (event) {
+  if (event.key === "Shift") shiftHeld = false;
+});
+window.addEventListener("blur", function () {
+  shiftHeld = false;
+});
+
+function pointerPoint(event) {
+  return { clientX: event.clientX, clientY: event.clientY };
+}
+
+function canvasCenterPoint() {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    clientX: rect.left + rect.width / 2,
+    clientY: rect.top + rect.height / 2,
+  };
+}
+
+function touchDistance(a, b) {
+  const dx = a.clientX - b.clientX;
+  const dy = a.clientY - b.clientY;
+  return Math.hypot(dx, dy);
+}
+
+function touchMidpoint(a, b) {
+  return {
+    x: (a.clientX + b.clientX) / 2,
+    y: (a.clientY + b.clientY) / 2,
+  };
+}
+
+function pinchPointsFromPointers() {
+  const pts = Array.from(activePointers.values());
+  if (pts.length >= 2) return [pts[0], pts[1]];
+  // Chrome Device Mode: Shift+drag often exposes only one touch
+  if (pts.length === 1 && shiftHeld) return [pts[0], canvasCenterPoint()];
+  return null;
+}
 
 function endPreviewPan(event) {
   if (!previewPanDragging) return;
@@ -1329,87 +1384,25 @@ function endPreviewPan(event) {
   }
 }
 
-canvas.addEventListener("pointerdown", function (event) {
-  if (pinchActive || event.button !== 0 || !previewSvg) return;
-  previewPanDragging = true;
-  previewPanMoved = false;
-  panHasCapture = false;
-  panPointerId = event.pointerId;
-  panDownTarget = event.target;
-  panStartClientX = event.clientX;
-  panStartClientY = event.clientY;
-  panOriginX = previewPanX;
-  panOriginY = previewPanY;
-  // Capture only after drag starts — early capture breaks element click targeting
-});
-
-canvas.addEventListener("pointermove", function (event) {
-  if (pinchActive || !previewPanDragging || event.pointerId !== panPointerId) return;
-  const dx = event.clientX - panStartClientX;
-  const dy = event.clientY - panStartClientY;
-  if (!previewPanMoved && dx * dx + dy * dy < PAN_THRESHOLD * PAN_THRESHOLD) return;
-
-  if (!panHasCapture) {
-    panHasCapture = true;
-    try {
-      canvas.setPointerCapture(event.pointerId);
-    } catch (err) {
-      /* ignore */
-    }
-  }
-
-  previewPanMoved = true;
-  previewStage.classList.add("is-panning");
-  canvas.classList.add("is-panning");
-  previewPanX = panOriginX + dx;
-  previewPanY = panOriginY + dy;
-  applyPreviewZoom();
-});
-
-canvas.addEventListener("pointerup", endPreviewPan);
-canvas.addEventListener("pointercancel", endPreviewPan);
-
-/* ——— Preview pinch zoom (mobile) ——— */
-let pinchActive = false;
-let pinchStartDist = 0;
-let pinchStartZoom = 1;
-let pinchStartPanX = 0;
-let pinchStartPanY = 0;
-let pinchMidX = 0;
-let pinchMidY = 0;
-let pinchCenterX = 0;
-let pinchCenterY = 0;
-
-function touchDistance(a, b) {
-  const dx = a.clientX - b.clientX;
-  const dy = a.clientY - b.clientY;
-  return Math.hypot(dx, dy);
-}
-
-function touchMidpoint(a, b) {
-  return {
-    x: (a.clientX + b.clientX) / 2,
-    y: (a.clientY + b.clientY) / 2,
-  };
-}
-
 function endPreviewPinch() {
   if (!pinchActive) return;
   pinchActive = false;
-  previewStage.classList.remove("is-panning");
-  canvas.classList.remove("is-panning");
+  if (!previewPanDragging) {
+    previewStage.classList.remove("is-panning");
+    canvas.classList.remove("is-panning");
+  }
 }
 
-function beginPreviewPinch(touchA, touchB) {
+function beginPreviewPinch(pointA, pointB) {
   endPreviewPan();
   previewPanDragging = false;
-  previewPanMoved = true; // suppress click-to-select after pinch
+  previewPanMoved = true;
   pinchActive = true;
-  pinchStartDist = Math.max(1, touchDistance(touchA, touchB));
+  pinchStartDist = Math.max(1, touchDistance(pointA, pointB));
   pinchStartZoom = previewZoom;
   pinchStartPanX = previewPanX;
   pinchStartPanY = previewPanY;
-  const mid = touchMidpoint(touchA, touchB);
+  const mid = touchMidpoint(pointA, pointB);
   pinchMidX = mid.x;
   pinchMidY = mid.y;
   if (previewSvg) {
@@ -1424,13 +1417,12 @@ function beginPreviewPinch(touchA, touchB) {
   canvas.classList.add("is-panning");
 }
 
-function updatePreviewPinch(touchA, touchB) {
+function updatePreviewPinch(pointA, pointB) {
   if (!pinchActive || !previewSvg) return;
-  const dist = Math.max(1, touchDistance(touchA, touchB));
-  const mid = touchMidpoint(touchA, touchB);
+  const dist = Math.max(1, touchDistance(pointA, pointB));
+  const mid = touchMidpoint(pointA, pointB);
   const nextZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, pinchStartZoom * (dist / pinchStartDist)));
   const zoomRatio = nextZoom / pinchStartZoom;
-  // Keep content under the pinch midpoint stable, then follow two-finger drag
   previewPanX =
     pinchStartPanX * zoomRatio +
     (mid.x - pinchMidX) +
@@ -1444,47 +1436,84 @@ function updatePreviewPinch(touchA, touchB) {
 }
 
 canvas.addEventListener(
-  "touchstart",
+  "pointerdown",
   function (event) {
-    if (!previewSvg) return;
-    if (event.touches.length === 2) {
-      event.preventDefault();
-      beginPreviewPinch(event.touches[0], event.touches[1]);
-    }
-  },
-  { passive: false }
-);
+    if (!previewSvg || event.button !== 0) return;
+    activePointers.set(event.pointerId, pointerPoint(event));
 
-canvas.addEventListener(
-  "touchmove",
-  function (event) {
-    if (!pinchActive) return;
-    if (event.touches.length < 2) {
-      endPreviewPinch();
+    const pinchPts = pinchPointsFromPointers();
+    if (pinchPts) {
+      event.preventDefault();
+      beginPreviewPinch(pinchPts[0], pinchPts[1]);
+      try {
+        canvas.setPointerCapture(event.pointerId);
+      } catch (err) {
+        /* ignore */
+      }
       return;
     }
-    event.preventDefault();
-    updatePreviewPinch(event.touches[0], event.touches[1]);
+
+    if (pinchActive) return;
+    previewPanDragging = true;
+    previewPanMoved = false;
+    panHasCapture = false;
+    panPointerId = event.pointerId;
+    panDownTarget = event.target;
+    panStartClientX = event.clientX;
+    panStartClientY = event.clientY;
+    panOriginX = previewPanX;
+    panOriginY = previewPanY;
   },
   { passive: false }
 );
 
 canvas.addEventListener(
-  "touchend",
+  "pointermove",
   function (event) {
-    if (!pinchActive) return;
-    if (event.touches.length < 2) endPreviewPinch();
+    if (activePointers.has(event.pointerId)) {
+      activePointers.set(event.pointerId, pointerPoint(event));
+    }
+
+    const pinchPts = pinchPointsFromPointers();
+    if (pinchPts && (pinchActive || shiftHeld || activePointers.size >= 2)) {
+      if (!pinchActive) beginPreviewPinch(pinchPts[0], pinchPts[1]);
+      event.preventDefault();
+      updatePreviewPinch(pinchPts[0], pinchPts[1]);
+      return;
+    }
+
+    if (pinchActive || !previewPanDragging || event.pointerId !== panPointerId) return;
+    const dx = event.clientX - panStartClientX;
+    const dy = event.clientY - panStartClientY;
+    if (!previewPanMoved && dx * dx + dy * dy < PAN_THRESHOLD * PAN_THRESHOLD) return;
+
+    if (!panHasCapture) {
+      panHasCapture = true;
+      try {
+        canvas.setPointerCapture(event.pointerId);
+      } catch (err) {
+        /* ignore */
+      }
+    }
+
+    previewPanMoved = true;
+    previewStage.classList.add("is-panning");
+    canvas.classList.add("is-panning");
+    previewPanX = panOriginX + dx;
+    previewPanY = panOriginY + dy;
+    applyPreviewZoom();
   },
-  { passive: true }
+  { passive: false }
 );
 
-canvas.addEventListener(
-  "touchcancel",
-  function () {
-    endPreviewPinch();
-  },
-  { passive: true }
-);
+function onPreviewPointerEnd(event) {
+  activePointers.delete(event.pointerId);
+  if (pinchActive && !pinchPointsFromPointers()) endPreviewPinch();
+  endPreviewPan(event);
+}
+
+canvas.addEventListener("pointerup", onPreviewPointerEnd);
+canvas.addEventListener("pointercancel", onPreviewPointerEnd);
 
 window.addEventListener("resize", function () {
   updateLineNumbers();
