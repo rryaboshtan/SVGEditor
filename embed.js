@@ -172,6 +172,54 @@
         },
         { passive: false }
       );
+
+      // Pinch zoom on mobile
+      var pinchActive = false;
+      var pinchStartDist = 0;
+      var pinchStartZoom = 1;
+
+      function pinchDist(a, b) {
+        var dx = a.clientX - b.clientX;
+        var dy = a.clientY - b.clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      var pinchTarget = canvas || stage;
+      pinchTarget.addEventListener(
+        "touchstart",
+        function (event) {
+          if (!previewSvg || event.touches.length !== 2) return;
+          event.preventDefault();
+          pinchActive = true;
+          pinchStartDist = Math.max(1, pinchDist(event.touches[0], event.touches[1]));
+          pinchStartZoom = zoom;
+        },
+        { passive: false }
+      );
+      pinchTarget.addEventListener(
+        "touchmove",
+        function (event) {
+          if (!pinchActive || event.touches.length < 2) return;
+          event.preventDefault();
+          var dist = Math.max(1, pinchDist(event.touches[0], event.touches[1]));
+          setZoom(pinchStartZoom * (dist / pinchStartDist));
+        },
+        { passive: false }
+      );
+      pinchTarget.addEventListener(
+        "touchend",
+        function (event) {
+          if (event.touches.length < 2) pinchActive = false;
+        },
+        { passive: true }
+      );
+      pinchTarget.addEventListener(
+        "touchcancel",
+        function () {
+          pinchActive = false;
+        },
+        { passive: true }
+      );
     }
   }
 

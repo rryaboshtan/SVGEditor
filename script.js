@@ -1313,8 +1313,10 @@ function endPreviewPan(event) {
   if (event && panPointerId != null && event.pointerId !== panPointerId) return;
   previewPanDragging = false;
   panPointerId = null;
-  previewStage.classList.remove("is-panning");
-  canvas.classList.remove("is-panning");
+  if (!pinchActive) {
+    previewStage.classList.remove("is-panning");
+    canvas.classList.remove("is-panning");
+  }
   if (panHasCapture) {
     panHasCapture = false;
     try {
@@ -1328,7 +1330,7 @@ function endPreviewPan(event) {
 }
 
 canvas.addEventListener("pointerdown", function (event) {
-  if (event.button !== 0 || !previewSvg) return;
+  if (pinchActive || event.button !== 0 || !previewSvg) return;
   previewPanDragging = true;
   previewPanMoved = false;
   panHasCapture = false;
@@ -1342,7 +1344,7 @@ canvas.addEventListener("pointerdown", function (event) {
 });
 
 canvas.addEventListener("pointermove", function (event) {
-  if (!previewPanDragging || event.pointerId !== panPointerId) return;
+  if (pinchActive || !previewPanDragging || event.pointerId !== panPointerId) return;
   const dx = event.clientX - panStartClientX;
   const dy = event.clientY - panStartClientY;
   if (!previewPanMoved && dx * dx + dy * dy < PAN_THRESHOLD * PAN_THRESHOLD) return;
@@ -1366,6 +1368,123 @@ canvas.addEventListener("pointermove", function (event) {
 
 canvas.addEventListener("pointerup", endPreviewPan);
 canvas.addEventListener("pointercancel", endPreviewPan);
+
+/* ——— Preview pinch zoom (mobile) ——— */
+let pinchActive = false;
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let pinchStartPanX = 0;
+let pinchStartPanY = 0;
+let pinchMidX = 0;
+let pinchMidY = 0;
+let pinchCenterX = 0;
+let pinchCenterY = 0;
+
+function touchDistance(a, b) {
+  const dx = a.clientX - b.clientX;
+  const dy = a.clientY - b.clientY;
+  return Math.hypot(dx, dy);
+}
+
+function touchMidpoint(a, b) {
+  return {
+    x: (a.clientX + b.clientX) / 2,
+    y: (a.clientY + b.clientY) / 2,
+  };
+}
+
+function endPreviewPinch() {
+  if (!pinchActive) return;
+  pinchActive = false;
+  previewStage.classList.remove("is-panning");
+  canvas.classList.remove("is-panning");
+}
+
+function beginPreviewPinch(touchA, touchB) {
+  endPreviewPan();
+  previewPanDragging = false;
+  previewPanMoved = true; // suppress click-to-select after pinch
+  pinchActive = true;
+  pinchStartDist = Math.max(1, touchDistance(touchA, touchB));
+  pinchStartZoom = previewZoom;
+  pinchStartPanX = previewPanX;
+  pinchStartPanY = previewPanY;
+  const mid = touchMidpoint(touchA, touchB);
+  pinchMidX = mid.x;
+  pinchMidY = mid.y;
+  if (previewSvg) {
+    const rect = previewSvg.getBoundingClientRect();
+    pinchCenterX = rect.left + rect.width / 2;
+    pinchCenterY = rect.top + rect.height / 2;
+  } else {
+    pinchCenterX = mid.x;
+    pinchCenterY = mid.y;
+  }
+  previewStage.classList.add("is-panning");
+  canvas.classList.add("is-panning");
+}
+
+function updatePreviewPinch(touchA, touchB) {
+  if (!pinchActive || !previewSvg) return;
+  const dist = Math.max(1, touchDistance(touchA, touchB));
+  const mid = touchMidpoint(touchA, touchB);
+  const nextZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, pinchStartZoom * (dist / pinchStartDist)));
+  const zoomRatio = nextZoom / pinchStartZoom;
+  // Keep content under the pinch midpoint stable, then follow two-finger drag
+  previewPanX =
+    pinchStartPanX * zoomRatio +
+    (mid.x - pinchMidX) +
+    (pinchMidX - pinchCenterX) * (1 - zoomRatio);
+  previewPanY =
+    pinchStartPanY * zoomRatio +
+    (mid.y - pinchMidY) +
+    (pinchMidY - pinchCenterY) * (1 - zoomRatio);
+  previewZoom = Math.round(nextZoom * 100) / 100;
+  applyPreviewZoom();
+}
+
+canvas.addEventListener(
+  "touchstart",
+  function (event) {
+    if (!previewSvg) return;
+    if (event.touches.length === 2) {
+      event.preventDefault();
+      beginPreviewPinch(event.touches[0], event.touches[1]);
+    }
+  },
+  { passive: false }
+);
+
+canvas.addEventListener(
+  "touchmove",
+  function (event) {
+    if (!pinchActive) return;
+    if (event.touches.length < 2) {
+      endPreviewPinch();
+      return;
+    }
+    event.preventDefault();
+    updatePreviewPinch(event.touches[0], event.touches[1]);
+  },
+  { passive: false }
+);
+
+canvas.addEventListener(
+  "touchend",
+  function (event) {
+    if (!pinchActive) return;
+    if (event.touches.length < 2) endPreviewPinch();
+  },
+  { passive: true }
+);
+
+canvas.addEventListener(
+  "touchcancel",
+  function () {
+    endPreviewPinch();
+  },
+  { passive: true }
+);
 
 window.addEventListener("resize", function () {
   updateLineNumbers();
