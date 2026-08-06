@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">SVG to React export in SVGEditor</title>
+  <desc id="desc">Three-step flow: paste SVG, live preview, copy React JSX component</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#071526"/>
+      <stop offset="100%" stop-color="#0B1B33"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#102A4A"/>
+      <stop offset="100%" stop-color="#0A1628"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#67E8F9"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="420" rx="24" fill="url(#bg)"/>
+  <rect x="1" y="1" width="958" height="418" rx="23" fill="none" stroke="#67E8F9" stroke-opacity="0.18"/>
+
+  <!-- Step 1 -->
+  <rect x="36" y="56" width="260" height="300" rx="18" fill="url(#card)" stroke="#7DD3FC" stroke-opacity="0.22"/>
+  <text x="56" y="92" fill="#7DD3FC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="2">1 · PASTE SVG</text>
+  <rect x="56" y="112" width="220" height="210" rx="12" fill="#041018" stroke="#1E3A5F"/>
+  <text x="72" y="148" fill="#67E8F9" font-family="ui-monospace, monospace" font-size="13">&lt;svg viewBox="0 0 24 24"&gt;</text>
+  <text x="72" y="176" fill="#9FB6D1" font-family="ui-monospace, monospace" font-size="13">  &lt;path d="M12 2L2 7&"/&gt;</text>
+  <text x="72" y="204" fill="#9FB6D1" font-family="ui-monospace, monospace" font-size="13">&lt;/svg&gt;</text>
+  <text x="72" y="248" fill="#5B7A99" font-family="ui-monospace, monospace" font-size="12">source panel</text>
+
+  <!-- Arrow 1 -->
+  <path d="M312 206 H348" stroke="url(#accent)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M340 196 L356 206 L340 216" fill="none" stroke="#67E8F9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Step 2 -->
+  <rect x="368" y="56" width="260" height="300" rx="18" fill="url(#card)" stroke="#7DD3FC" stroke-opacity="0.22"/>
+  <text x="388" y="92" fill="#7DD3FC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="2">2 · LIVE PREVIEW</text>
+  <rect x="388" y="112" width="220" height="210" rx="12" fill="#041018" stroke="#1E3A5F"/>
+  <circle cx="498" cy="200" r="48" fill="none" stroke="#38BDF8" stroke-opacity="0.25" stroke-width="2"/>
+  <path d="M470 220 L498 152 L526 220 Z" fill="none" stroke="#7DD3FC" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="498" cy="188" r="5" fill="#F0F9FF"/>
+  <text x="430" y="290" fill="#5B7A99" font-family="ui-monospace, monospace" font-size="12">canvas preview</text>
+
+  <!-- Arrow 2 -->
+  <path d="M644 206 H680" stroke="url(#accent)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M672 196 L688 206 L672 216" fill="none" stroke="#67E8F9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Step 3 -->
+  <rect x="700" y="56" width="224" height="300" rx="18" fill="url(#card)" stroke="#67E8F9" stroke-opacity="0.35"/>
+  <text x="720" y="92" fill="#A5F3FC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="2">3 · EXPORT REACT</text>
+  <rect x="720" y="112" width="184" height="210" rx="12" fill="#031018" stroke="#0EA5E9" stroke-opacity="0.45"/>
+  <text x="736" y="148" fill="#67E8F9" font-family="ui-monospace, monospace" font-size="12">export default</text>
+  <text x="736" y="172" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="12">function Icon(props) {</text>
+  <text x="736" y="196" fill="#9FB6D1" font-family="ui-monospace, monospace" font-size="12">  return (</text>
+  <text x="736" y="220" fill="#7DD3FC" font-family="ui-monospace, monospace" font-size="12">    &lt;svg {...props}&gt;</text>
+  <text x="736" y="244" fill="#9FB6D1" font-family="ui-monospace, monospace" font-size="12">      &</text>
+  <text x="736" y="268" fill="#9FB6D1" font-family="ui-monospace, monospace" font-size="12">  )</text>
+  <text x="736" y="292" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="12">}</text>
+
+  <text x="36" y="392" fill="#6F89A8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14">getsvgeditor.com  convert in the browser, no upload</text>
+</svg>

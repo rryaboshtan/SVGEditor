@@ -33,7 +33,7 @@ stamp_assets() {
   mv "$tmp" "$file"
 }
 
-for html in index.html embed.html privacy.html terms.html 404.html; do
+for html in index.html embed.html privacy.html terms.html 404.html blog/*.html; do
   if [[ -f "$html" ]]; then
     stamp_assets "$html"
   fi
