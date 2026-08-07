@@ -22,12 +22,17 @@
     />
     <meta property="og:url" content="https://getsvgeditor.com/blog/svg-to-react" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="https://getsvgeditor.com/og-image.jpg" />
+    <meta property="og:image" content="https://getsvgeditor.com/blog/svg-to-react-og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="SVGEditor — paste SVG, export React or React Native" />
+    <meta
+      property="og:image:alt"
+      content="SVGEditor converting SVG source to a React Icon component in the export tab"
+    />
     <meta property="article:published_time" content="2026-08-06T12:00:00+03:00" />
-    <meta property="article:modified_time" content="2026-08-07T03:10:00+03:00" />
+    <meta property="article:modified_time" content="2026-08-07T03:45:00+03:00" />
+    <meta property="article:author" content="https://www.linkedin.com/in/roman-riaboshtan" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Convert SVG to React (JSX) Online — Free SVGEditor" />
@@ -35,11 +40,15 @@
       name="twitter:description"
       content="Convert SVG to React JSX online for free. React Native export, tips, and a browser tool on SVGEditor."
     />
-    <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
+    <meta name="twitter:image" content="https://getsvgeditor.com/blog/svg-to-react-og.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="SVGEditor converting SVG source to a React Icon component in the export tab"
+    />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/styles.min.css?v=0c267b31f1" />
+    <link rel="stylesheet" href="/styles.min.css?v=2b9185084a" />
 
     <script type="application/ld+json">
       {
@@ -51,7 +60,7 @@
             "description": "Convert SVG to a reusable React JSX component online — free. Manual steps, React Native export, SVGR vs paste-JSX, Next.js tips, and a browser tool.",
             "inLanguage": "en",
             "datePublished": "2026-08-06T12:00:00+03:00",
-            "dateModified": "2026-08-07T03:10:00+03:00",
+            "dateModified": "2026-08-07T03:45:00+03:00",
             "author": {
               "@type": "Person",
               "name": "Roman Riaboshtan",
@@ -81,6 +90,7 @@
               "@id": "https://getsvgeditor.com/blog/svg-to-react"
             },
             "image": [
+              "https://getsvgeditor.com/blog/svg-to-react-og.jpg",
               "https://getsvgeditor.com/blog/svg-to-react-editor.webp",
               "https://getsvgeditor.com/og-image.jpg"
             ]
@@ -432,19 +442,39 @@ export default function Icon(props) {
             <p>
               Teams usually pick one of two pipelines. Neither is “wrong” — they solve different jobs.
             </p>
-            <ul>
-              <li>
-                <strong>SVGR / Vite plugin / webpack loader:</strong> keep <code>.svg</code> files in the
-                repo and import them as components. Great when designers drop files into
-                <code>icons/</code> and CI rebuilds the bundle. Extra config, but zero copy-paste.
-              </li>
-              <li>
-                <strong>Paste JSX from a converter</strong> (like
-                <a href="/">SVGEditor</a>): best for one-off icons, shareable drafts, or when you do not
-                want another build plugin. You own a normal <code>.jsx</code> / <code>.tsx</code> file —
-                easy to tweak path props by hand.
-              </li>
-            </ul>
+            <div class="article-table-wrap">
+              <table class="article-table">
+                <thead>
+                  <tr>
+                    <th scope="col">When you…</th>
+                    <th scope="col">Prefer SVGR</th>
+                    <th scope="col">Prefer SVGEditor (paste JSX)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Icon volume</th>
+                    <td>Steady stream of <code>.svg</code> files in the repo</td>
+                    <td>One-off icons, drafts, quick handoffs</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Build setup</th>
+                    <td>OK adding a Vite / webpack / Next plugin</td>
+                    <td>No bundler change — just a <code>.jsx</code> / <code>.tsx</code> file</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Preview / share</th>
+                    <td>In the app after import</td>
+                    <td>Live preview + share/embed link in the browser</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">React Native</th>
+                    <td>Separate RN pipeline / config</td>
+                    <td>Same paste flow → React Native tab</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p>
               In <strong>Next.js</strong>, do not put interactive icons through
               <code>next/image</code>. That helper is for raster (and some static assets); it will not give
@@ -467,6 +497,35 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
               <code>currentColor</code>, then set color on the component or a parent. That is the usual
               reason people convert SVG to React instead of shipping a static <code>.svg</code> URL.
             </p>
+          </section>
+
+          <section>
+            <h2>Common mistakes</h2>
+            <ul>
+              <li>
+                <strong>Dropping <code>viewBox</code>:</strong> the icon stops scaling cleanly when you change
+                width/height. Keep it on the root <code>&lt;svg&gt;</code> / <code>&lt;Svg&gt;</code>.
+              </li>
+              <li>
+                <strong>Shipping Figma’s <code>#000</code> fills:</strong> fine on a light mock, invisible or
+                harsh on a dark UI. Prefer <code>currentColor</code> (or theme props) for chrome icons.
+              </li>
+              <li>
+                <strong>Using <code>next/image</code> for interactive icons:</strong> you lose easy
+                <code>fill</code> / <code>stroke</code> / <code>className</code> control. Use a component
+                (SVGR or pasted JSX).
+              </li>
+              <li>
+                <strong>Leaving kebab-case attributes in JSX:</strong>
+                <code>stroke-width</code> must become <code>strokeWidth</code> (and friends). Converters
+                catch this; hand edits often miss one.
+              </li>
+              <li>
+                <strong>Quoting numeric props in React Native:</strong>
+                <code>width="24"</code> should be <code>width={24}</code>. SVGEditor’s RN export already
+                uses numbers.
+              </li>
+            </ul>
           </section>
 
           <section>
