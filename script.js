@@ -128,8 +128,13 @@ function setStatus(state, message) {
   status.dataset.state = state;
   status.textContent = message;
   status.classList.remove("is-flashing");
-  void status.offsetWidth;
-  status.classList.add("is-flashing");
+  // Restart pulse without forced reflow (avoid offsetWidth flush).
+  requestAnimationFrame(function () {
+    status.classList.remove("is-flashing");
+    requestAnimationFrame(function () {
+      status.classList.add("is-flashing");
+    });
+  });
 }
 
 function extractSvgMarkup(raw) {
@@ -171,19 +176,40 @@ function parseSvg(markup) {
   return node;
 }
 
-function getEditorContentWidth() {
+let editorMetricsCache = null;
+
+function invalidateEditorMetrics() {
+  editorMetricsCache = null;
+}
+
+function getEditorMetrics() {
+  if (editorMetricsCache) return editorMetricsCache;
   const style = window.getComputedStyle(editor);
   const paddingLeft = parseFloat(style.paddingLeft) || 0;
   const paddingRight = parseFloat(style.paddingRight) || 0;
-  return Math.max(1, editor.clientWidth - paddingLeft - paddingRight);
+  editorMetricsCache = {
+    paddingLeft: paddingLeft,
+    paddingRight: paddingRight,
+    contentWidth: Math.max(1, editor.clientWidth - paddingLeft - paddingRight),
+    font: style.fontWeight + " " + style.fontSize + " " + style.fontFamily,
+    fontSize: parseFloat(style.fontSize) || 14,
+    lineHeight: parseFloat(style.lineHeight) || 21,
+    paddingTop: parseFloat(style.paddingTop) || 0,
+    paddingBottom: parseFloat(style.paddingBottom) || 0,
+  };
+  return editorMetricsCache;
+}
+
+function getEditorContentWidth() {
+  return getEditorMetrics().contentWidth;
 }
 
 /** Visual rows a logical line occupies with soft-wrap. */
-function countVisualRows(lineText) {
+function countVisualRows(lineText, contentWidth) {
   if (!lineText) return 1;
   const width = measureEditorLineWidth(editor, lineText);
-  const contentWidth = getEditorContentWidth();
-  return Math.max(1, Math.ceil(width / contentWidth));
+  const avail = contentWidth == null ? getEditorContentWidth() : contentWidth;
+  return Math.max(1, Math.ceil(width / avail));
 }
 
 /**
@@ -594,9 +620,10 @@ function renderPreview(source) {
 function updateLineNumbers() {
   if (!lineNumbers) return;
   const lines = editor.value.split("\n");
+  const contentWidth = getEditorContentWidth();
   const parts = [];
   for (let i = 0; i < lines.length; i += 1) {
-    const rows = countVisualRows(lines[i]);
+    const rows = countVisualRows(lines[i], contentWidth);
     let block = String(i + 1);
     for (let r = 1; r < rows; r += 1) {
       block += "\n";
@@ -894,8 +921,13 @@ function getMeasureContext(textarea) {
   if (!measureCtx) {
     measureCtx = document.createElement("canvas").getContext("2d");
   }
-  const style = window.getComputedStyle(textarea);
-  measureCtx.font = style.fontWeight + " " + style.fontSize + " " + style.fontFamily;
+  const metrics = textarea === editor ? getEditorMetrics() : null;
+  if (metrics) {
+    measureCtx.font = metrics.font;
+  } else {
+    const style = window.getComputedStyle(textarea);
+    measureCtx.font = style.fontWeight + " " + style.fontSize + " " + style.fontFamily;
+  }
   return measureCtx;
 }
 
@@ -908,16 +940,19 @@ function measureEditorLineWidth(textarea, lineText) {
 
 function isClickPastLineText(textarea, clientX, clientY) {
   const rect = textarea.getBoundingClientRect();
-  const style = window.getComputedStyle(textarea);
-  const paddingLeft = parseFloat(style.paddingLeft) || 0;
-  const paddingTop = parseFloat(style.paddingTop) || 0;
-  const paddingBottom = parseFloat(style.paddingBottom) || 0;
+  const metrics = textarea === editor ? getEditorMetrics() : null;
+  const style = metrics ? null : window.getComputedStyle(textarea);
+  const paddingLeft = metrics ? metrics.paddingLeft : parseFloat(style.paddingLeft) || 0;
+  const paddingTop = metrics ? metrics.paddingTop : parseFloat(style.paddingTop) || 0;
+  const paddingBottom = metrics
+    ? metrics.paddingBottom
+    : parseFloat(style.paddingBottom) || 0;
 
   const x = clientX - rect.left + textarea.scrollLeft - paddingLeft;
   const y = clientY - rect.top + textarea.scrollTop - paddingTop;
 
-  const fontSize = parseFloat(style.fontSize) || 14;
-  let lineHeight = parseFloat(style.lineHeight);
+  const fontSize = metrics ? metrics.fontSize : parseFloat(style.fontSize) || 14;
+  let lineHeight = metrics ? metrics.lineHeight : parseFloat(style.lineHeight);
   if (!lineHeight || Number.isNaN(lineHeight)) lineHeight = fontSize * 1.7;
 
   const lines = textarea.value.split("\n");
@@ -1516,12 +1551,14 @@ canvas.addEventListener("pointerup", onPreviewPointerEnd);
 canvas.addEventListener("pointercancel", onPreviewPointerEnd);
 
 window.addEventListener("resize", function () {
+  invalidateEditorMetrics();
   updateLineNumbers();
   if (inspectActive) scheduleSelection();
 });
 
 if (typeof ResizeObserver !== "undefined") {
   new ResizeObserver(function () {
+    invalidateEditorMetrics();
     updateLineNumbers();
   }).observe(editor);
 }
@@ -2109,8 +2146,12 @@ function applySplit(percent) {
   if (splitter) {
     splitter.setAttribute("aria-valuenow", String(Math.round(splitPercent)));
   }
-  updateLineNumbers();
-  syncEditorChromeScroll();
+  invalidateEditorMetrics();
+  // Defer layout reads until after the split write paints.
+  requestAnimationFrame(function () {
+    updateLineNumbers();
+    syncEditorChromeScroll();
+  });
 }
 
 function splitFromPointer(clientX) {
