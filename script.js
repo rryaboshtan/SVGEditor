@@ -39,6 +39,8 @@ const EMPTY_IDLE_HTML =
   "</p>" +
   '<p class="preview-empty-links">' +
   '<a href="/blog/svg-to-react">SVG to React guide</a>' +
+  ' · ' +
+  '<a href="/blog/svg-to-png">SVG to PNG guide</a>' +
   "</p>" +
   "</div>";
 

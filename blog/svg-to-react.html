@@ -31,7 +31,7 @@
       content="SVGEditor converting SVG source to a React Icon component in the export tab"
     />
     <meta property="article:published_time" content="2026-08-06T12:00:00+03:00" />
-    <meta property="article:modified_time" content="2026-08-07T13:20:00+03:00" />
+    <meta property="article:modified_time" content="2026-08-07T17:15:00+03:00" />
     <meta property="article:author" content="https://www.linkedin.com/in/roman-riaboshtan" />
     <meta property="article:section" content="React" />
     <meta property="article:tag" content="SVG to React" />
@@ -53,7 +53,7 @@
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/styles.min.css?v=b4615e248c" />
+    <link rel="stylesheet" href="/styles.min.css?v=97d6a90e1b" />
 
     <script type="application/ld+json">
       {
@@ -66,7 +66,7 @@
             "description": "Convert SVG to a reusable React JSX component online — free. Manual steps, React Native export, SVGR vs paste-JSX, Next.js tips, and a browser tool.",
             "inLanguage": "en",
             "datePublished": "2026-08-06T12:00:00+03:00",
-            "dateModified": "2026-08-07T13:20:00+03:00",
+            "dateModified": "2026-08-07T17:15:00+03:00",
             "articleSection": "React",
             "keywords": [
               "svg to react",
@@ -74,9 +74,11 @@
               "convert svg to react online",
               "react native svg",
               "svgr",
-              "currentColor icons"
+              "currentColor icons",
+              "svg react component",
+              "svg to react typescript"
             ],
-            "wordCount": 1576,
+            "wordCount": 2400,
             "author": {
               "@type": "Person",
               "name": "Roman Riaboshtan",
@@ -343,8 +345,9 @@
         <p class="legal-kicker">Guide</p>
         <h1 class="legal-title">Convert SVG to React (JSX)</h1>
         <p class="legal-lead">
-          Convert SVG to React JSX online — free, in the browser. Turn an icon into a reusable component;
-          the same flow also exports <code>react-native-svg</code> for mobile.
+          Convert SVG to React JSX online — free, in the browser. A playbook for reusable icons,
+          <code>currentColor</code> theming, React Native export, and when SVGR still wins — written to match
+          how SVGEditor’s converter actually behaves.
         </p>
         <p class="legal-updated">Published August 6, 2026 · Updated August 7, 2026</p>
 
@@ -354,7 +357,7 @@
             src="/blog/roman-riaboshtan.jpg"
             width="84"
             height="84"
-            alt="Roman Riaboshtan"
+            alt="Roman Riaboshtan, creator of SVGEditor"
             loading="eager"
             decoding="async"
           />
@@ -366,8 +369,8 @@
               >
             </p>
             <p class="article-byline-role">
-              Creator of SVGEditor — full-stack developer (Python &amp; React). This guide reflects how the
-              in-browser React / React Native export is built.
+              Creator of SVGEditor — full-stack (Python &amp; React). This guide mirrors the in-browser React /
+              React Native exporter: attribute mapping, props spread, and the limits versus SVGR.
             </p>
           </div>
         </div>
@@ -436,8 +439,7 @@
   &lt;path fill="#000000" d="M2 17l10 5 10-5M2 12l10 5 10-5"/&gt;
 &lt;/svg&gt;</code></pre>
             <p>
-              <strong>After</strong> — paste into
-              <a href="/svg-to-react">SVGEditor</a>, keep the <strong>React</strong> tab open, then set strokes/fills to
+              <strong>After</strong> — paste into SVGEditor, keep the <strong>React</strong> tab open, then set strokes/fills to
               <code>currentColor</code> (or edit the exported JSX once):
             </p>
             <pre class="article-code" tabindex="0"><code>export default function LayersIcon(props) {
@@ -515,7 +517,7 @@
               <li id="howto-step-1">
                 <h3 class="article-h3">Paste or upload your SVG</h3>
                 <p>
-                  Open the <a href="/svg-to-react">SVG to React converter</a>. Paste markup into
+                  Open the converter. Paste markup into
                   <strong>Source</strong> or use <strong>Upload</strong> for a <code>.svg</code> file. Check
                   the live preview so fills, <code>viewBox</code>, and unusual markup look right before you
                   export — conversion stays in your browser.
@@ -646,6 +648,130 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
           </section>
 
           <section>
+            <h2 id="what-converter-does">What SVGEditor’s React export does (and does not)</h2>
+            <p>
+              Knowing the boundary keeps expectations honest — and is why paste-JSX and SVGR both still
+              exist.
+            </p>
+            <ul>
+              <li>
+                <strong>Does:</strong> walk the SVG tree into a function component; map kebab-case attrs to
+                JSX (<code>stroke-width</code> → <code>strokeWidth</code>); spread <code>{...props}</code> on
+                the root so callers own <code>className</code>, size, and ARIA; offer a parallel
+                <code>react-native-svg</code> tree with numeric props.
+              </li>
+              <li>
+                <strong>Does not:</strong> run SVGO-style path rewriting, dedupe gradients across files, or
+                invent <code>currentColor</code> for you. Preview first; fix fills in Source (or in the
+                copied JSX) when the mark must theme.
+              </li>
+              <li>
+                <strong>Why <code>{...props}</code> on the root:</strong> so one icon file stays flexible —
+                buttons pass <code>className</code>, tests pass <code>data-testid</code>, a11y passes
+                <code>aria-label</code> — without regenerating the component.
+              </li>
+            </ul>
+            <p>
+              Internal <code>id</code>s (gradients, clipPaths) can collide if you mount the same raw markup
+              twice on one page. Prefer unique ids per icon file, or strip unused defs after export when you
+              only need paths.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="bundle-vs-img">Bundle cost: component vs &lt;img&gt; vs sprite</h2>
+            <p>
+              A React icon is JS in your bundle. That is fine for a UI kit of dozens of small marks; it is
+              the wrong default for a 200&nbsp;KB illustration you never recolor.
+            </p>
+            <div class="article-table-wrap">
+              <table class="article-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Approach</th>
+                    <th scope="col">Best when…</th>
+                    <th scope="col">Watch out for…</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">React / RN component</th>
+                    <td>Theme color, props, a11y, shared web+mobile</td>
+                    <td>JS weight if you paste huge illustrations</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>&lt;img src=".svg"&gt;</code></th>
+                    <td>Static art, cacheable asset, no recolor</td>
+                    <td>No <code>currentColor</code>; harder a11y hooks</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">SVG sprite / symbol</th>
+                    <td>Many static icons, one HTTP fetch</td>
+                    <td>Theming and tree-shaking are clumsier than components</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">PNG handoff</th>
+                    <td>Email, decks, CMS uploads</td>
+                    <td>Fixed pixels — see the SVG → PNG guide</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              Rule we use in SVGEditor itself: chrome icons → components with <code>currentColor</code>;
+              marketing bitmaps → PNG when the destination cannot take SVG.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="a11y-ids">Accessibility and id hygiene</h2>
+            <p>
+              Decorative icons in buttons that already have text should set
+              <code>aria-hidden="true"</code> (and usually <code>focusable="false"</code> on the SVG) so
+              screen readers do not announce path soup. Standalone icons need an accessible name:
+            </p>
+            <pre class="article-code" tabindex="0"><code>export default function SearchIcon(props: React.SVGProps&lt;SVGSVGElement&gt;) {
+  return (
+    &lt;svg viewBox="0 0 24 24" width={24} height={24} aria-hidden="true" {...props}&gt;
+      &lt;path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" stroke="currentColor" fill="none" /&gt;
+    &lt;/svg&gt;
+  );
+}
+
+// Meaningful control — name the button, hide the glyph
+&lt;button type="button" aria-label="Search"&gt;
+  &lt;SearchIcon /&gt;
+&lt;/button&gt;</code></pre>
+            <p>
+              If the SVG ships a <code>&lt;title&gt;</code> from Figma, keep it only when the icon is the
+              sole label; otherwise remove it to avoid double announcements.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="next-rsc">Next.js App Router and RSC</h2>
+            <p>
+              Pasted icon components without hooks are fine as Server Components — they are just JSX.
+              Do not wrap them in <code>next/image</code>. Client boundaries matter only if the icon file
+              imports browser-only APIs (it should not).
+            </p>
+            <p>
+              Colocate icons under <code>components/icons/</code>, export named components, and let the
+              bundler tree-shake unused files. That scales better than one mega <code>icons.tsx</code> barrel
+              that re-exports everything.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="privacy-export">Privacy: why in-browser JSX export matters</h2>
+            <p>
+              Unreleased product marks should not hit a random upload converter. SVGEditor builds React /
+              React Native output in the browser — same stance as preview and PNG. Share links encode the
+              SVG in the URL hash; treat them like the file itself.
+            </p>
+          </section>
+
+          <section>
             <h2 id="common-mistakes">Common mistakes</h2>
             <ul>
               <li>
@@ -670,6 +796,15 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
                 <strong>Quoting numeric props in React Native:</strong>
                 <code>width="24"</code> should be <code>width={24}</code>. SVGEditor’s RN export already
                 uses numbers.
+              </li>
+              <li>
+                <strong>Reusing gradient <code>id</code>s across icons:</strong> two components with
+                <code>id="paint0"</code> on one page fight each other. Rename ids per file or inline unique
+                prefixes after export.
+              </li>
+              <li>
+                <strong>Pasting a full illustration as JSX:</strong> huge path dumps bloat the JS bundle.
+                Keep large art as <code>&lt;img&gt;</code> / static SVG; reserve components for UI chrome.
               </li>
             </ul>
           </section>
@@ -704,9 +839,9 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
             <h2 id="faq">FAQ</h2>
             <h3 class="article-h3">Is there a free SVG to React converter online?</h3>
             <p>
-              Yes. <a href="/svg-to-react">SVGEditor’s SVG to React tool</a> converts SVG to JSX in your
-              browser for free — no account and no file upload to a server. Paste SVG, keep the
-              <strong>React</strong> tab open, and copy the component.
+              Yes. SVGEditor converts SVG to JSX in your browser for free — no account and no file upload
+              to a server. Paste SVG, keep the <strong>React</strong> tab open, and copy the component
+              (button at the top of this guide).
             </p>
             <h3 class="article-h3">How do I convert SVG to JSX for TypeScript?</h3>
             <p>
@@ -732,9 +867,9 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
             </p>
             <h3 class="article-h3">SVGR or SVGEditor — which should I use?</h3>
             <p>
-              Use SVGR when icons are a steady stream of <code>.svg</code> files in the repo. Use
-              <a href="/svg-to-react">SVGEditor</a> when you need a quick JSX / React Native snippet, a live preview, or
-              a share link without touching the bundler.
+              Use SVGR when icons are a steady stream of <code>.svg</code> files in the repo. Use SVGEditor
+              when you need a quick JSX / React Native snippet, a live preview, or a share link without
+              touching the bundler.
             </p>
             <h3 class="article-h3">Can I share the SVG with a teammate?</h3>
             <p>
@@ -746,12 +881,16 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
           <section>
             <h2 id="convert-now">Convert your SVG now</h2>
             <p>
-              Paste once, preview live, export React or React Native, or download PNG / Data URI — free, no
-              account.
+              Paste once, preview live, export React or React Native — or download PNG / Data URI from the
+              same workspace. Free, no account.
             </p>
             <div class="legal-actions">
               <a class="btn btn-accent" href="/svg-to-react">Open SVG → React converter</a>
             </div>
+            <p>
+              Also useful:
+              <a href="/blog/svg-to-png">Convert SVG to PNG</a> when the destination needs a bitmap.
+            </p>
           </section>
         </div>
       </article>
@@ -761,6 +900,8 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
       <a href="/">← Back to SVGEditor</a>
       <span class="legal-footer-sep" aria-hidden="true">·</span>
       <a href="/svg-to-react">SVG to React tool</a>
+      <span class="legal-footer-sep" aria-hidden="true">·</span>
+      <a href="/blog/svg-to-png">SVG to PNG guide</a>
       <span class="legal-footer-sep" aria-hidden="true">·</span>
       <a href="/terms">Terms</a>
       <span class="legal-footer-sep" aria-hidden="true">·</span>

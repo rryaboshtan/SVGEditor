@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Convert SVG to PNG Online Free — Retina, Transparency &amp; Sizing | SVGEditor</title>
+    <meta
+      name="description"
+      content="Free SVG to PNG converter online: paste SVG, download a transparent 2× PNG in your browser. Retina sizing math, alpha tips, SVG vs PNG vs Data URI, CLI alternatives. No upload."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Roman Riaboshtan" />
+    <meta name="theme-color" content="#061018" />
+    <link rel="canonical" href="https://getsvgeditor.com/blog/svg-to-png" />
+    <link rel="alternate" href="https://getsvgeditor.com/svg-to-png" title="SVG to PNG converter tool" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="SVGEditor" />
+    <meta property="og:title" content="Convert SVG to PNG Online Free — Retina, Transparency &amp; Sizing" />
+    <meta
+      property="og:description"
+      content="Turn SVG into a transparent 2× PNG in the browser. Worked example, sizing math, email/CMS handoffs, and a free converter — by Roman Riaboshtan."
+    />
+    <meta property="og:url" content="https://getsvgeditor.com/blog/svg-to-png" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://getsvgeditor.com/blog/svg-to-png-og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="SVGEditor — free SVG to PNG converter with transparent download"
+    />
+    <meta property="article:published_time" content="2026-08-07T16:00:00+03:00" />
+    <meta property="article:modified_time" content="2026-08-07T17:00:00+03:00" />
+    <meta property="article:author" content="https://www.linkedin.com/in/roman-riaboshtan" />
+    <meta property="article:section" content="SVG" />
+    <meta property="article:tag" content="SVG to PNG" />
+    <meta property="article:tag" content="convert SVG to PNG online" />
+    <meta property="article:tag" content="transparent PNG" />
+    <meta property="article:tag" content="retina PNG" />
+    <meta property="article:tag" content="SVG export" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Convert SVG to PNG Online Free — Retina, Transparency &amp; Sizing" />
+    <meta
+      name="twitter:description"
+      content="Paste SVG, download a transparent 2× PNG — free. Sizing math, alpha tips, and when to keep SVG. By Roman Riaboshtan."
+    />
+    <meta name="twitter:image" content="https://getsvgeditor.com/blog/svg-to-png-og.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="SVGEditor — free SVG to PNG converter with transparent download"
+    />
+    <meta name="twitter:creator" content="@roman_riaboshtan" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="preload"
+      as="image"
+      href="/blog/svg-to-png-editor.webp"
+      type="image/webp"
+      fetchpriority="high"
+      imagesrcset="/blog/svg-to-png-editor.webp"
+      imagesizes="(max-width: 900px) 100vw, 42rem"
+    />
+    <link rel="stylesheet" href="/styles.min.css?v=97d6a90e1b" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://getsvgeditor.com/#organization",
+            "name": "SVGEditor",
+            "url": "https://getsvgeditor.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://getsvgeditor.com/apple-touch-icon.png",
+              "width": 180,
+              "height": 180
+            },
+            "sameAs": [
+              "https://github.com/rryaboshtan",
+              "https://github.com/rryaboshtan/SvgViewer",
+              "https://www.linkedin.com/in/roman-riaboshtan",
+              "https://dev.to/roman_riaboshtan",
+              "https://www.reddit.com/user/Roman_Riaboshtan"
+            ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://getsvgeditor.com/blog/svg-to-png#author",
+            "name": "Roman Riaboshtan",
+            "url": "https://github.com/rryaboshtan",
+            "image": "https://getsvgeditor.com/blog/roman-riaboshtan.jpg",
+            "jobTitle": "Full-stack developer",
+            "description": "Creator of SVGEditor — builds browser-native SVG tools for designers and engineers.",
+            "sameAs": [
+              "https://github.com/rryaboshtan",
+              "https://github.com/rryaboshtan/SvgViewer",
+              "https://www.linkedin.com/in/roman-riaboshtan",
+              "https://dev.to/roman_riaboshtan",
+              "https://www.reddit.com/user/Roman_Riaboshtan"
+            ],
+            "worksFor": { "@id": "https://getsvgeditor.com/#organization" }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://getsvgeditor.com/#website",
+            "name": "SVGEditor",
+            "url": "https://getsvgeditor.com/",
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://getsvgeditor.com/blog/svg-to-png",
+            "url": "https://getsvgeditor.com/blog/svg-to-png",
+            "name": "Convert SVG to PNG Online Free — Retina, Transparency & Sizing",
+            "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://getsvgeditor.com/blog/svg-to-png-editor.webp",
+              "width": 1400,
+              "height": 788
+            },
+            "breadcrumb": { "@id": "https://getsvgeditor.com/blog/svg-to-png#breadcrumb" },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "TechArticle",
+            "@id": "https://getsvgeditor.com/blog/svg-to-png#article",
+            "headline": "Convert SVG to PNG Online Free — Retina, Transparency & Sizing",
+            "alternativeHeadline": "How to convert SVG to a transparent PNG in the browser",
+            "description": "Free SVG to PNG converter online with a deep guide: 2× retina sizing, alpha transparency, SVG vs PNG vs Data URI, email/CMS handoffs, CLI alternatives, and common rasterization mistakes.",
+            "inLanguage": "en",
+            "datePublished": "2026-08-07T16:00:00+03:00",
+            "dateModified": "2026-08-07T17:00:00+03:00",
+            "articleSection": "SVG",
+            "keywords": [
+              "svg to png",
+              "convert svg to png online",
+              "free svg to png converter",
+              "transparent png from svg",
+              "download svg as png",
+              "svg retina png",
+              "svg vs png",
+              "svg to png 2x",
+              "svg to png no upload",
+              "browser svg rasterizer"
+            ],
+            "wordCount": 2450,
+            "author": { "@id": "https://getsvgeditor.com/blog/svg-to-png#author" },
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" },
+            "mainEntityOfPage": { "@id": "https://getsvgeditor.com/blog/svg-to-png" },
+            "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
+            "about": [
+              { "@type": "Thing", "name": "SVG to PNG" },
+              { "@type": "Thing", "name": "PNG" },
+              { "@type": "Thing", "name": "Rasterization" },
+              { "@type": "Thing", "name": "Retina display" }
+            ],
+            "mentions": [
+              { "@type": "SoftwareApplication", "name": "SVGEditor", "url": "https://getsvgeditor.com/", "applicationCategory": "DeveloperApplication", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+              { "@type": "SoftwareApplication", "name": "SVG to PNG Converter", "url": "https://getsvgeditor.com/svg-to-png", "applicationCategory": "DeveloperApplication", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
+              { "@type": "Thing", "name": "Inkscape" },
+              { "@type": "Thing", "name": "ImageMagick" }
+            ],
+            "image": [
+              {
+                "@type": "ImageObject",
+                "url": "https://getsvgeditor.com/blog/svg-to-png-editor.webp",
+                "width": 1400,
+                "height": 788,
+                "caption": "SVGEditor PNG export tab with transparent checkerboard preview"
+              },
+              {
+                "@type": "ImageObject",
+                "url": "https://getsvgeditor.com/blog/svg-to-png-scale.webp",
+                "width": 1200,
+                "height": 640,
+                "caption": "24 CSS px SVG becomes 48 px PNG at 2x export"
+              },
+              {
+                "@type": "ImageObject",
+                "url": "https://getsvgeditor.com/blog/svg-to-png-og.jpg",
+                "width": 1200,
+                "height": 630
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://getsvgeditor.com/blog/svg-to-png#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://getsvgeditor.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Convert SVG to PNG",
+                "item": "https://getsvgeditor.com/blog/svg-to-png"
+              }
+            ]
+          },
+          {
+            "@type": "HowTo",
+            "@id": "https://getsvgeditor.com/blog/svg-to-png#howto",
+            "name": "Convert SVG to PNG online with SVGEditor",
+            "description": "Paste SVG into SVGEditor, preview the 2× PNG raster with transparency, download the file, then decide PNG vs SVG for the destination — no upload to a server.",
+            "inLanguage": "en",
+            "totalTime": "PT5M",
+            "tool": {
+              "@type": "HowToTool",
+              "name": "SVGEditor SVG to PNG converter",
+              "url": "https://getsvgeditor.com/svg-to-png"
+            },
+            "step": [
+              {
+                "@type": "HowToStep",
+                "position": 1,
+                "name": "Paste or upload SVG with size set",
+                "url": "https://getsvgeditor.com/blog/svg-to-png#howto-step-1",
+                "text": "Open the free SVG to PNG converter. Paste markup or upload a .svg. Keep viewBox and set width/height so pixel size is predictable before the 2× step."
+              },
+              {
+                "@type": "HowToStep",
+                "position": 2,
+                "name": "Preview the PNG raster",
+                "url": "https://getsvgeditor.com/blog/svg-to-png#howto-step-2",
+                "text": "Keep the PNG tab open. Checkerboard means transparency in the UI — it is not baked into the file. Confirm strokes and fills look right."
+              },
+              {
+                "@type": "HowToStep",
+                "position": 3,
+                "name": "Download the 2× PNG",
+                "url": "https://getsvgeditor.com/blog/svg-to-png#howto-step-3",
+                "text": "Click Download PNG. SVGEditor rasterizes at 2× width/height for sharper retina output when shown at the original CSS size."
+              },
+              {
+                "@type": "HowToStep",
+                "position": 4,
+                "name": "Choose PNG vs SVG for the destination",
+                "url": "https://getsvgeditor.com/blog/svg-to-png#howto-step-4",
+                "text": "Ship the PNG to email, docs, or bitmap-only uploads. Keep SVG or React JSX when icons must scale and follow theme colors."
+              }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://getsvgeditor.com/blog/svg-to-png#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is there a free SVG to PNG converter online?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. SVGEditor’s SVG to PNG tool converts in your browser for free — no account and no file upload to a server. Open https://getsvgeditor.com/svg-to-png, paste SVG, and download from the PNG tab."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does converting SVG to PNG keep transparency?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. The downloaded PNG keeps alpha from the SVG. Checkerboard in the PNG tab is only the UI preview of transparency — not pixels written into the file."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What size is the exported PNG from SVGEditor?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "SVGEditor rasterizes at 2× the SVG width and height. A 24×24 icon becomes a 48×48 PNG. Set width/height (and keep viewBox) for predictable pixels; enlarge those attributes before export for print or large thumbnails."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Why is my SVG to PNG export blurry or tiny?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Export size follows the SVG width/height, then ×2. If the source is 16×16, the PNG stays small. Set explicit dimensions on the root svg, preview again, then download. For display, use width/height CSS equal to the original CSS size so the 2× file looks sharp on retina."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "When should I use PNG instead of SVG?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Use PNG when the destination needs a bitmap (email clients, Word/PowerPoint, many CMS fields, social uploads). Keep SVG for UI icons you will recolor or scale. Prefer a React component when the same mark must follow theme colors."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "PNG download vs Data URI — which should I use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Download PNG when you need a file to attach or upload. Use the Data URI tab when you want to paste a CSS background-image or inline data: URL without a separate asset request."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is in-browser SVG to PNG safer than uploading to a website?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes for private marks and unreleased brand assets. SVGEditor rasterizes locally in your browser — the SVG is not uploaded to a backend. Treat share links like the file itself because the payload lives in the URL hash."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I convert SVG to React as well as PNG?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes — same editor. Use the React or React Native tabs, or open the SVG to React converter and guide when you need a component instead of a bitmap."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body class="legal-page article-page">
+    <div class="ambiance" aria-hidden="true">
+      <div class="ambiance-wash"></div>
+      <div class="ambiance-glow ambiance-glow-a"></div>
+      <div class="ambiance-glow ambiance-glow-b"></div>
+      <div class="ambiance-glow ambiance-glow-c"></div>
+      <div class="ambiance-beam"></div>
+      <div class="ambiance-grid"></div>
+      <div class="ambiance-noise"></div>
+      <div class="ambiance-vignette"></div>
+    </div>
+
+    <header class="site-header">
+      <a class="brand brand-link" href="/">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
+            <defs>
+              <linearGradient id="brand-plate" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#071526" />
+                <stop offset="0.55" stop-color="#0B1B33" />
+                <stop offset="1" stop-color="#0E3A5C" />
+              </linearGradient>
+              <linearGradient id="brand-bracket" x1="6" y1="7" x2="26" y2="25" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#A5F3FC" />
+                <stop offset="0.45" stop-color="#38BDF8" />
+                <stop offset="1" stop-color="#2563EB" />
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="8" fill="url(#brand-plate)" />
+            <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="7.25" stroke="#67E8F9" stroke-opacity="0.18" />
+            <path
+              d="M10.2 8.2L5.4 16L10.2 23.8"
+              stroke="url(#brand-bracket)"
+              stroke-width="2.35"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M21.8 8.2L26.6 16L21.8 23.8"
+              stroke="url(#brand-bracket)"
+              stroke-width="2.35"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="16" cy="16" r="5.55" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="1" fill="none" />
+            <circle cx="16" cy="16" r="3.85" stroke="#7DD3FC" stroke-width="1.4" fill="none" />
+            <circle cx="16" cy="16" r="1.85" fill="#F0F9FF" />
+            <circle cx="16" cy="16" r="0.8" fill="#0369A1" />
+          </svg>
+        </span>
+        <div class="brand-text">
+          <p class="brand-name">SVGEditor</p>
+          <p class="brand-tagline brand-tagline-seo">
+            Free online SVG editor — preview, share, React &amp; PNG
+          </p>
+        </div>
+      </a>
+      <div class="header-meta">
+        <nav class="legal-nav" aria-label="Site">
+          <a href="/svg-to-png">Tool</a>
+          <a href="/blog/svg-to-png" aria-current="page">Guide</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </nav>
+        <a
+          class="github-link"
+          href="https://github.com/rryaboshtan/SvgViewer"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open source on GitHub"
+          aria-label="Open source repository on GitHub"
+        >
+          <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+          <span>Open Source</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="legal-shell" id="article-content">
+      <article class="legal-card" itemscope itemtype="https://schema.org/TechArticle">
+        <nav class="article-breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="article-breadcrumbs-sep" aria-hidden="true">/</span>
+          <span aria-current="page">Convert SVG to PNG</span>
+        </nav>
+        <p class="legal-kicker">Guide</p>
+        <h1 class="legal-title" itemprop="headline">Convert SVG to PNG online (free)</h1>
+        <p class="legal-lead" itemprop="description">
+          A practical playbook for converting SVG to PNG online — free transparent downloads,
+          <strong>2× retina</strong> sizing, and when a bitmap is the wrong answer. Written by the builder of
+          SVGEditor so the steps match what the PNG converter actually does in your browser.
+        </p>
+        <p class="legal-updated">Published August 7, 2026 · Updated August 7, 2026</p>
+
+        <div class="article-byline">
+          <img
+            class="article-byline-avatar"
+            src="/blog/roman-riaboshtan.jpg"
+            width="84"
+            height="84"
+            alt="Roman Riaboshtan, creator of SVGEditor"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="article-byline-text">
+            <p class="article-byline-name">
+              By
+              <a href="https://www.linkedin.com/in/roman-riaboshtan" target="_blank" rel="noopener noreferrer"
+                >Roman Riaboshtan</a
+              >
+            </p>
+            <p class="article-byline-role">
+              Creator of SVGEditor · full-stack (Python &amp; React). Ships browser-native SVG
+              tooling used for preview, share, React/JSX, and PNG export — this guide reflects the real
+              rasterizer, not generic advice.
+            </p>
+          </div>
+        </div>
+
+        <div class="article-cta">
+          <p>
+            Skip desktop installs: paste SVG — the <strong>PNG</strong> tab is already open on the tool page.
+          </p>
+          <a class="btn btn-accent article-cta-btn" href="/svg-to-png">Open free SVG → PNG converter</a>
+        </div>
+
+        <figure class="article-figure">
+          <picture>
+            <source srcset="/blog/svg-to-png-editor.webp" type="image/webp" />
+            <img
+              src="/blog/svg-to-png-editor.jpg"
+              width="1400"
+              height="788"
+              sizes="(max-width: 900px) 100vw, 42rem"
+              alt="Real SVGEditor UI: Source panel on the left, PNG tab selected on the right with transparent checkerboard and Download PNG"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </picture>
+          <figcaption>
+            Real SVGEditor UI: paste on the left, open <strong>PNG</strong>, download a transparent file — no upload.
+          </figcaption>
+        </figure>
+
+        <div class="legal-grid">
+          <section>
+            <h2 id="why-png">Why convert SVG to PNG?</h2>
+            <p>
+              SVG stays sharp at any size and is ideal for product UI. Many destinations still demand a
+              <strong>bitmap</strong>: email clients that strip or block SVG, Word/PowerPoint inserts, CMS
+              media libraries that only accept PNG/JPEG, and social uploaders that reject vector files.
+              Rasterizing once gives you a portable asset without leaving the browser.
+            </p>
+            <p>
+              PNG beats JPEG for icons and logos because it keeps an <strong>alpha channel</strong> — soft
+              edges and hollow marks sit cleanly on light or dark backgrounds. That is why “SVG to PNG”
+              remains a high-intent search even in a vector-first world.
+            </p>
+            <p>
+              Converting does <em>not</em> mean PNG should replace SVG in the app. Use PNG for handoff; keep
+              the SVG (or a React component) as the source of truth when color and scale still matter in code.
+              Preview, share, React, and PNG share one Source panel in the same editor.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="worked-example">Worked example: 24×24 icon → 48×48 PNG</h2>
+            <p>
+              A common request from design or marketing: “send the mark as PNG for the deck / newsletter.”
+              The SVG is a 24×24 icon. SVGEditor’s exporter draws it at <strong>2×</strong>, so the download
+              is <strong>48×48</strong> — sharper on retina screens when shown at 24 CSS pixels.
+            </p>
+            <figure class="article-figure">
+              <img
+                src="/blog/svg-to-png-scale.webp"
+                width="1200"
+                height="640"
+                sizes="(max-width: 900px) 100vw, 42rem"
+                alt="Before: SVG source at 24 by 24. After: transparent PNG at 48 by 48 from 2x export with checkerboard alpha"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                Before: vector at 24 CSS px. After: PNG at 48 px with alpha (checkerboard is preview only).
+              </figcaption>
+            </figure>
+            <p><strong>Source SVG</strong> (size comes from <code>width</code> / <code>height</code>):</p>
+            <pre class="article-code" tabindex="0"><code>&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"&gt;
+  &lt;path
+    d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+    stroke="#38BDF8"
+    stroke-width="1.5"
+    stroke-linejoin="round"
+  /&gt;
+&lt;/svg&gt;</code></pre>
+            <p>
+              Paste into SVGEditor, keep <strong>PNG</strong> open, then
+              <strong>Download PNG</strong>. The sizing contract inside the tool is intentionally simple:
+            </p>
+            <pre class="article-code" tabindex="0"><code>// How SVGEditor sizes the canvas (simplified from the real exporter)
+const scale = 2;
+pngWidth  = svgWidth  * scale;  // 24 → 48
+pngHeight = svgHeight * scale;  // 24 → 48
+// drawImage stretches the vector into that pixel grid; alpha is kept</code></pre>
+            <p>
+              Display the file at the <em>original</em> CSS size so the extra pixels work for you:
+            </p>
+            <pre class="article-code" tabindex="0"><code>&lt;!-- 48×48 file, shown at 24 CSS px → sharp on 2× screens --&gt;
+&lt;img
+  src="/icons/layers.png"
+  width="24"
+  height="24"
+  alt=""
+  decoding="async"
+/&gt;
+
+/* or */
+.icon-layers {
+  width: 24px;
+  height: 24px;
+  background: url("/icons/layers.png") center / contain no-repeat;
+}</code></pre>
+            <p>
+              Need a larger file for print or a hero thumbnail? Raise <code>width</code> /
+              <code>height</code> on the SVG first (for example <code>200</code>×<code>200</code> → 400×400
+              PNG), then download again. The 2× factor still applies on top of those attributes.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="manual-path">How browser SVG → PNG rasterization works</h2>
+            <p>
+              Understanding the pipeline explains most “broken export” tickets. In-browser converters
+              (including SVGEditor) follow the canvas path:
+            </p>
+            <ol class="article-steps">
+              <li>Parse / serialize the SVG and ensure a proper <code>xmlns</code>.</li>
+              <li>Read <code>width</code> / <code>height</code> (fall back to <code>viewBox</code> if needed).</li>
+              <li>Load the SVG into an <code>Image</code> via a blob URL (<code>image/svg+xml</code>).</li>
+              <li>Draw onto a canvas at the target pixel size (SVGEditor uses a fixed <strong>2×</strong> scale).</li>
+              <li>Call <code>canvas.toDataURL("image/png")</code> (or <code>toBlob</code>) to download.</li>
+            </ol>
+            <pre class="article-code" tabindex="0"><code>// Sketch — SVGEditor already does this in the PNG tab
+const scale = 2;
+canvas.width = Math.round(width * scale);
+canvas.height = Math.round(height * scale);
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+link.href = canvas.toDataURL("image/png");
+link.download = "svgeditor-export.png";</code></pre>
+            <p>
+              Why a fixed 2× instead of <code>window.devicePixelRatio</code>? Export must be
+              <strong>deterministic</strong>: the same SVG should yield the same PNG on a laptop and a phone.
+              Device DPR would make downloads differ by machine — bad for design handoff. You opt into more
+              pixels by enlarging the SVG attributes. That choice is intentional in SVGEditor: marketing gets
+              one reproducible file; engineering can still keep the vector for UI.
+            </p>
+            <p>
+              <strong>Percentage sizes and missing units:</strong> if the root SVG only has
+              <code>width="100%"</code> (or no size at all), the rasterizer falls back to
+              <code>viewBox</code> width/height, then 512×512. Explicit CSS-pixel attributes avoid “why is my
+              PNG huge/tiny?” threads.
+            </p>
+            <p>
+              External images inside the SVG, missing namespaces, cross-origin fonts, or exotic filters are
+              the usual reasons <code>drawImage</code> fails — fix the markup in Source, then retry.
+            </p>
+          </section>
+
+          <section id="howto" aria-labelledby="howto-heading">
+            <h2 id="howto-heading">How to convert SVG to PNG online</h2>
+            <p>
+              Use
+              <a href="/svg-to-png">SVGEditor’s free SVG to PNG converter</a>
+              when you want a transparent download without installing Inkscape, Illustrator, or a CLI.
+              No account, no upload to a server — typically a few minutes from paste to file.
+            </p>
+            <ol class="article-howto">
+              <li id="howto-step-1">
+                <h3 class="article-h3">Paste or upload SVG with size set</h3>
+                <p>
+                  Open the converter. Paste markup into
+                  <strong>Source</strong> or use <strong>Upload</strong> for a <code>.svg</code> file. Keep
+                  <code>viewBox</code> and set explicit <code>width</code> / <code>height</code> so the
+                  pixel math is predictable before the 2× step.
+                </p>
+              </li>
+              <li id="howto-step-2">
+                <h3 class="article-h3">Preview the PNG raster</h3>
+                <p>
+                  The <strong>PNG</strong> tab is already selected on the tool page. Confirm strokes, fills,
+                  and edges look right. Checkerboard means transparent areas in the UI — it is not written
+                  into the PNG pixels.
+                </p>
+              </li>
+              <li id="howto-step-3">
+                <h3 class="article-h3">Download the 2× PNG</h3>
+                <p>
+                  Click <strong>Download PNG</strong>. SVGEditor rasterizes at
+                  <strong>2×</strong> width/height for sharper retina display when you show the asset at the
+                  original CSS size.
+                </p>
+              </li>
+              <li id="howto-step-4">
+                <h3 class="article-h3">Choose PNG vs SVG for the destination</h3>
+                <p>
+                  Ship the PNG to email, decks, or bitmap-only uploads. Keep the SVG — or export React JSX —
+                  when the same mark must scale and follow <code>currentColor</code> in the product UI.
+                </p>
+              </li>
+            </ol>
+            <p>
+              Need an inline CSS background instead of a file? Switch to the <strong>Data URI</strong> tab
+              in the same workspace (URL-encoded or Base64).
+            </p>
+          </section>
+
+          <section>
+            <h2 id="retina-alpha">Retina sizing, alpha, and anti-aliasing</h2>
+            <ul>
+              <li>
+                <strong>2× export:</strong> a 24×24 SVG becomes a 48×48 PNG. Display at 24 CSS px for crisp
+                2× screens. Upscale SVG attributes first if you need more absolute pixels.
+              </li>
+              <li>
+                <strong>Alpha:</strong> empty / translucent SVG areas stay transparent in the download.
+                Preview swatches on the live <strong>Preview</strong> tab do <em>not</em> bake into the PNG.
+              </li>
+              <li>
+                <strong>Hard-coded fills:</strong> a black icon on a transparent PNG is fine in a light
+                email; on a dark slide it vanishes. Recolor the SVG before export, or keep vector for themed UI.
+              </li>
+              <li>
+                <strong>Hairline strokes:</strong> a 1px stroke at small sizes can look soft after rasterization.
+                Slightly thicker strokes (or larger export size) read cleaner in decks and email.
+              </li>
+              <li>
+                <strong>Premultiplied alpha:</strong> soft edges on transparent PNGs can pick up a faint fringe
+                when composited on unexpected backgrounds. If you see a light halo in a dark deck, re-export
+                after checking fills on both light and dark in the live preview first.
+              </li>
+              <li>
+                <strong>Fallback size:</strong> if width/height are missing, SVGEditor falls back to
+                <code>viewBox</code> (or 512). Prefer explicit dimensions so stakeholders get the size they asked for.
+              </li>
+            </ul>
+            <p>
+              Optional HTML for responsive sharpness (1× CSS size, 2× file from SVGEditor):
+            </p>
+            <pre class="article-code" tabindex="0"><code>&lt;img
+  src="/icons/layers.png"
+  srcset="/icons/layers.png 2x"
+  width="24"
+  height="24"
+  alt="Layers"
+  decoding="async"
+/&gt;</code></pre>
+          </section>
+
+          <section>
+            <h2 id="svg-vs-png-vs-uri">SVG vs PNG vs Data URI</h2>
+            <p>Same editor, three outputs. Pick by destination — not by habit.</p>
+            <div class="article-table-wrap">
+              <table class="article-table">
+                <thead>
+                  <tr>
+                    <th scope="col">When you…</th>
+                    <th scope="col">Prefer SVG / React</th>
+                    <th scope="col">Prefer PNG download</th>
+                    <th scope="col">Prefer Data URI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Product UI</th>
+                    <td>Icons that recolor and scale</td>
+                    <td>Rare (prefer vector)</td>
+                    <td>Tiny one-off CSS backgrounds</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Email / Office</th>
+                    <td>Often blocked or ugly</td>
+                    <td>Best default handoff</td>
+                    <td>Sometimes works in HTML email</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">CMS / social upload</th>
+                    <td>Often rejected</td>
+                    <td>Accepted almost everywhere</td>
+                    <td>Not a file upload</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">No extra HTTP request</th>
+                    <td>Inline SVG / component</td>
+                    <td>Needs a file or CDN URL</td>
+                    <td>Paste into CSS / HTML</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Theme / dark mode</th>
+                    <td><code>currentColor</code> / props</td>
+                    <td>Fixed pixels — re-export to recolor</td>
+                    <td>Fixed unless you regenerate</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              Rule of thumb: <strong>SVG/React in the app</strong>, <strong>PNG for people and tools that
+              only speak bitmap</strong>, <strong>Data URI for a quick CSS paste</strong> without adding an
+              asset to the repo.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="browser-vs-cli">Browser converter vs Inkscape / ImageMagick</h2>
+            <p>
+              Desktop and CLI tools still matter for batch jobs. An online converter wins when the cost of
+              setup is higher than the cost of one export.
+            </p>
+            <div class="article-table-wrap">
+              <table class="article-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Job</th>
+                    <th scope="col">SVGEditor (browser)</th>
+                    <th scope="col">Inkscape / ImageMagick / resvg</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">One-off icon / logo</th>
+                    <td>Fastest — paste and download</td>
+                    <td>Overkill unless already installed</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Hundreds of files</th>
+                    <td>Manual per file</td>
+                    <td>Scriptable batch export</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Private / unreleased brand</th>
+                    <td>Stays on device (no upload)</td>
+                    <td>Local too — if you trust the machine</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Preview + share link</th>
+                    <td>Built in</td>
+                    <td>Separate tools</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Also need React JSX</th>
+                    <td>Same workspace</td>
+                    <td>Different pipeline (SVGR, etc.)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              Example CLI (for teams that already live in the terminal):
+            </p>
+            <pre class="article-code" tabindex="0"><code># ImageMagick — size is explicit; no automatic 2×
+convert -background none icon.svg -resize 48x48 icon.png
+
+# Inkscape
+inkscape icon.svg --export-type=png --export-filename=icon.png -w 48 -h 48</code></pre>
+            <p>
+              SVGEditor’s opinionated 2× is for human handoff (“looks sharp at the icon’s CSS size”). CLI
+              flags make you choose pixels every time — better for pipelines, slower for a single Slack ask.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="privacy">Why in-browser conversion matters for brand assets</h2>
+            <p>
+              Unreleased logos and client marks should not land on a random upload service. SVGEditor
+              rasterizes with the browser’s canvas — the SVG is not posted to a backend for conversion.
+              That is the same privacy stance as the rest of the product (preview, share-via-hash, React export).
+            </p>
+            <p>
+              If you use <strong>Copy link</strong>, treat the URL like the file: the payload lives in the
+              hash on the recipient’s machine. Do not paste confidential marks into public channels.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="common-mistakes">Common mistakes</h2>
+            <ul>
+              <li>
+                <strong>No <code>width</code> / <code>height</code>:</strong> export size becomes guesswork
+                (viewBox fallback or 512). Set dimensions before you download.
+              </li>
+              <li>
+                <strong>Dropping <code>viewBox</code>:</strong> scaling and aspect ratio get fragile when
+                you change size for a larger PNG.
+              </li>
+              <li>
+                <strong>Thinking the checkerboard is in the file:</strong> it is only the PNG tab chrome.
+                The download keeps real alpha.
+              </li>
+              <li>
+                <strong>Expecting theme colors in PNG:</strong> once rasterized, fills are fixed. Recolor
+                the SVG first, or keep a React component for UI chrome.
+              </li>
+              <li>
+                <strong>Using a tiny icon SVG for a large hero:</strong> 2× of 24px is still 48px. Enlarge
+                <code>width</code>/<code>height</code> (keep <code>viewBox</code>) before export.
+              </li>
+              <li>
+                <strong>External images / fonts in the SVG:</strong> the canvas path cannot fetch cross-origin
+                assets reliably — inline or remove them, then retry.
+              </li>
+              <li>
+                <strong>Showing a 2× PNG at full pixel size:</strong> a 48×48 file displayed at 48 CSS px
+                looks soft on 1× and huge on 2×. Display at the original CSS size (24).
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 id="practical-tips">Practical tips from shipping SVGEditor</h2>
+            <ul>
+              <li>
+                <strong>Email:</strong> host or attach PNG; many clients (notably older Outlook) mishandle
+                inline SVG. Prefer a hosted PNG URL or CID attachment over inline SVG markup.
+              </li>
+              <li>
+                <strong>Slides:</strong> export at a larger CSS size (e.g. 256 → 512) so zoom does not pixelate.
+              </li>
+              <li>
+                <strong>Favicons:</strong> browsers want dedicated sizes; a single 2× icon PNG is a start,
+                not a full favicon set. Generate each target size separately before shipping.
+              </li>
+              <li>
+                <strong>Cleanup:</strong> strip editor junk and unused <code>id</code>s before rasterizing —
+                fewer surprises if you also keep the vector.
+              </li>
+              <li>
+                <strong>Share before download:</strong> use <strong>Copy link</strong> so a teammate can
+                verify the preview.
+              </li>
+              <li>
+                <strong>Same paste, other formats:</strong> React, React Native, and Data URI stay one click
+                away — useful when marketing wants PNG and engineering wants JSX from one source.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 id="faq">FAQ</h2>
+            <h3 class="article-h3">Is there a free SVG to PNG converter online?</h3>
+            <p>
+              Yes. SVGEditor’s SVG to PNG tool runs in your browser for free —
+              no account and no file upload to a server. Paste SVG, keep the <strong>PNG</strong> tab
+              open, and download (use the button at the top of this guide).
+            </p>
+            <h3 class="article-h3">Does converting SVG to PNG keep transparency?</h3>
+            <p>
+              Yes. The file keeps alpha from the SVG. The checkerboard is only the preview chrome, not
+              pixels in the download.
+            </p>
+            <h3 class="article-h3">What size is the exported PNG?</h3>
+            <p>
+              Rasterization uses <strong>2×</strong> the SVG width and height. A 24×24 icon becomes 48×48.
+              Set those attributes (and keep <code>viewBox</code>) for predictable pixels; enlarge them
+              first for print or large thumbnails.
+            </p>
+            <h3 class="article-h3">Why is my SVG to PNG export blurry or tiny?</h3>
+            <p>
+              Size follows the SVG dimensions, then ×2. A 16×16 source stays small even after 2×. Raise
+              <code>width</code> / <code>height</code> on the root <code>&lt;svg&gt;</code>, preview again,
+              then download. Display the PNG at the original CSS size so retina sharpness shows up.
+            </p>
+            <h3 class="article-h3">When should I use PNG instead of SVG?</h3>
+            <p>
+              When the destination needs a bitmap — email, Office, many CMS uploads, social. Keep SVG for
+              UI you will still theme and scale.
+            </p>
+            <h3 class="article-h3">PNG download vs Data URI — which should I use?</h3>
+            <p>
+              Download PNG when you need a file to attach or upload. Use the <strong>Data URI</strong> tab
+              when you want to paste a CSS <code>background-image</code> or inline <code>data:</code> URL
+              without a separate asset.
+            </p>
+            <h3 class="article-h3">Is in-browser SVG to PNG safer than uploading?</h3>
+            <p>
+              For private marks, yes — conversion stays on your device. Still treat share URLs carefully;
+              the payload lives in the hash.
+            </p>
+            <h3 class="article-h3">Can I convert SVG to React as well as PNG?</h3>
+            <p>
+              Yes — same editor. Switch to the <strong>React</strong> tab when you need a component instead of
+              a bitmap. For the full JSX / React Native playbook, see the related guide below.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="related">Related guide</h2>
+            <p>
+              <a href="/blog/svg-to-react">Convert SVG to React (JSX)</a> — components, SVGR, React Native,
+              and when to keep SVG as a component instead of exporting PNG.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="convert-now">Convert your SVG now</h2>
+            <p>
+              Paste once, preview the 2× raster, download a transparent PNG — or export React / Data URI
+              from the same workspace. Free, no account.
+            </p>
+            <div class="legal-actions">
+              <a class="btn btn-accent" href="/svg-to-png">Open free SVG → PNG converter</a>
+            </div>
+          </section>
+        </div>
+      </article>
+    </main>
+
+    <footer class="legal-footer">
+      <a href="/">← Back to SVGEditor</a>
+      <span class="legal-footer-sep" aria-hidden="true">·</span>
+      <a href="/terms">Terms</a>
+      <span class="legal-footer-sep" aria-hidden="true">·</span>
+      <a href="/privacy">Privacy</a>
+    </footer>
+  </body>
+</html>

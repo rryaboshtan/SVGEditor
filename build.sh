@@ -33,7 +33,7 @@ stamp_assets() {
   mv "$tmp" "$file"
 }
 
-for html in index.html svg-to-react.html embed.html privacy.html terms.html 404.html blog/*.html; do
+for html in index.html svg-to-react.html svg-to-png.html embed.html privacy.html terms.html 404.html blog/*.html; do
   if [[ -f "$html" ]]; then
     stamp_assets "$html"
   fi
