@@ -2505,7 +2505,9 @@ body.is-resizing .preview-stage {
 }
 
 /* ——— Tool page (/svg-to-react) — same one-screen layout as home ——— */
+/* cache-bust: tool banner styles must ship with HTML */
 .tool-banner {
+  --tool-cache: 1;
   position: relative;
   z-index: 5;
   flex: 0 0 auto;
