@@ -29,6 +29,37 @@ const splitter = document.getElementById("splitter");
 const canvas = document.getElementById("preview-canvas");
 const empty = document.getElementById("preview-empty");
 const status = document.getElementById("preview-status");
+
+const EMPTY_IDLE_HTML =
+  '<div class="preview-empty-inner">' +
+  '<p class="preview-empty-title">Live SVG preview</p>' +
+  '<p class="preview-empty-body">' +
+  "Paste or upload SVG on the left to preview live. Share a link, or export React JSX, " +
+  "React Native, PNG, or Data URI — free, in your browser." +
+  "</p>" +
+  '<p class="preview-empty-links">' +
+  '<a href="/blog/svg-to-react">SVG to React guide</a>' +
+  "</p>" +
+  "</div>";
+
+function showEmptyIdle() {
+  if (!empty) return;
+  empty.classList.remove("is-message");
+  empty.innerHTML = EMPTY_IDLE_HTML;
+  empty.hidden = false;
+}
+
+function showEmptyMessage(message) {
+  if (!empty) return;
+  empty.classList.add("is-message");
+  empty.innerHTML =
+    '<div class="preview-empty-inner">' +
+    '<p class="preview-empty-title">' +
+    escapeHtml(message) +
+    "</p>" +
+    "</div>";
+  empty.hidden = false;
+}
 const clearBtn = document.getElementById("btn-clear");
 const uploadBtn = document.getElementById("btn-upload");
 const downloadSvgBtn = document.getElementById("btn-download-svg");
@@ -525,7 +556,7 @@ function renderPreview(source) {
 
   if (!markup) {
     canvas.replaceChildren();
-    empty.hidden = false;
+    showEmptyIdle();
     previewSvg = null;
     elementRanges = [];
     clearHighlight();
@@ -603,8 +634,7 @@ function renderPreview(source) {
     }
   } catch {
     canvas.replaceChildren();
-    empty.hidden = false;
-    empty.textContent = "Couldn’t parse this SVG. Check for a missing tag or typo.";
+    showEmptyMessage("Couldn’t parse this SVG. Check for a missing tag or typo.");
     previewSvg = null;
     elementRanges = [];
     clearHighlight();
@@ -835,8 +865,11 @@ function applyEditorState(state) {
   suppressSelectionSync = true;
   editor.focus();
   editor.setSelectionRange(start, end);
-  empty.textContent = "Your SVG preview will appear here.";
-  empty.hidden = !state.value.trim();
+  if (state.value.trim()) {
+    empty.hidden = true;
+  } else {
+    showEmptyIdle();
+  }
   clearHighlight();
   refreshEditorChrome();
   scheduleRender();
@@ -1057,7 +1090,7 @@ clearBtn.addEventListener("click", function () {
   flushHistory();
   if (!editor.value.length) return;
   editor.value = "";
-  empty.textContent = "Your SVG preview will appear here.";
+  showEmptyIdle();
   clearHighlight();
   editor.focus();
   editor.setSelectionRange(0, 0);
@@ -1292,6 +1325,8 @@ previewStage.addEventListener(
     }
     while (el && el !== previewStage) {
       if (el.localName && String(el.localName).toLowerCase() === "a") {
+        // Empty-state / UI links are trusted; only block anchors from SVG markup
+        if (empty && empty.contains(el)) return;
         event.preventDefault();
         event.stopPropagation();
         setStatus("empty", "Links in preview are disabled");
@@ -2107,7 +2142,6 @@ setMobileMode(document.body.getAttribute("data-mobile-mode") || "edit");
 const shareNotice = document.getElementById("share-notice");
 
 function applyStartupSvg(markup, statusMsg) {
-  empty.textContent = "Paste markup on the left to preview.";
   editor.value = markup;
   commitHistory();
   applyPreviewZoom();

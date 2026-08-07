@@ -74,7 +74,7 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.min.css?v=c958639586" />
+    <link rel="stylesheet" href="styles.min.css?v=61ef7a6720" />
 
     <script type="application/ld+json">
       {
@@ -533,7 +533,18 @@
             <h2 id="preview-heading" class="sr-only">Live preview</h2>
             <div class="preview-stage" id="preview-stage" data-bg="transparent">
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
-              <p class="preview-empty" id="preview-empty" hidden>Paste markup on the left to preview.</p>
+              <div class="preview-empty" id="preview-empty" hidden>
+                <div class="preview-empty-inner">
+                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-body">
+                    Paste or upload SVG on the left to preview live. Share a link, or export React JSX,
+                    React Native, PNG, or Data URI — free, in your browser.
+                  </p>
+                  <p class="preview-empty-links">
+                    <a href="/blog/svg-to-react">SVG to React guide</a>
+                  </p>
+                </div>
+              </div>
               <div class="preview-toolbar" role="toolbar" aria-label="Preview controls">
                 <div class="toolbar-group" role="group" aria-label="Zoom">
                   <button type="button" class="toolbar-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
@@ -668,6 +679,6 @@
       </section>
     </main>
 
-    <script defer src="app.min.js?v=c958639586"></script>
+    <script defer src="app.min.js?v=61ef7a6720"></script>
   </body>
 </html>

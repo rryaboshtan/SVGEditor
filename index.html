@@ -8,14 +8,17 @@
       name="description"
       content="Free online SVG editor — paste or upload SVG, preview live, share, export React or PNG. No account, runs in your browser."
     />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="author" content="SVGEditor" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Roman Riaboshtan" />
     <meta name="theme-color" content="#061018" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://cloudflareinsights.com; form-action 'none'; upgrade-insecure-requests"
     />
     <link rel="canonical" href="https://getsvgeditor.com/" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://getsvgeditor.com/sitemap.xml" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
@@ -71,7 +74,7 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.min.css?v=c958639586" />
+    <link rel="stylesheet" href="styles.min.css?v=61ef7a6720" />
 
     <script type="application/ld+json">
       {
@@ -102,7 +105,39 @@
             "name": "SVGEditor",
             "url": "https://getsvgeditor.com/",
             "inLanguage": "en",
-            "publisher": { "@id": "https://getsvgeditor.com/#organization" }
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" },
+            "about": {
+              "@type": "Thing",
+              "name": "Online SVG editor"
+            }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://getsvgeditor.com/#webpage",
+            "url": "https://getsvgeditor.com/",
+            "name": "SVG Editor — Free Online SVG Preview & Code Editor",
+            "description": "Free online SVG editor — paste or upload SVG, preview live, share, export React or PNG. No account, runs in your browser.",
+            "inLanguage": "en",
+            "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
+            "about": { "@id": "https://getsvgeditor.com/#app" },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://getsvgeditor.com/og-image.jpg",
+              "width": 1200,
+              "height": 630
+            },
+            "dateModified": "2026-08-07",
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://getsvgeditor.com/"
+                }
+              ]
+            }
           },
           {
             "@type": "WebApplication",
@@ -115,6 +150,8 @@
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
             "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "dateModified": "2026-08-07",
             "image": "https://getsvgeditor.com/og-image.jpg",
             "screenshot": "https://getsvgeditor.com/og-image.jpg",
             "offers": {
@@ -123,10 +160,13 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Live SVG preview",
-              "Share link and embed",
-              "Export to React, React Native, PNG, and Data URI",
-              "Runs entirely in the browser"
+              "Paste or upload SVG markup",
+              "Live SVG preview with zoom and pan",
+              "Share link and iframe embed",
+              "Export React JSX and React Native",
+              "Export PNG and Data URI",
+              "Download sanitized SVG",
+              "Runs entirely in the browser — no account"
             ],
             "sameAs": [
               "https://github.com/rryaboshtan",
@@ -137,6 +177,7 @@
             ],
             "publisher": { "@id": "https://getsvgeditor.com/#organization" },
             "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
+            "mainEntityOfPage": { "@id": "https://getsvgeditor.com/#webpage" },
             "potentialAction": {
               "@type": "UseAction",
               "target": {
@@ -207,14 +248,16 @@
         </span>
         <div class="brand-text">
           <h1 class="brand-name">SVGEditor</h1>
-          <p class="brand-tagline brand-tagline-seo">Free online SVG editor — preview, share, export</p>
+          <p class="brand-tagline brand-tagline-seo">
+            Free online SVG editor — live preview, share, React &amp; PNG export
+          </p>
         </div>
       </div>
       <div class="header-meta">
         <nav class="legal-nav" aria-label="Site">
-          <a href="/blog/svg-to-react">Guide</a>
-          <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy</a>
-          <a href="/terms" target="_blank" rel="noopener noreferrer">Terms</a>
+          <a href="/blog/svg-to-react" title="Convert SVG to React JSX guide">SVG to React</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
         </nav>
         <span class="header-sep" aria-hidden="true"></span>
         <a
@@ -238,6 +281,11 @@
 
     <p id="share-notice" class="share-notice" hidden role="status">
       From a share link — don’t trust the preview alone
+    </p>
+
+    <p class="app-pitch">
+      Paste or upload SVG for live preview, share links, and React / PNG export — free in your browser.
+      <a href="/blog/svg-to-react">Read the SVG to React guide</a>.
     </p>
 
     <div class="mobile-mode-switch" role="tablist" aria-label="Mobile workspace mode">
@@ -267,7 +315,7 @@
       <section class="panel panel-editor" aria-labelledby="editor-heading">
         <div class="panel-bar">
           <div class="panel-bar-left">
-            <p id="editor-heading" class="panel-title">Source</p>
+            <p id="editor-heading" class="panel-title">SVG source</p>
           </div>
           <div class="panel-actions">
             <input
@@ -310,7 +358,7 @@
             </button>
           </div>
         </div>
-        <label class="sr-only" for="editor">SVG markup</label>
+        <label class="sr-only" for="editor">SVG markup editor</label>
         <div class="code-editor">
           <div class="line-numbers" id="line-numbers" aria-hidden="true"></div>
           <div class="editor-pane">
@@ -323,12 +371,13 @@
               autocapitalize="off"
               autocorrect="off"
               aria-describedby="editor-hint"
-              placeholder="Paste your SVG markup here…"
+              placeholder="Paste SVG markup to preview and export…"
             ></textarea>
           </div>
         </div>
         <p id="editor-hint" class="sr-only">
-          Type or paste SVG markup. The preview on the right updates as you type.
+          Free online SVG editor: type or paste SVG markup. Live preview updates as you type. Export React
+          JSX, React Native, PNG, or Data URI, or share a link — all in your browser.
         </p>
       </section>
 
@@ -379,7 +428,18 @@
             <h2 id="preview-heading" class="sr-only">Live preview</h2>
             <div class="preview-stage" id="preview-stage" data-bg="transparent">
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
-              <p class="preview-empty" id="preview-empty" hidden>Paste markup on the left to preview.</p>
+              <div class="preview-empty" id="preview-empty" hidden>
+                <div class="preview-empty-inner">
+                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-body">
+                    Paste or upload SVG on the left to preview live. Share a link, or export React JSX,
+                    React Native, PNG, or Data URI — free, in your browser.
+                  </p>
+                  <p class="preview-empty-links">
+                    <a href="/blog/svg-to-react">SVG to React guide</a>
+                  </p>
+                </div>
+              </div>
               <div class="preview-toolbar" role="toolbar" aria-label="Preview controls">
                 <div class="toolbar-group" role="group" aria-label="Zoom">
                   <button type="button" class="toolbar-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
@@ -514,6 +574,26 @@
       </section>
     </main>
 
-    <script defer src="app.min.js?v=c958639586"></script>
+    <noscript>
+      <div class="noscript-note">
+        <p>
+          <strong>SVGEditor</strong> is a free online SVG editor. With JavaScript enabled you can paste or
+          upload SVG, preview live, share a link, and export React JSX, React Native, PNG, or Data URI —
+          entirely in your browser.
+        </p>
+        <p>
+          Guides:
+          <a href="/blog/svg-to-react">Convert SVG to React (JSX)</a>
+          ·
+          <a href="/svg-to-react">SVG to React converter</a>
+          ·
+          <a href="/privacy">Privacy</a>
+          ·
+          <a href="/terms">Terms</a>
+        </p>
+      </div>
+    </noscript>
+
+    <script defer src="app.min.js?v=61ef7a6720"></script>
   </body>
 </html>
