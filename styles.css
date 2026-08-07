@@ -621,6 +621,35 @@ body.legal-page {
   padding: 0.9rem 0 0;
 }
 
+.article-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.article-breadcrumbs a {
+  color: #7dd3fc;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(125, 211, 252, 0.3);
+}
+
+.article-breadcrumbs a:hover {
+  color: #ecfeff;
+}
+
+.article-breadcrumbs-sep {
+  opacity: 0.45;
+}
+
+.article-breadcrumbs [aria-current="page"] {
+  color: #9fb6d1;
+}
+
 .article-byline-avatar {
   flex: 0 0 auto;
   width: 2.75rem;
