@@ -6,7 +6,7 @@
     <title>SVG Editor — Free Online SVG Preview &amp; Code Editor</title>
     <meta
       name="description"
-      content="Paste or upload SVG and preview it live. Free online SVG editor with share, React/PNG export, and a side-by-side preview — no account, runs in your browser."
+      content="Free online SVG editor — paste or upload SVG, preview live, share, export React or PNG. No account, runs in your browser."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -22,11 +22,12 @@
     <meta property="og:title" content="SVG Editor — Free Online SVG Preview &amp; Code Editor" />
     <meta
       property="og:description"
-      content="Paste or upload SVG and preview it live. Share links, export React or PNG — free, no account, runs in your browser."
+      content="Free online SVG editor — paste or upload SVG, preview live, share, export React or PNG. No account, runs in your browser."
     />
     <meta property="og:url" content="https://getsvgeditor.com/" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://getsvgeditor.com/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="SVGEditor — paste SVG code on the left, see the preview on the right" />
@@ -35,9 +36,13 @@
     <meta name="twitter:title" content="SVG Editor — Free Online SVG Preview &amp; Code Editor" />
     <meta
       name="twitter:description"
-      content="Paste or upload SVG and preview it live. Share links, export React or PNG — free, no account, runs in your browser."
+      content="Free online SVG editor — paste or upload SVG, preview live, share, export React or PNG. No account, runs in your browser."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="SVGEditor — paste SVG code on the left, see the preview on the right"
+    />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -66,29 +71,84 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.min.css?v=de0f725c66" />
+    <link rel="stylesheet" href="styles.min.css?v=d510c54977" />
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "SVGEditor",
-        "alternateName": ["SVG Editor", "Get SVG Editor"],
-        "url": "https://getsvgeditor.com/",
-        "description": "Paste or upload SVG and preview it live. Free online SVG editor with share, React/PNG export, and a side-by-side preview — no account, runs in your browser.",
-        "applicationCategory": "DesignApplication",
-        "operatingSystem": "Any",
-        "browserRequirements": "Requires a modern browser with JavaScript enabled",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "featureList": [
-          "Live SVG preview",
-          "Share link and embed",
-          "Export to React, React Native, PNG, and Data URI",
-          "Runs entirely in the browser"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://getsvgeditor.com/#organization",
+            "name": "SVGEditor",
+            "url": "https://getsvgeditor.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://getsvgeditor.com/apple-touch-icon.png",
+              "width": 180,
+              "height": 180
+            },
+            "sameAs": [
+              "https://github.com/rryaboshtan",
+              "https://github.com/rryaboshtan/SvgViewer",
+              "https://www.linkedin.com/in/roman-riaboshtan",
+              "https://dev.to/roman_riaboshtan",
+              "https://www.reddit.com/user/Roman_Riaboshtan"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://getsvgeditor.com/#website",
+            "name": "SVGEditor",
+            "url": "https://getsvgeditor.com/",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" }
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://getsvgeditor.com/#app",
+            "name": "SVGEditor",
+            "alternateName": ["SVG Editor", "Get SVG Editor", "Free online SVG editor"],
+            "url": "https://getsvgeditor.com/",
+            "description": "Free online SVG editor — paste or upload SVG, preview live, share, export React or PNG. No account, runs in your browser.",
+            "applicationCategory": "DesignApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires a modern browser with JavaScript enabled",
+            "inLanguage": "en",
+            "image": "https://getsvgeditor.com/og-image.jpg",
+            "screenshot": "https://getsvgeditor.com/og-image.jpg",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Live SVG preview",
+              "Share link and embed",
+              "Export to React, React Native, PNG, and Data URI",
+              "Runs entirely in the browser"
+            ],
+            "sameAs": [
+              "https://github.com/rryaboshtan",
+              "https://github.com/rryaboshtan/SvgViewer",
+              "https://www.linkedin.com/in/roman-riaboshtan",
+              "https://dev.to/roman_riaboshtan",
+              "https://www.reddit.com/user/Roman_Riaboshtan"
+            ],
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" },
+            "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
+            "potentialAction": {
+              "@type": "UseAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://getsvgeditor.com/",
+                "actionPlatform": [
+                  "http://schema.org/DesktopWebPlatform",
+                  "http://schema.org/MobileWebPlatform"
+                ]
+              }
+            }
+          }
         ]
       }
     </script>
@@ -147,7 +207,7 @@
         </span>
         <div class="brand-text">
           <h1 class="brand-name">SVGEditor</h1>
-          <p class="brand-tagline">Code in · vector out</p>
+          <p class="brand-tagline brand-tagline-seo">Free online SVG editor — preview, share, export</p>
         </div>
       </div>
       <div class="header-meta">
@@ -454,6 +514,6 @@
       </section>
     </main>
 
-    <script defer src="app.min.js?v=de0f725c66"></script>
+    <script defer src="app.min.js?v=d510c54977"></script>
   </body>
 </html>
