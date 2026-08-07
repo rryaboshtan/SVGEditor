@@ -1188,6 +1188,22 @@ function closeShareMenu() {
   if (shareMenu) shareMenu.open = false;
 }
 
+const toolFaq = document.querySelector(".tool-faq");
+
+function closeToolFaq() {
+  if (toolFaq) toolFaq.open = false;
+}
+
+if (toolFaq) {
+  document.addEventListener("pointerdown", function (e) {
+    if (!toolFaq.open) return;
+    if (!toolFaq.contains(e.target)) closeToolFaq();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeToolFaq();
+  });
+}
+
 function flashShareButton(btn, label) {
   if (!btn) return;
   const labelEl = btn.querySelector(".share-menu-item-label") || btn;
@@ -2037,7 +2053,7 @@ if (downloadPngBtn) {
   });
 }
 
-setActiveTab("preview");
+setActiveTab(document.body.getAttribute("data-default-tab") || "preview");
 
 /* ——— Mobile: Edit | Preview (single panel under 900px) ——— */
 const mobileModeBtns = document.querySelectorAll(".mobile-mode-btn");

@@ -26,6 +26,9 @@
 /og-image.jpg
   Cache-Control: public, max-age=604800
 
+/blog/svg-to-react-og.jpg
+  Cache-Control: public, max-age=604800
+
 # HTML stays fresher + CSP (frame-ancestors only works via HTTP header, not <meta>)
 /
   Cache-Control: public, max-age=300
