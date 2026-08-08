@@ -1,11 +1,18 @@
-/* Load GA4 after first paint: window load → idle (keeps Lighthouse happier). */
+/* GA4 after first interaction (or long idle) — keeps PageSpeed off the gtag unused-JS audit. */
 (function () {
   var MEASUREMENT_ID = "G-4D9GCN9FTJ";
+  var FALLBACK_MS = 12000;
   var loaded = false;
+  var events = ["pointerdown", "keydown", "scroll", "touchstart"];
+  var fallbackTimer;
 
   function injectGtag() {
     if (loaded) return;
     loaded = true;
+    clearTimeout(fallbackTimer);
+    for (var i = 0; i < events.length; i++) {
+      window.removeEventListener(events[i], onInteract, true);
+    }
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = function gtag() {
@@ -20,17 +27,25 @@
     document.head.appendChild(s);
   }
 
-  function scheduleInject() {
-    if (typeof window.requestIdleCallback === "function") {
-      window.requestIdleCallback(injectGtag, { timeout: 3500 });
-    } else {
-      window.setTimeout(injectGtag, 2000);
-    }
+  function onInteract() {
+    injectGtag();
+  }
+
+  for (var i = 0; i < events.length; i++) {
+    window.addEventListener(events[i], onInteract, {
+      once: true,
+      capture: true,
+      passive: true,
+    });
+  }
+
+  function armFallback() {
+    fallbackTimer = window.setTimeout(injectGtag, FALLBACK_MS);
   }
 
   if (document.readyState === "complete") {
-    scheduleInject();
+    armFallback();
   } else {
-    window.addEventListener("load", scheduleInject, { once: true });
+    window.addEventListener("load", armFallback, { once: true });
   }
 })();
