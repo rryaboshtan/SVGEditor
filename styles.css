@@ -1916,10 +1916,10 @@ body.is-resizing .preview-stage {
   display: inline-flex;
   align-items: center;
   gap: 0.42rem;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #8eabca;
   transition: color 0.25s var(--ease), opacity 0.25s var(--ease);
 }

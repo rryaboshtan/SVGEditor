@@ -2234,7 +2234,7 @@ if (sharedRaw && extractSvgMarkup(sharedRaw)) {
 
 const startupSvg = sharedSvg || DEFAULT_SVG;
 showingStartupSample = !sharedSvg;
-applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — replace or clear to start");
+applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — paste your own to edit");
 refreshSampleChip();
 
 const SHARE_NOTICE_KEY = "svgeditor-share-notice-dismissed";
