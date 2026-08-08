@@ -297,27 +297,83 @@ textarea {
   z-index: 2;
   flex: 0 0 auto;
   margin: 0;
-  padding: 0.28rem clamp(1rem, 2.5vw, 1.75rem) 0.34rem;
+  padding: 0.28rem clamp(1rem, 2.5vw, 1.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
   border-bottom: 1px solid rgba(125, 211, 252, 0.07);
-  background: linear-gradient(180deg, rgba(6, 14, 24, 0.2), rgba(4, 10, 18, 0.08));
-  color: #a3bdd6;
+  background: rgba(5, 12, 22, 0.22);
+  color: #8eabca;
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.3;
   letter-spacing: 0.01em;
 }
 
+.app-pitch-lead {
+  min-width: 0;
+  color: #8eabca;
+}
+
+.app-pitch-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.app-pitch-dot {
+  opacity: 0.45;
+}
+
 .app-pitch a {
-  color: #7dd3fc;
+  color: #9fd8f5;
   text-decoration: none;
-  border-bottom: 1px solid rgba(125, 211, 252, 0.28);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.14);
   white-space: nowrap;
+  border-bottom: 0;
+  transition:
+    color 0.18s var(--ease),
+    background 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
 }
 
 .app-pitch a:hover {
-  color: #e0f2fe;
-  border-bottom-color: rgba(224, 242, 254, 0.45);
+  color: #f0f9ff;
+  background: rgba(125, 211, 252, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.28);
+  border-bottom-color: transparent;
+}
+
+.sample-chip {
+  margin: 0;
+  margin-left: 0.45rem;
+  padding: 0.18rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.22);
+  color: #9fd8f5;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sample-chip:hover {
+  color: #f0f9ff;
+  background: rgba(125, 211, 252, 0.16);
+}
+
+.sample-chip[hidden] {
+  display: none !important;
 }
 
 .noscript-note {
@@ -379,10 +435,10 @@ textarea {
     0 0 0 1px rgba(186, 230, 253, 0.45),
     0 8px 22px -10px rgba(14, 165, 233, 0.9);
   text-decoration: none;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
   transition:
@@ -448,10 +504,10 @@ textarea {
   border-radius: 999px;
   color: #7ea0c2;
   text-decoration: none;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
   transition:
     color 0.18s var(--ease),
     background 0.18s var(--ease);
@@ -1242,10 +1298,10 @@ body.is-resizing .preview-stage {
   background: transparent;
   color: #8eabca;
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   cursor: pointer;
   transition:
     background 0.18s var(--ease),
@@ -1310,10 +1366,10 @@ body.is-resizing .preview-stage {
 
 .code-output-label {
   margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #8eabca;
 }
 
@@ -1323,10 +1379,10 @@ body.is-resizing .preview-stage {
   background: rgba(34, 211, 238, 0.12);
   color: #7dd3fc;
   box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.22);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   cursor: pointer;
   border: 0;
 }
@@ -1393,10 +1449,10 @@ body.is-resizing .preview-stage {
   background: transparent;
   color: #8eabca;
   font-family: var(--font-sans);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   cursor: pointer;
   transition:
     background 0.18s var(--ease),
@@ -1482,10 +1538,10 @@ body.is-resizing .preview-stage {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #8eabca;
 }
 
@@ -1523,10 +1579,10 @@ body.is-resizing .preview-stage {
   border: 0;
   border-radius: 999px;
   padding: 0.38rem 0.8rem;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   cursor: pointer;
   transition:
     background 0.18s var(--ease),
@@ -2485,10 +2541,10 @@ body.is-resizing .preview-stage {
     background: transparent;
     color: #8eb4d4;
     font-family: var(--font-sans);
-    font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
     cursor: pointer;
     transition:
       background 0.18s var(--ease),
@@ -2637,9 +2693,14 @@ body.is-resizing .preview-stage {
     box-sizing: border-box;
   }
 
-  /* Clear is easy to fat-finger next to Share; desktop still has it + Ctrl+Z */
+  /* Clear is easy to fat-finger next to Share; desktop still has it */
   .panel-actions #btn-clear {
     display: none;
+  }
+
+  /* Sample chip adds chrome; on phone paste/select-all is enough */
+  .sample-chip {
+    display: none !important;
   }
 
   .panel-actions .btn-quiet {
@@ -2748,7 +2809,32 @@ body.is-resizing .preview-stage {
   }
 
   .panel-bar-tabs .preview-status {
+    display: block;
+    max-width: 100%;
+    margin-top: 0.2rem;
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .panel-bar-tabs {
+    flex-wrap: wrap;
+    row-gap: 0.2rem;
+  }
+
+  /* Pitch tool pills duplicate header nav on small screens */
+  .app-pitch-links {
     display: none;
+  }
+
+  .app-pitch {
+    justify-content: center;
+  }
+
+  .app-pitch-lead {
+    text-align: center;
+    width: 100%;
   }
 
   .preview-toolbar {
@@ -2868,16 +2954,43 @@ body.is-resizing .preview-stage {
   z-index: 4;
   flex: 0 0 auto;
   margin: 0;
-  padding: 0.55rem clamp(1rem, 2.5vw, 1.75rem);
+  padding: 0.45rem clamp(1rem, 2.5vw, 1.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   border-bottom: 1px solid rgba(56, 189, 248, 0.28);
   background: linear-gradient(90deg, rgba(14, 58, 92, 0.95), rgba(8, 28, 48, 0.92));
   color: #d7ecff;
   font-family: var(--font-sans);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: 0.01em;
   text-transform: none;
+}
+
+.share-notice-text {
+  min-width: 0;
+}
+
+.share-notice-dismiss {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.28rem 0.65rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.28);
+  color: #e0f2fe;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.share-notice-dismiss:hover {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .share-notice[hidden] {

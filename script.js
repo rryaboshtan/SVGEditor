@@ -34,15 +34,18 @@ const EMPTY_IDLE_HTML =
   '<div class="preview-empty-inner">' +
   '<p class="preview-empty-title">Live SVG preview</p>' +
   '<p class="preview-empty-body">' +
-  "Paste or upload SVG on the left to preview live. Share a link, or export React JSX, " +
-  "React Native, PNG, or Data URI — free, in your browser." +
+  "Paste or upload SVG on the left. Export React, React Native, PNG, or Data URI — or share a link." +
   "</p>" +
   '<p class="preview-empty-links">' +
-  '<a href="/blog/svg-to-react">SVG to React guide</a>' +
-  ' · ' +
-  '<a href="/blog/svg-to-png">SVG to PNG guide</a>' +
+  '<a href="/svg-to-react">React tool</a>' +
+  " · " +
+  '<a href="/svg-to-png">PNG tool</a>' +
   "</p>" +
   "</div>";
+
+const clearSampleBtn = document.getElementById("btn-clear-sample");
+const shareNoticeDismiss = document.getElementById("share-notice-dismiss");
+let showingStartupSample = false;
 
 function showEmptyIdle() {
   if (!empty) return;
@@ -922,8 +925,15 @@ function canRedo() {
   return userEdited && historyIndex < history.length - 1;
 }
 
+function refreshSampleChip() {
+  if (!clearSampleBtn) return;
+  clearSampleBtn.hidden = !(showingStartupSample && !userEdited && editor.value.trim());
+}
+
 function markUserEdited() {
   userEdited = true;
+  showingStartupSample = false;
+  refreshSampleChip();
 }
 
 function scheduleSelectionSafe() {
@@ -1046,7 +1056,14 @@ editor.addEventListener("keydown", function (event) {
     return;
   }
 
+  if (event.key === "Escape") {
+    editor.blur();
+    return;
+  }
+
   if (event.key === "Tab") {
+    // Indent only when text is selected; otherwise let Tab move focus (a11y).
+    if (editor.selectionStart === editor.selectionEnd) return;
     event.preventDefault();
     markUserEdited();
     flushHistory();
@@ -1087,7 +1104,7 @@ bgButtons.forEach(function (btn) {
   });
 });
 
-clearBtn.addEventListener("click", function () {
+function clearEditorContents() {
   markUserEdited();
   flushHistory();
   if (!editor.value.length) return;
@@ -1099,7 +1116,16 @@ clearBtn.addEventListener("click", function () {
   commitHistory();
   scheduleRender();
   refreshEditorChrome();
-});
+  setStatus("empty", "Editor cleared — paste SVG to start");
+}
+
+if (clearBtn) {
+  clearBtn.addEventListener("click", clearEditorContents);
+}
+
+if (clearSampleBtn) {
+  clearSampleBtn.addEventListener("click", clearEditorContents);
+}
 
 if (uploadBtn && fileUpload) {
   uploadBtn.addEventListener("click", function () {
@@ -1131,6 +1157,7 @@ if (uploadBtn && fileUpload) {
       scheduleRender();
       clearHighlight();
       setStatus("ok", "Uploaded " + file.name);
+      maybeShowOutputOnMobile();
     };
     reader.onerror = function () {
       setStatus("error", "Upload failed");
@@ -2044,9 +2071,24 @@ function setActiveTab(tab) {
   }
 }
 
-exportTabs.forEach(function (btn) {
+exportTabs.forEach(function (btn, index) {
   btn.addEventListener("click", function () {
     setActiveTab(btn.getAttribute("data-tab"));
+  });
+  btn.addEventListener("keydown", function (event) {
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft" && event.key !== "Home" && event.key !== "End") {
+      return;
+    }
+    event.preventDefault();
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % exportTabs.length;
+    if (event.key === "ArrowLeft") next = (index - 1 + exportTabs.length) % exportTabs.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = exportTabs.length - 1;
+    const target = exportTabs[next];
+    if (!target) return;
+    setActiveTab(target.getAttribute("data-tab"));
+    target.focus();
   });
 });
 
@@ -2056,43 +2098,63 @@ dataUriFormatBtns.forEach(function (btn) {
   });
 });
 
+function isPlaceholderExport(text) {
+  const t = String(text || "").trim();
+  return !t || /^\/\/\s*Paste valid SVG/i.test(t);
+}
+
+function flashCopyButton(btn, label) {
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.classList.add("is-copied");
+  btn.textContent = label;
+  window.setTimeout(function () {
+    btn.classList.remove("is-copied");
+    btn.textContent = original;
+  }, 1200);
+}
+
 document.querySelectorAll(".btn-copy[data-copy]").forEach(function (btn) {
-  btn.addEventListener("click", async function () {
+  btn.addEventListener("click", function () {
     const targetId = btn.getAttribute("data-copy");
     const el = document.getElementById(targetId);
     if (!el) return;
     const text = el.textContent || "";
-    try {
-      await navigator.clipboard.writeText(text);
-      btn.classList.add("is-copied");
-      btn.textContent = "Copied";
-      setTimeout(function () {
-        btn.classList.remove("is-copied");
-        btn.textContent = "Copy";
-      }, 1200);
-    } catch (err) {
-      btn.textContent = "Failed";
-      setTimeout(function () {
-        btn.textContent = "Copy";
-      }, 1200);
+    if (isPlaceholderExport(text)) {
+      setStatus("empty", "Nothing to copy yet — paste SVG first");
+      return;
     }
+    copyTextToClipboard(text)
+      .then(function () {
+        flashCopyButton(btn, "Copied");
+        setStatus("ok", "Copied to clipboard");
+      })
+      .catch(function () {
+        flashCopyButton(btn, "Failed");
+        setStatus("error", "Copy failed");
+      });
   });
 });
 
 if (downloadPngBtn) {
   downloadPngBtn.disabled = true;
   downloadPngBtn.addEventListener("click", function () {
-    if (!pngCanvas.width || !pngCanvas.height || pngEmpty && !pngEmpty.hidden) return;
+    if (!pngCanvas.width || !pngCanvas.height || (pngEmpty && !pngEmpty.hidden)) {
+      setStatus("empty", "Nothing to download — paste SVG first");
+      return;
+    }
     const link = document.createElement("a");
     link.download = "svgeditor-export.png";
     link.href = pngCanvas.toDataURL("image/png");
     link.click();
+    setStatus("ok", "PNG downloaded");
+    flashCopyButton(downloadPngBtn, "Downloaded");
   });
 }
 
 setActiveTab(document.body.getAttribute("data-default-tab") || "preview");
 
-/* ——— Mobile: Edit | Preview (single panel under 900px) ——— */
+/* ——— Mobile: Source | Output (single panel under 900px) ——— */
 const mobileModeBtns = document.querySelectorAll(".mobile-mode-btn");
 const mobileMq = window.matchMedia("(max-width: 900px)");
 
@@ -2119,6 +2181,13 @@ function setMobileMode(mode) {
       updateLineNumbers();
       if (mobileMq.matches) editor.focus();
     });
+  }
+}
+
+function maybeShowOutputOnMobile() {
+  if (!mobileMq.matches) return;
+  if (document.body.classList.contains("tool-page")) {
+    setMobileMode("preview");
   }
 }
 
@@ -2164,10 +2233,30 @@ if (sharedRaw && extractSvgMarkup(sharedRaw)) {
 }
 
 const startupSvg = sharedSvg || DEFAULT_SVG;
-applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : null);
+showingStartupSample = !sharedSvg;
+applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — replace or clear to start");
+refreshSampleChip();
 
+const SHARE_NOTICE_KEY = "svgeditor-share-notice-dismissed";
 if (shareNotice) {
-  shareNotice.hidden = !sharedSvg;
+  let dismissed = false;
+  try {
+    dismissed = sessionStorage.getItem(SHARE_NOTICE_KEY) === "1";
+  } catch (err) {
+    dismissed = false;
+  }
+  shareNotice.hidden = !sharedSvg || dismissed;
+}
+
+if (shareNoticeDismiss) {
+  shareNoticeDismiss.addEventListener("click", function () {
+    if (shareNotice) shareNotice.hidden = true;
+    try {
+      sessionStorage.setItem(SHARE_NOTICE_KEY, "1");
+    } catch (err) {
+      /* ignore */
+    }
+  });
 }
 
 if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {

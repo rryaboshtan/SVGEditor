@@ -74,7 +74,7 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.min.css?v=318f92069e" />
+    <link rel="stylesheet" href="styles.min.css?v=b8d587984d" />
 
     <script type="application/ld+json">
       {
@@ -244,7 +244,7 @@
       }
     </script>
   </head>
-  <body class="app-page tool-page" data-mobile-mode="edit" data-default-tab="react">
+  <body class="app-page tool-page" data-mobile-mode="preview" data-default-tab="react">
     <div class="ambiance" aria-hidden="true">
       <div class="ambiance-wash"></div>
       <div class="ambiance-glow ambiance-glow-a"></div>
@@ -331,7 +331,12 @@
     </header>
 
     <p id="share-notice" class="share-notice" hidden role="status">
-      From a share link — don’t trust the preview alone
+      <span class="share-notice-text"
+        >Shared SVG — preview only; don’t run untrusted markup as code.</span
+      >
+      <button type="button" class="share-notice-dismiss" id="share-notice-dismiss" aria-label="Dismiss notice">
+        Dismiss
+      </button>
     </p>
 
     <div class="tool-banner">
@@ -396,34 +401,39 @@
       </div>
     </div>
 
-    <div class="mobile-mode-switch" role="tablist" aria-label="Mobile workspace mode">
-      <button
-        type="button"
-        class="mobile-mode-btn is-active"
-        id="mobile-mode-edit"
-        role="tab"
-        data-mobile-mode="edit"
-        aria-selected="true"
-      >
-        Edit
-      </button>
+    <div class="mobile-mode-switch" role="tablist" aria-label="Source or output">
       <button
         type="button"
         class="mobile-mode-btn"
+        id="mobile-mode-edit"
+        role="tab"
+        data-mobile-mode="edit"
+        aria-selected="false"
+        aria-controls="workspace-source"
+      >
+        Source
+      </button>
+      <button
+        type="button"
+        class="mobile-mode-btn is-active"
         id="mobile-mode-preview"
         role="tab"
         data-mobile-mode="preview"
-        aria-selected="false"
+        aria-selected="true"
+        aria-controls="workspace-output"
       >
-        Preview
+        Output
       </button>
     </div>
 
     <main class="workspace" id="tool">
-      <section class="panel panel-editor" aria-labelledby="editor-heading">
+      <section class="panel panel-editor" id="workspace-source" aria-labelledby="editor-heading">
         <div class="panel-bar">
           <div class="panel-bar-left">
             <p id="editor-heading" class="panel-title">Source</p>
+            <button type="button" class="sample-chip" id="btn-clear-sample" hidden>
+              Clear sample
+            </button>
           </div>
           <div class="panel-actions">
             <input
@@ -500,13 +510,13 @@
         tabindex="0"
       ></div>
 
-      <section class="panel panel-preview" aria-labelledby="preview-heading">
+      <section class="panel panel-preview" id="workspace-output" aria-labelledby="preview-heading">
         <div class="panel-bar panel-bar-light panel-bar-tabs">
           <div class="export-tabs" role="tablist" aria-label="Output formats">
-            <button type="button" class="export-tab is-active" role="tab" id="tab-preview" data-tab="preview" aria-selected="true" aria-controls="panel-view-preview">
+            <button type="button" class="export-tab" role="tab" id="tab-preview" data-tab="preview" aria-selected="false" aria-controls="panel-view-preview">
               Preview
             </button>
-            <button type="button" class="export-tab" role="tab" id="tab-react" data-tab="react" aria-selected="false" aria-controls="panel-view-react">
+            <button type="button" class="export-tab is-active" role="tab" id="tab-react" data-tab="react" aria-selected="true" aria-controls="panel-view-react">
               React
             </button>
             <button type="button" class="export-tab" role="tab" id="tab-react-native" data-tab="react-native" aria-selected="false" aria-controls="panel-view-react-native">
@@ -526,11 +536,12 @@
 
         <div class="export-views">
           <div
-            class="export-view is-active"
+            class="export-view"
             id="panel-view-preview"
             role="tabpanel"
             aria-labelledby="tab-preview"
             data-view="preview"
+            hidden
           >
             <h2 id="preview-heading" class="sr-only">Live preview</h2>
             <div class="preview-stage" id="preview-stage" data-bg="transparent">
@@ -539,18 +550,17 @@
                 <div class="preview-empty-inner">
                   <p class="preview-empty-title">Live SVG preview</p>
                   <p class="preview-empty-body">
-                    Paste or upload SVG on the left to preview live. Share a link, or export React JSX,
-                    React Native, PNG, or Data URI — free, in your browser.
+                    Paste or upload SVG on the left. The React tab is ready — copy JSX, or switch to React Native / PNG.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/blog/svg-to-react">SVG to React guide</a>
+                    <a href="/blog/svg-to-react">React guide</a>
                   </p>
                 </div>
               </div>
               <div class="preview-toolbar" role="toolbar" aria-label="Preview controls">
                 <div class="toolbar-group" role="group" aria-label="Zoom">
                   <button type="button" class="toolbar-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
-                  <button type="button" class="toolbar-btn toolbar-zoom-value" id="zoom-reset" title="Reset zoom and position">100%</button>
+                  <button type="button" class="toolbar-btn toolbar-zoom-value" id="zoom-reset" title="Reset zoom and position" aria-label="Reset zoom to 100%">100%</button>
                   <button type="button" class="toolbar-btn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
                 </div>
                 <div class="toolbar-divider" aria-hidden="true"></div>
@@ -594,12 +604,11 @@
           </div>
 
           <div
-            class="export-view"
+            class="export-view is-active"
             id="panel-view-react"
             role="tabpanel"
             aria-labelledby="tab-react"
             data-view="react"
-            hidden
           >
             <div class="code-output-bar">
               <p class="code-output-label">React component</p>
@@ -632,12 +641,12 @@
             hidden
           >
             <div class="code-output-bar">
-              <p class="code-output-label">PNG export</p>
+              <p class="code-output-label">PNG export · 2× retina pixels</p>
               <button type="button" class="btn btn-copy" id="btn-download-png">Download PNG</button>
             </div>
             <div class="png-stage" id="png-stage" data-bg="transparent">
               <canvas id="png-canvas" class="png-canvas" aria-label="PNG preview"></canvas>
-              <p class="preview-empty" id="png-empty" hidden>Paste valid SVG to export PNG.</p>
+              <p class="preview-empty" id="png-empty" hidden>Paste valid SVG to export a transparent PNG (2×).</p>
             </div>
           </div>
 
@@ -681,6 +690,6 @@
       </section>
     </main>
 
-    <script defer src="app.min.js?v=318f92069e"></script>
+    <script defer src="app.min.js?v=b8d587984d"></script>
   </body>
 </html>
