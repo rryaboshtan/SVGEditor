@@ -18,7 +18,7 @@ cat vendor/lz-string.min.js svg-sanitize.js share-codec.js embed.js >"$TMP_EMBED
 npx --yes esbuild "$TMP_EMBED" --minify --outfile=embed.min.js
 
 # Cache-bust query from content hash so CDN/browsers never keep stale JS/CSS
-ASSET_V="$(cat app.min.js embed.min.js styles.min.css fonts.min.css | sha256sum | cut -c1-10)"
+ASSET_V="$(cat app.min.js embed.min.js styles.min.css fonts.min.css gtag-config.js | sha256sum | cut -c1-10)"
 
 stamp_assets() {
   local file="$1"
@@ -29,6 +29,7 @@ stamp_assets() {
     -e "s|(href=\"/?fonts\\.min\\.css)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
     -e "s|(src=\"/?app\\.min\\.js)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
     -e "s|(src=\"/?embed\\.min\\.js)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
+    -e "s|(src=\"/?gtag-config\\.js)(\\?v=[^\"]*)?\"|\\1?v=${ASSET_V}\"|g" \
     "$file" >"$tmp"
   mv "$tmp" "$file"
 }

@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#061018" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://cloudflareinsights.com; form-action 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://static.cloudflareinsights.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://cloudflareinsights.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; form-action 'none'; upgrade-insecure-requests"
     />
     <link rel="canonical" href="https://getsvgeditor.com/svg-to-react" />
 
@@ -74,7 +74,11 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.min.css?v=b8d587984d" />
+    <link rel="stylesheet" href="styles.min.css?v=33f6b6f191" />
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4D9GCN9FTJ"></script>
+    <script src="gtag-config.js?v=33f6b6f191"></script>
 
     <script type="application/ld+json">
       {
@@ -690,6 +694,6 @@
       </section>
     </main>
 
-    <script defer src="app.min.js?v=b8d587984d"></script>
+    <script defer src="app.min.js?v=33f6b6f191"></script>
   </body>
 </html>
