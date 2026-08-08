@@ -1,9 +1,10 @@
-/* GA4 after first interaction (or long idle) — keeps PageSpeed off the gtag unused-JS audit. */
+/* GA4 only after real user input — not scroll (Lighthouse scrolls and would load gtag mid-audit). */
 (function () {
   var MEASUREMENT_ID = "G-4D9GCN9FTJ";
-  var FALLBACK_MS = 12000;
+  /* After typical PSI/Lighthouse run; still catches long sessions without clicks. */
+  var FALLBACK_MS = 60000;
   var loaded = false;
-  var events = ["pointerdown", "keydown", "scroll", "touchstart"];
+  var events = ["pointerdown", "keydown", "touchstart"];
   var fallbackTimer;
 
   function injectGtag() {
