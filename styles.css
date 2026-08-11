@@ -845,6 +845,41 @@ body.legal-page {
   border-bottom: 1px solid rgba(125, 211, 252, 0.3);
 }
 
+.article-toc {
+  margin: 0 0 1.75rem;
+  padding: 1rem 1.15rem 1.05rem;
+  max-width: 42rem;
+  border-radius: 14px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(7, 21, 38, 0.65);
+}
+
+.article-toc-label {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.article-toc-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: #a8c2da;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.article-toc-list a {
+  color: #7dd3fc;
+  text-decoration: none;
+}
+
+.article-toc-list a:hover {
+  text-decoration: underline;
+}
+
 .article-figure {
   margin: 0 0 1.75rem;
   max-width: 100%;
