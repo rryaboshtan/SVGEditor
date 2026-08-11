@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="Roman Riaboshtan" />
     <meta name="theme-color" content="#061018" />
-    <link rel="canonical" href="https://getsvgeditor.com/blog/svg-to-react" />
+    <link rel="canonical" href="https://getsvgeditor.com/svg-to-react" />
 
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="SVGEditor" />
@@ -53,7 +53,7 @@
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/styles.min.css?v=4b82ef1c25" />
+    <link rel="stylesheet" href="/styles.min.css?v=5006e98df8" />
 
     <script type="application/ld+json">
       {
@@ -251,7 +251,7 @@
     </script>
 
     <!-- Google Analytics (GA4) — delayed via gtag-config.js -->
-    <script defer src="/gtag-config.js?v=4b82ef1c25"></script>
+    <script defer src="/gtag-config.js?v=5006e98df8"></script>
   </head>
   <body class="legal-page article-page">
     <div class="ambiance" aria-hidden="true">
@@ -878,6 +878,16 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
             <p>
               Yes — use <strong>Copy link</strong> or <strong>Copy iframe</strong> in the editor. The payload
               lives in the URL hash on their side; treat share links like the file itself.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="related">Related guides</h2>
+            <p>
+              <a href="/blog/svg-to-png">Convert SVG to PNG</a> — retina sizing and transparent downloads when
+              you need a bitmap handoff.<br />
+              <a href="/blog/sanitize-svg">Sanitize SVG for XSS</a> — strip
+              <code>script</code>, <code>foreignObject</code>, and hostile SMIL before preview or share.
             </p>
           </section>
 
