@@ -213,13 +213,25 @@ function parseSvg(markup) {
 }
 
 let editorMetricsCache = null;
+let editorWidthStale = true;
+let lineNumbersRaf = 0;
+let editorChromeRaf = 0;
+let highlightPosRaf = 0;
 
 function invalidateEditorMetrics() {
-  editorMetricsCache = null;
+  editorWidthStale = true;
 }
 
 function getEditorMetrics() {
-  if (editorMetricsCache) return editorMetricsCache;
+  if (editorMetricsCache && !editorWidthStale) return editorMetricsCache;
+  if (editorMetricsCache && editorWidthStale) {
+    editorMetricsCache.contentWidth = Math.max(
+      1,
+      editor.clientWidth - editorMetricsCache.paddingLeft - editorMetricsCache.paddingRight
+    );
+    editorWidthStale = false;
+    return editorMetricsCache;
+  }
   const style = window.getComputedStyle(editor);
   const paddingLeft = parseFloat(style.paddingLeft) || 0;
   const paddingRight = parseFloat(style.paddingRight) || 0;
@@ -233,7 +245,22 @@ function getEditorMetrics() {
     paddingTop: parseFloat(style.paddingTop) || 0,
     paddingBottom: parseFloat(style.paddingBottom) || 0,
   };
+  editorWidthStale = false;
   return editorMetricsCache;
+}
+
+/** Prefer ResizeObserver content box so we don't flush layout via clientWidth. */
+function setEditorContentWidthFromBox(contentBoxWidth) {
+  const width = Math.max(1, Number(contentBoxWidth) || 0);
+  if (!editorMetricsCache) {
+    getEditorMetrics();
+  }
+  if (!editorMetricsCache) return;
+  editorMetricsCache.contentWidth = Math.max(
+    1,
+    width - editorMetricsCache.paddingLeft - editorMetricsCache.paddingRight
+  );
+  editorWidthStale = false;
 }
 
 function getEditorContentWidth() {
@@ -516,7 +543,7 @@ function applySelection(index) {
     node.classList.add("is-selected");
   });
 
-  positionHighlightTargets(paintTargets);
+  scheduleHighlightPosition();
 
   const tag = elementRanges[index].name;
   const resource = resolveResourceNode(sourceNode);
@@ -547,7 +574,7 @@ function selectionFromCaret() {
   }
 
   if (best === selectedIndex && inspectActive) {
-    positionHighlightTargets(selectedPaintTargets);
+    scheduleHighlightPosition();
     return;
   }
 
@@ -668,6 +695,23 @@ function updateLineNumbers() {
   lineNumbers.textContent = parts.join("\n") || "1";
 }
 
+function scheduleUpdateLineNumbers() {
+  if (lineNumbersRaf) return;
+  lineNumbersRaf = requestAnimationFrame(function () {
+    lineNumbersRaf = 0;
+    updateLineNumbers();
+  });
+}
+
+function scheduleHighlightPosition() {
+  if (!inspectActive) return;
+  if (highlightPosRaf) return;
+  highlightPosRaf = requestAnimationFrame(function () {
+    highlightPosRaf = 0;
+    if (inspectActive) positionHighlightTargets(selectedPaintTargets);
+  });
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -762,9 +806,24 @@ function syncEditorChromeScroll() {
 }
 
 function refreshEditorChrome() {
+  // Read scroll before DOM writes so we don't force a synchronous reflow.
+  const scrollTop = editor.scrollTop;
+  const scrollLeft = editor.scrollLeft;
   updateLineNumbers();
   updateSyntaxHighlight();
-  syncEditorChromeScroll();
+  if (lineNumbers) lineNumbers.scrollTop = scrollTop;
+  if (editorHighlight) {
+    editorHighlight.scrollTop = scrollTop;
+    editorHighlight.scrollLeft = scrollLeft;
+  }
+}
+
+function scheduleRefreshEditorChrome() {
+  if (editorChromeRaf) return;
+  editorChromeRaf = requestAnimationFrame(function () {
+    editorChromeRaf = 0;
+    refreshEditorChrome();
+  });
 }
 
 function syncLineNumbersScroll() {
@@ -779,7 +838,7 @@ function applyPreviewZoom() {
     zoomResetBtn.textContent = Math.round(previewZoom * 100) + "%";
   }
   if (inspectActive) {
-    positionHighlightTargets(selectedPaintTargets);
+    scheduleHighlightPosition();
   }
 }
 
@@ -876,7 +935,7 @@ function applyEditorState(state) {
     showEmptyIdle();
   }
   clearHighlight();
-  refreshEditorChrome();
+  scheduleRefreshEditorChrome();
   scheduleRender();
   requestAnimationFrame(function () {
     suppressSelectionSync = false;
@@ -943,13 +1002,13 @@ function scheduleSelectionSafe() {
 
 editor.addEventListener("input", function () {
   markUserEdited();
-  refreshEditorChrome();
+  scheduleRefreshEditorChrome();
   scheduleRender();
   scheduleCommitHistory();
 });
 editor.addEventListener("scroll", syncEditorChromeScroll);
 editor.addEventListener("keyup", function (event) {
-  updateLineNumbers();
+  scheduleUpdateLineNumbers();
   const key = event.key.toLowerCase();
   if (event.ctrlKey || event.metaKey || key === "control" || key === "meta" || key === "z" || key === "y") {
     return;
@@ -1074,7 +1133,7 @@ editor.addEventListener("keydown", function (event) {
     editor.selectionStart = editor.selectionEnd = selectionStart + 2;
     commitHistory();
     scheduleRender();
-    refreshEditorChrome();
+    scheduleRefreshEditorChrome();
     return;
   }
 
@@ -1115,7 +1174,7 @@ function clearEditorContents() {
   editor.setSelectionRange(0, 0);
   commitHistory();
   scheduleRender();
-  refreshEditorChrome();
+  scheduleRefreshEditorChrome();
   setStatus("empty", "Editor cleared — paste SVG to start");
 }
 
@@ -1153,7 +1212,7 @@ if (uploadBtn && fileUpload) {
       editor.focus();
       editor.setSelectionRange(0, 0);
       commitHistory();
-      refreshEditorChrome();
+      scheduleRefreshEditorChrome();
       scheduleRender();
       clearHighlight();
       setStatus("ok", "Uploaded " + file.name);
@@ -1632,14 +1691,19 @@ canvas.addEventListener("pointercancel", onPreviewPointerEnd);
 
 window.addEventListener("resize", function () {
   invalidateEditorMetrics();
-  updateLineNumbers();
+  scheduleUpdateLineNumbers();
   if (inspectActive) scheduleSelection();
 });
 
 if (typeof ResizeObserver !== "undefined") {
-  new ResizeObserver(function () {
-    invalidateEditorMetrics();
-    updateLineNumbers();
+  new ResizeObserver(function (entries) {
+    const entry = entries && entries[0];
+    if (entry && entry.contentRect && entry.contentRect.width > 0) {
+      setEditorContentWidthFromBox(entry.contentRect.width);
+    } else {
+      invalidateEditorMetrics();
+    }
+    scheduleUpdateLineNumbers();
   }).observe(editor);
 }
 previewStage.addEventListener("scroll", function () {
@@ -2168,7 +2232,7 @@ function setMobileMode(mode) {
   });
   if (next === "preview") {
     window.requestAnimationFrame(function () {
-      updateLineNumbers();
+      scheduleUpdateLineNumbers();
       if (latestMarkup) {
         if (activeTab === "png" || activeTab === "preview") {
           updateExports(latestMarkup);
@@ -2178,7 +2242,7 @@ function setMobileMode(mode) {
     });
   } else {
     window.requestAnimationFrame(function () {
-      updateLineNumbers();
+      scheduleUpdateLineNumbers();
       if (mobileMq.matches) editor.focus();
     });
   }
@@ -2217,7 +2281,7 @@ function applyStartupSvg(markup, statusMsg) {
   commitHistory();
   applyPreviewZoom();
   renderPreview(markup);
-  refreshEditorChrome();
+  scheduleRefreshEditorChrome();
   if (statusMsg) setStatus("ok", statusMsg);
 }
 
@@ -2264,7 +2328,7 @@ if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {
 }
 
 function warmEditorChrome() {
-  refreshEditorChrome();
+  scheduleRefreshEditorChrome();
 }
 
 if (typeof requestIdleCallback === "function") {
@@ -2290,7 +2354,7 @@ function applySplit(percent) {
   invalidateEditorMetrics();
   // Defer layout reads until after the split write paints.
   requestAnimationFrame(function () {
-    updateLineNumbers();
+    scheduleUpdateLineNumbers();
     syncEditorChromeScroll();
   });
 }
@@ -2368,10 +2432,17 @@ let chromeDragging = false;
 let chromeDragStartY = 0;
 let chromeDragStartCollapse = 0;
 let chromeDragMoved = false;
+let cachedChromeNatural = 0;
+
+function measureChromeNaturalHeight() {
+  if (!appChrome) return 0;
+  cachedChromeNatural = Math.max(0, Math.round(appChrome.offsetHeight));
+  return cachedChromeNatural;
+}
 
 function chromeNaturalHeight() {
-  if (!appChrome) return 0;
-  return Math.max(0, Math.round(appChrome.offsetHeight));
+  if (cachedChromeNatural > 0) return cachedChromeNatural;
+  return measureChromeNaturalHeight();
 }
 
 function toggleChromeCollapse() {
@@ -2386,12 +2457,24 @@ function toggleChromeCollapse() {
 
 function applyChromeCollapse(px, opts) {
   const options = opts || {};
-  const natural = chromeNaturalHeight();
+  const natural =
+    options.natural != null ? Math.max(0, options.natural) : chromeNaturalHeight();
+  if (options.natural != null) cachedChromeNatural = natural;
   const max = Math.max(0, natural);
-  chromeCollapsePx = Math.min(max, Math.max(0, Math.round(px)));
-  chromeCollapsePctValue = max > 0 ? Math.round((chromeCollapsePx / max) * 100) : 0;
+  const nextPx = Math.min(max, Math.max(0, Math.round(px)));
+  const nextPct = max > 0 ? Math.round((nextPx / max) * 100) : 0;
+  const nextMax = max > 0 && nextPx >= max - 1;
+  if (
+    nextPx === chromeCollapsePx &&
+    nextPct === chromeCollapsePctValue &&
+    document.body.classList.contains("is-chrome-max") === nextMax
+  ) {
+    return;
+  }
+  chromeCollapsePx = nextPx;
+  chromeCollapsePctValue = nextPct;
   document.body.style.setProperty("--chrome-collapse", chromeCollapsePx + "px");
-  document.body.classList.toggle("is-chrome-max", max > 0 && chromeCollapsePx >= max - 1);
+  document.body.classList.toggle("is-chrome-max", nextMax);
   if (!options.skipStore) {
     try {
       localStorage.setItem(CHROME_STORAGE_KEY, String(chromeCollapsePctValue));
@@ -2401,15 +2484,17 @@ function applyChromeCollapse(px, opts) {
   }
   invalidateEditorMetrics();
   requestAnimationFrame(function () {
-    updateLineNumbers();
+    scheduleUpdateLineNumbers();
     syncEditorChromeScroll();
   });
 }
 
 function applyChromeCollapsePct(pct, opts) {
-  const natural = chromeNaturalHeight();
+  const options = opts || {};
+  const natural =
+    options.natural != null ? Math.max(0, options.natural) : chromeNaturalHeight();
   const clamped = Math.min(100, Math.max(0, Number(pct) || 0));
-  applyChromeCollapse((natural * clamped) / 100, opts);
+  applyChromeCollapse((natural * clamped) / 100, options);
 }
 
 function restoreChromeCollapse() {
@@ -2484,13 +2569,31 @@ if (appChrome && chromeShutter) {
   });
 
   window.addEventListener("resize", function () {
-    applyChromeCollapsePct(chromeCollapsePctValue, { skipStore: true });
+    cachedChromeNatural = 0;
+    requestAnimationFrame(function () {
+      const natural = measureChromeNaturalHeight();
+      applyChromeCollapsePct(chromeCollapsePctValue, {
+        skipStore: true,
+        natural: natural,
+      });
+    });
   });
 
   if (typeof ResizeObserver !== "undefined") {
-    const chromeRo = new ResizeObserver(function () {
+    const chromeRo = new ResizeObserver(function (entries) {
       if (chromeDragging) return;
-      applyChromeCollapsePct(chromeCollapsePctValue, { skipStore: true });
+      const entry = entries && entries[0];
+      let natural = 0;
+      if (entry && entry.borderBoxSize && entry.borderBoxSize[0]) {
+        natural = Math.max(0, Math.round(entry.borderBoxSize[0].blockSize));
+      } else if (entry && entry.contentRect) {
+        natural = Math.max(0, Math.round(entry.contentRect.height));
+      }
+      if (natural > 0) cachedChromeNatural = natural;
+      applyChromeCollapsePct(chromeCollapsePctValue, {
+        skipStore: true,
+        natural: natural || chromeNaturalHeight(),
+      });
     });
     chromeRo.observe(appChrome);
   }
