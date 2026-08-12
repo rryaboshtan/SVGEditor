@@ -2357,3 +2357,145 @@ if (splitter && workspace) {
     }
   });
 }
+
+/* ——— Chrome shutter (hide header / enlarge workspace) ——— */
+const appChrome = document.getElementById("app-chrome");
+const chromeShutter = document.getElementById("chrome-shutter");
+const CHROME_STORAGE_KEY = "svgeditor-chrome-collapse-pct";
+let chromeCollapsePx = 0;
+let chromeCollapsePctValue = 0;
+let chromeDragging = false;
+let chromeDragStartY = 0;
+let chromeDragStartCollapse = 0;
+
+function chromeNaturalHeight() {
+  if (!appChrome) return 0;
+  return Math.max(0, Math.round(appChrome.offsetHeight));
+}
+
+function applyChromeCollapse(px, opts) {
+  const options = opts || {};
+  const natural = chromeNaturalHeight();
+  const max = Math.max(0, natural);
+  chromeCollapsePx = Math.min(max, Math.max(0, Math.round(px)));
+  chromeCollapsePctValue = max > 0 ? Math.round((chromeCollapsePx / max) * 100) : 0;
+  document.body.style.setProperty("--chrome-collapse", chromeCollapsePx + "px");
+  document.body.classList.toggle("is-chrome-max", max > 0 && chromeCollapsePx >= max - 1);
+  if (chromeShutter) {
+    chromeShutter.setAttribute("aria-valuenow", String(chromeCollapsePctValue));
+  }
+  if (!options.skipStore) {
+    try {
+      localStorage.setItem(CHROME_STORAGE_KEY, String(chromeCollapsePctValue));
+    } catch (err) {
+      /* ignore */
+    }
+  }
+  invalidateEditorMetrics();
+  requestAnimationFrame(function () {
+    updateLineNumbers();
+    syncEditorChromeScroll();
+  });
+}
+
+function applyChromeCollapsePct(pct, opts) {
+  const natural = chromeNaturalHeight();
+  const clamped = Math.min(100, Math.max(0, Number(pct) || 0));
+  applyChromeCollapse((natural * clamped) / 100, opts);
+}
+
+function restoreChromeCollapse() {
+  let pct = 0;
+  try {
+    const raw = localStorage.getItem(CHROME_STORAGE_KEY);
+    if (raw != null && raw !== "") pct = Number(raw);
+  } catch (err) {
+    pct = 0;
+  }
+  applyChromeCollapsePct(pct, { skipStore: true });
+}
+
+if (appChrome && chromeShutter) {
+  requestAnimationFrame(function () {
+    restoreChromeCollapse();
+  });
+
+  chromeShutter.addEventListener("pointerdown", function (event) {
+    if (event.button != null && event.button !== 0) return;
+    chromeDragging = true;
+    chromeDragStartY = event.clientY;
+    chromeDragStartCollapse = chromeCollapsePx;
+    chromeShutter.classList.add("is-active");
+    document.body.classList.add("is-chrome-resizing");
+    try {
+      chromeShutter.setPointerCapture(event.pointerId);
+    } catch (err) {
+      /* ignore */
+    }
+    event.preventDefault();
+  });
+
+  chromeShutter.addEventListener("pointermove", function (event) {
+    if (!chromeDragging) return;
+    const delta = chromeDragStartY - event.clientY;
+    applyChromeCollapse(chromeDragStartCollapse + delta);
+  });
+
+  function endChromeDrag(event) {
+    if (!chromeDragging) return;
+    chromeDragging = false;
+    chromeShutter.classList.remove("is-active");
+    document.body.classList.remove("is-chrome-resizing");
+    if (event && event.pointerId != null) {
+      try {
+        chromeShutter.releasePointerCapture(event.pointerId);
+      } catch (err) {
+        /* ignore */
+      }
+    }
+  }
+
+  chromeShutter.addEventListener("pointerup", endChromeDrag);
+  chromeShutter.addEventListener("pointercancel", endChromeDrag);
+
+  chromeShutter.addEventListener("dblclick", function (event) {
+    event.preventDefault();
+    const natural = chromeNaturalHeight();
+    if (natural <= 0) return;
+    if (chromeCollapsePx >= natural - 1) {
+      applyChromeCollapse(0);
+    } else {
+      applyChromeCollapse(natural);
+    }
+  });
+
+  chromeShutter.addEventListener("keydown", function (event) {
+    const natural = chromeNaturalHeight();
+    const step = Math.max(12, Math.round(natural * 0.08));
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      applyChromeCollapse(chromeCollapsePx + step);
+    } else if (event.key === "ArrowDown") {
+      event.preventDefault();
+      applyChromeCollapse(chromeCollapsePx - step);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      applyChromeCollapse(natural);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      applyChromeCollapse(0);
+    }
+  });
+
+  window.addEventListener("resize", function () {
+    applyChromeCollapsePct(chromeCollapsePctValue, { skipStore: true });
+  });
+
+  if (typeof ResizeObserver !== "undefined") {
+    const chromeRo = new ResizeObserver(function () {
+      if (chromeDragging) return;
+      applyChromeCollapsePct(chromeCollapsePctValue, { skipStore: true });
+    });
+    chromeRo.observe(appChrome);
+  }
+}

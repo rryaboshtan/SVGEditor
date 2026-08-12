@@ -74,10 +74,10 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.min.css?v=cc3cf96f57" />
+    <link rel="stylesheet" href="styles.min.css?v=0b9fc6a27a" />
 
     <!-- Google Analytics (GA4) — delayed via gtag-config.js -->
-    <script defer src="gtag-config.js?v=cc3cf96f57"></script>
+    <script defer src="gtag-config.js?v=0b9fc6a27a"></script>
 
     <script type="application/ld+json">
       {
@@ -217,6 +217,7 @@
 
     <a class="skip-link" href="#editor">Skip to SVG editor</a>
 
+    <div class="app-chrome" id="app-chrome">
     <header class="site-header">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">
@@ -301,6 +302,22 @@
     <p class="app-pitch">
       <span class="app-pitch-lead">Paste, preview, and export — free in your browser</span>
     </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="chrome-shutter"
+      id="chrome-shutter"
+      aria-orientation="horizontal"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      aria-label="Drag to hide header and enlarge the workspace"
+      title="Drag up to hide the header · double-click to toggle"
+    >
+      <span class="chrome-shutter-grip" aria-hidden="true"></span>
+    </button>
 
     <div class="mobile-mode-switch" role="tablist" aria-label="Source or output">
       <button
@@ -621,6 +638,6 @@
       </div>
     </noscript>
 
-    <script defer src="app.min.js?v=cc3cf96f57"></script>
+    <script defer src="app.min.js?v=0b9fc6a27a"></script>
   </body>
 </html>
