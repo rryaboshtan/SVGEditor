@@ -220,6 +220,11 @@ textarea {
   will-change: transform, margin-bottom;
 }
 
+/* FAQ panel lives inside .app-chrome; raise the whole chrome above the shutter strip */
+body:has(.tool-faq[open]) .app-chrome {
+  z-index: 8;
+}
+
 body.is-chrome-max .app-chrome {
   pointer-events: none;
   visibility: hidden;
@@ -2727,11 +2732,11 @@ body.is-resizing .preview-stage {
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.3rem;
+    gap: 0.18rem;
     flex: 0 0 auto;
-    margin: 0.5rem 0.5rem 0;
-    padding: 0.3rem;
-    border-radius: 14px;
+    margin: 0.28rem 0.5rem 0;
+    padding: 0.16rem;
+    border-radius: 11px;
     background: rgba(8, 18, 32, 0.72);
     box-shadow:
       inset 0 0 0 1px rgba(125, 211, 252, 0.14),
@@ -2741,13 +2746,13 @@ body.is-resizing .preview-stage {
   .mobile-mode-btn {
     appearance: none;
     border: 0;
-    border-radius: 11px;
-    min-height: 2.55rem;
-    padding: 0.45rem 0.75rem;
+    border-radius: 9px;
+    min-height: 2.05rem;
+    padding: 0.28rem 0.65rem;
     background: transparent;
     color: #8eb4d4;
     font-family: var(--font-sans);
-    font-size: 0.82rem;
+    font-size: 0.76rem;
     font-weight: 700;
     letter-spacing: 0.01em;
     text-transform: none;
@@ -2861,23 +2866,14 @@ body.is-resizing .preview-stage {
     flex-shrink: 0;
   }
 
-  /* Keep GitHub visible on phones — legal links live in .mobile-legal */
+  /* Keep GitHub + tool links; Privacy/Terms stay in FAQ (tool pages) / desktop nav */
   .legal-nav a[href="/privacy"],
   .legal-nav a[href="/terms"] {
     display: none;
   }
 
   .mobile-legal {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    margin: 0.15rem 0.5rem 0;
-    padding: 0.15rem 0.35rem;
-    min-height: 1.35rem;
+    display: none !important;
   }
 
   .brand-name {
@@ -2937,8 +2933,8 @@ body.is-resizing .preview-stage {
     width: 100%;
     justify-content: center;
     min-width: 0;
-    min-height: 2.55rem;
-    padding: 0.45rem 0.32rem;
+    min-height: 2.15rem;
+    padding: 0.32rem 0.28rem;
     font-size: 0.62rem;
     letter-spacing: 0.02em;
     overflow: hidden;
@@ -2992,7 +2988,7 @@ body.is-resizing .preview-stage {
   }
 
   .panel-bar-tabs {
-    padding: 0.35rem 0.45rem;
+    padding: 0.22rem 0.35rem;
     overflow: hidden;
   }
 
@@ -3004,8 +3000,8 @@ body.is-resizing .preview-stage {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    border-radius: 12px;
-    gap: 0.2rem;
+    border-radius: 10px;
+    gap: 0.14rem;
   }
 
   .export-tabs::-webkit-scrollbar {
@@ -3014,9 +3010,9 @@ body.is-resizing .preview-stage {
 
   .export-tab {
     flex: 0 0 auto;
-    min-height: 2.35rem;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.68rem;
+    min-height: 1.95rem;
+    padding: 0.28rem 0.62rem;
+    font-size: 0.66rem;
   }
 
   .tab-label-full {
@@ -3068,7 +3064,14 @@ body.is-resizing .preview-stage {
 
 @media (max-width: 420px) {
   .mobile-mode-switch {
-    margin: 0.35rem 0.28rem 0;
+    margin: 0.22rem 0.28rem 0;
+    padding: 0.12rem;
+  }
+
+  .mobile-mode-btn {
+    min-height: 1.9rem;
+    padding: 0.22rem 0.5rem;
+    font-size: 0.72rem;
   }
 
   .workspace {
@@ -3500,12 +3503,40 @@ body.is-resizing .preview-stage {
   border-radius: 4px;
 }
 
+.tool-faq-legal {
+  display: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.85rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(125, 211, 252, 0.12);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6f89a8;
+}
+
+.tool-faq-legal a {
+  color: #8eb4d4;
+  text-decoration: none;
+}
+
+.tool-faq-legal a:hover {
+  color: #e8f4ff;
+}
+
+.tool-faq-legal a:focus-visible {
+  outline: 2px solid #a5f3fc;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
 @media (max-width: 900px) {
   .tool-banner {
     flex-wrap: wrap;
-    gap: 0.25rem 0.75rem;
-    padding-top: 0.28rem;
-    padding-bottom: 0.3rem;
+    gap: 0.18rem 0.75rem;
+    padding-top: 0.22rem;
+    padding-bottom: 0.22rem;
   }
 
   .tool-note {
@@ -3513,7 +3544,7 @@ body.is-resizing .preview-stage {
   }
 
   .tool-steps {
-    gap: 0.2rem 0;
+    gap: 0.16rem 0;
   }
 
   .tool-steps li {
@@ -3530,10 +3561,27 @@ body.is-resizing .preview-stage {
     justify-content: space-between;
   }
 
+  .tool-faq-toggle {
+    padding: 0.18rem 0.5rem;
+    font-size: 0.66rem;
+  }
+
+  .tool-banner-link {
+    font-size: 0.62rem;
+  }
+
+  .chrome-shutter {
+    height: 0.95rem;
+  }
+
   .tool-faq-panel {
     right: auto;
     left: 0;
     width: min(22.5rem, calc(100vw - 1.25rem));
+  }
+
+  .tool-faq-legal {
+    display: flex;
   }
 }
 
