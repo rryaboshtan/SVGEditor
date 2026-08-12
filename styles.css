@@ -673,6 +673,34 @@ body.is-chrome-max .chrome-shutter {
   outline-offset: 2px;
 }
 
+.mobile-legal {
+  display: none;
+}
+
+.mobile-legal a {
+  color: #8eb4d4;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.mobile-legal a:hover {
+  color: #e8f4ff;
+}
+
+.mobile-legal a:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.mobile-legal-sep {
+  color: #5f7f9c;
+  font-size: 0.72rem;
+  user-select: none;
+}
+
 .article-breadcrumbs a:focus-visible,
 .article-cta a:focus-visible,
 .preview-empty-links a:focus-visible {
@@ -2833,10 +2861,23 @@ body.is-resizing .preview-stage {
     flex-shrink: 0;
   }
 
-  /* Keep GitHub visible on phones — drop secondary legal links from the bar */
+  /* Keep GitHub visible on phones — legal links live in .mobile-legal */
   .legal-nav a[href="/privacy"],
   .legal-nav a[href="/terms"] {
     display: none;
+  }
+
+  .mobile-legal {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 0.15rem 0.5rem 0;
+    padding: 0.15rem 0.35rem;
+    min-height: 1.35rem;
   }
 
   .brand-name {
