@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 980" width="1000" height="980" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 720" width="1100" height="720" role="img" aria-labelledby="title desc">
   <title id="title">SVG XSS attack surface map</title>
   <desc id="desc">Diagram of dangerous SVG surfaces: script, event handlers, foreignObject, SMIL, unsafe URLs, and CSS</desc>
   <defs>
@@ -11,47 +11,47 @@
       <stop offset="100%" stop-color="#0A1A2C"/>
     </linearGradient>
   </defs>
-  <rect width="1000" height="980" fill="url(#bg)"/>
-  <rect x="28" y="28" width="944" height="924" rx="20" fill="url(#card)" stroke="#38BDF8" stroke-opacity="0.4" stroke-width="2.5"/>
+  <rect width="1100" height="720" fill="url(#bg)"/>
+  <rect x="28" y="24" width="1044" height="672" rx="18" fill="url(#card)" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="2"/>
 
-  <text x="56" y="88" fill="#F8FAFC" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="36" font-weight="700">SVG XSS attack surface</text>
-  <text x="56" y="130" fill="#BAE6FD" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">What untrusted markup can execute when you inline it</text>
+  <text x="52" y="70" fill="#F8FAFC" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700">SVG XSS attack surface</text>
+  <text x="52" y="102" fill="#7DD3FC" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="15">What untrusted markup can execute when you inline it</text>
 
   <g font-family="system-ui, -apple-system, Segoe UI, sans-serif">
-    <rect x="56" y="168" width="430" height="220" rx="16" fill="#0B1F33" stroke="#F87171" stroke-width="3"/>
-    <text x="84" y="222" fill="#FECACA" font-size="30" font-weight="700">&lt;script&gt; / on*</text>
-    <text x="84" y="272" fill="#F8FAFC" font-size="22">Classic execution</text>
-    <text x="84" y="310" fill="#F1F5F9" font-size="21">onclick, onload, onbegin…</text>
-    <text x="84" y="348" fill="#F1F5F9" font-size="21">Runs in the page origin</text>
+    <rect x="52" y="132" width="480" height="160" rx="14" fill="#0B1F33" stroke="#F87171" stroke-width="2"/>
+    <text x="76" y="172" fill="#FCA5A5" font-size="18" font-weight="700">&lt;script&gt; / on*</text>
+    <text x="76" y="206" fill="#F1F5F9" font-size="14">Classic execution</text>
+    <text x="76" y="232" fill="#CBD5E1" font-size="14">onclick, onload, onbegin…</text>
+    <text x="76" y="258" fill="#CBD5E1" font-size="14">Runs in the page origin</text>
 
-    <rect x="514" y="168" width="430" height="220" rx="16" fill="#0B1F33" stroke="#FBBF24" stroke-width="3"/>
-    <text x="542" y="222" fill="#FDE68A" font-size="30" font-weight="700">foreignObject</text>
-    <text x="542" y="272" fill="#F8FAFC" font-size="22">HTML island inside SVG</text>
-    <text x="542" y="310" fill="#F1F5F9" font-size="21">iframe, form, nested HTML</text>
-    <text x="542" y="348" fill="#F1F5F9" font-size="21">Bypasses SVG-only checks</text>
+    <rect x="568" y="132" width="480" height="160" rx="14" fill="#0B1F33" stroke="#FBBF24" stroke-width="2"/>
+    <text x="592" y="172" fill="#FCD34D" font-size="18" font-weight="700">foreignObject</text>
+    <text x="592" y="206" fill="#F1F5F9" font-size="14">HTML island inside SVG</text>
+    <text x="592" y="232" fill="#CBD5E1" font-size="14">iframe, form, nested HTML</text>
+    <text x="592" y="258" fill="#CBD5E1" font-size="14">Bypasses SVG-only checks</text>
 
-    <rect x="56" y="416" width="430" height="220" rx="16" fill="#0B1F33" stroke="#A78BFA" stroke-width="3"/>
-    <text x="84" y="470" fill="#DDD6FE" font-size="30" font-weight="700">SMIL animate / set</text>
-    <text x="84" y="520" fill="#F8FAFC" font-size="22">Mutate href to javascript:</text>
-    <text x="84" y="558" fill="#F1F5F9" font-size="21">attributeName=href/style</text>
-    <text x="84" y="596" fill="#F1F5F9" font-size="21">Easy to miss in allowlists</text>
+    <rect x="52" y="316" width="480" height="160" rx="14" fill="#0B1F33" stroke="#A78BFA" stroke-width="2"/>
+    <text x="76" y="356" fill="#C4B5FD" font-size="18" font-weight="700">SMIL animate / set</text>
+    <text x="76" y="390" fill="#F1F5F9" font-size="14">Mutate href to javascript:</text>
+    <text x="76" y="416" fill="#CBD5E1" font-size="14">attributeName=href/style</text>
+    <text x="76" y="442" fill="#CBD5E1" font-size="14">Easy to miss in allowlists</text>
 
-    <rect x="514" y="416" width="430" height="220" rx="16" fill="#0B1F33" stroke="#38BDF8" stroke-width="3"/>
-    <text x="542" y="470" fill="#BAE6FD" font-size="30" font-weight="700">Unsafe URLs</text>
-    <text x="542" y="520" fill="#F8FAFC" font-size="22">javascript:, data:text/html</text>
-    <text x="542" y="558" fill="#F1F5F9" font-size="21">nested data:image/svg+xml</text>
-    <text x="542" y="596" fill="#F1F5F9" font-size="21">external &lt;use&gt; / remotes</text>
+    <rect x="568" y="316" width="480" height="160" rx="14" fill="#0B1F33" stroke="#38BDF8" stroke-width="2"/>
+    <text x="592" y="356" fill="#7DD3FC" font-size="18" font-weight="700">Unsafe URLs</text>
+    <text x="592" y="390" fill="#F1F5F9" font-size="14">javascript:, data:text/html</text>
+    <text x="592" y="416" fill="#CBD5E1" font-size="14">nested data:image/svg+xml</text>
+    <text x="592" y="442" fill="#CBD5E1" font-size="14">external &lt;use&gt; / remotes</text>
 
-    <rect x="56" y="664" width="430" height="220" rx="16" fill="#0B1F33" stroke="#34D399" stroke-width="3"/>
-    <text x="84" y="718" fill="#A7F3D0" font-size="30" font-weight="700">CSS active content</text>
-    <text x="84" y="768" fill="#F8FAFC" font-size="22">@import, url(javascript:)</text>
-    <text x="84" y="806" fill="#F1F5F9" font-size="21">expression(), -moz-binding</text>
-    <text x="84" y="844" fill="#F1F5F9" font-size="21">&lt;style&gt; + style attributes</text>
+    <rect x="52" y="500" width="480" height="160" rx="14" fill="#0B1F33" stroke="#34D399" stroke-width="2"/>
+    <text x="76" y="540" fill="#6EE7B7" font-size="18" font-weight="700">CSS active content</text>
+    <text x="76" y="574" fill="#F1F5F9" font-size="14">@import, url(javascript:)</text>
+    <text x="76" y="600" fill="#CBD5E1" font-size="14">expression(), -moz-binding</text>
+    <text x="76" y="626" fill="#CBD5E1" font-size="14">&lt;style&gt; + style attributes</text>
 
-    <rect x="514" y="664" width="430" height="220" rx="16" fill="#0B1F33" stroke="#22D3EE" stroke-width="3"/>
-    <text x="542" y="718" fill="#CFFAFE" font-size="30" font-weight="700">Safer insert paths</text>
-    <text x="542" y="768" fill="#F8FAFC" font-size="22">&lt;img&gt; / scrubbed DOM</text>
-    <text x="542" y="806" fill="#F1F5F9" font-size="21">CSP + sanitizer + share</text>
-    <text x="542" y="844" fill="#F1F5F9" font-size="21">Never raw innerHTML</text>
+    <rect x="568" y="500" width="480" height="160" rx="14" fill="#0B1F33" stroke="#22D3EE" stroke-width="2"/>
+    <text x="592" y="540" fill="#A5F3FC" font-size="18" font-weight="700">Safer insert paths</text>
+    <text x="592" y="574" fill="#F1F5F9" font-size="14">&lt;img&gt; / scrubbed DOM</text>
+    <text x="592" y="600" fill="#CBD5E1" font-size="14">CSP + sanitizer + share</text>
+    <text x="592" y="626" fill="#CBD5E1" font-size="14">Never raw innerHTML</text>
   </g>
 </svg>
