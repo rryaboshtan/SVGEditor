@@ -3,24 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Convert SVG to React (JSX) Online — Free SVGEditor</title>
+    <title>How to Convert SVG to React (JSX) Online — Free Guide | SVGEditor</title>
     <meta
       name="description"
-      content="Convert SVG to React JSX online — free. Manual steps, React Native export, SVGR vs paste-JSX, Next.js tips. No upload, runs in your browser."
+      content="How to convert SVG to React JSX online — free, in the browser. Manual steps, currentColor theming, React Native, SVGR vs paste-JSX, Next.js tips, and TypeScript. Matches SVGEditor’s converter."
     />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="author" content="Roman Riaboshtan" />
     <meta name="theme-color" content="#061018" />
     <link rel="canonical" href="https://getsvgeditor.com/svg-to-react" />
 
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Convert SVG to React (JSX) Online — Free SVGEditor" />
+    <meta property="og:title" content="How to Convert SVG to React (JSX) Online — Free Guide" />
     <meta
       property="og:description"
-      content="Convert SVG to a reusable React JSX component online. Also covers React Native, SVGR vs paste-JSX, and a free in-browser tool."
+      content="Convert SVG to reusable React JSX — currentColor, React Native, SVGR vs paste-JSX, Next.js, TypeScript. Free in-browser tool by Roman Riaboshtan (SVGEditor)."
     />
-    <meta property="og:url" content="https://getsvgeditor.com/blog/svg-to-react" />
+    <meta property="og:url" content="https://getsvgeditor.com/svg-to-react" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://getsvgeditor.com/blog/svg-to-react-og.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
@@ -31,25 +31,28 @@
       content="SVGEditor converting SVG source to a React Icon component in the export tab"
     />
     <meta property="article:published_time" content="2026-08-06T12:00:00+03:00" />
-    <meta property="article:modified_time" content="2026-08-07T17:15:00+03:00" />
+    <meta property="article:modified_time" content="2026-08-12T09:50:00+03:00" />
     <meta property="article:author" content="https://www.linkedin.com/in/roman-riaboshtan" />
     <meta property="article:section" content="React" />
     <meta property="article:tag" content="SVG to React" />
     <meta property="article:tag" content="JSX" />
     <meta property="article:tag" content="React Native" />
     <meta property="article:tag" content="SVGR" />
+    <meta property="article:tag" content="currentColor" />
+    <meta property="article:tag" content="TypeScript" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Convert SVG to React (JSX) Online — Free SVGEditor" />
+    <meta name="twitter:title" content="How to Convert SVG to React (JSX) Online — Free Guide" />
     <meta
       name="twitter:description"
-      content="Convert SVG to React JSX online for free. React Native export, tips, and a browser tool on SVGEditor."
+      content="Convert SVG to React JSX online for free — React Native, SVGR vs paste-JSX, Next.js, TypeScript. Browser tool on SVGEditor."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/blog/svg-to-react-og.jpg" />
     <meta
       name="twitter:image:alt"
       content="SVGEditor converting SVG source to a React Icon component in the export tab"
     />
+    <meta name="twitter:creator" content="@roman_riaboshtan" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -60,70 +63,108 @@
         "@context": "https://schema.org",
         "@graph": [
           {
+            "@type": "Organization",
+            "@id": "https://getsvgeditor.com/#organization",
+            "name": "SVGEditor",
+            "url": "https://getsvgeditor.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://getsvgeditor.com/apple-touch-icon.png",
+              "width": 180,
+              "height": 180
+            },
+            "sameAs": [
+              "https://github.com/rryaboshtan",
+              "https://github.com/rryaboshtan/SvgViewer",
+              "https://www.linkedin.com/in/roman-riaboshtan",
+              "https://dev.to/roman_riaboshtan",
+              "https://www.reddit.com/user/Roman_Riaboshtan",
+              "https://hashnode.com/@roman-riaboshtan",
+              "https://www.youtube.com/@RomanRiaboshtan",
+              "https://habr.com/ru/users/RomanRiaboshtan"
+            ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://getsvgeditor.com/blog/svg-to-react#author",
+            "name": "Roman Riaboshtan",
+            "url": "https://github.com/rryaboshtan",
+            "image": "https://getsvgeditor.com/blog/roman-riaboshtan.jpg",
+            "jobTitle": "Full-stack developer",
+            "description": "Creator of SVGEditor. Builds browser-native SVG tools, including SVG to React and React Native export.",
+            "sameAs": [
+              "https://github.com/rryaboshtan",
+              "https://github.com/rryaboshtan/SvgViewer",
+              "https://www.linkedin.com/in/roman-riaboshtan",
+              "https://dev.to/roman_riaboshtan",
+              "https://www.reddit.com/user/Roman_Riaboshtan",
+              "https://hashnode.com/@roman-riaboshtan",
+              "https://www.youtube.com/@RomanRiaboshtan",
+              "https://habr.com/ru/users/RomanRiaboshtan"
+            ],
+            "worksFor": { "@id": "https://getsvgeditor.com/#organization" }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://getsvgeditor.com/#website",
+            "name": "SVGEditor",
+            "url": "https://getsvgeditor.com/",
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://getsvgeditor.com/blog/svg-to-react",
+            "url": "https://getsvgeditor.com/blog/svg-to-react",
+            "name": "How to Convert SVG to React (JSX)",
+            "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://getsvgeditor.com/blog/svg-to-react-og.jpg"
+            },
+            "breadcrumb": { "@id": "https://getsvgeditor.com/blog/svg-to-react#breadcrumb" },
+            "mainEntity": { "@id": "https://getsvgeditor.com/blog/svg-to-react#article" }
+          },
+          {
             "@type": "TechArticle",
             "@id": "https://getsvgeditor.com/blog/svg-to-react#article",
-            "headline": "Convert SVG to React (JSX) Online",
-            "description": "Convert SVG to a reusable React JSX component online — free. Manual steps, React Native export, SVGR vs paste-JSX, Next.js tips, and a browser tool.",
+            "headline": "How to convert SVG to React (JSX) online",
+            "description": "How to convert SVG to reusable React JSX — free, in the browser. Manual steps, currentColor theming, React Native, SVGR vs paste-JSX, Next.js, TypeScript, and SVGEditor’s converter.",
             "inLanguage": "en",
             "datePublished": "2026-08-06T12:00:00+03:00",
-            "dateModified": "2026-08-07T17:15:00+03:00",
+            "dateModified": "2026-08-12T09:50:00+03:00",
             "articleSection": "React",
             "keywords": [
               "svg to react",
+              "how to convert svg to react",
               "svg to jsx",
               "convert svg to react online",
               "react native svg",
               "svgr",
               "currentColor icons",
               "svg react component",
-              "svg to react typescript"
+              "svg to react typescript",
+              "svg to react native"
             ],
-            "wordCount": 2400,
-            "author": {
-              "@type": "Person",
-              "name": "Roman Riaboshtan",
-              "url": "https://github.com/rryaboshtan",
-              "image": "https://getsvgeditor.com/blog/roman-riaboshtan.jpg",
-              "sameAs": [
-                "https://github.com/rryaboshtan",
-                "https://github.com/rryaboshtan/SvgViewer",
-                "https://www.linkedin.com/in/roman-riaboshtan",
-                "https://dev.to/roman_riaboshtan",
-                "https://www.reddit.com/user/Roman_Riaboshtan",
-                "https://hashnode.com/@roman-riaboshtan",
-                "https://www.youtube.com/@RomanRiaboshtan",
-                "https://habr.com/ru/users/RomanRiaboshtan"
-              ]
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "SVGEditor",
-              "url": "https://getsvgeditor.com/",
-              "logo": {
-                "@type": "ImageObject",
-                "url": "https://getsvgeditor.com/apple-touch-icon.png",
-                "width": 180,
-                "height": 180
-              }
-            },
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": "https://getsvgeditor.com/blog/svg-to-react"
-            },
-            "isPartOf": {
-              "@type": "WebSite",
-              "name": "SVGEditor",
-              "url": "https://getsvgeditor.com/"
-            },
+            "wordCount": 3200,
+            "author": { "@id": "https://getsvgeditor.com/blog/svg-to-react#author" },
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" },
+            "mainEntityOfPage": { "@id": "https://getsvgeditor.com/blog/svg-to-react" },
+            "isPartOf": { "@id": "https://getsvgeditor.com/#website" },
             "about": [
               { "@type": "Thing", "name": "SVG to React" },
               { "@type": "Thing", "name": "JSX" },
-              { "@type": "Thing", "name": "React Native" }
+              { "@type": "Thing", "name": "React Native" },
+              { "@type": "Thing", "name": "SVGR" }
             ],
             "image": [
-              "https://getsvgeditor.com/blog/svg-to-react-og.jpg",
+              {
+                "@type": "ImageObject",
+                "url": "https://getsvgeditor.com/blog/svg-to-react-og.jpg",
+                "width": 1200,
+                "height": 630
+              },
               "https://getsvgeditor.com/blog/svg-to-react-editor.webp",
-              "https://getsvgeditor.com/og-image.jpg"
+              "https://getsvgeditor.com/blog/svg-currentcolor-before-after.webp"
             ]
           },
           {
@@ -147,7 +188,7 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/blog/svg-to-react#howto",
-            "name": "Convert SVG to React JSX online with SVGEditor",
+            "name": "How to convert SVG to React JSX online with SVGEditor",
             "description": "Open SVGEditor, paste SVG, copy React JSX or React Native output, then drop the component into your app — no upload to a server.",
             "inLanguage": "en",
             "totalTime": "PT5M",
@@ -204,7 +245,7 @@
                 "name": "How do I convert SVG to JSX for TypeScript?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Paste the SVG into SVGEditor, copy the React export into a .tsx file, and type props as React.SVGProps<SVGSVGElement> so className, onClick, and ARIA attributes stay typed."
+                  "text": "Paste the SVG into SVGEditor, copy the React export into a .tsx file, and type props as React.SVGProps<SVGSVGElement> so className, onClick, and ARIA attributes stay typed. For design-system icons, wrap with forwardRef when parents need a DOM ref."
                 }
               },
               {
@@ -217,7 +258,7 @@
               },
               {
                 "@type": "Question",
-                "name": "SVG as img vs inline React component?",
+                "name": "Should I use SVG as an img or as an inline React component?",
                 "acceptedAnswer": {
                   "@type": "Answer",
                   "text": "Use an img tag or a static asset for large illustrations you never recolor. Use a React component when the same mark appears in buttons, nav, and themes with different colors."
@@ -225,7 +266,7 @@
               },
               {
                 "@type": "Question",
-                "name": "Does the converter change my paths?",
+                "name": "Does the converter change my SVG paths?",
                 "acceptedAnswer": {
                   "@type": "Answer",
                   "text": "SVGEditor rewrites the tree into JSX / React Native tags and JSX attribute names. It does not re-path or optimize geometry the way SVGO does — preview first if the SVG is unusual."
@@ -237,6 +278,14 @@
                 "acceptedAnswer": {
                   "@type": "Answer",
                   "text": "Use SVGR when icons are a steady stream of .svg files in the repo. Use SVGEditor when you need a quick JSX / React Native snippet, a live preview, or a share link without touching the bundler."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Should I sanitize SVG before converting to React?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes for untrusted uploads or paste from the internet. Sanitize first so script, foreignObject, and hostile SMIL never land in your component tree. SVGEditor sanitizes before preview and export; see the sanitize SVG guide for the full checklist."
                 }
               },
               {
@@ -311,7 +360,7 @@
         <div class="brand-text">
           <p class="brand-name">SVGEditor</p>
           <p class="brand-tagline brand-tagline-seo">
-            Free online SVG editor — preview, share, React &amp; PNG
+            Free online SVG editor for live preview, share, React &amp; PNG
           </p>
         </div>
       </a>
@@ -342,20 +391,21 @@
     </header>
 
     <main class="legal-shell" id="article-content">
-      <article class="legal-card">
+      <article class="legal-card" itemscope itemtype="https://schema.org/TechArticle">
         <nav class="article-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="article-breadcrumbs-sep" aria-hidden="true">/</span>
           <span aria-current="page">Convert SVG to React (JSX)</span>
         </nav>
         <p class="legal-kicker">Guide</p>
-        <h1 class="legal-title">Convert SVG to React (JSX)</h1>
-        <p class="legal-lead">
-          Convert SVG to React JSX online — free, in the browser. A playbook for reusable icons,
-          <code>currentColor</code> theming, React Native export, and when SVGR still wins — written to match
-          how SVGEditor’s converter actually behaves.
+        <h1 class="legal-title" itemprop="headline">How to convert SVG to React (JSX)</h1>
+        <p class="legal-lead" itemprop="description">
+          How to <strong>convert SVG to React JSX</strong> online — free, in the browser. This guide covers
+          reusable icons, <code>currentColor</code> theming, React Native export, TypeScript typing, SVGR vs
+          paste-JSX, and when <em>not</em> to inline a mark. Written by the creator of SVGEditor so the advice
+          matches a real converter, not a generic “rename attributes” checklist.
         </p>
-        <p class="legal-updated">Published August 6, 2026 · Updated August 7, 2026</p>
+        <p class="legal-updated">Published August 6, 2026 · Updated August 12, 2026</p>
 
         <div class="article-byline">
           <img
@@ -370,24 +420,44 @@
           <div class="article-byline-text">
             <p class="article-byline-name">
               By
-              <a href="https://github.com/rryaboshtan" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.linkedin.com/in/roman-riaboshtan" target="_blank" rel="noopener noreferrer"
                 >Roman Riaboshtan</a
               >
             </p>
             <p class="article-byline-role">
-              Creator of SVGEditor — full-stack (Python &amp; React). This guide mirrors the in-browser React /
-              React Native exporter: attribute mapping, props spread, and the limits versus SVGR.
+              Creator of SVGEditor · full-stack developer (Python &amp; React). Built the in-browser React /
+              React Native exporter — attribute mapping, props spread, and the limits versus SVGR — and wrote
+              this guide from that pipeline.
             </p>
           </div>
         </div>
 
         <div class="article-cta">
           <p>
-            Skip the manual rewrite: paste your SVG in the editor, then use the
+            Skip the hand rewrite: paste your SVG in the editor, then use the
             <strong>React</strong> or <strong>React Native</strong> export tab.
           </p>
           <a class="btn btn-accent article-cta-btn" href="/svg-to-react">Open SVG → React converter</a>
         </div>
+
+        <nav class="article-toc" aria-label="On this page">
+          <p class="article-toc-label">On this page</p>
+          <ol class="article-toc-list">
+            <li><a href="#why-convert">Why convert SVG to React</a></li>
+            <li><a href="#worked-example">Worked example</a></li>
+            <li><a href="#manual-path">Manual SVG → JSX</a></li>
+            <li><a href="#howto-heading">Convert online</a></li>
+            <li><a href="#react-native">React Native</a></li>
+            <li><a href="#svgr-vs-paste">SVGR vs paste-JSX</a></li>
+            <li><a href="#what-converter-does">What the exporter does</a></li>
+            <li><a href="#sanitize-first">Sanitize untrusted SVG</a></li>
+            <li><a href="#design-system">Design-system patterns</a></li>
+            <li><a href="#bundle-vs-img">Bundle cost</a></li>
+            <li><a href="#a11y-ids">Accessibility</a></li>
+            <li><a href="#common-mistakes">Common mistakes</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ol>
+        </nav>
 
         <figure class="article-figure">
           <img
@@ -415,16 +485,21 @@
               <code>width</code>, <code>fill</code>, and ARIA attributes like any other React element.
             </p>
             <p>
-              Design tools often export verbose SVG. Cleaning it once and wrapping it as
-              <code>Icon</code> keeps your UI kit consistent across web and mobile.
+              Design tools often export verbose SVG. Clean it once, wrap it as an <code>Icon</code> component,
+              and keep your UI kit consistent across web and mobile.
+            </p>
+            <p>
+              That said: not every SVG belongs in your JS bundle. Large illustrations you never recolor should
+              stay as <code>&lt;img&gt;</code> or a static asset. Reserve React components for UI chrome —
+              buttons, nav, status marks — where theming and props matter.
             </p>
           </section>
 
           <section>
             <h2 id="worked-example">Worked example: icon for a dark UI</h2>
             <p>
-              A common handoff: Figma exports an icon with hard-coded <code>#000</code> fills. In a dark
-              app that mark disappears or fights the theme. Here is the path we use with SVGEditor.
+              A common handoff: Figma exports an icon with hard-coded <code>#000</code> fills. In a dark app
+              that mark disappears — or fights the theme. Here is the path we use with SVGEditor.
             </p>
             <figure class="article-figure">
               <img
@@ -485,7 +560,14 @@
                 Wrap the root <code>&lt;svg&gt;</code> in a function component and spread
                 <code>{...props}</code> so callers can override size and style.
               </li>
-              <li>Prefer <code>fill="currentColor"</code> when the icon should inherit text color.</li>
+              <li>
+                Prefer <code>fill="currentColor"</code> or <code>stroke="currentColor"</code> when the icon
+                should inherit text color.
+              </li>
+              <li>
+                If the SVG came from an untrusted upload, sanitize first — see
+                <a href="#sanitize-first">Sanitize untrusted SVG</a>.
+              </li>
             </ol>
             <pre class="article-code" tabindex="0"><code>export default function Icon(props) {
   return (
@@ -594,7 +676,7 @@ export default function Icon(props) {
           <section>
             <h2 id="svgr-vs-paste">SVGR vs paste-JSX (and Next.js)</h2>
             <p>
-              Teams usually pick one of two pipelines. Neither is “wrong” — they solve different jobs.
+              Teams usually pick one of two pipelines. Neither is wrong — they solve different jobs.
             </p>
             <div class="article-table-wrap">
               <table class="article-table">
@@ -656,7 +738,7 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
           <section>
             <h2 id="what-converter-does">What SVGEditor’s React export does (and does not)</h2>
             <p>
-              Knowing the boundary keeps expectations honest — and is why paste-JSX and SVGR both still
+              Knowing the boundary keeps expectations honest — and explains why paste-JSX and SVGR both still
               exist.
             </p>
             <ul>
@@ -681,6 +763,85 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
               Internal <code>id</code>s (gradients, clipPaths) can collide if you mount the same raw markup
               twice on one page. Prefer unique ids per icon file, or strip unused defs after export when you
               only need paths.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="sanitize-first">Sanitize untrusted SVG before you convert</h2>
+            <p>
+              JSX export does not make hostile markup safe. If the SVG came from a user upload, a paste from
+              the internet, or a share link, treat it as untrusted <strong>before</strong> it becomes a
+              component in your app.
+            </p>
+            <ul>
+              <li>
+                Strip <code>script</code>, event handlers, <code>foreignObject</code>, and hostile SMIL — the
+                same surfaces that cause SVG XSS when inlined.
+              </li>
+              <li>
+                SVGEditor sanitizes on paste/upload before preview and before React / React Native export.
+                That is intentional: you should not copy a payload that still carries active content.
+              </li>
+              <li>
+                For a production upload pipeline, keep a server-side (or Worker) sanitizer too — see
+                <a href="/blog/sanitize-svg">Sanitize SVG for XSS</a> for DOMPurify config, CSP, and the
+                checklist.
+              </li>
+            </ul>
+            <p>
+              Trusted design-system files from your repo are a different lane. Untrusted uploads are not.
+              Mixing them is how “icon upload” features become XSS bugs.
+            </p>
+          </section>
+
+          <section>
+            <h2 id="design-system">Design-system patterns (TypeScript, refs, tree-shaking)</h2>
+            <p>
+              Once you paste JSX once or twice, the next step is a small icon kit that scales. Patterns that
+              hold up in production:
+            </p>
+            <h3 class="article-h3">Type props and forward refs when parents need the DOM node</h3>
+            <pre class="article-code" tabindex="0"><code>import { forwardRef } from "react";
+
+const SearchIcon = forwardRef&lt;SVGSVGElement, React.SVGProps&lt;SVGSVGElement&gt;&gt;(
+  function SearchIcon(props, ref) {
+    return (
+      &lt;svg
+        ref={ref}
+        viewBox="0 0 24 24"
+        width={24}
+        height={24}
+        fill="none"
+        aria-hidden="true"
+        {...props}
+      &gt;
+        &lt;path
+          d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
+          stroke="currentColor"
+          strokeWidth={1.5}
+        /&gt;
+      &lt;/svg&gt;
+    );
+  }
+);
+
+export default SearchIcon;</code></pre>
+            <p>
+              Use <code>forwardRef</code> when a tooltip, focus manager, or animation library needs the
+              underlying <code>&lt;svg&gt;</code>. For most decorative icons, a plain function component is
+              enough.
+            </p>
+            <h3 class="article-h3">Named files beat mega barrels</h3>
+            <p>
+              Prefer <code>components/icons/SearchIcon.tsx</code> over one <code>icons.tsx</code> that
+              re-exports everything. Bundlers tree-shake unused files more reliably than giant barrels —
+              especially under Next.js App Router.
+            </p>
+            <h3 class="article-h3">Default size, keep viewBox, let props win</h3>
+            <p>
+              Ship a sensible default (<code>width={24}</code> / <code>height={24}</code>), always keep
+              <code>viewBox</code>, and spread <code>{...props}</code> last so callers can override size,
+              <code>className</code>, and a11y attributes without editing the icon file.
             </p>
           </section>
 
@@ -725,7 +886,8 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
             </div>
             <p>
               Rule we use in SVGEditor itself: chrome icons → components with <code>currentColor</code>;
-              marketing bitmaps → PNG when the destination cannot take SVG.
+              marketing bitmaps → PNG when the destination cannot take SVG. See
+              <a href="/blog/svg-to-png">Convert SVG to PNG</a> for the raster handoff.
             </p>
           </section>
 
@@ -757,9 +919,9 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
           <section>
             <h2 id="next-rsc">Next.js App Router and RSC</h2>
             <p>
-              Pasted icon components without hooks are fine as Server Components — they are just JSX.
-              Do not wrap them in <code>next/image</code>. Client boundaries matter only if the icon file
-              imports browser-only APIs (it should not).
+              Pasted icon components without hooks are fine as Server Components — they are just JSX. Do not
+              wrap them in <code>next/image</code>. Client boundaries matter only if the icon file imports
+              browser-only APIs (it should not).
             </p>
             <p>
               Colocate icons under <code>components/icons/</code>, export named components, and let the
@@ -772,8 +934,8 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
             <h2 id="privacy-export">Privacy: why in-browser JSX export matters</h2>
             <p>
               Unreleased product marks should not hit a random upload converter. SVGEditor builds React /
-              React Native output in the browser — same stance as preview and PNG. Share links encode the
-              SVG in the URL hash; treat them like the file itself.
+              React Native output in the browser — same stance as preview and PNG. Share links encode the SVG
+              in the URL hash; treat them like the file itself.
             </p>
           </section>
 
@@ -795,13 +957,13 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
               </li>
               <li>
                 <strong>Leaving kebab-case attributes in JSX:</strong>
-                <code>stroke-width</code> must become <code>strokeWidth</code> (and friends). Converters
-                catch this; hand edits often miss one.
+                <code>stroke-width</code> must become <code>strokeWidth</code> (and friends). Converters catch
+                this; hand edits often miss one.
               </li>
               <li>
                 <strong>Quoting numeric props in React Native:</strong>
-                <code>width="24"</code> should be <code>width={24}</code>. SVGEditor’s RN export already
-                uses numbers.
+                <code>width="24"</code> should be <code>width={24}</code>. SVGEditor’s RN export already uses
+                numbers.
               </li>
               <li>
                 <strong>Reusing gradient <code>id</code>s across icons:</strong> two components with
@@ -809,8 +971,16 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
                 prefixes after export.
               </li>
               <li>
-                <strong>Pasting a full illustration as JSX:</strong> huge path dumps bloat the JS bundle.
-                Keep large art as <code>&lt;img&gt;</code> / static SVG; reserve components for UI chrome.
+                <strong>Pasting a full illustration as JSX:</strong> huge path dumps bloat the JS bundle. Keep
+                large art as <code>&lt;img&gt;</code> / static SVG; reserve components for UI chrome.
+              </li>
+              <li>
+                <strong>Skipping sanitize on untrusted uploads:</strong> converting to JSX does not remove XSS
+                vectors. Sanitize first — see <a href="#sanitize-first">Sanitize untrusted SVG</a>.
+              </li>
+              <li>
+                <strong>One mega <code>icons.tsx</code> barrel:</strong> harder to tree-shake. Prefer one file
+                per icon under <code>components/icons/</code>.
               </li>
             </ul>
           </section>
@@ -845,15 +1015,17 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
             <h2 id="faq">FAQ</h2>
             <h3 class="article-h3">Is there a free SVG to React converter online?</h3>
             <p>
-              Yes. SVGEditor converts SVG to JSX in your browser for free — no account and no file upload
-              to a server. Paste SVG, keep the <strong>React</strong> tab open, and copy the component
-              (button at the top of this guide).
+              Yes. SVGEditor converts SVG to JSX in your browser for free — no account and no file upload to a
+              server. Paste SVG, keep the <strong>React</strong> tab open, and copy the component (button at
+              the top of this guide).
             </p>
             <h3 class="article-h3">How do I convert SVG to JSX for TypeScript?</h3>
             <p>
-              Paste the SVG into the converter, copy the React export into a <code>.tsx</code> file, and
-              type props as <code>React.SVGProps&lt;SVGSVGElement&gt;</code> so <code>className</code>,
-              <code>onClick</code>, and ARIA attributes stay typed.
+              Paste the SVG into the converter, copy the React export into a <code>.tsx</code> file, and type
+              props as <code>React.SVGProps&lt;SVGSVGElement&gt;</code> so <code>className</code>,
+              <code>onClick</code>, and ARIA attributes stay typed. For design-system icons that need a DOM
+              ref, wrap with <code>forwardRef</code> — see
+              <a href="#design-system">Design-system patterns</a>.
             </p>
             <h3 class="article-h3">Can I convert SVG to a React Native component?</h3>
             <p>
@@ -861,10 +1033,10 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
               <code>react-native-svg</code> (<code>Svg</code>, <code>Path</code>, <code>Circle</code>, …),
               adds the import, and uses numeric props like <code>width={24}</code>.
             </p>
-            <h3 class="article-h3">SVG as &lt;img&gt; vs inline React component?</h3>
+            <h3 class="article-h3">Should I use SVG as an &lt;img&gt; or as an inline React component?</h3>
             <p>
-              Use <code>&lt;img&gt;</code> (or a static asset) for large illustrations you never recolor.
-              Use a component when the same mark appears in buttons, nav, and themes with different colors.
+              Use <code>&lt;img&gt;</code> (or a static asset) for large illustrations you never recolor. Use
+              a component when the same mark appears in buttons, nav, and themes with different colors.
             </p>
             <h3 class="article-h3">Does the converter change my paths?</h3>
             <p>
@@ -876,6 +1048,13 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
               Use SVGR when icons are a steady stream of <code>.svg</code> files in the repo. Use SVGEditor
               when you need a quick JSX / React Native snippet, a live preview, or a share link without
               touching the bundler.
+            </p>
+            <h3 class="article-h3">Should I sanitize SVG before converting to React?</h3>
+            <p>
+              Yes for untrusted uploads or paste from the internet. Sanitize first so
+              <code>script</code>, <code>foreignObject</code>, and hostile SMIL never land in your component
+              tree. SVGEditor sanitizes before preview and export — details in
+              <a href="/blog/sanitize-svg">Sanitize SVG for XSS</a>.
             </p>
             <h3 class="article-h3">Can I share the SVG with a teammate?</h3>
             <p>
@@ -890,15 +1069,16 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
               <a href="/blog/svg-to-png">Convert SVG to PNG</a> — retina sizing and transparent downloads when
               you need a bitmap handoff.<br />
               <a href="/blog/sanitize-svg">Sanitize SVG for XSS</a> — strip
-              <code>script</code>, <code>foreignObject</code>, and hostile SMIL before preview or share.
+              <code>script</code>, <code>foreignObject</code>, and hostile SMIL before preview, share, or
+              React export.
             </p>
           </section>
 
           <section>
             <h2 id="convert-now">Convert your SVG now</h2>
             <p>
-              Paste once, preview live, export React or React Native — or download PNG / Data URI from the
-              same workspace. Free, no account.
+              Paste once, confirm the live preview, then export React or React Native — or download PNG / Data
+              URI from the same workspace. Free, no account required.
             </p>
             <div class="legal-actions">
               <a class="btn btn-accent" href="/svg-to-react">Open SVG → React converter</a>
