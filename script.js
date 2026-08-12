@@ -2367,10 +2367,21 @@ let chromeCollapsePctValue = 0;
 let chromeDragging = false;
 let chromeDragStartY = 0;
 let chromeDragStartCollapse = 0;
+let chromeDragMoved = false;
 
 function chromeNaturalHeight() {
   if (!appChrome) return 0;
   return Math.max(0, Math.round(appChrome.offsetHeight));
+}
+
+function toggleChromeCollapse() {
+  const natural = chromeNaturalHeight();
+  if (natural <= 0) return;
+  if (chromeCollapsePx >= natural - 1) {
+    applyChromeCollapse(0);
+  } else {
+    applyChromeCollapse(natural);
+  }
 }
 
 function applyChromeCollapse(px, opts) {
@@ -2381,9 +2392,6 @@ function applyChromeCollapse(px, opts) {
   chromeCollapsePctValue = max > 0 ? Math.round((chromeCollapsePx / max) * 100) : 0;
   document.body.style.setProperty("--chrome-collapse", chromeCollapsePx + "px");
   document.body.classList.toggle("is-chrome-max", max > 0 && chromeCollapsePx >= max - 1);
-  if (chromeShutter) {
-    chromeShutter.setAttribute("aria-valuenow", String(chromeCollapsePctValue));
-  }
   if (!options.skipStore) {
     try {
       localStorage.setItem(CHROME_STORAGE_KEY, String(chromeCollapsePctValue));
@@ -2423,6 +2431,7 @@ if (appChrome && chromeShutter) {
   chromeShutter.addEventListener("pointerdown", function (event) {
     if (event.button != null && event.button !== 0) return;
     chromeDragging = true;
+    chromeDragMoved = false;
     chromeDragStartY = event.clientY;
     chromeDragStartCollapse = chromeCollapsePx;
     chromeShutter.classList.add("is-active");
@@ -2438,6 +2447,7 @@ if (appChrome && chromeShutter) {
   chromeShutter.addEventListener("pointermove", function (event) {
     if (!chromeDragging) return;
     const delta = chromeDragStartY - event.clientY;
+    if (Math.abs(delta) >= 4) chromeDragMoved = true;
     applyChromeCollapse(chromeDragStartCollapse + delta);
   });
 
@@ -2458,33 +2468,19 @@ if (appChrome && chromeShutter) {
   chromeShutter.addEventListener("pointerup", endChromeDrag);
   chromeShutter.addEventListener("pointercancel", endChromeDrag);
 
-  chromeShutter.addEventListener("dblclick", function (event) {
-    event.preventDefault();
-    const natural = chromeNaturalHeight();
-    if (natural <= 0) return;
-    if (chromeCollapsePx >= natural - 1) {
-      applyChromeCollapse(0);
-    } else {
-      applyChromeCollapse(natural);
+  chromeShutter.addEventListener("click", function (event) {
+    if (chromeDragMoved) {
+      chromeDragMoved = false;
+      event.preventDefault();
+      return;
     }
+    event.preventDefault();
+    toggleChromeCollapse();
   });
 
-  chromeShutter.addEventListener("keydown", function (event) {
-    const natural = chromeNaturalHeight();
-    const step = Math.max(12, Math.round(natural * 0.08));
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      applyChromeCollapse(chromeCollapsePx + step);
-    } else if (event.key === "ArrowDown") {
-      event.preventDefault();
-      applyChromeCollapse(chromeCollapsePx - step);
-    } else if (event.key === "Home") {
-      event.preventDefault();
-      applyChromeCollapse(natural);
-    } else if (event.key === "End") {
-      event.preventDefault();
-      applyChromeCollapse(0);
-    }
+  chromeShutter.addEventListener("dblclick", function (event) {
+    event.preventDefault();
+    toggleChromeCollapse();
   });
 
   window.addEventListener("resize", function () {
