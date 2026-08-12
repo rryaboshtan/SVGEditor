@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" width="1400" height="520" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" role="img" aria-labelledby="title desc">
   <title id="title">SVG sanitize pipeline</title>
   <desc id="desc">Flow from untrusted SVG markup through parse, strip, URL policy, CSP, then safe preview or share</desc>
   <defs>
@@ -6,53 +6,56 @@
       <stop offset="0%" stop-color="#061018"/>
       <stop offset="100%" stop-color="#0A1C30"/>
     </linearGradient>
-    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.35"/>
-    </filter>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+    <marker id="arrowR" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
       <path d="M0,0 L10,4 L0,8 Z" fill="#7DD3FC"/>
     </marker>
+    <marker id="arrowD" markerWidth="12" markerHeight="12" refX="4" refY="10" orient="auto">
+      <path d="M0,0 L4,10 L8,0 Z" fill="#7DD3FC"/>
+    </marker>
   </defs>
-  <rect width="1400" height="520" fill="url(#bg2)"/>
-  <text x="56" y="72" fill="#F8FAFC" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="36" font-weight="700">Defense-in-depth sanitization pipeline</text>
-  <text x="56" y="112" fill="#BAE6FD" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">Parse → strip active content → URL policy → CSP → preview / share</text>
+  <rect width="1000" height="720" fill="url(#bg2)"/>
 
-  <g font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" filter="url(#soft)">
-    <rect x="48" y="168" width="210" height="150" rx="16" fill="#0B1F33" stroke="#F87171" stroke-width="2.5"/>
-    <text x="72" y="228" fill="#FECACA" font-size="24" font-weight="700">Untrusted</text>
-    <text x="72" y="262" fill="#E2E8F0" font-size="18">paste / upload</text>
-    <text x="72" y="290" fill="#E2E8F0" font-size="18">/ share hash</text>
+  <text x="40" y="58" fill="#F8FAFC" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="700">Defense-in-depth sanitization pipeline</text>
+  <text x="40" y="96" fill="#BAE6FD" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">Parse → strip → URL policy → CSP → preview / share</text>
 
-    <line x1="268" y1="243" x2="318" y2="243" stroke="#7DD3FC" stroke-width="3" marker-end="url(#arrow)"/>
+  <g font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+    <!-- Row 1 -->
+    <rect x="40" y="130" width="280" height="150" rx="16" fill="#0B1F33" stroke="#F87171" stroke-width="3"/>
+    <text x="64" y="192" fill="#FECACA" font-size="30" font-weight="700">1. Untrusted</text>
+    <text x="64" y="236" fill="#F1F5F9" font-size="22">paste / upload</text>
+    <text x="64" y="268" fill="#F1F5F9" font-size="22">/ share hash</text>
 
-    <rect x="328" y="168" width="210" height="150" rx="16" fill="#0B1F33" stroke="#38BDF8" stroke-width="2.5"/>
-    <text x="352" y="228" fill="#BAE6FD" font-size="24" font-weight="700">DOMParser</text>
-    <text x="352" y="262" fill="#E2E8F0" font-size="18">image/svg+xml</text>
-    <text x="352" y="290" fill="#E2E8F0" font-size="18">reject junk root</text>
+    <line x1="330" y1="205" x2="378" y2="205" stroke="#7DD3FC" stroke-width="3.5" marker-end="url(#arrowR)"/>
 
-    <line x1="548" y1="243" x2="598" y2="243" stroke="#7DD3FC" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="390" y="130" width="280" height="150" rx="16" fill="#0B1F33" stroke="#38BDF8" stroke-width="3"/>
+    <text x="414" y="192" fill="#BAE6FD" font-size="30" font-weight="700">2. DOMParser</text>
+    <text x="414" y="236" fill="#F1F5F9" font-size="22">image/svg+xml</text>
+    <text x="414" y="268" fill="#F1F5F9" font-size="22">reject junk root</text>
 
-    <rect x="608" y="168" width="210" height="150" rx="16" fill="#0B1F33" stroke="#FBBF24" stroke-width="2.5"/>
-    <text x="632" y="228" fill="#FDE68A" font-size="24" font-weight="700">Strip / scrub</text>
-    <text x="632" y="262" fill="#E2E8F0" font-size="18">tags, on*, SMIL</text>
-    <text x="632" y="290" fill="#E2E8F0" font-size="18">CSS / URLs</text>
+    <line x1="680" y1="205" x2="728" y2="205" stroke="#7DD3FC" stroke-width="3.5" marker-end="url(#arrowR)"/>
 
-    <line x1="828" y1="243" x2="878" y2="243" stroke="#7DD3FC" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="740" y="130" width="220" height="150" rx="16" fill="#0B1F33" stroke="#FBBF24" stroke-width="3"/>
+    <text x="764" y="192" fill="#FDE68A" font-size="28" font-weight="700">3. Strip</text>
+    <text x="764" y="236" fill="#F1F5F9" font-size="22">tags, on*, SMIL</text>
+    <text x="764" y="268" fill="#F1F5F9" font-size="22">CSS / URLs</text>
 
-    <rect x="888" y="150" width="200" height="82" rx="14" fill="#0B1F33" stroke="#34D399" stroke-width="2.5"/>
-    <text x="912" y="200" fill="#A7F3D0" font-size="22" font-weight="700">Safe preview</text>
+    <!-- Arrow down from strip -->
+    <line x1="850" y1="290" x2="850" y2="338" stroke="#7DD3FC" stroke-width="3.5" marker-end="url(#arrowD)"/>
 
-    <rect x="888" y="254" width="200" height="82" rx="14" fill="#0B1F33" stroke="#22D3EE" stroke-width="2.5"/>
-    <text x="912" y="304" fill="#CFFAFE" font-size="22" font-weight="700">Share mode</text>
+    <!-- Row 2 -->
+    <rect x="40" y="360" width="440" height="130" rx="16" fill="#0B1F33" stroke="#34D399" stroke-width="3"/>
+    <text x="64" y="418" fill="#A7F3D0" font-size="30" font-weight="700">4a. Safe preview</text>
+    <text x="64" y="462" fill="#F1F5F9" font-size="22">Inspectable sanitized DOM</text>
 
-    <line x1="1098" y1="243" x2="1140" y2="243" stroke="#7DD3FC" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="520" y="360" width="440" height="130" rx="16" fill="#0B1F33" stroke="#22D3EE" stroke-width="3"/>
+    <text x="544" y="418" fill="#CFFAFE" font-size="30" font-weight="700">4b. Share mode</text>
+    <text x="544" y="462" fill="#F1F5F9" font-size="22">Strips phishing UI + remotes</text>
 
-    <rect x="1150" y="168" width="200" height="150" rx="16" fill="#0B1F33" stroke="#A5F3FC" stroke-width="2.5"/>
-    <text x="1174" y="228" fill="#F0F9FF" font-size="24" font-weight="700">+ CSP</text>
-    <text x="1174" y="262" fill="#E2E8F0" font-size="18">script-src self</text>
-    <text x="1174" y="290" fill="#E2E8F0" font-size="18">defense layer</text>
+    <!-- Arrow down -->
+    <line x1="500" y1="500" x2="500" y2="538" stroke="#7DD3FC" stroke-width="3.5" marker-end="url(#arrowD)"/>
+
+    <!-- Row 3 CSP -->
+    <rect x="40" y="550" width="920" height="100" rx="16" fill="#0B1F33" stroke="#A5F3FC" stroke-width="3"/>
+    <text x="64" y="612" fill="#F0F9FF" font-size="28" font-weight="700">5. + CSP — script-src 'self' as a defense layer</text>
   </g>
-
-  <text x="56" y="420" fill="#E2E8F0" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="19">Share mode also strips phishing UI: outbound links and remote images.</text>
-  <text x="56" y="456" fill="#CBD5E1" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17">One failed layer should not mean game over. The sanitizer, insert path, and CSP reinforce each other.</text>
 </svg>

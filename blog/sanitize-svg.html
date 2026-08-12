@@ -499,8 +499,8 @@
         <figure class="article-figure">
           <img
             src="/blog/sanitize-svg-attack-surface.svg"
-            width="1400"
-            height="720"
+            width="1000"
+            height="980"
             sizes="(max-width: 900px) 100vw, 42rem"
             alt="SVG XSS attack surface map: script and on-handlers, foreignObject, SMIL, unsafe URLs, CSS active content, safer insert paths"
             loading="eager"
@@ -687,15 +687,15 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
             <figure class="article-figure">
               <img
                 src="/blog/sanitize-svg-pipeline.svg"
-                width="1400"
-                height="520"
+                width="1000"
+                height="720"
                 sizes="(max-width: 900px) 100vw, 42rem"
                 alt="Pipeline diagram: untrusted SVG to DOMParser, strip and scrub, safe preview or share mode, plus CSP"
                 loading="lazy"
                 decoding="async"
               />
               <figcaption>
-                One failed layer should not mean game over. The sanitizer, insert path, and CSP reinforce each
+                One failed layer should not mean game over — sanitizer, insert path, and CSP reinforce each
                 other.
               </figcaption>
             </figure>
