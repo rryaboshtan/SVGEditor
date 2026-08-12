@@ -6,11 +6,8 @@
       <stop offset="0%" stop-color="#061018"/>
       <stop offset="100%" stop-color="#0A1C30"/>
     </linearGradient>
-    <marker id="arrowR" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#7DD3FC"/>
-    </marker>
-    <marker id="arrowD" markerWidth="10" markerHeight="10" refX="3" refY="8" orient="auto">
-      <path d="M0,0 L3,8 L6,0 Z" fill="#7DD3FC"/>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#7DD3FC"/>
     </marker>
   </defs>
   <rect width="1100" height="560" fill="url(#bg2)"/>
@@ -25,21 +22,21 @@
     <text x="60" y="186" fill="#E2E8F0" font-size="14">paste / upload</text>
     <text x="60" y="210" fill="#E2E8F0" font-size="14">/ share hash</text>
 
-    <line x1="350" y1="175" x2="390" y2="175" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrowR)"/>
+    <line x1="350" y1="175" x2="390" y2="175" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrow)"/>
 
     <rect x="400" y="110" width="300" height="130" rx="14" fill="#0B1F33" stroke="#38BDF8" stroke-width="2"/>
     <text x="420" y="152" fill="#7DD3FC" font-size="18" font-weight="700">2. DOMParser</text>
     <text x="420" y="186" fill="#E2E8F0" font-size="14">image/svg+xml</text>
     <text x="420" y="210" fill="#E2E8F0" font-size="14">reject junk root</text>
 
-    <line x1="710" y1="175" x2="750" y2="175" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrowR)"/>
+    <line x1="710" y1="175" x2="750" y2="175" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrow)"/>
 
     <rect x="760" y="110" width="300" height="130" rx="14" fill="#0B1F33" stroke="#FBBF24" stroke-width="2"/>
     <text x="780" y="152" fill="#FCD34D" font-size="18" font-weight="700">3. Strip / scrub</text>
     <text x="780" y="186" fill="#E2E8F0" font-size="14">tags, on*, SMIL</text>
     <text x="780" y="210" fill="#E2E8F0" font-size="14">CSS / URLs</text>
 
-    <line x1="910" y1="250" x2="910" y2="290" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrowD)"/>
+    <line x1="910" y1="250" x2="910" y2="298" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrow)"/>
 
     <!-- Row 2: preview + share -->
     <rect x="40" y="310" width="490" height="100" rx="14" fill="#0B1F33" stroke="#34D399" stroke-width="2"/>
@@ -50,7 +47,7 @@
     <text x="590" y="350" fill="#A5F3FC" font-size="18" font-weight="700">4b. Share mode</text>
     <text x="590" y="382" fill="#E2E8F0" font-size="14">Strips phishing UI + remotes</text>
 
-    <line x1="550" y1="420" x2="550" y2="455" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrowD)"/>
+    <line x1="550" y1="420" x2="550" y2="458" stroke="#7DD3FC" stroke-width="2.5" marker-end="url(#arrow)"/>
 
     <!-- Row 3: CSP -->
     <rect x="40" y="470" width="1020" height="60" rx="14" fill="#0B1F33" stroke="#A5F3FC" stroke-width="2"/>
