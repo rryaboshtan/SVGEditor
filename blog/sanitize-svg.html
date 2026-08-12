@@ -6,7 +6,7 @@
     <title>How to Sanitize SVG for XSS (Uploads, React, DOMPurify) | SVGEditor</title>
     <meta
       name="description"
-      content="How to sanitize SVG uploads against XSS: foreignObject, SMIL, data: URLs, DOMPurify config, React/Next.js insert paths, CSP, XXE, and a production checklist. Matches SVGEditor’s in-browser sanitizer."
+      content="A practical guide to sanitizing untrusted SVG uploads against XSS — covering foreignObject, SMIL, DOMPurify, React/Next.js, CSP, and XXE. Built around SVGEditor’s in-browser sanitizer."
     />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="author" content="Roman Riaboshtan" />
@@ -18,7 +18,7 @@
     <meta property="og:title" content="How to Sanitize SVG for XSS (Uploads, React, DOMPurify)" />
     <meta
       property="og:description"
-      content="Sanitize SVG uploads: foreignObject, SMIL, DOMPurify config, React/Next paths, CSP, XXE — by Roman Riaboshtan (SVGEditor)."
+      content="How to sanitize untrusted SVG uploads safely — foreignObject, SMIL, DOMPurify, React/Next, CSP, and XXE. By Roman Riaboshtan (SVGEditor)."
     />
     <meta property="og:url" content="https://getsvgeditor.com/blog/sanitize-svg" />
     <meta property="og:locale" content="en_US" />
@@ -31,7 +31,7 @@
       content="Sanitize SVG for XSS — SVGEditor security guide"
     />
     <meta property="article:published_time" content="2026-08-10T09:30:00+03:00" />
-    <meta property="article:modified_time" content="2026-08-10T10:00:00+03:00" />
+    <meta property="article:modified_time" content="2026-08-12T08:30:00+03:00" />
     <meta property="article:author" content="https://www.linkedin.com/in/roman-riaboshtan" />
     <meta property="article:section" content="SVG" />
     <meta property="article:tag" content="sanitize SVG" />
@@ -45,7 +45,7 @@
     <meta name="twitter:title" content="How to Sanitize SVG for XSS (Uploads, React, DOMPurify)" />
     <meta
       name="twitter:description"
-      content="Sanitize SVG uploads for XSS: foreignObject, SMIL, DOMPurify, React/Next, CSP. Free in-browser preview on SVGEditor."
+      content="Sanitize untrusted SVG uploads for XSS with DOMPurify, React/Next, and CSP. Try a free in-browser preview in SVGEditor."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/blog/sanitize-svg-og.jpg" />
     <meta name="twitter:image:alt" content="Sanitize SVG for XSS — SVGEditor security guide" />
@@ -56,8 +56,8 @@
     <link
       rel="preload"
       as="image"
-      href="/blog/sanitize-svg-attack-surface.webp"
-      type="image/webp"
+      href="/blog/sanitize-svg-attack-surface.svg"
+      type="image/svg+xml"
       fetchpriority="high"
     />
     <link rel="stylesheet" href="/styles.min.css?v=5006e98df8" />
@@ -95,7 +95,7 @@
             "url": "https://github.com/rryaboshtan",
             "image": "https://getsvgeditor.com/blog/roman-riaboshtan.jpg",
             "jobTitle": "Full-stack developer",
-            "description": "Creator of SVGEditor — builds browser-native SVG tools, including a client-side SVG XSS sanitizer.",
+            "description": "Creator of SVGEditor. Builds browser-native SVG tools, including a client-side sanitizer for SVG XSS.",
             "sameAs": [
               "https://github.com/rryaboshtan",
               "https://github.com/rryaboshtan/SvgViewer",
@@ -132,10 +132,10 @@
             "@type": "TechArticle",
             "@id": "https://getsvgeditor.com/blog/sanitize-svg#article",
             "headline": "How to sanitize SVG for XSS: uploads, React, DOMPurify",
-            "description": "How to sanitize untrusted SVG before preview or share — XSS vectors, DOMPurify config, React/Next insert paths, CSP, XXE, and SVGEditor’s browser pipeline.",
+            "description": "How to sanitize untrusted SVG before preview or share — XSS vectors, DOMPurify, React/Next insert paths, CSP, XXE, and SVGEditor’s browser pipeline.",
             "inLanguage": "en",
             "datePublished": "2026-08-10T09:30:00+03:00",
-            "dateModified": "2026-08-10T10:00:00+03:00",
+            "dateModified": "2026-08-12T08:30:00+03:00",
             "articleSection": "SVG",
             "keywords": [
               "sanitize SVG",
@@ -285,7 +285,7 @@
                 "name": "Should I use DOMPurify to sanitize SVG?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "DOMPurify (with an SVG-aware config) is a solid default for many apps. SVGEditor ships a purpose-built SVG sanitizer tuned for preview, download, and share/embed payloads — including a stricter share mode that removes phishing chrome. Pick a maintained library or a tested custom allowlist; do not invent a one-off regex stripper."
+                  "text": "DOMPurify (with an SVG-aware config) is a solid default for many apps. SVGEditor ships a purpose-built SVG sanitizer tuned for preview, download, and share/embed payloads — including a stricter share mode that removes phishing UI. Pick a maintained library or a tested custom allowlist; do not invent a one-off regex stripper."
                 }
               },
               {
@@ -293,7 +293,7 @@
                 "name": "Does SVGEditor sanitize SVG in the browser?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Before live preview, download, Data URI export, and share/embed encoding, SVGEditor runs a client-side sanitizer that strips executable and active content. Share mode is stricter: outbound links and remote images are removed so a shared link cannot dress up phishing chrome. Markup is not uploaded to a server for cleaning."
+                  "text": "Yes. Before live preview, download, data URI export, and share/embed encoding, SVGEditor runs a client-side sanitizer that strips executable and active content. Share mode is stricter: outbound links and remote images are removed so a shared link cannot dress up as phishing UI. Markup is not uploaded to a server for cleaning."
                 }
               },
               {
@@ -301,7 +301,7 @@
                 "name": "Can Content Security Policy replace an SVG sanitizer?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. CSP is defense-in-depth. A strict script-src can block many script gadgets, but attribute handlers, navigation tricks, and product UX abuse (fake buttons in shared SVG) still need markup policy. Use sanitizer + CSP + a safe insert path together."
+                  "text": "No. CSP is defense in depth. A strict script-src can block many script gadgets, but attribute handlers, navigation tricks, and product UX abuse (fake buttons in shared SVG) still need a markup policy. Use a sanitizer + CSP + a safe insert path together."
                 }
               },
               {
@@ -309,7 +309,7 @@
                 "name": "What breaks when you over-sanitize SVG?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Legitimate icons may lose external sprite use references, remote images, SMIL motion graphics, or embedded HTML labels. Document the policy: design-system icons (trusted) vs user uploads (hostile). Offer a clear error when markup is invalid or too aggressive to keep."
+                  "text": "Legitimate icons may lose external sprite use references, remote images, SMIL motion graphics, or embedded HTML labels. Document the policy: design-system icons (trusted) versus user uploads (hostile). Return a clear error when markup is invalid or too aggressive to keep."
                 }
               },
               {
@@ -317,7 +317,7 @@
                 "name": "How do I sanitize SVG uploads in React or Next.js?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Never pass raw upload markup to dangerouslySetInnerHTML. Sanitize on the server (or in a Worker) with DOMPurify/isomorphic-dompurify or a purpose-built SVG sanitizer, store only cleaned markup, and prefer img or a scrubbed DOM insert for preview. In Next.js, keep sanitization out of the edge of trust — validate again before any HTML serialization."
+                  "text": "Never pass raw upload markup to dangerouslySetInnerHTML. Sanitize on the server (or in a Worker) with DOMPurify/isomorphic-dompurify or a purpose-built SVG sanitizer, store only cleaned markup, and prefer img or a scrubbed DOM insert for preview. In Next.js, keep sanitization inside your trust boundary — validate again before any HTML serialization."
                 }
               },
               {
@@ -438,12 +438,13 @@
         <p class="legal-kicker">Guide</p>
         <h1 class="legal-title" itemprop="headline">How to sanitize SVG for XSS</h1>
         <p class="legal-lead" itemprop="description">
-          A production playbook for <strong>sanitizing SVG uploads</strong> before live preview, React insert,
-          download, or share — covering <code>foreignObject</code>, SMIL <code>href</code> tricks, nested
-          <code>data:</code> URIs, DOMPurify config, Next.js paths, XXE, and CSP. Written by the builder of
-          SVGEditor so the advice matches a real client-side sanitizer, not a regex myth.
+          How to <strong>sanitize SVG uploads</strong> before live preview, React insert, download, or share.
+          This guide covers the real attack surface — <code>foreignObject</code>, SMIL <code>href</code> tricks,
+          nested <code>data:</code> URIs, DOMPurify, Next.js, XXE, and CSP — and it comes from the creator of
+          SVGEditor, so the advice tracks a real client-side sanitizer rather than a regex checklist that only
+          looks safe on paper.
         </p>
-        <p class="legal-updated">Published August 10, 2026 · Updated August 10, 2026</p>
+        <p class="legal-updated">Published August 10, 2026 · Updated August 12, 2026</p>
 
         <div class="article-byline">
           <img
@@ -463,16 +464,16 @@
               >
             </p>
             <p class="article-byline-role">
-              Creator of SVGEditor · full-stack (Python &amp; React). Ships the browser sanitizer used for
-              preview, share/embed, PNG, and React export — this guide reflects that pipeline.
+              Creator of SVGEditor · full-stack developer (Python &amp; React). Built the browser sanitizer
+              behind preview, share/embed, PNG, and React export — and wrote this guide from that pipeline.
             </p>
           </div>
         </div>
 
         <div class="article-cta">
           <p>
-            Paste a suspicious SVG into the editor: active content is stripped <strong>before</strong> preview
-            and before share-link encoding — no upload.
+            Paste a suspicious SVG into the editor. Active content is stripped <strong>before</strong> preview
+            and before share-link encoding. Nothing leaves your browser.
           </p>
           <a class="btn btn-accent article-cta-btn" href="/">Open SVGEditor (sanitized preview)</a>
         </div>
@@ -496,21 +497,18 @@
         </nav>
 
         <figure class="article-figure">
-          <picture>
-            <source srcset="/blog/sanitize-svg-attack-surface.webp" type="image/webp" />
-            <img
-              src="/blog/sanitize-svg-attack-surface.svg"
-              width="1200"
-              height="640"
-              sizes="(max-width: 900px) 100vw, 42rem"
-              alt="SVG XSS attack surface map: script and on-handlers, foreignObject, SMIL, unsafe URLs, CSS active content, safer insert paths"
-              loading="eager"
-              fetchpriority="high"
-              decoding="async"
-            />
-          </picture>
+          <img
+            src="/blog/sanitize-svg-attack-surface.svg"
+            width="1400"
+            height="720"
+            sizes="(max-width: 900px) 100vw, 42rem"
+            alt="SVG XSS attack surface map: script and on-handlers, foreignObject, SMIL, unsafe URLs, CSS active content, safer insert paths"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
           <figcaption>
-            If you inline untrusted SVG, every box on this map is in scope — not only <code>&lt;script&gt;</code>.
+            If you inline untrusted SVG, every box on this map is in scope — not just <code>&lt;script&gt;</code>.
           </figcaption>
         </figure>
 
@@ -519,21 +517,21 @@
             <h2 id="why-sanitize">Why you must sanitize SVG</h2>
             <p>
               SVG is not “just an image.” It is <strong>XML that can carry active content</strong>. Designers
-              export innocent icons; attackers ship the same MIME type with a payload. The moment your app does
-              something like this with user input, you inherit HTML-class XSS risk on your origin:
+              export harmless icons; attackers ship the same MIME type with a payload. The moment your app does
+              something like this with user input, you inherit the same XSS risk as raw HTML on your origin:
             </p>
             <pre class="article-code" tabindex="0"><code>// Hostile if `markup` came from an upload or paste
 preview.innerHTML = markup;
 // or
 element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
             <p>
-              Teams usually discover this the hard way: a “logo upload,” a paste-to-preview editor, an SVG sprite
-              built from untrusted files, or a <strong>share link that embeds raw markup in the URL</strong>.
-              Rendering success is not a security signal.
+              Most teams learn this the hard way — through a “logo upload,” a paste-to-preview editor, an SVG
+              sprite built from untrusted files, or a <strong>share link that embeds raw markup in the URL</strong>.
+              A successful render is not a security signal.
             </p>
             <p>
               Trusted design-system icons and hostile uploads need <strong>different pipelines</strong>. Mixing
-              them is how production incidents start.
+              the two is how production incidents start.
             </p>
           </section>
 
@@ -549,13 +547,13 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
                   <tr>
                     <th scope="col">Surface</th>
                     <th scope="col">What goes wrong</th>
-                    <th scope="col">Sanitize response</th>
+                    <th scope="col">Mitigation</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <th scope="row"><code>&lt;script&gt;</code></th>
-                    <td>Direct code execution in page origin</td>
+                    <td>Runs code in the page’s origin</td>
                     <td>Remove the element entirely</td>
                   </tr>
                   <tr>
@@ -566,17 +564,17 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
                   <tr>
                     <th scope="row"><code>foreignObject</code></th>
                     <td>HTML island: nested scriptable DOM, forms, iframes</td>
-                    <td>Remove (do not “empty and keep”)</td>
+                    <td>Remove it (don’t empty it and leave the shell)</td>
                   </tr>
                   <tr>
                     <th scope="row">SMIL (<code>animate</code> / <code>set</code>)</th>
-                    <td>Rewrite <code>href</code> / <code>style</code> to <code>javascript:</code></td>
-                    <td>Remove dangerous animations; never leave retargeting SMIL</td>
+                    <td>Can rewrite <code>href</code> / <code>style</code> to <code>javascript:</code></td>
+                    <td>Remove dangerous animations; never leave SMIL that can retarget URLs</td>
                   </tr>
                   <tr>
                     <th scope="row">URL attributes</th>
                     <td><code>javascript:</code>, <code>data:text/html</code>, nested SVG <code>data:</code></td>
-                    <td>Allowlist by element kind + scheme</td>
+                    <td>Allowlist by element type and URL scheme</td>
                   </tr>
                   <tr>
                     <th scope="row">CSS</th>
@@ -585,8 +583,8 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
                   </tr>
                   <tr>
                     <th scope="row">External <code>&lt;use&gt;</code></th>
-                    <td>Pull remote SVG content into the document</td>
-                    <td>Fragments only (<code>#icon</code>) for untrusted trees</td>
+                    <td>Pulls remote SVG into the document</td>
+                    <td>Fragments only (<code>#icon</code>) for untrusted content</td>
                   </tr>
                   <tr>
                     <th scope="row"><code>feImage</code> / filters</th>
@@ -597,14 +595,14 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
               </table>
             </div>
             <p>
-              This matches the spirit of
+              That lines up with
               <a
                 href="https://owasp.org/www-project-application-security-verification-standard/"
                 target="_blank"
                 rel="noopener noreferrer"
                 >OWASP ASVS 5.2.7</a
               >: sanitize, disable, or sandbox user-supplied SVG — especially inline script and
-              <code>foreignObject</code>. CSP alone is not enough; SMIL is declarative animation, not
+              <code>foreignObject</code>. CSP alone is not enough. SMIL is declarative animation, not
               “script,” so a strict <code>script-src</code> will not stop an <code>animate</code> that rewrites
               <code>href</code>.
             </p>
@@ -613,15 +611,16 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
           <section>
             <h2 id="payload-examples">Payload patterns you should test against</h2>
             <p>
-              These snippets are <strong>hostile examples for security tests</strong> — not something to paste
-              into production without a sanitizer. A correct pipeline must neutralize them before DOM insert.
+              Use these snippets as <strong>hostile security-test fixtures</strong> — not as something to paste
+              into production without a sanitizer. A solid pipeline has to neutralize them before they reach the
+              DOM.
             </p>
             <h3 class="article-h3" id="payload-script">1) Event handler on a shape</h3>
             <pre class="article-code" tabindex="0"><code>&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"&gt;
   &lt;circle cx="12" cy="12" r="10" onload="alert('xss')" /&gt;
 &lt;/svg&gt;</code></pre>
             <p>
-              Expectation after sanitize: the <code>onload</code> attribute is gone. The circle may remain.
+              After sanitization: the <code>onload</code> attribute is gone. The circle may remain.
             </p>
 
             <h3 class="article-h3" id="payload-foreignobject">2) foreignObject HTML island</h3>
@@ -633,8 +632,8 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
   &lt;/foreignObject&gt;
 &lt;/svg&gt;</code></pre>
             <p>
-              Expectation: the entire <code>foreignObject</code> subtree is removed. “SVG-only” parsers that
-              ignore HTML namespace children fail here.
+              After sanitization: the entire <code>foreignObject</code> subtree is gone. “SVG-only” parsers that
+              ignore HTML-namespace children fail this case.
             </p>
 
             <h3 class="article-h3" id="payload-smil">3) SMIL rewriting href to javascript:</h3>
@@ -645,8 +644,8 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
   &lt;/a&gt;
 &lt;/svg&gt;</code></pre>
             <p>
-              Expectation: the dangerous <code>set</code> / <code>animate</code> is removed (or the whole
-              animation dropped). Leaving SMIL that targets <code>href</code>, <code>xlink:href</code>, or
+              After sanitization: the dangerous <code>set</code> / <code>animate</code> is removed (or the whole
+              animation is dropped). Leaving SMIL that targets <code>href</code>, <code>xlink:href</code>, or
               <code>style</code> is a classic incomplete allowlist.
             </p>
 
@@ -655,74 +654,74 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
   &lt;image href="data:image/svg+xml,&lt;svg&gt;…payload…&lt;/svg&gt;" /&gt;
 &lt;/svg&gt;</code></pre>
             <p>
-              Nested SVG inside <code>data:</code> can reintroduce scriptable content. A strict policy allows
-              common <strong>raster</strong> data URIs (<code>image/png</code>, <code>jpeg</code>,
-              <code>webp</code>, …) and blocks <code>data:image/svg</code>, <code>data:text/html</code>, and
-              <code>data:application/*</code>.
+              Nested SVG inside a <code>data:</code> URL can smuggle scriptable content back in. A strict policy
+              allows common <strong>raster</strong> data URIs (<code>image/png</code>, <code>jpeg</code>,
+              <code>webp</code>, and similar) and blocks <code>data:image/svg</code>,
+              <code>data:text/html</code>, and <code>data:application/*</code>.
             </p>
           </section>
 
           <section>
             <h2 id="xxe">XXE, DOCTYPE, and non-browser XML parsers</h2>
             <p>
-              Browser <code>DOMParser</code> with <code>"image/svg+xml"</code> is a different beast from a
+              Browser <code>DOMParser</code> with <code>"image/svg+xml"</code> is a different animal from a
               server-side XML stack. On the server, <strong>disable DTDs and external entities</strong> before
-              you even think about tag allowlists. Billion-laughs / XXE class bugs live in the parser config,
+              you even think about tag allowlists. Billion-laughs and XXE-class bugs live in the parser config,
               not in your <code>script</code> stripper.
             </p>
             <ul>
               <li>Reject or strip <code>DOCTYPE</code> and entity declarations on upload</li>
-              <li>Disable external entity resolution in libxml / Xerces / whatever you use</li>
+              <li>Disable external entity resolution in libxml, Xerces, or whatever you use</li>
               <li>Cap input size and node count (zip bombs and pathological trees)</li>
-              <li>Do not “pretty-print” hostile XML through a second parser with looser settings</li>
+              <li>Don’t “pretty-print” hostile XML through a second parser with looser settings</li>
             </ul>
             <p>
-              SVGEditor’s path is browser-first: invalid markup fails closed via
-              <code>parsererror</code> / non-<code>svg</code> root. If you store uploads server-side, apply the
-              XML hardening checklist <em>and</em> the SVG active-content checklist.
+              SVGEditor is browser-first: invalid markup fails closed on <code>parsererror</code> or a
+              non-<code>svg</code> root. If you store uploads on the server, apply the XML hardening checklist
+              <em>and</em> the SVG active-content checklist.
             </p>
           </section>
 
           <section>
-            <h2 id="pipeline">Defense-in-depth sanitize pipeline</h2>
+            <h2 id="pipeline">Defense-in-depth sanitization pipeline</h2>
             <figure class="article-figure">
-              <picture>
-                <source srcset="/blog/sanitize-svg-pipeline.webp" type="image/webp" />
-                <img
-                  src="/blog/sanitize-svg-pipeline.svg"
-                  width="1200"
-                  height="420"
-                  sizes="(max-width: 900px) 100vw, 42rem"
-                  alt="Pipeline diagram: untrusted SVG to DOMParser, strip and scrub, safe preview or share mode, plus CSP"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
+              <img
+                src="/blog/sanitize-svg-pipeline.svg"
+                width="1400"
+                height="520"
+                sizes="(max-width: 900px) 100vw, 42rem"
+                alt="Pipeline diagram: untrusted SVG to DOMParser, strip and scrub, safe preview or share mode, plus CSP"
+                loading="lazy"
+                decoding="async"
+              />
               <figcaption>
-                One layer failing should not mean game over — sanitizer, insert path, and CSP reinforce each other.
+                One failed layer should not mean game over. The sanitizer, insert path, and CSP reinforce each
+                other.
               </figcaption>
             </figure>
             <ol id="howto">
               <li id="howto-step-1">
-                <strong>Classify the source.</strong> Design-system file from CI ≠ paste from the internet ≠
-                share-hash payload.
+                <strong>Classify the source.</strong> A design-system file from CI ≠ a paste from the internet ≠
+                a share-hash payload.
               </li>
               <li id="howto-step-2">
                 <strong>Parse as SVG XML.</strong> Use <code>DOMParser</code> with
-                <code>"image/svg+xml"</code>, require a root <code>&lt;svg&gt;</code>, reject
+                <code>"image/svg+xml"</code>, require a root <code>&lt;svg&gt;</code>, and reject
                 <code>parsererror</code>.
               </li>
               <li id="howto-step-3">
-                <strong>Strip active content deepest-first.</strong> Forbidden tags, event handlers, hostile
-                SMIL, then scrub CSS and URL attributes.
+                <strong>Strip active content deepest-first.</strong> Remove forbidden tags, event handlers, and
+                hostile SMIL first, then scrub CSS and URL attributes.
               </li>
               <li id="howto-step-4">
                 <strong>Insert only cleaned markup</strong> under a CSP that does not trust inline script from
-                random strings. Prefer scrubbed DOM append over string <code>innerHTML</code> when you can.
+                arbitrary strings. When you can, append a scrubbed DOM tree instead of assigning string
+                <code>innerHTML</code>.
               </li>
             </ol>
             <p>
-              Simplified shape of a browser sanitizer (the real SVGEditor module is stricter and share-aware):
+              Here is a simplified outline of a browser sanitizer. SVGEditor’s real module is stricter and
+              share-aware:
             </p>
             <pre class="article-code" tabindex="0"><code>function sanitizeSvgMarkup(markup, { share = false } = {}) {
   const doc = new DOMParser().parseFromString(markup, "image/svg+xml");
@@ -735,7 +734,7 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
   // 3) drop SMIL that targets href/style or carries javascript:
   // 4) scrub &lt;style&gt; / style="" (block @import, url(javascript:), …)
   // 5) URL policy: fragments OK; raster data: OK; javascript: never
-  // 6) if share: unwrap &lt;a&gt;, block remote images (anti-phishing chrome)
+  // 6) if share: unwrap &lt;a&gt;, block remote images (anti-phishing UI)
 
   return new XMLSerializer().serializeToString(svg);
 }</code></pre>
@@ -762,25 +761,25 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
                   </tr>
                   <tr>
                     <th scope="row">Sanitized inline DOM</th>
-                    <td>Acceptable if maintained</td>
+                    <td>Acceptable if well maintained</td>
                     <td>Full (after policy)</td>
                     <td>Editors, inspectable preview</td>
                   </tr>
                   <tr>
                     <th scope="row"><code>&lt;img src="…svg"&gt;</code></th>
-                    <td>Lower for script exec</td>
+                    <td>Lower for script execution</td>
                     <td>Weak (<code>currentColor</code> won’t theme)</td>
-                    <td>Static marks, CMS figures</td>
+                    <td>Static logos, CMS figures</td>
                   </tr>
                   <tr>
                     <th scope="row">CSS <code>background-image</code></th>
-                    <td>Lower for script exec</td>
+                    <td>Lower for script execution</td>
                     <td>Decoration only</td>
-                    <td>Atmosphere, not controls</td>
+                    <td>Decorative only — never interactive UI</td>
                   </tr>
                   <tr>
                     <th scope="row">Trusted sprite / components</th>
-                    <td>Low (if supply chain clean)</td>
+                    <td>Low (if the supply chain is clean)</td>
                     <td>Strong</td>
                     <td>Design-system UI chrome</td>
                   </tr>
@@ -788,9 +787,9 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
               </table>
             </div>
             <p>
-              Rule of thumb: <strong>trusted system icons may be inlined</strong>;
-              <strong>user SVG gets a hostile pipeline</strong> (sanitize ± <code>&lt;img&gt;</code>). For
-              embedding trade-offs beyond security, see
+              Rule of thumb: <strong>trusted system icons can be inlined</strong>;
+              <strong>treat user SVG as hostile</strong> (sanitize it, use <code>&lt;img&gt;</code>, or both).
+              For embedding trade-offs beyond security, see
               <a href="/blog/svg-to-react">SVG → React</a> and
               <a href="/blog/svg-to-png">SVG → PNG</a>.
             </p>
@@ -800,18 +799,18 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
             <h2 id="share-mode">Share / embed mode: XSS is not the only threat</h2>
             <p>
               Product editors that encode SVG into a URL hash create a second problem:
-              <strong>phishing chrome</strong>. Even without script execution, a shared SVG can look like a
-              login button that navigates off-site.
+              <strong>phishing UI</strong>. Even without script execution, a shared SVG can look like a login
+              button that sends people off-site.
             </p>
-            <p>SVGEditor’s share/embed path therefore uses a stricter policy on top of the base sanitizer:</p>
+            <p>That is why SVGEditor’s share/embed path uses a stricter policy on top of the base sanitizer:</p>
             <ul>
               <li>Unwrap <code>&lt;a&gt;</code> so fake CTAs cannot navigate away</li>
               <li>Block remote <code>http(s)</code> images and relative remote assets</li>
               <li>Still allow local fragments (<code>#id</code>) and safe raster <code>data:image/*</code></li>
             </ul>
             <p>
-              Treat share URLs like the file itself. Confidential marks do not belong in public channels — the
-              payload lives in the hash on the recipient’s machine.
+              Treat share URLs like the file itself. Confidential artwork does not belong in public channels —
+              the payload sits in the hash on the recipient’s machine.
             </p>
           </section>
 
@@ -823,38 +822,38 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
                   <tr>
                     <th scope="col">Approach</th>
                     <th scope="col">Strengths</th>
-                    <th scope="col">Watch-outs</th>
+                    <th scope="col">Caveats</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <th scope="row">DOMPurify (+ SVG config)</th>
-                    <td>Battle-tested, widely reviewed, good default</td>
-                    <td>Must enable SVG/Math carefully; keep dependency updated</td>
+                    <td>Battle-tested, widely reviewed, solid default</td>
+                    <td>Enable SVG/Math carefully; keep the dependency updated</td>
                   </tr>
                   <tr>
                     <th scope="row">isomorphic-dompurify / server clean</th>
                     <td>Clean before storage; one policy for SSR</td>
-                    <td>Still sanitize again before risky client insert</td>
+                    <td>Sanitize again before any risky client insert</td>
                   </tr>
                   <tr>
                     <th scope="row">Purpose-built SVG sanitizer</th>
-                    <td>SMIL / share-mode / editor UX tuned to product</td>
-                    <td>You own tests and bypass research</td>
+                    <td>SMIL, share mode, and editor UX tuned to your product</td>
+                    <td>You own the tests and bypass research</td>
                   </tr>
                   <tr>
                     <th scope="row">Regex / string replace</th>
-                    <td>None that matter</td>
-                    <td>Bypasses via encoding, namespaces, SMIL, CSS</td>
+                    <td>None worth keeping</td>
+                    <td>Easy to bypass via encoding, namespaces, SMIL, or CSS</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <p>
-              SVGEditor uses a <strong>purpose-built client sanitizer</strong> because preview, download, Data
-              URI, and share encoding all run in the browser with a known threat model. If you build a SaaS
-              upload feature, DOMPurify (or equivalent) plus server-side validation is often the faster path —
-              as long as SMIL and <code>foreignObject</code> are in your test suite.
+              SVGEditor uses a <strong>purpose-built client sanitizer</strong> because preview, download, data
+              URI export, and share encoding all run in the browser under a known threat model. If you are
+              building a SaaS upload feature, DOMPurify (or an equivalent) plus server-side validation is often
+              the faster path — as long as SMIL and <code>foreignObject</code> are in your test suite.
             </p>
           </section>
 
@@ -866,7 +865,7 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
                 >DOMPurify</a
               >
               (Cure53). Pin the version, update on a schedule, and treat SVG bypass advisories as pager-worthy.
-              Starting point for <strong>untrusted uploads</strong> (tune to your product):
+              Here is a starting point for <strong>untrusted uploads</strong> (tune it to your product):
             </p>
             <pre class="article-code" tabindex="0"><code>import DOMPurify from "dompurify";
 
@@ -891,23 +890,23 @@ const CLEAN = DOMPurify.sanitize(dirtySvgString, {
   KEEP_CONTENT: false,
 });
 
-// Second pass for share/preview phishing chrome (product-specific):
+// Second pass for share/preview phishing UI (product-specific):
 // - unwrap or remove &lt;a&gt;
 // - drop http(s) images / external use
 // Or call your purpose-built SVG sanitizer here.</code></pre>
             <p>
-              Notes that bite teams in production:
+              Common production gotchas:
             </p>
             <ul>
               <li>
                 Re-enabling <code>foreignObject</code> for “HTML labels” reopens the entire HTML XSS surface —
-                require a trusted-author tier instead.
+                use a trusted-author tier instead.
               </li>
               <li>
                 Forbidding the whole SMIL family is the blunt, safe default for uploads. If you must keep
                 decorative motion, allowlist only animations that cannot target <code>href</code> /
-                <code>xlink:href</code> / <code>style</code> and still fuzz <code>from</code>/<code>to</code>/
-                <code>values</code> for <code>javascript:</code>.
+                <code>xlink:href</code> / <code>style</code>, and still fuzz <code>from</code> /
+                <code>to</code> / <code>values</code> for <code>javascript:</code>.
               </li>
               <li>
                 On Node, use a maintained isomorphic wrapper and <strong>sanitize again</strong> before any
@@ -919,7 +918,7 @@ const CLEAN = DOMPurify.sanitize(dirtySvgString, {
           <section>
             <h2 id="react-next">How to sanitize SVG uploads in React and Next.js</h2>
             <p>
-              The React footgun is not exotic:
+              The React footgun is simple:
             </p>
             <pre class="article-code" tabindex="0"><code>// ❌ Never with user/upload markup
 &lt;div dangerouslySetInnerHTML={{ __html: uploadedSvg }} /&gt;
@@ -942,18 +941,18 @@ previewRef.current.replaceChildren(parseSvgElement(clean));</code></pre>
                 <tbody>
                   <tr>
                     <th scope="row">Upload API</th>
-                    <td>Sanitize in the API / Worker before store</td>
+                    <td>Sanitize in the API / Worker before you store it</td>
                     <td>Route Handler / Server Action — same rule</td>
                   </tr>
                   <tr>
                     <th scope="row">Preview</th>
                     <td><code>&lt;img&gt;</code> or scrubbed DOM</td>
-                    <td>Same; avoid streaming raw SVG into RSC HTML</td>
+                    <td>Same; don’t stream raw SVG into RSC HTML</td>
                   </tr>
                   <tr>
                     <th scope="row">Icons in UI</th>
                     <td>Trusted SVGR / components only</td>
-                    <td>Import from the design-system package</td>
+                    <td>Import from your design-system package</td>
                   </tr>
                   <tr>
                     <th scope="row">Export to JSX</th>
@@ -964,8 +963,8 @@ previewRef.current.replaceChildren(parseSvgElement(clean));</code></pre>
               </table>
             </div>
             <p>
-              If you need theming on a <em>user</em> mark, sanitize to a strict subset first, then wrap as a
-              component. Do not “trust the designer’s export” because the upload form has a file picker.
+              If you need theming on a <em>user</em> asset, sanitize to a strict subset first, then wrap it as a
+              component. Don’t “trust the designer’s export” just because the upload form has a file picker.
             </p>
           </section>
 
@@ -983,8 +982,8 @@ previewRef.current.replaceChildren(parseSvgElement(clean));</code></pre>
                 <tbody>
                   <tr>
                     <th scope="row">Namespaced event attrs</th>
-                    <td>Handlers may appear with prefixes / odd casing</td>
-                    <td>Strip by localName: anything matching <code>/^on/i</code></td>
+                    <td>Handlers may show up with prefixes or odd casing</td>
+                    <td>Strip by <code>localName</code>: anything matching <code>/^on/i</code></td>
                   </tr>
                   <tr>
                     <th scope="row">SMIL vs CSP</th>
@@ -993,23 +992,23 @@ previewRef.current.replaceChildren(parseSvgElement(clean));</code></pre>
                   </tr>
                   <tr>
                     <th scope="row"><code>&lt;img src="file.svg"&gt;</code></th>
-                    <td>Scripts generally do not run; theming dies</td>
+                    <td>Scripts generally do not run; theming is lost</td>
                     <td>Good for static preview, not for icon systems</td>
                   </tr>
                   <tr>
                     <th scope="row">Inline SVG in HTML</th>
-                    <td>Full active surface in page origin</td>
-                    <td>Highest risk path — sanitize or don’t</td>
+                    <td>Full active surface in the page origin</td>
+                    <td>Highest-risk path — sanitize it or don’t inline it</td>
                   </tr>
                   <tr>
                     <th scope="row">Mutation after parse</th>
-                    <td>Serializing then re-parsing can reshuffle edge cases</td>
+                    <td>Serialize-then-reparse can reshuffle edge cases</td>
                     <td>Sanitize → insert; avoid multi-hop reparse loops</td>
                   </tr>
                   <tr>
                     <th scope="row">Safari / Firefox gaps</th>
-                    <td>Legacy URL / animation behaviors differ at the edges</td>
-                    <td>Fail closed; test payloads in ≥2 engines</td>
+                    <td>Legacy URL / animation behavior differs at the edges</td>
+                    <td>Fail closed; test payloads in at least two engines</td>
                   </tr>
                 </tbody>
               </table>
@@ -1019,8 +1018,8 @@ previewRef.current.replaceChildren(parseSvgElement(clean));</code></pre>
           <section>
             <h2 id="tests">Regression tests every SVG sanitizer needs</h2>
             <p>
-              Treat these as CI fixtures (assert: no <code>script</code>, no <code>on*</code>, no
-              <code>javascript:</code> left, <code>foreignObject</code> gone):
+              Treat these as CI fixtures. After sanitization, assert that there is no <code>script</code>, no
+              <code>on*</code>, no leftover <code>javascript:</code>, and no <code>foreignObject</code>:
             </p>
             <pre class="article-code" tabindex="0"><code>const FIXTURES = [
   ["onload-circle", `&lt;svg&gt;&lt;circle onload="alert(1)" /&gt;&lt;/svg&gt;`],
@@ -1039,8 +1038,8 @@ for (const [name, dirty] of FIXTURES) {
   assert.ok(!/&lt;script/i.test(clean), name);
 }</code></pre>
             <p>
-              When you change the allowlist, add a fixture first. Sanitizer regressions are silent until someone
-              pastes a PoC into production.
+              When you change the allowlist, add a fixture first. Sanitizer regressions stay quiet until someone
+              pastes a proof of concept into production.
             </p>
           </section>
 
@@ -1052,12 +1051,13 @@ for (const [name, dirty] of FIXTURES) {
               markup sanitization:
             </p>
             <ul>
-              <li>Some handlers and navigation tricks still create product abuse</li>
-              <li>Shared SVG can socially engineer clicks without executing script</li>
-              <li>Future browser / library gaps should not be your only door lock</li>
+              <li>Some handlers and navigation tricks still enable product abuse</li>
+              <li>Shared SVG can socially engineer clicks without running any script</li>
+              <li>Future browser or library gaps should not be your only lock on the door</li>
             </ul>
             <p>
-              SVGEditor pairs page CSP with the sanitizer on purpose: <strong>defense-in-depth</strong>.
+              SVGEditor pairs page CSP with the sanitizer on purpose. That is
+              <strong>defense in depth</strong>.
             </p>
           </section>
 
@@ -1066,75 +1066,75 @@ for (const [name, dirty] of FIXTURES) {
             <ul>
               <li>
                 <strong>External sprites:</strong> <code>&lt;use href="/icons.svg#x"&gt;</code> may be stripped
-                for untrusted trees — correct for uploads, painful for your own icon sheet.
+                for untrusted content — correct for uploads, painful for your own icon sheet.
               </li>
               <li>
-                <strong>Remote illustrations:</strong> <code>&lt;image href="https://cdn/…"&gt;</code> blocked in
-                share mode by design.
+                <strong>Remote illustrations:</strong> <code>&lt;image href="https://cdn/…"&gt;</code> is blocked
+                in share mode by design.
               </li>
               <li>
                 <strong>Decorative SMIL / CSS motion:</strong> hostile animation targets must go; benign motion
-                may be collateral if your policy is strict.
+                may be collateral damage if your policy is strict.
               </li>
               <li>
                 <strong>HTML labels in diagrams:</strong> <code>foreignObject</code> diagrams will not survive a
-                secure upload path — ask for a different format or trusted-author exception.
+                secure upload path — ask for a different format or a trusted-author exception.
               </li>
             </ul>
             <p>
-              Document two tiers: <strong>trusted authoring</strong> vs <strong>untrusted upload</strong>. Do
-              not silently “fix” files in a way that looks like a successful brand asset but lost its links.
+              Document two tiers: <strong>trusted authoring</strong> versus <strong>untrusted upload</strong>.
+              Don’t silently “fix” files so they look like a successful brand asset that quietly lost its links.
             </p>
           </section>
 
           <section>
             <h2 id="checklist">Production checklist: sanitize SVG uploads</h2>
             <ul>
-              <li>Source classified (trusted system vs user vs share payload)?</li>
-              <li>Parse with XML SVG parser; reject non-<code>svg</code> roots?</li>
+              <li>Is the source classified (trusted system vs user vs share payload)?</li>
+              <li>Do you parse with an XML SVG parser and reject non-<code>svg</code> roots?</li>
               <li>
-                Forbidden tags removed (<code>script</code>, <code>foreignObject</code>, <code>iframe</code>,
-                forms, …)?
+                Are forbidden tags removed (<code>script</code>, <code>foreignObject</code>,
+                <code>iframe</code>, forms, and similar)?
               </li>
-              <li>All <code>on*</code> attributes removed (including namespaced forms)?</li>
-              <li>SMIL that targets <code>href</code> / <code>style</code> or carries <code>javascript:</code> dropped?</li>
-              <li>CSS scrubbed (<code>@import</code>, <code>url(javascript:)</code>, legacy bindings)?</li>
-              <li>URL allowlist by element kind; nested SVG <code>data:</code> blocked?</li>
-              <li>External <code>&lt;use&gt;</code> disabled for untrusted content?</li>
-              <li>Share/embed path strips phishing chrome (links, remote images)?</li>
-              <li>CSP enabled as a second layer?</li>
-              <li>Automated tests include foreignObject + SMIL + nested data URI cases?</li>
-              <li>Invalid markup fails closed with a clear error?</li>
+              <li>Are all <code>on*</code> attributes removed (including namespaced forms)?</li>
+              <li>Is SMIL that targets <code>href</code> / <code>style</code> or carries <code>javascript:</code> dropped?</li>
+              <li>Is CSS scrubbed (<code>@import</code>, <code>url(javascript:)</code>, legacy bindings)?</li>
+              <li>Do you allowlist URLs by element type and block nested SVG <code>data:</code>?</li>
+              <li>Is external <code>&lt;use&gt;</code> disabled for untrusted content?</li>
+              <li>Does the share/embed path strip phishing UI (links, remote images)?</li>
+              <li>Is CSP enabled as a second layer?</li>
+              <li>Do automated tests cover foreignObject, SMIL, and nested data URI cases?</li>
+              <li>Does invalid markup fail closed with a clear error?</li>
             </ul>
           </section>
 
           <section>
             <h2 id="svgeditor">How SVGEditor sanitizes in practice</h2>
             <p>
-              Every paste, upload, download, Data URI export, and share/embed encode path runs through the
-              client sanitizer before the markup is trusted for preview or serialization. Highlights:
+              Every paste, upload, download, data URI export, and share/embed encode path runs through the
+              client sanitizer before the markup is trusted for preview or serialization. In short, it:
             </p>
             <ul>
               <li>
                 Removes executable / active tags (<code>script</code>, <code>foreignObject</code>,
-                <code>iframe</code>, form controls, …)
+                <code>iframe</code>, form controls, and similar)
               </li>
               <li>Strips event-handler attributes</li>
               <li>Removes SMIL that can retarget URLs or inject handlers</li>
               <li>Scrubs CSS text and <code>url()</code> values</li>
               <li>
-                Enforces a URL policy (blocks <code>javascript:</code>, nested SVG <code>data:</code>, unsafe
-                schemes)
+                Enforces a URL policy (blocks <code>javascript:</code>, nested SVG <code>data:</code>, and
+                unsafe schemes)
               </li>
               <li>
-                <strong>Share mode</strong> additionally unwraps anchors and blocks remote images so a hash link
-                cannot pose as a phishing page chrome
+                In <strong>share mode</strong>, also unwraps anchors and blocks remote images so a hash link
+                cannot pose as phishing UI
               </li>
             </ul>
             <p>
-              Nothing is uploaded to a server for “virus scanning theater.” Cleaning happens on-device — same
+              Nothing is uploaded to a server for “virus scanning theater.” Cleaning happens on-device — the same
               privacy stance as React and PNG export. Open the
-              <a href="/">editor</a>, paste markup, and inspect the preview; active content should already be
+              <a href="/">editor</a>, paste markup, and inspect the preview. Active content should already be
               gone before you hit share or download.
             </p>
           </section>
@@ -1143,15 +1143,14 @@ for (const [name, dirty] of FIXTURES) {
             <h2 id="faq">FAQ</h2>
             <h3 class="article-h3">Why can SVG cause XSS?</h3>
             <p>
-              Because SVG can include script, event handlers, HTML via <code>foreignObject</code>, SMIL that
-              rewrites URLs, and CSS payloads. Inline that into your page and it runs with your origin’s
-              privileges.
+              SVG can include script, event handlers, HTML via <code>foreignObject</code>, SMIL that rewrites
+              URLs, and CSS payloads. Inline that into your page and it runs with your origin’s privileges.
             </p>
             <h3 class="article-h3">Is &lt;img&gt; enough to sanitize SVG?</h3>
             <p>
-              It lowers script-execution risk versus raw inline markup, but it is not a complete policy and it
-              kills theming. Editors and upload features still need an explicit sanitizer before DOM insert or
-              share encoding.
+              It lowers script-execution risk compared with raw inline markup, but it is not a complete policy,
+              and it kills theming. Editors and upload features still need an explicit sanitizer before any DOM
+              insert or share encoding.
             </p>
             <h3 class="article-h3">What is foreignObject XSS?</h3>
             <p>
@@ -1161,45 +1160,46 @@ for (const [name, dirty] of FIXTURES) {
             <h3 class="article-h3">Why is SMIL dangerous?</h3>
             <p>
               Animations can change <code>href</code> / <code>style</code> to <code>javascript:</code> after
-              your static attribute scan. Strip hostile SMIL; do not only delete <code>&lt;script&gt;</code>.
+              your static attribute scan. Strip hostile SMIL — don’t stop at deleting
+              <code>&lt;script&gt;</code>.
             </p>
             <h3 class="article-h3">Should I use DOMPurify?</h3>
             <p>
-              Yes for many apps — with an SVG-aware config and regression tests. SVGEditor uses a purpose-built
-              sanitizer for preview/share UX; the requirement is the same: maintain it and test bypasses.
+              Yes, for many apps — with an SVG-aware config and regression tests. SVGEditor uses a purpose-built
+              sanitizer for preview and share UX, but the bar is the same: maintain it and test bypasses.
             </p>
             <h3 class="article-h3">Does SVGEditor sanitize in the browser?</h3>
             <p>
-              Yes — before preview, download, Data URI, and share/embed. Share mode is stricter against phishing
-              chrome. No server round-trip for cleaning.
+              Yes — before preview, download, data URI export, and share/embed. Share mode is stricter against
+              phishing UI, and there is no server round-trip for cleaning.
             </p>
             <h3 class="article-h3">Can CSP replace a sanitizer?</h3>
             <p>
-              No. Use both. CSP catches missed script gadgets; the sanitizer defines what markup your product
-              will even accept.
+              No. Use both. CSP catches missed script gadgets; the sanitizer decides what markup your product
+              will accept in the first place.
             </p>
             <h3 class="article-h3">What breaks if we over-sanitize?</h3>
             <p>
               External <code>&lt;use&gt;</code>, remote images, rich SMIL, and HTML-in-SVG diagrams. Split
-              trusted vs untrusted pipelines and fail closed with clear errors.
+              trusted and untrusted pipelines, and fail closed with clear errors.
             </p>
             <h3 class="article-h3">How do I sanitize SVG uploads in React or Next.js?</h3>
             <p>
-              Never feed raw uploads to <code>dangerouslySetInnerHTML</code>. Sanitize in the API / Server
-              Action, store only cleaned markup, preview via <code>&lt;img&gt;</code> or scrubbed DOM, and keep
+              Never feed raw uploads to <code>dangerouslySetInnerHTML</code>. Sanitize in the API or Server
+              Action, store only cleaned markup, preview with <code>&lt;img&gt;</code> or scrubbed DOM, and keep
               design-system icons on a trusted import path. See the
               <a href="#react-next">React / Next.js section</a> above.
             </p>
             <h3 class="article-h3">What is a good DOMPurify config for SVG?</h3>
             <p>
-              Enable the SVG profile, forbid <code>script</code> / <code>foreignObject</code> / hostile SMIL,
+              Enable the SVG profile, forbid <code>script</code>, <code>foreignObject</code>, and hostile SMIL,
               keep the library updated, and add fixtures for nested <code>data:</code> SVG. Copy the
-              <a href="#dompurify-config">starting config</a> and tighten for share mode.
+              <a href="#dompurify-config">starting config</a> and tighten it for share mode.
             </p>
             <h3 class="article-h3">Does OWASP require sanitizing user SVG?</h3>
             <p>
-              Yes — ASVS <strong>5.2.7</strong> requires sanitizing, disabling, or sandboxing user-supplied SVG
-              scriptable content (inline scripts and <code>foreignObject</code> called out explicitly).
+              Yes. ASVS <strong>5.2.7</strong> requires sanitizing, disabling, or sandboxing user-supplied SVG
+              scriptable content — and it calls out inline scripts and <code>foreignObject</code> explicitly.
             </p>
           </section>
 
@@ -1238,16 +1238,16 @@ for (const [name, dirty] of FIXTURES) {
             <p>
               <a href="/blog/svg-to-react">Convert SVG to React (JSX)</a> — components and theming after the
               markup is trustworthy.<br />
-              <a href="/blog/svg-to-png">Convert SVG to PNG</a> — raster handoff when the destination cannot take
-              vector (still sanitize first if the source was untrusted).
+              <a href="/blog/svg-to-png">Convert SVG to PNG</a> — a raster export when the destination cannot
+              take vector (still sanitize first if the source was untrusted).
             </p>
           </section>
 
           <section>
             <h2 id="try-now">Try a sanitized preview now</h2>
             <p>
-              Paste SVG, confirm the live preview, then export React / PNG or copy a share link. Active content
-              is stripped client-side before those paths run — free, no account.
+              Paste an SVG, confirm the live preview, then export React or PNG — or copy a share link. Active
+              content is stripped client-side before those paths run. Free, no account required.
             </p>
             <div class="legal-actions">
               <a class="btn btn-accent" href="/">Open SVGEditor</a>
