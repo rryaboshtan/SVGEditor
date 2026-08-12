@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#061018" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; form-action 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; script-src 'self' https://static.cloudflareinsights.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://cloudflareinsights.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; form-action 'none'; upgrade-insecure-requests"
     />
     <link rel="canonical" href="https://getsvgeditor.com/svg-to-react" />
 
@@ -50,6 +50,9 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
+    <link rel="dns-prefetch" href="https://cloudflareinsights.com" />
+
     <link
       rel="preload"
       href="fonts/syne-700-latin.woff2"
@@ -71,23 +74,7 @@
       type="font/woff2"
       crossorigin
     />
-    <style>
-      html,
-      body {
-        margin: 0;
-        background: #061018;
-        color: #e8f4ff;
-      }
-    </style>
-    <link
-      rel="stylesheet"
-      href="styles.min.css?v=5006e98df8"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link rel="stylesheet" href="styles.min.css?v=5006e98df8" />
-    </noscript>
+    <link rel="stylesheet" href="styles.min.css?v=5006e98df8" />
 
     <!-- Google Analytics (GA4) — delayed via gtag-config.js -->
     <script defer src="gtag-config.js?v=5006e98df8"></script>
