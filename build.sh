@@ -30,9 +30,10 @@ import pathlib, re, sys
 asset_v = sys.argv[1]
 css = pathlib.Path("styles.min.css").read_text(encoding="utf-8").replace("</", "<\\/")
 style_tag = f'<style id="app-css">{css}</style>'
+# No inline onload — CSP blocks event handlers; gtag-config.js promotes media=all.
 mono_block = (
-    f'<link rel="stylesheet" href="/fonts-mono.min.css?v={asset_v}" '
-    f'media="print" onload="this.media=\'all\'" />\n'
+    f'<link id="fonts-mono" rel="stylesheet" href="/fonts-mono.min.css?v={asset_v}" '
+    f'media="print" />\n'
     f'    <noscript><link rel="stylesheet" href="/fonts-mono.min.css?v={asset_v}" /></noscript>'
 )
 
@@ -42,8 +43,8 @@ link_re = re.compile(
 )
 style_re = re.compile(r'<style id="app-css">.*?</style>', re.S)
 mono_re = re.compile(
-    r'[ \t]*<link\s+rel="stylesheet"\s+href="/?fonts-mono\.min\.css(?:\?v=[^"]*)?"[^>]*>\s*'
-    r'(?:\n\s*<noscript>\s*<link\s+rel="stylesheet"\s+href="/?fonts-mono\.min\.css(?:\?v=[^"]*)?"\s*/?>\s*</noscript>\s*)?',
+    r'[ \t]*<link\s+(?:[^>]*\s)?href="/?fonts-mono\.min\.css(?:\?v=[^"]*)?"[^>]*>\s*'
+    r'(?:\n?\s*<noscript>\s*<link\s+rel="stylesheet"\s+href="/?fonts-mono\.min\.css(?:\?v=[^"]*)?"\s*/?>\s*</noscript>\s*)*',
     re.I,
 )
 
@@ -59,6 +60,8 @@ def stamp_misc(text: str) -> str:
         text = re.sub(pat, rep, text)
     return text
 
+slot_re = re.compile(r'[ \t]*<!--\s*fonts-mono-slot\s*-->\s*\n?')
+
 def apply_css(text: str) -> str:
     if style_re.search(text):
         text = style_re.sub(style_tag, text, count=1)
@@ -67,6 +70,8 @@ def apply_css(text: str) -> str:
 
     if mono_re.search(text):
         text = mono_re.sub(mono_block + "\n    ", text, count=1)
+    elif slot_re.search(text):
+        text = slot_re.sub(mono_block + "\n    ", text, count=1)
     elif 'id="app-css"' in text:
         text = style_re.sub(style_tag + "\n    " + mono_block, text, count=1)
     return text

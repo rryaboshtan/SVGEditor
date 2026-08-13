@@ -1,3 +1,17 @@
+/* Promote deferred mono stylesheet without inline onload (CSP-safe). */
+(function () {
+  var link = document.getElementById("fonts-mono");
+  if (!link) return;
+  function apply() {
+    link.media = "all";
+  }
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(apply, { timeout: 1200 });
+  } else {
+    window.setTimeout(apply, 1);
+  }
+})();
+
 /* GA4 only after real user input — not scroll (Lighthouse scrolls and would load gtag mid-audit). */
 (function () {
   var MEASUREMENT_ID = "G-4D9GCN9FTJ";
