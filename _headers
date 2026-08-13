@@ -17,6 +17,12 @@
 /fonts.min.css
   Cache-Control: public, max-age=31536000, immutable
 
+/fonts-syne.min.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts-mono.min.css
+  Cache-Control: public, max-age=31536000, immutable
+
 /gtag-config.js
   Cache-Control: public, max-age=31536000, immutable
 
