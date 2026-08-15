@@ -79,7 +79,7 @@ const bgButtons = document.querySelectorAll(".toolbar-swatch[data-bg]");
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const ZOOM_MIN = 0.25;
-const ZOOM_MAX = 4;
+const ZOOM_MAX = 10;
 const ZOOM_STEP = 0.25;
 
 let previewZoom = 1;

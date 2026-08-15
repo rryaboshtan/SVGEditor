@@ -3,7 +3,7 @@
 
   var SVG_NS = "http://www.w3.org/2000/svg";
   var ZOOM_MIN = 0.5;
-  var ZOOM_MAX = 3;
+  var ZOOM_MAX = 10;
   var ZOOM_STEP = 0.25;
 
   var stage = document.getElementById("embed-stage");
