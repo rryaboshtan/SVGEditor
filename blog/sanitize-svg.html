@@ -441,10 +441,10 @@
         <p class="legal-kicker">Guide</p>
         <h1 class="legal-title" itemprop="headline">How to sanitize SVG for XSS</h1>
         <p class="legal-lead" itemprop="description">
-          How to <strong>sanitize SVG uploads</strong> before live preview, React insert, download, or share.
-          This guide covers the real attack surface — <code>foreignObject</code>, SMIL <code>href</code> tricks,
-          nested <code>data:</code> URIs, DOMPurify, Next.js, XXE, and CSP — and it comes from the creator of
-          SVGEditor, so the advice tracks a real client-side sanitizer rather than a regex checklist that only
+          Learn how to <strong>sanitize SVG uploads</strong> before live preview, React insertion, download, or
+          sharing. This guide covers the real attack surface—<code>foreignObject</code>, SMIL
+          <code>href</code> tricks, nested <code>data:</code> URIs, DOMPurify, Next.js, XXE, and CSP. Written by
+          SVGEditor’s creator, it reflects a real client-side sanitizer rather than a regex checklist that only
           looks safe on paper.
         </p>
         <p class="legal-updated">Published August 10, 2026 · Updated August 12, 2026</p>
@@ -528,9 +528,9 @@ preview.innerHTML = markup;
 // or
 element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
             <p>
-              Most teams learn this the hard way — through a “logo upload,” a paste-to-preview editor, an SVG
-              sprite built from untrusted files, or a <strong>share link that embeds raw markup in the URL</strong>.
-              A successful render is not a security signal.
+              This risk appears in “logo upload” features, paste-to-preview editors, SVG sprites built from
+              untrusted files, and <strong>share links that embed raw markup in the URL</strong>. A successful
+              render is not a security signal.
             </p>
             <p>
               Trusted design-system icons and hostile uploads need <strong>different pipelines</strong>. Mixing
@@ -598,7 +598,7 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
               </table>
             </div>
             <p>
-              That lines up with
+              This aligns with
               <a
                 href="https://owasp.org/www-project-application-security-verification-standard/"
                 target="_blank"
@@ -614,8 +614,8 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
           <section>
             <h2 id="payload-examples">Payload patterns you should test against</h2>
             <p>
-              Use these snippets as <strong>hostile security-test fixtures</strong> — not as something to paste
-              into production without a sanitizer. A solid pipeline has to neutralize them before they reach the
+              Use these snippets as <strong>hostile security-test fixtures</strong>, not as content to paste
+              into production without a sanitizer. A solid pipeline must neutralize them before they reach the
               DOM.
             </p>
             <h3 class="article-h3" id="payload-script">1) Event handler on a shape</h3>
@@ -667,21 +667,21 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
           <section>
             <h2 id="xxe">XXE, DOCTYPE, and non-browser XML parsers</h2>
             <p>
-              Browser <code>DOMParser</code> with <code>"image/svg+xml"</code> is a different animal from a
+              Browser <code>DOMParser</code> with <code>"image/svg+xml"</code> behaves differently from a
               server-side XML stack. On the server, <strong>disable DTDs and external entities</strong> before
-              you even think about tag allowlists. Billion-laughs and XXE-class bugs live in the parser config,
+              you define tag allowlists. Billion-laughs and XXE-class bugs live in the parser configuration,
               not in your <code>script</code> stripper.
             </p>
             <ul>
               <li>Reject or strip <code>DOCTYPE</code> and entity declarations on upload</li>
-              <li>Disable external entity resolution in libxml, Xerces, or whatever you use</li>
+              <li>Disable external entity resolution in libxml, Xerces, or the XML library you use</li>
               <li>Cap input size and node count (zip bombs and pathological trees)</li>
               <li>Don’t “pretty-print” hostile XML through a second parser with looser settings</li>
             </ul>
             <p>
               SVGEditor is browser-first: invalid markup fails closed on <code>parsererror</code> or a
-              non-<code>svg</code> root. If you store uploads on the server, apply the XML hardening checklist
-              <em>and</em> the SVG active-content checklist.
+              non-<code>svg</code> root. If you store uploads on the server, apply both the XML-hardening
+              checklist <em>and</em> the SVG active-content checklist.
             </p>
           </section>
 
@@ -805,7 +805,7 @@ element.dangerouslySetInnerHTML({ __html: markup });</code></pre>
               <strong>phishing UI</strong>. Even without script execution, a shared SVG can look like a login
               button that sends people off-site.
             </p>
-            <p>That is why SVGEditor’s share/embed path uses a stricter policy on top of the base sanitizer:</p>
+            <p>For that reason, SVGEditor’s share/embed path applies a stricter policy on top of the base sanitizer:</p>
             <ul>
               <li>Unwrap <code>&lt;a&gt;</code> so fake CTAs cannot navigate away</li>
               <li>Block remote <code>http(s)</code> images and relative remote assets</li>
@@ -912,8 +912,9 @@ const CLEAN = DOMPurify.sanitize(dirtySvgString, {
                 <code>to</code> / <code>values</code> for <code>javascript:</code>.
               </li>
               <li>
-                On Node, use a maintained isomorphic wrapper and <strong>sanitize again</strong> before any
-                browser insert — stored XSS loves the “we cleaned it at upload once in 2022” gap.
+                On Node, use a maintained isomorphic wrapper and <strong>sanitize again</strong> before inserting
+                into the browser DOM. This closes the stored-XSS gap created when content is cleaned only once,
+                during upload.
               </li>
             </ul>
           </section>
@@ -1135,8 +1136,8 @@ for (const [name, dirty] of FIXTURES) {
               </li>
             </ul>
             <p>
-              Nothing is uploaded to a server for “virus scanning theater.” Cleaning happens on-device — the same
-              privacy stance as React and PNG export. Open the
+              The sanitizer runs on-device; no server-side “virus scan” is involved. This is the same privacy
+              model used for React and PNG export. Open the
               <a href="/">editor</a>, paste markup, and inspect the preview. Active content should already be
               gone before you hit share or download.
             </p>
@@ -1169,7 +1170,7 @@ for (const [name, dirty] of FIXTURES) {
             <h3 class="article-h3">Should I use DOMPurify?</h3>
             <p>
               Yes, for many apps — with an SVG-aware config and regression tests. SVGEditor uses a purpose-built
-              sanitizer for preview and share UX, but the bar is the same: maintain it and test bypasses.
+              sanitizer for preview and share UX, but the same standard applies: maintain it and test for bypasses.
             </p>
             <h3 class="article-h3">Does SVGEditor sanitize in the browser?</h3>
             <p>

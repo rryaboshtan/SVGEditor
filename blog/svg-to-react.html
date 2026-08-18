@@ -418,9 +418,9 @@
         <p class="legal-kicker">Guide</p>
         <h1 class="legal-title" itemprop="headline">SVG to React: currentColor, SVGR, and when not to inline</h1>
         <p class="legal-lead" itemprop="description">
-          Not every SVG belongs in your JS bundle. This guide covers <code>currentColor</code> theming,
+          Not every SVG belongs in your JS bundle. This guide explains <code>currentColor</code> theming,
           React Native, TypeScript, SVGR vs paste-JSX, Next.js, and when <em>not</em> to inline an icon.
-          Written against SVGEditor’s real exporter — not a “rename attributes and hope” checklist.
+          It is based on SVGEditor’s actual exporter—not a “rename attributes and hope” checklist.
         </p>
         <p class="legal-updated">Published August 6, 2026 · Updated August 12, 2026</p>
 
@@ -451,7 +451,7 @@
 
         <div class="article-cta">
           <p>
-            Skip the hand rewrite: paste your SVG in the editor, then use the
+            Skip the manual rewrite: paste your SVG into the editor, then use the
             <strong>React</strong> or <strong>React Native</strong> export tab.
           </p>
           <a class="btn btn-accent article-cta-btn" href="/svg-to-react">Open SVG → React converter</a>
@@ -504,8 +504,8 @@
               <code>width</code>, <code>fill</code>, and ARIA attributes like any other React element.
             </p>
             <p>
-              Design tools often export verbose SVG. Clean it once, wrap it as an <code>Icon</code> component,
-              and keep your UI kit consistent across web and mobile.
+              Design tools often export verbose SVG. Clean it up once, wrap it as an <code>Icon</code>
+              component, and keep your UI kit consistent across web and mobile.
             </p>
             <p>
               That said: not every SVG belongs in your JS bundle. Large illustrations you never recolor should
@@ -558,7 +558,7 @@
 // Nav / button — color follows theme
 &lt;LayersIcon className="text-sky-300" aria-hidden="true" /&gt;</code></pre>
             <p>
-              Same markup on the <strong>React Native</strong> tab becomes
+              On the <strong>React Native</strong> tab, the same markup becomes
               <code>&lt;Svg&gt;</code> / <code>&lt;Path&gt;</code> with numeric props — useful when design
               shares one SVG and web + mobile both need a component.
             </p>
@@ -618,8 +618,9 @@
             <p>
               Use
               <a href="/svg-to-react">SVGEditor’s SVG to React converter</a>
-              when you want JSX (or React Native) without wiring SVGR. No account, no upload to a server —
-              typically a few minutes from paste to a file in your repo.
+              when you want JSX (or React Native) without wiring up SVGR. You do not need an account, and
+              nothing is uploaded to a server—typically, you can go from paste to a file in your repo in a
+              few minutes.
             </p>
             <ol class="article-howto">
               <li id="howto-step-1">
@@ -672,7 +673,7 @@
           <section>
             <h2 id="react-native">React Native notes</h2>
             <p>
-              React Native does not render raw HTML SVG. Install
+              React Native does not render raw HTML SVG markup directly. Install
               <a href="https://github.com/software-mansion/react-native-svg" target="_blank" rel="noopener noreferrer"
                 >react-native-svg</a
               >
@@ -706,7 +707,7 @@ export default function Icon(props) {
           <section>
             <h2 id="svgr-vs-paste">SVGR vs paste-JSX (and Next.js)</h2>
             <p>
-              Teams usually pick one of two pipelines. Neither is wrong — they solve different jobs.
+              Teams usually choose between two pipelines. Neither is wrong—they solve different problems.
             </p>
             <div class="article-table-wrap">
               <table class="article-table">
@@ -742,7 +743,7 @@ export default function Icon(props) {
               </table>
             </div>
             <p>
-              In <strong>Next.js</strong>, do not put interactive icons through
+              In <strong>Next.js</strong>, do not pass interactive icons through
               <code>next/image</code>. That helper is for raster (and some static assets); it will not give
               you prop-driven <code>fill</code> / <code>stroke</code> the way an inline component does.
               Prefer either SVGR or a pasted component under <code>components/icons/</code>.
@@ -773,8 +774,8 @@ export default function Mark(props: React.SVGProps&lt;SVGSVGElement&gt;) {
           <section>
             <h2 id="what-converter-does">What SVGEditor’s React export does (and does not)</h2>
             <p>
-              Knowing the boundary keeps expectations honest — and explains why paste-JSX and SVGR both still
-              exist.
+              Understanding this boundary sets realistic expectations and explains why both paste-JSX and
+              SVGR still exist.
             </p>
             <ul>
               <li>
@@ -897,8 +898,8 @@ export default SearchIcon;</code></pre>
           <section>
             <h2 id="bundle-vs-img">Bundle cost: component vs &lt;img&gt; vs sprite</h2>
             <p>
-              A React icon is JS in your bundle. That is fine for a UI kit of dozens of small marks; it is
-              the wrong default for a 200&nbsp;KB illustration you never recolor.
+              A React icon adds JavaScript to your bundle. That is fine for a UI kit of dozens of small marks,
+              but it is the wrong default for a 200&nbsp;KB illustration you never recolor.
             </p>
             <div class="article-table-wrap">
               <table class="article-table">

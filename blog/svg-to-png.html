@@ -446,9 +446,9 @@
         <p class="legal-kicker">Guide</p>
         <h1 class="legal-title" itemprop="headline">SVG to PNG: sizing, transparency, and when to keep SVG</h1>
         <p class="legal-lead" itemprop="description">
-          In SVGEditor, a 24×24 SVG produces a 48×48 PNG. This guide covers <strong>2×</strong> sizing, alpha,
-          SVG vs PNG vs Data URI, email and CMS handoffs, and when to keep SVG. Examples reflect SVGEditor’s
-          current 2× export behavior.
+          In SVGEditor, a 24×24 SVG produces a 48×48 PNG. This guide explains <strong>2×</strong> sizing,
+          alpha, SVG vs PNG vs Data URI, email and CMS handoffs, and when to keep SVG. The examples reflect
+          SVGEditor’s current 2× export behavior.
         </p>
         <p class="legal-updated">Published August 7, 2026 · Updated August 13, 2026</p>
 
@@ -478,8 +478,8 @@
 
         <div class="article-cta">
           <p>
-            Paste an SVG—no desktop app or account required. The <strong>PNG</strong> tab is already open on
-            the tool page.
+            Paste an SVG—no desktop app or account required. The tool page opens with the <strong>PNG</strong>
+            tab ready.
           </p>
           <a class="btn btn-accent article-cta-btn" href="/svg-to-png">Open SVG → PNG converter</a>
         </div>
@@ -549,8 +549,8 @@
             <h2 id="worked-example">Worked example: 24×24 icon → 48×48 PNG</h2>
             <p>
               A common request from design or marketing is, “Send the icon as a PNG for the deck or newsletter.”
-              The SVG is a 24×24 icon. SVGEditor’s exporter draws it at <strong>2×</strong>, so the download
-              is <strong>48×48</strong>, producing a sharper result on 2× displays when shown at 24 CSS pixels.
+              The source is a 24×24 icon. SVGEditor’s exporter renders it at <strong>2×</strong>, so the
+              download is <strong>48×48</strong> and looks sharper on 2× displays when shown at 24 CSS pixels.
             </p>
             <figure class="article-figure">
               <img
@@ -576,7 +576,7 @@
   /&gt;
 &lt;/svg&gt;</code></pre>
             <p>
-              Paste the SVG into SVGEditor, keep <strong>PNG</strong> open, then
+              Paste the SVG into SVGEditor, leave <strong>PNG</strong> selected, then
               <strong>Download PNG</strong>. The tool uses a deliberately simple sizing rule:
             </p>
             <pre class="article-code" tabindex="0"><code>// How SVGEditor sizes the canvas (simplified from the real exporter)
@@ -585,7 +585,7 @@ pngWidth  = svgWidth  * scale;  // 24 → 48
 pngHeight = svgHeight * scale;  // 24 → 48
 // drawImage stretches the vector into that pixel grid; alpha is kept</code></pre>
             <p>
-              Display the file at the <em>original</em> CSS size so the extra pixels work for you:
+              Display the file at its <em>original</em> CSS size so the extra pixels improve sharpness:
             </p>
             <pre class="article-code" tabindex="0"><code>&lt;!-- 48×48 file, shown at 24 CSS px → sharp on 2× screens --&gt;
 &lt;img
@@ -659,8 +659,8 @@ link.download = "svgeditor-export.png";</code></pre>
             <p>
               Use
               <a href="/svg-to-png">SVGEditor’s SVG to PNG converter</a>
-              when you want a transparent download without installing Inkscape, Illustrator, or a CLI. No
-              account is required, and no file is uploaded.
+              when you want a transparent download without installing Inkscape, Illustrator, or a CLI. You
+              do not need an account, and no file is uploaded.
             </p>
             <ol class="article-howto">
               <li id="howto-step-1">
@@ -696,7 +696,7 @@ link.download = "svgeditor-export.png";</code></pre>
             </ol>
             <p>
               Need an inline CSS background instead of a file? Switch to the <strong>Data URI</strong> tab
-              in the same workspace (URL-encoded or Base64).
+              in the same workspace to create a URL-encoded or Base64 value.
             </p>
           </section>
 
@@ -765,7 +765,7 @@ link.download = "svgeditor-export.png";</code></pre>
               </li>
             </ul>
             <p>
-              Optional HTML for responsive sharpness (1× CSS size, 2× file from SVGEditor):
+              Optional HTML for responsive sharpness (a 1× CSS size with a 2× file from SVGEditor):
             </p>
             <pre class="article-code" tabindex="0"><code>&lt;img
   src="/icons/layers.png"
@@ -835,7 +835,7 @@ link.download = "svgeditor-export.png";</code></pre>
             <h2 id="browser-vs-cli">Browser converter vs Inkscape, ImageMagick, or resvg</h2>
             <p>
               Desktop and CLI tools remain important for batch jobs. A browser converter is more efficient
-              when setting up a local tool would take longer than completing a single export.
+              when configuring a local tool would take longer than completing a single export.
             </p>
             <div class="article-table-wrap">
               <table class="article-table">
