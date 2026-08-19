@@ -70,3 +70,6 @@
 
 /*.html
   Cache-Control: public, max-age=300
+
+https://svgviewer-5tl.pages.dev/*
+  Link: <https://getsvgeditor.com/:splat>; rel="canonical"
