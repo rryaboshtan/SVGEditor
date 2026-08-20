@@ -3577,3 +3577,386 @@ body.is-resizing .preview-stage {
     animation: none;
   }
 }
+
+/* ——— SVG editor download landing page ——— */
+body.download-page {
+  min-height: 100dvh;
+  height: auto;
+  max-height: none;
+  overflow-x: clip;
+  overflow-y: auto;
+}
+
+.download-shell {
+  position: relative;
+  z-index: 1;
+  width: min(72rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.2rem 0 3rem;
+}
+
+.download-breadcrumbs {
+  display: flex;
+  gap: .5rem;
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+}
+
+.download-breadcrumbs a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.download-breadcrumbs a:hover {
+  color: var(--ink);
+}
+
+.download-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, .95fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  padding: clamp(2rem, 7vw, 5rem) clamp(1.25rem, 5vw, 4rem);
+  border: 1px solid rgba(125, 211, 252, .2);
+  border-radius: clamp(1.3rem, 3vw, 2rem);
+  background: linear-gradient(135deg, rgba(9, 34, 56, .72), rgba(5, 13, 24, .85));
+  box-shadow: 0 1px rgba(255,255,255,.06) inset, 0 30px 80px -45px #000, 0 0 80px -35px rgba(34,211,238,.35);
+  overflow: hidden;
+}
+
+.download-hero::after {
+  content: "";
+  position: absolute;
+  width: 30rem;
+  height: 30rem;
+  right: -12rem;
+  top: -14rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,211,238,.16), transparent 68%);
+  pointer-events: none;
+}
+
+.download-hero-copy,
+.download-window {
+  position: relative;
+  z-index: 1;
+}
+
+.download-kicker {
+  margin: 0 0 .8rem;
+  color: var(--accent-hot);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.download-hero h1 {
+  max-width: 29rem;
+  margin: 0 0 1.15rem;
+  color: #f5fbff;
+  font-size: clamp(2rem, 3.3vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.download-lead {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  line-height: 1.75;
+}
+
+.download-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 1.65rem;
+}
+
+.download-actions a {
+  text-decoration: none;
+}
+
+.download-note {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.download-window {
+  border: 1px solid rgba(165, 243, 252, .3);
+  border-radius: 1.1rem;
+  background: #07111d;
+  box-shadow: 0 24px 60px -32px #000, 0 0 40px -24px #22d3ee;
+  transform: rotate(1.4deg);
+}
+
+.download-window-bar,
+.download-window-footer {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 2.35rem;
+  padding: .55rem .8rem;
+  border-bottom: 1px solid rgba(125,211,252,.12);
+  color: #8eabca;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+}
+
+.download-window-bar span {
+  width: .48rem;
+  height: .48rem;
+  border-radius: 50%;
+  background: #fb7185;
+}
+
+.download-window-bar span:nth-child(2) { background: #fbbf24; }
+.download-window-bar span:nth-child(3) { background: #34d399; }
+.download-window-bar strong { margin-left: .5rem; color: #d7ebff; font-family: var(--font-sans); font-size: .7rem; }
+.download-window-bar em { margin-left: auto; color: #5eead4; font-style: normal; font-size: .56rem; }
+
+.download-window-body {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  align-items: center;
+  min-height: 17rem;
+  padding: 1.1rem;
+  background: linear-gradient(135deg, #06101b, #0b1d30);
+}
+
+.download-code-lines {
+  display: grid;
+  gap: .75rem;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: clamp(.58rem, 1.2vw, .72rem);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.download-code-lines i:nth-child(2) { color: #5eead4; }
+.download-code-lines i:nth-child(3) { color: #fdba74; }
+.download-code-lines i { overflow: hidden; text-overflow: ellipsis; font-style: normal; }
+
+.download-preview-art {
+  display: grid;
+  place-items: center;
+  min-height: 10rem;
+  border-left: 1px solid rgba(125,211,252,.12);
+}
+
+.download-preview-art svg {
+  width: min(100%, 10rem);
+  filter: drop-shadow(0 0 24px rgba(34,211,238,.35));
+}
+
+.download-window-footer {
+  justify-content: space-between;
+  border-top: 1px solid rgba(125,211,252,.12);
+  border-bottom: 0;
+}
+
+.download-window-footer span:last-child { color: #67e8f9; }
+
+.download-section {
+  padding: clamp(3rem, 7vw, 5.5rem) .5rem 0;
+}
+
+.download-section-heading {
+  max-width: 44rem;
+  margin-bottom: 1.65rem;
+}
+
+.download-section h2,
+.download-faq h2 {
+  max-width: 36rem;
+  margin: 0 0 .7rem;
+  color: #f5fbff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 2.05rem);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.2;
+}
+
+.download-section-heading > p:last-child {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.download-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.download-card {
+  padding: 1.35rem;
+  border: 1px solid rgba(125,211,252,.15);
+  border-radius: var(--radius-md);
+  background: rgba(8,18,32,.58);
+  box-shadow: 0 1px rgba(255,255,255,.04) inset;
+}
+
+.download-card-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 1rem;
+  border-radius: .65rem;
+  background: linear-gradient(135deg, #67e8f9, #2563eb);
+  color: #031018;
+  font-weight: 800;
+}
+
+.download-card h3 {
+  margin: 0 0 .5rem;
+  color: #e8f4ff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+}
+
+.download-card p {
+  min-height: 4.3rem;
+  margin: 0 0 1rem;
+  color: #9fb6d1;
+  font-size: .9rem;
+  line-height: 1.65;
+}
+
+.download-card a {
+  color: var(--accent);
+  font-size: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.download-card a:hover { color: #ecfeff; }
+
+.download-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid rgba(125,211,252,.15);
+  border-radius: var(--radius-md);
+  background: rgba(125,211,252,.15);
+}
+
+.download-benefits div {
+  display: grid;
+  gap: .45rem;
+  min-height: 9rem;
+  padding: 1.2rem;
+  background: rgba(8,18,32,.88);
+}
+
+.download-benefits strong { color: #e8f4ff; font-size: .95rem; }
+.download-benefits span { color: #9fb6d1; font-size: .82rem; line-height: 1.55; }
+
+.download-howto > ol {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.download-howto li {
+  display: flex;
+  gap: .9rem;
+  padding: 1.2rem;
+  border: 1px solid rgba(125,211,252,.15);
+  border-radius: var(--radius-md);
+  background: rgba(8,18,32,.55);
+}
+
+.download-howto li > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.8rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #67e8f9, #2563eb);
+  color: #031018;
+  font-weight: 800;
+}
+
+.download-howto strong { color: #e8f4ff; font-size: .95rem; }
+.download-howto p { margin: .4rem 0 0; color: #9fb6d1; font-size: .82rem; line-height: 1.55; }
+
+.download-faq {
+  max-width: 52rem;
+  margin: clamp(3rem, 7vw, 5.5rem) auto 0;
+  padding: 1.5rem;
+  border: 1px solid rgba(125,211,252,.15);
+  border-radius: var(--radius-lg);
+  background: rgba(8,18,32,.58);
+}
+
+.download-faq details {
+  padding: 1rem 0;
+  border-top: 1px solid rgba(125,211,252,.12);
+}
+
+.download-faq summary {
+  cursor: pointer;
+  color: #d7ebff;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.download-faq summary::marker { color: var(--accent); }
+.download-faq details p { max-width: 44rem; margin: .65rem 0 0; color: #9fb6d1; font-size: .88rem; line-height: 1.7; }
+
+.download-footer {
+  display: flex;
+  justify-content: center;
+  gap: .65rem;
+  padding: 3rem 0 0;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.download-footer a { color: #b6d4ef; text-decoration: none; }
+.download-footer a:hover { color: #fff; }
+
+@media (max-width: 800px) {
+  .download-hero { grid-template-columns: 1fr; }
+  .download-window { max-width: 38rem; width: 100%; margin: 0 auto; }
+  .download-card-grid,
+  .download-howto > ol { grid-template-columns: 1fr; }
+  .download-card p { min-height: 0; }
+  .download-benefits { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .download-shell { width: min(100% - 1.25rem, 72rem); padding-top: .8rem; }
+  .download-hero { padding: 1.7rem 1rem 1.4rem; border-radius: 1.1rem; }
+  .download-hero h1 { font-size: clamp(2.25rem, 12vw, 3.6rem); }
+  .download-lead { font-size: .96rem; }
+  .download-window-body { grid-template-columns: 1fr; gap: 1rem; }
+  .download-preview-art { min-height: 8rem; border-top: 1px solid rgba(125,211,252,.12); border-left: 0; }
+  .download-benefits { grid-template-columns: 1fr; }
+  .download-benefits div { min-height: 0; }
+  .download-faq { padding: 1.1rem; }
+  .download-footer { flex-wrap: wrap; }
+}

@@ -78,6 +78,7 @@ def apply_css(text: str) -> str:
 
 files = [
     "index.html",
+    "svg-editor-download.html",
     "svg-to-react.html",
     "svg-to-png.html",
     "embed.html",
