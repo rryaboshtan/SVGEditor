@@ -21,6 +21,12 @@ const DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 20
   <circle cx="100" cy="100" r="5" fill="#0369A1"/>
 </svg>`;
 
+const ICON_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3v18"/>
+  <path d="M3 12h18"/>
+  <circle cx="12" cy="12" r="8"/>
+</svg>`;
+
 const editor = document.getElementById("editor");
 const editorHighlight = document.getElementById("editor-highlight");
 const lineNumbers = document.getElementById("line-numbers");
@@ -2296,7 +2302,7 @@ if (sharedRaw && extractSvgMarkup(sharedRaw)) {
   }
 }
 
-const startupSvg = sharedSvg || DEFAULT_SVG;
+const startupSvg = sharedSvg || (document.body.classList.contains("icon-editor-page") ? ICON_DEFAULT_SVG : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
 applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — paste your own to edit");
 refreshSampleChip();

@@ -3960,3 +3960,98 @@ body.download-page {
   .download-faq { padding: 1.1rem; }
   .download-footer { flex-wrap: wrap; }
 }
+
+/* ——— SVG icon editor landing content ——— */
+body.icon-editor-page {
+  overflow: hidden;
+}
+
+/* Keep the source icon at its real UI size, while making the canvas preview readable. */
+.icon-editor-page .preview-canvas > svg {
+  width: min(100%, 14rem);
+  height: auto;
+}
+
+.icon-editor-guide {
+  position: relative;
+  z-index: 1;
+  width: min(72rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 5rem) 0 4rem;
+}
+
+.icon-editor-eyebrow {
+  margin: 0 0 .65rem;
+  color: var(--accent-hot);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.icon-editor-guide h2 {
+  max-width: 42rem;
+  margin: 0 0 .85rem;
+  color: #f5fbff;
+  font-size: clamp(1.65rem, 3.5vw, 2.65rem);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.05;
+}
+
+.icon-editor-guide > p:not(.icon-editor-eyebrow) {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.icon-editor-guide code {
+  padding: .08em .3em;
+  border: 1px solid rgba(125, 211, 252, .14);
+  border-radius: 4px;
+  background: rgba(8, 20, 36, .7);
+  color: #c8e7ff;
+  font-family: var(--font-mono);
+  font-size: .86em;
+}
+
+.icon-editor-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.icon-editor-guide-grid article {
+  padding: 1.25rem;
+  border: 1px solid rgba(125, 211, 252, .15);
+  border-radius: var(--radius-md);
+  background: rgba(8, 18, 32, .58);
+  box-shadow: 0 1px rgba(255, 255, 255, .04) inset;
+}
+
+.icon-editor-guide-grid h3 {
+  margin: 0 0 .45rem;
+  color: #e8f4ff;
+  font-size: 1rem;
+}
+
+.icon-editor-guide-grid p {
+  margin: 0;
+  color: #9fb6d1;
+  font-size: .88rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 800px) {
+  .icon-editor-guide {
+    width: min(100% - 1.25rem, 72rem);
+  }
+
+  .icon-editor-guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
