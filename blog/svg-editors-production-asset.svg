@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 250" role="img" aria-labelledby="title desc">
+  <title id="title">Production-ready SVG asset structure</title>
+  <desc id="desc">A code sample shows viewBox, path ID, and accessible label before rendering as a vector mark.</desc>
+  <rect width="840" height="250" rx="16" fill="#071526"/>
+  <rect x="36" y="34" width="356" height="182" rx="12" fill="#040c16" stroke="#38bdf8" stroke-opacity=".42"/>
+  <text x="62" y="67" fill="#9fb6d1" font-family="monospace" font-size="15">PRODUCTION SVG</text>
+  <text x="62" y="103" fill="#fb7185" font-family="monospace" font-size="16">&lt;svg</text>
+  <text x="112" y="103" fill="#fdba74" font-family="monospace" font-size="16">viewBox=</text>
+  <text x="215" y="103" fill="#5eead4" font-family="monospace" font-size="16">"0 0 120 80"</text>
+  <text x="62" y="136" fill="#fb7185" font-family="monospace" font-size="16">&lt;path</text>
+  <text x="126" y="136" fill="#fdba74" font-family="monospace" font-size="16">id=</text>
+  <text x="165" y="136" fill="#5eead4" font-family="monospace" font-size="16">"mark"</text>
+  <text x="62" y="169" fill="#fdba74" font-family="monospace" font-size="16">aria-label=</text>
+  <text x="190" y="169" fill="#5eead4" font-family="monospace" font-size="16">"Brand mark"</text>
+  <path d="M438 125h86" stroke="#67e8f9" stroke-width="3" stroke-linecap="round"/>
+  <path d="m514 114 14 11-14 11" fill="none" stroke="#a5f3fc" stroke-width="3"/>
+  <rect x="558" y="34" width="246" height="182" rx="12" fill="#f8fbff" stroke="#67e8f9" stroke-opacity=".55"/>
+  <text x="582" y="67" fill="#1e3a5f" font-family="sans-serif" font-size="15" font-weight="700">RENDERED ASSET</text>
+  <path d="M610 176 681 88l78 88H610Z" fill="#38bdf8" fill-opacity=".72"/>
+  <circle cx="681" cy="116" r="29" fill="#22d3ee" fill-opacity=".72"/>
+  <path d="M626 183h112" stroke="#1e3a5f" stroke-width="6" stroke-linecap="round"/>
+</svg>

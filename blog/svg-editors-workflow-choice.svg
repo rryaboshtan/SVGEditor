@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 220" role="img" aria-labelledby="title desc">
+  <title id="title">Choose an SVG editor by workflow</title>
+  <desc id="desc">Four cards compare code editing, illustration, collaboration, and quick browser work.</desc>
+  <rect width="840" height="220" rx="16" fill="#071526"/>
+  <g font-family="sans-serif" text-anchor="middle">
+    <g fill="#22d3ee">
+      <rect x="30" y="32" width="180" height="156" rx="12"/>
+      <rect x="230" y="32" width="180" height="156" rx="12"/>
+      <rect x="430" y="32" width="180" height="156" rx="12"/>
+      <rect x="630" y="32" width="180" height="156" rx="12"/>
+    </g>
+    <g fill="#031018" font-size="18" font-weight="800">
+      <text x="120" y="76">CODE</text><text x="320" y="76">DRAW</text>
+      <text x="520" y="76">TEAM</text><text x="720" y="76">QUICK</text>
+    </g>
+    <g fill="#031018" font-size="14">
+      <text x="120" y="111">SVGEditor</text><text x="320" y="111">Inkscape</text>
+      <text x="520" y="111">Figma / Sketch</text><text x="720" y="111">Method Draw</text>
+    </g>
+    <g fill="#071526" font-size="12">
+      <text x="120" y="145">inspect - export</text><text x="320" y="145">nodes - paths</text>
+      <text x="520" y="145">components - handoff</text><text x="720" y="145">shapes - browser</text>
+    </g>
+  </g>
+</svg>
