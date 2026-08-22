@@ -1721,6 +1721,7 @@ window.addEventListener("resize", function () {
   invalidateEditorMetrics();
   scheduleUpdateLineNumbers();
   if (inspectActive) scheduleSelection();
+  splitDragRect = null;
 });
 
 if (typeof ResizeObserver !== "undefined") {
@@ -2379,6 +2380,7 @@ const SPLIT_MIN = 20;
 const SPLIT_MAX = 80;
 let splitPercent = 52;
 let splitDragging = false;
+let splitDragRect = null;
 
 function applySplit(percent) {
   splitPercent = Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, percent));
@@ -2398,7 +2400,9 @@ function applySplit(percent) {
 
 function splitFromPointer(clientX) {
   if (!workspace) return;
-  const rect = workspace.getBoundingClientRect();
+  const rect =
+    splitDragRect ||
+    (splitDragRect = workspace.getBoundingClientRect());
   if (rect.width <= 0) return;
   applySplit(((clientX - rect.left) / rect.width) * 100);
 }
@@ -2408,6 +2412,7 @@ if (splitter && workspace) {
 
   splitter.addEventListener("pointerdown", function (event) {
     if (window.matchMedia("(max-width: 900px)").matches) return;
+    splitDragRect = workspace.getBoundingClientRect();
     splitDragging = true;
     splitter.classList.add("is-active");
     document.body.classList.add("is-resizing");
@@ -2428,6 +2433,7 @@ if (splitter && workspace) {
   function endSplitDrag(event) {
     if (!splitDragging) return;
     splitDragging = false;
+    splitDragRect = null;
     splitter.classList.remove("is-active");
     document.body.classList.remove("is-resizing");
     if (event && event.pointerId != null) {
