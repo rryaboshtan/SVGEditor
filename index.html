@@ -200,10 +200,81 @@
                 ]
               }
             }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://getsvgeditor.com/#faq",
+            "isPartOf": { "@id": "https://getsvgeditor.com/#webpage" },
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How do I edit SVG code online?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Paste or upload SVG XML in SVGEditor's online code editor, edit the markup or path attributes, and see the result in the live preview."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I edit an SVG path online?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. You can edit the SVG source, including path data, fill, stroke, viewBox, and other XML attributes, then preview and download the result."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does SVGEditor upload my SVG file?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. SVG editing and preview run in your browser, so your SVG normally stays on your device."
+                }
+              }
+            ]
           }
         ]
       }
     </script>
+    <style>
+      .app-pitch {
+        position: relative;
+        padding-right: 4.5rem;
+      }
+      .app-pitch .tool-faq {
+        position: absolute;
+        top: 50%;
+        right: clamp(1rem, 2.5vw, 1.75rem);
+        transform: translateY(-50%);
+      }
+      .app-pitch .tool-faq-toggle {
+        padding: .18rem .5rem;
+        font-size: .66rem;
+      }
+      .app-pitch .tool-faq-panel {
+        top: calc(100% + .55rem);
+        right: 0;
+        left: auto;
+      }
+      @media (max-width: 900px) {
+        .app-pitch {
+          padding-right: 4.2rem;
+        }
+        .app-pitch .tool-faq {
+          right: .65rem;
+        }
+      }
+      @media (max-width: 420px) {
+        .app-pitch {
+          padding-right: 3.8rem;
+        }
+        .app-pitch .tool-faq {
+          right: .4rem;
+        }
+        .app-pitch .tool-faq-toggle {
+          font-size: .6rem;
+        }
+      }
+    </style>
   </head>
   <body class="app-page" data-mobile-mode="edit">
     <div class="ambiance" aria-hidden="true">
@@ -302,9 +373,29 @@
       </button>
     </p>
 
-    <p class="app-pitch">
-      <span class="app-pitch-lead">Open source SVG editor for developers — paste, preview, and export free in your browser</span>
-    </p>
+    <div class="app-pitch">
+      <span class="app-pitch-lead">Open source SVG code and path editor — paste SVG XML, edit paths, preview, and export free in your browser</span>
+      <details class="tool-faq">
+        <summary class="tool-faq-toggle">FAQ</summary>
+        <div class="tool-faq-panel" role="region" aria-label="SVG code editor FAQ">
+          <p class="tool-faq-heading">Quick answers</p>
+          <dl class="tool-faq-list">
+            <div>
+              <dt>How do I edit SVG code online?</dt>
+              <dd>Paste or upload SVG XML, edit the markup or path attributes, and see the result in the live preview.</dd>
+            </div>
+            <div>
+              <dt>Can I edit an SVG path online?</dt>
+              <dd>Yes. Edit path data, fill, stroke, viewBox, and other XML attributes, then preview and download the result.</dd>
+            </div>
+            <div>
+              <dt>Does SVGEditor upload my SVG file?</dt>
+              <dd>No. SVG editing and preview run in your browser, so your SVG normally stays on your device.</dd>
+            </div>
+          </dl>
+        </div>
+      </details>
+    </div>
 
     </div>
 
