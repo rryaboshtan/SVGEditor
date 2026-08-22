@@ -27,6 +27,28 @@ const ICON_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2
   <circle cx="12" cy="12" r="8"/>
 </svg>`;
 
+const ANIMATION_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width="360" height="240" role="img" aria-label="Animated gradient wave">
+  <style>
+    .wave { stroke-dasharray: 12 8; animation: flow 2.8s linear infinite; }
+    .orb { transform-box: fill-box; transform-origin: center; animation: float 2.4s ease-in-out infinite; }
+    .orb-two { animation-delay: -.8s; }
+    .orb-three { animation-delay: -1.6s; }
+    @keyframes flow { to { stroke-dashoffset: -40; } }
+    @keyframes float { 0%, 100% { transform: translateY(12px) scale(.88); opacity: .55; } 50% { transform: translateY(-10px) scale(1.08); opacity: 1; } }
+  </style>
+  <defs>
+    <linearGradient id="wave-gradient" x1="20" y1="20" x2="220" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee"/><stop offset=".5" stop-color="#a5f3fc"/><stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="160" rx="28" fill="#071526"/>
+  <path class="wave" d="M18 92c24-52 48 52 72 0s48-52 72 0 48 52 60 0" fill="none" stroke="url(#wave-gradient)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M18 92c24-52 48 52 72 0s48-52 72 0 48 52 60 0" fill="none" stroke="#e0f2fe" stroke-opacity=".18" stroke-width="2"/>
+  <circle class="orb" cx="48" cy="48" r="10" fill="#67e8f9"/>
+  <circle class="orb orb-two" cx="120" cy="112" r="7" fill="#a5f3fc"/>
+  <circle class="orb orb-three" cx="194" cy="48" r="9" fill="#818cf8"/>
+</svg>`;
+
 const editor = document.getElementById("editor");
 const editorHighlight = document.getElementById("editor-highlight");
 const lineNumbers = document.getElementById("line-numbers");
@@ -2302,7 +2324,16 @@ if (sharedRaw && extractSvgMarkup(sharedRaw)) {
   }
 }
 
-const startupSvg = sharedSvg || (document.body.classList.contains("icon-editor-page") ? ICON_DEFAULT_SVG : DEFAULT_SVG);
+const animationMode =
+  window.location.pathname === "/svg-animation-editor" ||
+  new URLSearchParams(window.location.search).get("animation") === "1";
+const startupSvg =
+  sharedSvg ||
+  (animationMode
+    ? ANIMATION_DEFAULT_SVG
+    : document.body.classList.contains("icon-editor-page")
+      ? ICON_DEFAULT_SVG
+      : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
 applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — paste your own to edit");
 refreshSampleChip();

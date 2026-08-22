@@ -80,6 +80,7 @@ files = [
     "index.html",
     "svg-editor-download.html",
     "svg-icon-editor.html",
+    "svg-animation-editor.html",
     "svg-to-react.html",
     "svg-to-png.html",
     "embed.html",
