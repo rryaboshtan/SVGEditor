@@ -102,19 +102,30 @@
               "https://getsvgeditor.com/blog/svg-editors-source-workflow.svg",
               "https://getsvgeditor.com/blog/svg-editors-production-asset.svg"
             ],
-            "publisher": {
-              "@type": "Organization",
-              "name": "getsvgeditor.com",
-              "url": "https://getsvgeditor.com"
-            },
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" },
             "about": { "@id": "https://getsvgeditor.com/#application" },
             "breadcrumb": { "@id": "https://getsvgeditor.com/svg-editor-download#breadcrumb" }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://getsvgeditor.com/#website",
+            "url": "https://getsvgeditor.com/",
+            "name": "getsvgeditor.com",
+            "publisher": { "@id": "https://getsvgeditor.com/#organization" },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://getsvgeditor.com/#organization",
+            "name": "getsvgeditor.com",
+            "url": "https://getsvgeditor.com/"
           },
           {
             "@type": "SoftwareApplication",
             "@id": "https://getsvgeditor.com/#application",
             "name": "SVGEditor Free Online SVG Editor",
             "applicationCategory": "DesignApplication",
+            "applicationSubCategory": "WebApplication",
             "operatingSystem": "Windows, macOS, Linux",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
             "isAccessibleForFree": true,
