@@ -609,7 +609,8 @@ function selectionFromCaret() {
   applySelection(best);
 }
 
-function renderPreview(source) {
+function renderPreview(source, options) {
+  const renderOptions = options || {};
   const markup = extractSvgMarkup(source);
   const sourceOffset = markup ? source.indexOf(markup) : 0;
   const wasInspecting = inspectActive;
@@ -672,10 +673,31 @@ function renderPreview(source) {
       exportMarkup = new XMLSerializer().serializeToString(svg);
     }
 
-    try {
-      updateExports(exportMarkup);
-    } catch (err) {
-      console.error(err);
+    if (renderOptions.deferExports) {
+      // Let the preview paint first; React/PNG/Data URI exports are not part
+      // of the initial viewport and otherwise delay the first meaningful paint.
+      latestMarkup = exportMarkup;
+      const exportWork = function () {
+        // A user edit may have rendered a newer document while this idle
+        // callback was waiting; never replace its exports with stale data.
+        if (latestMarkup !== exportMarkup) return;
+        try {
+          updateExports(exportMarkup);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(exportWork, { timeout: 1500 });
+      } else {
+        window.setTimeout(exportWork, 0);
+      }
+    } else {
+      try {
+        updateExports(exportMarkup);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     if (stripped > 0) {
@@ -2309,7 +2331,7 @@ function applyStartupSvg(markup, statusMsg) {
   editor.value = markup;
   commitHistory();
   applyPreviewZoom();
-  renderPreview(markup);
+  renderPreview(markup, { deferExports: true });
   scheduleRefreshEditorChrome();
   if (statusMsg) setStatus("ok", statusMsg);
 }
