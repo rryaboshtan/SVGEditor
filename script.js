@@ -62,7 +62,7 @@ const EMPTY_IDLE_HTML =
   '<div class="preview-empty-inner">' +
   '<p class="preview-empty-title">Live SVG preview</p>' +
   '<p class="preview-empty-body">' +
-  "Paste or upload SVG on the left. Export to React, React Native, PNG, or a Data URI — or share a link." +
+  "Paste or upload an SVG in the Source panel. Export to React, React Native, PNG, or a Data URI — or share a link." +
   "</p>" +
   '<p class="preview-empty-links">' +
   '<a href="/svg-to-react">React tool</a>' +
@@ -694,7 +694,7 @@ function renderPreview(source) {
     }
   } catch {
     canvas.replaceChildren();
-    showEmptyMessage("Couldn’t parse this SVG. Check for a missing tag or typo.");
+      showEmptyMessage("Couldn’t parse this SVG. Check for a missing tag or a typo.");
     previewSvg = null;
     elementRanges = [];
     clearHighlight();
@@ -1231,7 +1231,7 @@ if (uploadBtn && fileUpload) {
       try {
         markup = sanitizeSvgSource(markup) || markup;
       } catch (err) {
-        setStatus("error", "Upload blocked — unsafe SVG");
+      setStatus("error", "Upload blocked — unsafe SVG content");
         return;
       }
       markUserEdited();
@@ -1243,11 +1243,11 @@ if (uploadBtn && fileUpload) {
       scheduleRefreshEditorChrome();
       scheduleRender();
       clearHighlight();
-      setStatus("ok", "Uploaded " + file.name);
+      setStatus("ok", "Loaded " + file.name);
       maybeShowOutputOnMobile();
     };
     reader.onerror = function () {
-      setStatus("error", "Upload failed");
+      setStatus("error", "Couldn’t read that file");
     };
     reader.readAsText(file);
   });
@@ -1264,7 +1264,7 @@ if (downloadSvgBtn) {
     try {
       markup = sanitizeSvgSource(markup) || markup;
     } catch (err) {
-      setStatus("error", "Download blocked — unsafe SVG");
+      setStatus("error", "Download blocked — unsafe SVG content");
       return;
     }
 
@@ -1300,9 +1300,9 @@ function encodeSharePayload() {
 function shareErrorMessage(result) {
   if (!result || result.error === "empty") return "Nothing to share yet";
   if (result.error === "too_large") {
-    return "SVG is too large for a share link — try a simpler file";
+    return "That SVG is too large to share as a link — try a simpler file";
   }
-  if (result.error === "missing_codec") return "Sharing is unavailable right now";
+  if (result.error === "missing_codec") return "Sharing is temporarily unavailable";
   return "Couldn’t create a share link";
 }
 
@@ -2214,7 +2214,7 @@ document.querySelectorAll(".btn-copy[data-copy]").forEach(function (btn) {
     if (!el) return;
     const text = el.textContent || "";
     if (isPlaceholderExport(text)) {
-      setStatus("empty", "Nothing to copy yet — paste SVG first");
+      setStatus("empty", "Nothing to copy yet — paste an SVG first");
       return;
     }
     copyTextToClipboard(text)
@@ -2233,7 +2233,7 @@ if (downloadPngBtn) {
   downloadPngBtn.disabled = true;
   downloadPngBtn.addEventListener("click", function () {
     if (!pngCanvas.width || !pngCanvas.height || (pngEmpty && !pngEmpty.hidden)) {
-      setStatus("empty", "Nothing to download — paste SVG first");
+      setStatus("empty", "Nothing to download yet — paste an SVG first");
       return;
     }
     const link = document.createElement("a");
@@ -2336,7 +2336,7 @@ const startupSvg =
       ? ICON_DEFAULT_SVG
       : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
-applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — paste your own to edit");
+applyStartupSvg(startupSvg, sharedSvg ? "Loaded from share link" : "Sample SVG — paste your own SVG to edit");
 refreshSampleChip();
 
 const SHARE_NOTICE_KEY = "svgeditor-share-notice-dismissed";
@@ -2362,7 +2362,7 @@ if (shareNoticeDismiss) {
 }
 
 if (sharedRaw && extractSvgMarkup(sharedRaw) && !sharedSvg) {
-  setStatus("error", "Share blocked — unsafe SVG");
+  setStatus("error", "Share blocked — unsafe SVG content");
 }
 
 function warmEditorChrome() {
