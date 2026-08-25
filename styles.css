@@ -412,9 +412,7 @@ body.is-chrome-max .chrome-shutter {
 .brand-mark {
   flex-shrink: 0;
   filter: drop-shadow(0 8px 22px rgba(34, 211, 238, 0.38));
-  animation:
-    brand-in 0.8s var(--ease) both,
-    mark-breathe 4.8s var(--ease) 1s infinite;
+  animation: brand-in 0.8s var(--ease) both;
 }
 
 .brand-text {
@@ -2643,16 +2641,6 @@ body.is-resizing .preview-stage {
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes mark-breathe {
-  0%,
-  100% {
-    filter: drop-shadow(0 6px 18px rgba(34, 211, 238, 0.24));
-  }
-  50% {
-    filter: drop-shadow(0 8px 26px rgba(34, 211, 238, 0.42));
   }
 }
 
