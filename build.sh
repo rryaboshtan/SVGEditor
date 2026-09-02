@@ -102,6 +102,7 @@ files = [
     "svg-to-react.html",
     "svg-to-png.html",
     "mirror-svg-path-horizontally.html",
+    "mirror-svg-path-vertically.html",
     "embed.html",
     "privacy.html",
     "terms.html",

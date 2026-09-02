@@ -65,6 +65,22 @@ const MIRROR_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
   <circle cx="48" cy="70" r="7" fill="#a5f3fc"/>
 </svg>`;
 
+/** Asymmetric arrow so a vertical mirror is obvious in the preview. */
+const MIRROR_V_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 240" width="210" height="360" role="img" aria-label="Arrow path pointing up — click Mirror vertically to flip">
+  <defs>
+    <linearGradient id="mirror-v-stroke" x1="28" y1="36" x2="112" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9"/>
+      <stop offset="0.55" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="140" height="240" rx="24" fill="#071526"/>
+  <rect x="10" y="10" width="120" height="220" rx="18" fill="none" stroke="#67e8f9" stroke-opacity="0.16"/>
+  <line x1="22" y1="120" x2="118" y2="120" stroke="#7dd3fc" stroke-opacity="0.28" stroke-width="1.5" stroke-dasharray="4 6"/>
+  <path d="M70 192 V72 L40 108 M70 72 L100 108" fill="none" stroke="url(#mirror-v-stroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="70" cy="192" r="7" fill="#a5f3fc"/>
+</svg>`;
+
 const editor = document.getElementById("editor");
 const editorHighlight = document.getElementById("editor-highlight");
 const lineNumbers = document.getElementById("line-numbers");
@@ -112,6 +128,7 @@ function showEmptyMessage(message) {
 const clearBtn = document.getElementById("btn-clear");
 const uploadBtn = document.getElementById("btn-upload");
 const mirrorHBtn = document.getElementById("btn-mirror-h");
+const mirrorVBtn = document.getElementById("btn-mirror-v");
 const downloadSvgBtn = document.getElementById("btn-download-svg");
 const copyLinkBtn = document.getElementById("btn-copy-link");
 const copyIframeBtn = document.getElementById("btn-copy-iframe");
@@ -1269,22 +1286,30 @@ function getSvgMirrorWidth(svg) {
   return null;
 }
 
+function getSvgMirrorHeight(svg) {
+  const vb = svg.getAttribute("viewBox");
+  if (vb) {
+    const parts = vb.trim().split(/[\s,]+/);
+    if (parts.length === 4) {
+      const height = parseFloat(parts[3]);
+      if (Number.isFinite(height) && height > 0) return height;
+    }
+  }
+  const heightAttr = parseFloat(svg.getAttribute("height"));
+  if (Number.isFinite(heightAttr) && heightAttr > 0) return heightAttr;
+  return null;
+}
+
 function prettySerializeSvg(svg) {
   return new XMLSerializer().serializeToString(svg);
 }
 
-function mirrorSvgMarkupHorizontally(markup) {
-  const svg = parseSvg(markup);
-  const width = getSvgMirrorWidth(svg);
-  if (width == null) {
-    throw new Error("Need a viewBox or width to mirror horizontally");
-  }
-
+function wrapOrUnwrapMirrorGroup(svg, axis, transform) {
   const existing = Array.from(svg.children).find(function (child) {
     return (
       child.nodeType === 1 &&
       child.localName.toLowerCase() === "g" &&
-      child.getAttribute(MIRROR_GROUP_ATTR) === "horizontal"
+      child.getAttribute(MIRROR_GROUP_ATTR) === axis
     );
   });
 
@@ -1293,30 +1318,49 @@ function mirrorSvgMarkupHorizontally(markup) {
       svg.insertBefore(existing.firstChild, existing);
     }
     svg.removeChild(existing);
-  } else {
-    const ns = "http://www.w3.org/2000/svg";
-    const group = document.createElementNS(ns, "g");
-    group.setAttribute(MIRROR_GROUP_ATTR, "horizontal");
-    group.setAttribute("transform", "translate(" + width + " 0) scale(-1 1)");
-
-    const move = [];
-    Array.from(svg.childNodes).forEach(function (node) {
-      if (node.nodeType !== 1) {
-        move.push(node);
-        return;
-      }
-      const name = node.localName.toLowerCase();
-      if (name === "defs" || name === "style" || name === "title" || name === "desc" || name === "metadata") {
-        return;
-      }
-      move.push(node);
-    });
-    move.forEach(function (node) {
-      group.appendChild(node);
-    });
-    svg.appendChild(group);
+    return;
   }
 
+  const ns = "http://www.w3.org/2000/svg";
+  const group = document.createElementNS(ns, "g");
+  group.setAttribute(MIRROR_GROUP_ATTR, axis);
+  group.setAttribute("transform", transform);
+
+  const move = [];
+  Array.from(svg.childNodes).forEach(function (node) {
+    if (node.nodeType !== 1) {
+      move.push(node);
+      return;
+    }
+    const name = node.localName.toLowerCase();
+    if (name === "defs" || name === "style" || name === "title" || name === "desc" || name === "metadata") {
+      return;
+    }
+    move.push(node);
+  });
+  move.forEach(function (node) {
+    group.appendChild(node);
+  });
+  svg.appendChild(group);
+}
+
+function mirrorSvgMarkupHorizontally(markup) {
+  const svg = parseSvg(markup);
+  const width = getSvgMirrorWidth(svg);
+  if (width == null) {
+    throw new Error("Need a viewBox or width to mirror horizontally");
+  }
+  wrapOrUnwrapMirrorGroup(svg, "horizontal", "translate(" + width + " 0) scale(-1 1)");
+  return prettySerializeSvg(svg);
+}
+
+function mirrorSvgMarkupVertically(markup) {
+  const svg = parseSvg(markup);
+  const height = getSvgMirrorHeight(svg);
+  if (height == null) {
+    throw new Error("Need a viewBox or height to mirror vertically");
+  }
+  wrapOrUnwrapMirrorGroup(svg, "vertical", "translate(0 " + height + ") scale(1 -1)");
   return prettySerializeSvg(svg);
 }
 
@@ -1346,6 +1390,26 @@ if (mirrorHBtn) {
       applyMirroredEditorMarkup(
         next,
         flipped ? "Mirrored horizontally — click again to flip back" : "Mirror removed — original orientation"
+      );
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not mirror this SVG");
+    }
+  });
+}
+
+if (mirrorVBtn) {
+  mirrorVBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG path first");
+      return;
+    }
+    try {
+      const next = mirrorSvgMarkupVertically(raw);
+      const flipped = next.indexOf(MIRROR_GROUP_ATTR + '="vertical"') !== -1;
+      applyMirroredEditorMarkup(
+        next,
+        flipped ? "Mirrored vertically — click again to flip back" : "Mirror removed — original orientation"
       );
     } catch (err) {
       setStatus("error", (err && err.message) || "Could not mirror this SVG");
@@ -2467,27 +2531,35 @@ if (sharedRaw && extractSvgMarkup(sharedRaw)) {
 const animationMode =
   window.location.pathname === "/svg-animation-editor" ||
   new URLSearchParams(window.location.search).get("animation") === "1";
-const mirrorPathMode =
-  document.body.classList.contains("mirror-path-page") ||
+const mirrorPathVMode =
+  document.body.classList.contains("mirror-path-v-page") ||
+  window.location.pathname === "/mirror-svg-path-vertically" ||
+  window.location.pathname === "/mirror-svg-path-vertically.html";
+const mirrorPathHMode =
+  (!mirrorPathVMode && document.body.classList.contains("mirror-path-page")) ||
   window.location.pathname === "/mirror-svg-path-horizontally" ||
   window.location.pathname === "/mirror-svg-path-horizontally.html";
 const startupSvg =
   sharedSvg ||
   (animationMode
     ? ANIMATION_DEFAULT_SVG
-    : mirrorPathMode
-      ? MIRROR_DEFAULT_SVG
-      : document.body.classList.contains("icon-editor-page")
-        ? ICON_DEFAULT_SVG
-        : DEFAULT_SVG);
+    : mirrorPathVMode
+      ? MIRROR_V_DEFAULT_SVG
+      : mirrorPathHMode
+        ? MIRROR_DEFAULT_SVG
+        : document.body.classList.contains("icon-editor-page")
+          ? ICON_DEFAULT_SVG
+          : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
 applyStartupSvg(
   startupSvg,
   sharedSvg
     ? "Loaded from share link"
-    : mirrorPathMode
-      ? "Sample arrow path — click Mirror horizontally to flip it"
-      : "Sample SVG — paste your own SVG to edit"
+    : mirrorPathVMode
+      ? "Sample arrow path — click Mirror vertically to flip it"
+      : mirrorPathHMode
+        ? "Sample arrow path — click Mirror horizontally to flip it"
+        : "Sample SVG — paste your own SVG to edit"
 );
 refreshSampleChip();
 

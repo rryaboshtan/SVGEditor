@@ -4264,7 +4264,8 @@ body.animation-editor-page {
   margin-top: .2rem;
 }
 
-.mirror-path-page #btn-mirror-h {
+.mirror-path-page #btn-mirror-h,
+.mirror-path-page #btn-mirror-v {
   letter-spacing: .02em;
 }
 
