@@ -101,6 +101,7 @@ files = [
     "svg-animation-editor.html",
     "svg-to-react.html",
     "svg-to-png.html",
+    "mirror-svg-path-horizontally.html",
     "embed.html",
     "privacy.html",
     "terms.html",

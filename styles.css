@@ -4248,6 +4248,26 @@ body.animation-editor-page {
   margin-top: .3rem;
 }
 
+.mirror-path-page .tool-banner-copy {
+  display: block;
+}
+
+.mirror-path-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.mirror-path-page .tool-title {
+  display: block;
+}
+
+.mirror-path-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.mirror-path-page #btn-mirror-h {
+  letter-spacing: .02em;
+}
+
 .animation-editor-page .site-header {
   height: 3.35rem;
 }
