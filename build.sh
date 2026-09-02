@@ -103,6 +103,8 @@ files = [
     "svg-to-png.html",
     "mirror-svg-path-horizontally.html",
     "mirror-svg-path-vertically.html",
+    "mirror-svg-horizontally.html",
+    "mirror-svg-vertically.html",
     "flip-svg-path-horizontally.html",
     "flip-svg-path-vertically.html",
     "flip-svg-horizontally.html",

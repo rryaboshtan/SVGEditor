@@ -2563,13 +2563,20 @@ const flipPathHMode =
 const mirrorPathVMode =
   flipPathVMode ||
   document.body.classList.contains("mirror-path-v-page") ||
+  document.body.classList.contains("mirror-svg-v-page") ||
   window.location.pathname === "/mirror-svg-path-vertically" ||
-  window.location.pathname === "/mirror-svg-path-vertically.html";
+  window.location.pathname === "/mirror-svg-path-vertically.html" ||
+  window.location.pathname === "/mirror-svg-vertically" ||
+  window.location.pathname === "/mirror-svg-vertically.html";
 const mirrorPathHMode =
   (!mirrorPathVMode &&
-    (flipPathHMode || document.body.classList.contains("mirror-path-page"))) ||
+    (flipPathHMode ||
+      document.body.classList.contains("mirror-path-page") ||
+      document.body.classList.contains("mirror-svg-page"))) ||
   window.location.pathname === "/mirror-svg-path-horizontally" ||
-  window.location.pathname === "/mirror-svg-path-horizontally.html";
+  window.location.pathname === "/mirror-svg-path-horizontally.html" ||
+  window.location.pathname === "/mirror-svg-horizontally" ||
+  window.location.pathname === "/mirror-svg-horizontally.html";
 const flipWording = flipPathVMode || flipPathHMode;
 const startupSvg =
   sharedSvg ||
