@@ -133,6 +133,42 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/strip-svg-metadata</loc>
+    <lastmod>2026-09-02T21:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/remove-comments-from-svg</loc>
+    <lastmod>2026-09-02T21:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/remove-unused-ids-from-svg</loc>
+    <lastmod>2026-09-02T21:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/clean-svg-file</loc>
+    <lastmod>2026-09-02T21:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/reduce-svg-file-size</loc>
+    <lastmod>2026-09-02T21:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/optimize-svg-file</loc>
+    <lastmod>2026-09-02T21:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/blog/svg-to-png</loc>
     <lastmod>2026-08-25T21:16:26+03:00</lastmod>
     <changefreq>monthly</changefreq>

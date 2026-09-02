@@ -685,7 +685,7 @@ function renderPreview(source, options) {
     if (stripped === 0) {
       nodes.forEach(function (node, index) {
         node.setAttribute("data-el-index", String(index));
-        if (!DEF_TAGS.has(node.localName.toLowerCase())) {
+        if (!DEF_TAGS.has(node.localName.toLowerCase()) && node.style) {
           node.style.cursor = "pointer";
         }
       });
@@ -1677,6 +1677,421 @@ if (viewboxActionBtn && viewboxIntent) {
       );
     } catch (err) {
       setStatus("error", (err && err.message) || "Could not update viewBox");
+    }
+  });
+}
+
+function stripSvgCommentsFromMarkup(markup) {
+  return String(markup || "").replace(/<!--[\s\S]*?-->/g, "");
+}
+
+function removeSvgCommentNodes(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_COMMENT);
+  const dead = [];
+  while (walker.nextNode()) dead.push(walker.currentNode);
+  dead.forEach(function (node) {
+    if (node.parentNode) node.parentNode.removeChild(node);
+  });
+}
+
+function isEditorJunkAttrName(name) {
+  const lower = String(name || "").toLowerCase();
+  if (
+    lower.indexOf("inkscape:") === 0 ||
+    lower.indexOf("sodipodi:") === 0 ||
+    lower.indexOf("sketch:") === 0 ||
+    lower.indexOf("xmlns:inkscape") === 0 ||
+    lower.indexOf("xmlns:sodipodi") === 0 ||
+    lower.indexOf("xmlns:sketch") === 0 ||
+    lower.indexOf("xmlns:i") === 0 ||
+    lower.indexOf("xmlns:serif") === 0 ||
+    lower.indexOf("serif:") === 0
+  ) {
+    return true;
+  }
+  return (
+    lower === "data-name" ||
+    lower === "enable-background" ||
+    lower === "data-sketch-source"
+  );
+}
+
+function stripSvgMetadataAndEditorJunk(svg) {
+  const killTags = svg.querySelectorAll("metadata, namedview, generator");
+  Array.from(killTags).forEach(function (el) {
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+  });
+  // Namespaced editor nodes (Inkscape / Sodipodi) — match by localName.
+  Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+    const local = String(el.localName || "").toLowerCase();
+    if (local === "namedview" || local === "metadata" || local === "generator") {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }
+  });
+
+  const nodes = [svg].concat(Array.from(svg.querySelectorAll("*")));
+  nodes.forEach(function (el) {
+    if (!el || !el.attributes) return;
+    Array.from(el.attributes).forEach(function (attr) {
+      if (isEditorJunkAttrName(attr.name)) {
+        el.removeAttribute(attr.name);
+      }
+    });
+  });
+}
+
+function addSvgIdRefsFromValue(refs, value) {
+  if (!value) return;
+  const text = String(value);
+  const urlRe = /url\(\s*['"]?#([^)'"\s]+)['"]?\s*\)/gi;
+  let match;
+  while ((match = urlRe.exec(text))) {
+    refs.add(match[1]);
+  }
+  const hashRe = /#([A-Za-z_][\w:.-]*)/g;
+  while ((match = hashRe.exec(text))) {
+    // Avoid treating hex colors like #67e8f9 as ids (no letters-only short hex ambiguity —
+    // SVG ids rarely look like 3/6/8 hex; skip pure hex tokens).
+    const token = match[1];
+    if (/^[0-9a-fA-F]{3,8}$/.test(token)) continue;
+    refs.add(token);
+  }
+}
+
+function collectSvgIdReferences(svg) {
+  const refs = new Set();
+  function addTokens(value) {
+    String(value || "")
+      .trim()
+      .split(/\s+/)
+      .forEach(function (part) {
+        if (!part) return;
+        if (part.charAt(0) === "#") refs.add(part.slice(1));
+        else refs.add(part);
+      });
+  }
+
+  Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+    Array.from(el.attributes || []).forEach(function (attr) {
+      const key = String(attr.name || "").toLowerCase();
+      const val = attr.value;
+      addSvgIdRefsFromValue(refs, val);
+      if (
+        key === "href" ||
+        key === "xlink:href" ||
+        key.slice(-5) === ":href"
+      ) {
+        const trimmed = String(val || "").trim();
+        if (trimmed.charAt(0) === "#") refs.add(trimmed.slice(1).split(/\s/)[0]);
+      }
+      if (
+        key === "aria-labelledby" ||
+        key === "aria-describedby" ||
+        key === "aria-owns" ||
+        key === "aria-controls"
+      ) {
+        addTokens(val);
+      }
+    });
+  });
+
+  Array.from(svg.querySelectorAll("style")).forEach(function (styleEl) {
+    addSvgIdRefsFromValue(refs, styleEl.textContent || "");
+  });
+
+  return refs;
+}
+
+function removeUnusedSvgIds(svg, options) {
+  options = options || {};
+  const removeOrphanDefs = options.removeOrphanDefs === true;
+  let guard = 0;
+  while (guard < 8) {
+    guard += 1;
+    const refs = collectSvgIdReferences(svg);
+    let changed = false;
+    Array.from(svg.querySelectorAll("[id]")).forEach(function (el) {
+      const id = el.getAttribute("id");
+      if (!id || refs.has(id)) return;
+      if (
+        removeOrphanDefs &&
+        el.parentNode &&
+        String(el.parentNode.localName || "").toLowerCase() === "defs"
+      ) {
+        el.parentNode.removeChild(el);
+      } else {
+        el.removeAttribute("id");
+      }
+      changed = true;
+    });
+    if (!changed) break;
+  }
+}
+
+function removeEmptySvgContainers(svg) {
+  let guard = 0;
+  while (guard < 8) {
+    guard += 1;
+    let changed = false;
+    Array.from(svg.querySelectorAll("defs, g")).forEach(function (el) {
+      if (!el.childNodes || el.childNodes.length) return;
+      // Keep <g> that still carries meaningful attrs (transform/fill) — only drop empty shells.
+      if (String(el.localName || "").toLowerCase() === "g") {
+        const meaningful = Array.from(el.attributes || []).some(function (attr) {
+          const n = String(attr.name || "").toLowerCase();
+          return n !== "id" && n !== "class";
+        });
+        if (meaningful) return;
+      }
+      if (el.parentNode) {
+        el.parentNode.removeChild(el);
+        changed = true;
+      }
+    });
+    if (!changed) break;
+  }
+}
+
+function compactSvgMarkup(markup) {
+  return String(markup || "")
+    .replace(/>\s*</g, "><")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** Drop leftover blank lines from removed comments/metadata text nodes. */
+function stripSvgWhitespaceTextNodes(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const dead = [];
+  while (walker.nextNode()) {
+    if (!/\S/.test(walker.currentNode.nodeValue || "")) {
+      dead.push(walker.currentNode);
+    }
+  }
+  dead.forEach(function (node) {
+    if (node.parentNode) node.parentNode.removeChild(node);
+  });
+}
+
+/** One element per line, no blank lines — readable without export fluff. */
+function formatSvgReadableMarkup(markup) {
+  return String(markup || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/>\s*</g, ">" + "\n" + "<")
+    .replace(/\n{2,}/g, "\n")
+    .trim();
+}
+
+function formatByteCount(n) {
+  if (n < 1024) return n + " B";
+  return Math.round((n / 1024) * 10) / 10 + " KB";
+}
+
+function updateCleanSizeStat(beforeLen, afterLen) {
+  const el = document.getElementById("clean-size-stat");
+  if (!el) return;
+  const saved = Math.max(0, beforeLen - afterLen);
+  const pct = beforeLen > 0 ? Math.round((saved / beforeLen) * 100) : 0;
+  el.hidden = false;
+  el.replaceChildren();
+  const before = document.createElement("span");
+  before.textContent = formatByteCount(beforeLen);
+  const arrow = document.createElement("span");
+  arrow.className = "clean-size-arrow";
+  arrow.setAttribute("aria-hidden", "true");
+  arrow.textContent = "→";
+  const after = document.createElement("span");
+  after.textContent = formatByteCount(afterLen);
+  const pctEl = document.createElement("span");
+  pctEl.className = "clean-size-pct";
+  pctEl.textContent = saved ? "(−" + pct + "%)" : "(0%)";
+  el.append(before, arrow, after, pctEl);
+  el.setAttribute(
+    "title",
+    "Size before → after cleaning" + (saved ? " (−" + pct + "%)" : "")
+  );
+}
+
+function cleanSvgMarkup(markup, intent) {
+  let source = extractSvgMarkup(markup) || String(markup || "").trim();
+  if (!source) throw new Error("Paste an SVG first");
+
+  const beforeLen = source.length;
+  const stripComments =
+    intent === "remove-comments-from-svg" ||
+    intent === "clean-svg-file" ||
+    intent === "reduce-svg-file-size" ||
+    intent === "optimize-svg-file";
+  const stripMeta =
+    intent === "strip-svg-metadata" ||
+    intent === "clean-svg-file" ||
+    intent === "reduce-svg-file-size" ||
+    intent === "optimize-svg-file";
+  const stripIds =
+    intent === "remove-unused-ids-from-svg" ||
+    intent === "reduce-svg-file-size" ||
+    intent === "optimize-svg-file";
+  const deepClean =
+    intent === "clean-svg-file" ||
+    intent === "reduce-svg-file-size" ||
+    intent === "optimize-svg-file";
+  const reduceSize =
+    intent === "reduce-svg-file-size" || intent === "optimize-svg-file";
+
+  if (stripComments) {
+    source = stripSvgCommentsFromMarkup(source);
+  }
+
+  const svg = parseSvg(source);
+  if (stripComments) removeSvgCommentNodes(svg);
+  if (stripMeta) stripSvgMetadataAndEditorJunk(svg);
+  if (stripIds) {
+    removeUnusedSvgIds(svg, {
+      removeOrphanDefs: reduceSize || intent === "remove-unused-ids-from-svg",
+    });
+  }
+  if (deepClean || reduceSize) removeEmptySvgContainers(svg);
+  if (reduceSize && svg.getAttribute("viewBox")) {
+    stripRootSvgSizeAttrs(svg);
+  }
+
+  stripSvgWhitespaceTextNodes(svg);
+
+  let out = prettySerializeSvg(svg);
+  if (reduceSize) out = compactSvgMarkup(out);
+  else out = formatSvgReadableMarkup(out);
+
+  const afterLen = out.length;
+  const saved = Math.max(0, beforeLen - afterLen);
+  const pct = beforeLen > 0 ? Math.round((saved / beforeLen) * 100) : 0;
+
+  let status = "SVG cleaned";
+  if (intent === "strip-svg-metadata") {
+    status = "Metadata and editor attributes removed";
+  } else if (intent === "remove-comments-from-svg") {
+    status = "Comments removed from SVG";
+  } else if (intent === "remove-unused-ids-from-svg") {
+    status = "Unused ids removed";
+  } else if (intent === "clean-svg-file") {
+    status = "SVG file cleaned";
+  } else if (intent === "reduce-svg-file-size") {
+    status =
+      "Size " +
+      formatByteCount(beforeLen) +
+      " → " +
+      formatByteCount(afterLen) +
+      (saved ? " (−" + pct + "%)" : "");
+  } else if (intent === "optimize-svg-file") {
+    status =
+      "Optimized " +
+      formatByteCount(beforeLen) +
+      " → " +
+      formatByteCount(afterLen) +
+      (saved ? " (−" + pct + "%)" : "");
+  }
+
+  return {
+    markup: out,
+    status: status,
+    beforeLen: beforeLen,
+    afterLen: afterLen,
+    saved: saved,
+    pct: pct,
+  };
+}
+
+const CLEAN_DEFAULT_SVGS = {
+  "strip-svg-metadata": `<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Badge with editor metadata — click Strip metadata" inkscape:version="1.3" data-name="Layer 1" enable-background="new 0 0 120 120">
+  <metadata>Exported from a design tool — safe to strip</metadata>
+  <circle cx="60" cy="60" r="40" fill="#0ea5e9"/>
+  <path d="M42 62 L54 74 L80 46" fill="none" stroke="#031018" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "remove-comments-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" width="160" height="100" role="img" aria-label="Graphic with XML comments — click Remove comments">
+  <!-- Designer note: temporary brand mark -->
+  <rect x="16" y="18" width="128" height="64" rx="14" fill="#0284c7"/>
+  <!-- TODO: replace cyan with final token -->
+  <circle cx="56" cy="50" r="16" fill="#67e8f9"/>
+  <circle cx="104" cy="50" r="16" fill="#22d3ee"/>
+  <!-- end sample -->
+</svg>`,
+  "remove-unused-ids-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140" role="img" aria-label="Shapes with unused ids — click Remove unused ids">
+  <defs>
+    <linearGradient id="used-grad" x1="20" y1="20" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="unused-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f43f5e"/>
+      <stop offset="1" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <rect id="unused-frame" x="18" y="18" width="104" height="104" rx="18" fill="none" stroke="#7dd3fc" stroke-opacity="0.25" stroke-width="2"/>
+  <circle id="hero" cx="70" cy="70" r="36" fill="url(#used-grad)"/>
+  <path id="unused-spark" d="M70 40 L74 58 L92 58 L78 70 L84 88 L70 76 L56 88 L62 70 L48 58 L66 58 Z" fill="#e0f2fe" opacity="0"/>
+</svg>`,
+  "clean-svg-file": `<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 160 110" width="160" height="110" data-name="Artboard" role="img" aria-label="Messy SVG — click Clean SVG">
+  <!-- leftover export comment -->
+  <metadata>tool=demo;keep=false</metadata>
+  <g inkscape:label="Layer 1" id="layer1">
+    <rect x="20" y="22" width="120" height="66" rx="16" fill="#0ea5e9"/>
+    <text x="80" y="62" text-anchor="middle" fill="#031018" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">clean me</text>
+  </g>
+  <g id="empty-layer"></g>
+</svg>`,
+  "reduce-svg-file-size": `<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 200 140" width="200px" height="140px" inkscape:version="1.2" data-name="HeavyExport" role="img" aria-label="Heavy SVG — click Reduce size">
+  <!-- bulky export -->
+  <metadata>Creator: demo exporter</metadata>
+  <defs>
+    <linearGradient id="keep-fill" x1="30" y1="30" x2="170" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#0284c7"/>
+    </linearGradient>
+    <radialGradient id="dead-glow" cx="50%" cy="50%" r="50%">
+      <stop stop-color="#fff" offset="0"/>
+      <stop stop-color="#000" offset="1"/>
+    </radialGradient>
+  </defs>
+  <g id="unused-wrapper">
+    <rect id="card" x="28" y="28" width="144" height="84" rx="18" fill="url(#keep-fill)"/>
+    <circle id="unused-dot" cx="40" cy="40" r="4" fill="#fff" opacity="0"/>
+  </g>
+</svg>`,
+  "optimize-svg-file": `<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="180" height="180" viewBox="0 0 180 180" inkscape:version="1.3" data-name="mark.svg" role="img" aria-label="Unoptimized SVG — click Optimize SVG">
+  <!-- optimize sample -->
+  <metadata id="metadata1">Illustrator / Inkscape leftovers</metadata>
+  <defs id="defs1">
+    <linearGradient id="paint" x1="40" y1="40" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="unused-paint" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#f43f5e"/>
+    </linearGradient>
+  </defs>
+  <g inkscape:groupmode="layer" id="layer1" inkscape:label="Layer 1">
+    <circle id="disc" cx="90" cy="90" r="52" fill="url(#paint)"/>
+    <path id="check" d="M70 92 L84 106 L116 72" fill="none" stroke="#031018" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>`,
+};
+
+const cleanActionBtn = document.getElementById("btn-clean-action");
+const cleanIntent =
+  (document.body && document.body.getAttribute("data-clean-intent")) || "";
+
+if (cleanActionBtn && cleanIntent) {
+  cleanActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    try {
+      const result = cleanSvgMarkup(raw, cleanIntent);
+      applyMirroredEditorMarkup(result.markup, result.status);
+      updateCleanSizeStat(result.beforeLen, result.afterLen);
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not clean this SVG");
     }
   });
 }
@@ -2830,19 +3245,23 @@ const mirrorPathHMode =
 const flipWording = flipPathVMode || flipPathHMode;
 const viewboxIntentStartup =
   (document.body && document.body.getAttribute("data-viewbox-intent")) || "";
+const cleanIntentStartup =
+  (document.body && document.body.getAttribute("data-clean-intent")) || "";
 const startupSvg =
   sharedSvg ||
   (viewboxIntentStartup && VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
     ? VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
-    : animationMode
-      ? ANIMATION_DEFAULT_SVG
-      : mirrorPathVMode
-        ? MIRROR_V_DEFAULT_SVG
-        : mirrorPathHMode
-          ? MIRROR_DEFAULT_SVG
-          : document.body.classList.contains("icon-editor-page")
-            ? ICON_DEFAULT_SVG
-            : DEFAULT_SVG);
+    : cleanIntentStartup && CLEAN_DEFAULT_SVGS[cleanIntentStartup]
+      ? CLEAN_DEFAULT_SVGS[cleanIntentStartup]
+      : animationMode
+        ? ANIMATION_DEFAULT_SVG
+        : mirrorPathVMode
+          ? MIRROR_V_DEFAULT_SVG
+          : mirrorPathHMode
+            ? MIRROR_DEFAULT_SVG
+            : document.body.classList.contains("icon-editor-page")
+              ? ICON_DEFAULT_SVG
+              : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
 applyStartupSvg(
   startupSvg,
@@ -2850,15 +3269,17 @@ applyStartupSvg(
     ? "Loaded from share link"
     : viewboxIntentStartup
       ? "Sample SVG — click the action button to fix the viewBox"
-      : mirrorPathVMode
-        ? flipPathVMode
-          ? "Sample arrow path — click Flip vertically to reflect it"
-          : "Sample arrow path — click Mirror vertically to flip it"
-        : mirrorPathHMode
-          ? flipWording
-            ? "Sample arrow path — click Flip horizontally to reflect it"
-            : "Sample arrow path — click Mirror horizontally to flip it"
-          : "Sample SVG — paste your own SVG to edit"
+      : cleanIntentStartup
+        ? "Sample SVG — click the action button to clean it"
+        : mirrorPathVMode
+          ? flipPathVMode
+            ? "Sample arrow path — click Flip vertically to reflect it"
+            : "Sample arrow path — click Mirror vertically to flip it"
+          : mirrorPathHMode
+            ? flipWording
+              ? "Sample arrow path — click Flip horizontally to reflect it"
+              : "Sample arrow path — click Mirror horizontally to flip it"
+            : "Sample SVG — paste your own SVG to edit"
 );
 refreshSampleChip();
 

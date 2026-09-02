@@ -1727,6 +1727,43 @@ body.is-resizing .preview-stage {
   min-width: 0;
 }
 
+.clean-tool-page .panel-bar-left {
+  flex: 1 1 auto;
+}
+
+.clean-size-stat {
+  margin: 0 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.22);
+  color: #9fd8f5;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clean-size-stat[hidden] {
+  display: none !important;
+}
+
+.clean-size-stat .clean-size-arrow {
+  color: #67e8f9;
+  opacity: 0.9;
+}
+
+.clean-size-stat .clean-size-pct {
+  color: #5eead4;
+}
+
 .window-dots {
   display: none;
 }
@@ -4334,6 +4371,26 @@ body.animation-editor-page {
 }
 
 .viewbox-tool-page #btn-viewbox-action {
+  letter-spacing: .02em;
+}
+
+.clean-tool-page .tool-banner-copy {
+  display: block;
+}
+
+.clean-tool-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.clean-tool-page .tool-title {
+  display: block;
+}
+
+.clean-tool-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.clean-tool-page #btn-clean-action {
   letter-spacing: .02em;
 }
 
