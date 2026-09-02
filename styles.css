@@ -4354,6 +4354,122 @@ body.animation-editor-page {
   letter-spacing: .02em;
 }
 
+.rotate-tool-page .tool-banner-copy {
+  display: block;
+}
+
+.rotate-tool-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.rotate-tool-page .tool-title {
+  display: block;
+}
+
+.rotate-tool-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.rotate-tool-page #btn-rotate-action {
+  letter-spacing: .02em;
+}
+
+.rotate-angle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-width: 0;
+  max-width: 100%;
+  padding: .18rem .18rem .18rem .55rem;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, .08);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, .18);
+}
+
+.rotate-angle-label {
+  flex: 0 0 auto;
+  margin: 0;
+  color: #8eb4d4;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.rotate-degrees-input {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  max-width: 3.5rem;
+  margin: 0;
+  padding: .28rem .2rem;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(4, 10, 18, .55);
+  color: #e8f4ff;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.rotate-degrees-input::-webkit-outer-spin-button,
+.rotate-degrees-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.rotate-degrees-input:focus {
+  outline: 2px solid #67e8f9;
+  outline-offset: 1px;
+}
+
+.rotate-angle-unit {
+  flex: 0 0 auto;
+  margin: 0 .1rem 0 0;
+  color: #9fb6d1;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.rotate-angle-group #btn-rotate-action {
+  flex: 0 0 auto;
+  width: 9.25rem;
+  min-width: 9.25rem;
+  max-width: 9.25rem;
+  justify-content: center;
+  padding-inline: .45rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .rotate-tool-page .panel-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rotate-tool-page .rotate-angle-group {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: flex-start;
+    padding: .22rem .22rem .22rem .65rem;
+  }
+
+  .rotate-tool-page .rotate-angle-group #btn-rotate-action {
+    margin-left: auto;
+    width: 9.25rem;
+    min-width: 9.25rem;
+    max-width: 9.25rem;
+    min-height: 2.15rem;
+  }
+}
+
 .viewbox-tool-page .tool-banner-copy {
   display: block;
 }

@@ -129,6 +129,7 @@ const clearBtn = document.getElementById("btn-clear");
 const uploadBtn = document.getElementById("btn-upload");
 const mirrorHBtn = document.getElementById("btn-mirror-h");
 const mirrorVBtn = document.getElementById("btn-mirror-v");
+const rotateActionBtn = document.getElementById("btn-rotate-action");
 const downloadSvgBtn = document.getElementById("btn-download-svg");
 const copyLinkBtn = document.getElementById("btn-copy-link");
 const copyIframeBtn = document.getElementById("btn-copy-iframe");
@@ -1427,6 +1428,254 @@ if (mirrorVBtn) {
       );
     } catch (err) {
       setStatus("error", (err && err.message) || "Could not mirror this SVG");
+    }
+  });
+}
+
+const ROTATE_GROUP_ATTR = "data-svgeditor-rotate";
+
+/** Asymmetric arrow path — rotation around the center is obvious. */
+const ROTATE_PATH_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Arrow path pointing right — click to rotate around center">
+  <defs>
+    <linearGradient id="rotate-path-stroke" x1="40" y1="40" x2="170" y2="160" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9"/>
+      <stop offset="0.55" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="28" fill="#071526"/>
+  <rect x="12" y="12" width="176" height="176" rx="20" fill="none" stroke="#67e8f9" stroke-opacity="0.16"/>
+  <circle cx="100" cy="100" r="4" fill="#a5f3fc"/>
+  <line x1="100" y1="28" x2="100" y2="172" stroke="#7dd3fc" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="4 6"/>
+  <line x1="28" y1="100" x2="172" y2="100" stroke="#7dd3fc" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="4 6"/>
+  <path d="M48 100 H148 L118 70 M148 100 L118 130" fill="none" stroke="url(#rotate-path-stroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+/** Mixed shapes so “rotate SVG element / object” feels distinct from a lone path. */
+const ROTATE_ELEMENT_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Pointer element — click to rotate around center">
+  <defs>
+    <linearGradient id="rotate-el-fill" x1="36" y1="40" x2="168" y2="160" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="28" fill="#071526"/>
+  <circle cx="100" cy="100" r="4" fill="#a5f3fc"/>
+  <rect x="52" y="78" width="96" height="44" rx="12" fill="url(#rotate-el-fill)"/>
+  <polygon points="148,100 118,72 118,128" fill="#67e8f9"/>
+  <circle cx="68" cy="100" r="10" fill="#031018"/>
+</svg>`;
+
+/** Compact UI icon without root width/height — good for icon-rotate intents. */
+const ROTATE_ICON_DEFAULT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Navigation icon pointing up — click to rotate">
+  <path d="M12 19V5"/>
+  <path d="M5 12l7-7 7 7"/>
+  <circle cx="12" cy="12" r="9" stroke-opacity="0.35"/>
+</svg>`;
+
+const ROTATE_DEFAULT_SVGS = {
+  path: ROTATE_PATH_DEFAULT_SVG,
+  element: ROTATE_ELEMENT_DEFAULT_SVG,
+  icon: ROTATE_ICON_DEFAULT_SVG,
+};
+
+function getSvgViewBoxBox(svg) {
+  const vb = svg.getAttribute("viewBox");
+  if (vb) {
+    const parts = vb.trim().split(/[\s,]+/);
+    if (parts.length === 4) {
+      const minX = parseFloat(parts[0]);
+      const minY = parseFloat(parts[1]);
+      const width = parseFloat(parts[2]);
+      const height = parseFloat(parts[3]);
+      if (
+        Number.isFinite(minX) &&
+        Number.isFinite(minY) &&
+        Number.isFinite(width) &&
+        Number.isFinite(height) &&
+        width > 0 &&
+        height > 0
+      ) {
+        return { minX: minX, minY: minY, width: width, height: height };
+      }
+    }
+  }
+  const widthAttr = parseFloat(svg.getAttribute("width"));
+  const heightAttr = parseFloat(svg.getAttribute("height"));
+  if (Number.isFinite(widthAttr) && widthAttr > 0 && Number.isFinite(heightAttr) && heightAttr > 0) {
+    return { minX: 0, minY: 0, width: widthAttr, height: heightAttr };
+  }
+  return null;
+}
+
+function normalizeRotationDegrees(deg) {
+  let n = deg % 360;
+  if (n < 0) n += 360;
+  if (Object.is(n, -0) || Math.abs(n) < 1e-9) return 0;
+  return Math.round(n * 1000) / 1000;
+}
+
+function formatRotationDegrees(deg) {
+  const n = normalizeRotationDegrees(deg);
+  if (n === 0) return "0";
+  return String(n);
+}
+
+function findRotateGroup(svg) {
+  return Array.from(svg.children).find(function (child) {
+    return (
+      child.nodeType === 1 &&
+      child.localName.toLowerCase() === "g" &&
+      child.hasAttribute(ROTATE_GROUP_ATTR)
+    );
+  });
+}
+
+function unwrapRotateGroup(svg, group) {
+  while (group.firstChild) {
+    svg.insertBefore(group.firstChild, group);
+  }
+  svg.removeChild(group);
+}
+
+function wrapRotateGroup(svg, degrees, cx, cy) {
+  const ns = "http://www.w3.org/2000/svg";
+  const group = document.createElementNS(ns, "g");
+  group.setAttribute(ROTATE_GROUP_ATTR, formatRotationDegrees(degrees));
+  group.setAttribute(
+    "transform",
+    "rotate(" + formatRotationDegrees(degrees) + " " + formatViewBoxNumber(cx) + " " + formatViewBoxNumber(cy) + ")"
+  );
+
+  const move = [];
+  Array.from(svg.childNodes).forEach(function (node) {
+    if (node.nodeType !== 1) {
+      move.push(node);
+      return;
+    }
+    const name = node.localName.toLowerCase();
+    if (name === "defs" || name === "style" || name === "title" || name === "desc" || name === "metadata") {
+      return;
+    }
+    move.push(node);
+  });
+  move.forEach(function (node) {
+    group.appendChild(node);
+  });
+  svg.appendChild(group);
+}
+
+function rotateSvgMarkupAroundCenter(markup, addDegrees) {
+  const svg = parseSvg(markup);
+  svg.removeAttribute("width");
+  svg.removeAttribute("height");
+
+  const box = getSvgViewBoxBox(svg);
+  if (!box) {
+    throw new Error("Need a viewBox (or width and height) to rotate around the center");
+  }
+
+  const step = Number(addDegrees);
+  if (!Number.isFinite(step) || step === 0) {
+    throw new Error("Rotation degrees must be a non-zero number");
+  }
+
+  const existing = findRotateGroup(svg);
+  let current = 0;
+  if (existing) {
+    current = parseFloat(existing.getAttribute(ROTATE_GROUP_ATTR)) || 0;
+    unwrapRotateGroup(svg, existing);
+  }
+
+  const next = normalizeRotationDegrees(current + step);
+  if (next === 0) {
+    return { markup: prettySerializeSvg(svg), degrees: 0 };
+  }
+
+  const cx = box.minX + box.width / 2;
+  const cy = box.minY + box.height / 2;
+  wrapRotateGroup(svg, next, cx, cy);
+  return { markup: prettySerializeSvg(svg), degrees: next };
+}
+
+const rotateIntent =
+  (document.body && document.body.getAttribute("data-rotate-intent")) || "";
+const rotateDegreesAttr =
+  (document.body && document.body.getAttribute("data-rotate-degrees")) || "";
+const rotateDegreesInput = document.getElementById("rotate-degrees-input");
+
+function formatAngleInputLabel(n) {
+  if (!Number.isFinite(n)) return "";
+  const rounded = Math.round(n * 1000) / 1000;
+  if (Object.is(rounded, -0)) return "0";
+  return String(rounded);
+}
+
+function getRotateStepFromUi() {
+  if (rotateDegreesInput) {
+    const typed = parseFloat(String(rotateDegreesInput.value).trim());
+    if (Number.isFinite(typed)) return typed;
+  }
+  const fallback = parseFloat(rotateDegreesAttr);
+  if (Number.isFinite(fallback)) return fallback;
+  return null;
+}
+
+function syncRotateActionLabel() {
+  if (!rotateActionBtn) return;
+  const step = getRotateStepFromUi();
+  if (!Number.isFinite(step) || step === 0) {
+    rotateActionBtn.textContent = "Rotate";
+    rotateActionBtn.title = "Enter a non-zero angle, then rotate around center";
+    return;
+  }
+  const label = formatAngleInputLabel(step);
+  rotateActionBtn.textContent = "Rotate " + label + "°";
+  rotateActionBtn.title = "Rotate " + label + "° around the viewBox center";
+}
+
+if (rotateDegreesInput && rotateIntent) {
+  const preset = parseFloat(rotateDegreesAttr);
+  if (Number.isFinite(preset) && String(rotateDegreesInput.value).trim() === "") {
+    rotateDegreesInput.value = formatAngleInputLabel(preset);
+  }
+  ["input", "change"].forEach(function (evt) {
+    rotateDegreesInput.addEventListener(evt, syncRotateActionLabel);
+  });
+  rotateDegreesInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (rotateActionBtn) rotateActionBtn.click();
+    }
+  });
+  syncRotateActionLabel();
+}
+
+if (rotateActionBtn && rotateIntent) {
+  rotateActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    const step = getRotateStepFromUi();
+    if (!Number.isFinite(step) || step === 0) {
+      setStatus("error", "Enter a non-zero angle in degrees");
+      if (rotateDegreesInput) rotateDegreesInput.focus();
+      return;
+    }
+    try {
+      const result = rotateSvgMarkupAroundCenter(raw, step);
+      const label = formatAngleInputLabel(step);
+      const signed = step > 0 ? "+" + label : label;
+      applyMirroredEditorMarkup(
+        result.markup,
+        result.degrees === 0
+          ? "Rotation cleared — back to 0° (width/height removed)"
+          : "Rotated " + signed + "° around center → " + formatRotationDegrees(result.degrees) + "° total"
+      );
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not rotate this SVG");
     }
   });
 }
@@ -3247,39 +3496,50 @@ const viewboxIntentStartup =
   (document.body && document.body.getAttribute("data-viewbox-intent")) || "";
 const cleanIntentStartup =
   (document.body && document.body.getAttribute("data-clean-intent")) || "";
+const rotateIntentStartup =
+  (document.body && document.body.getAttribute("data-rotate-intent")) || "";
+const rotateSampleStartup =
+  (document.body && document.body.getAttribute("data-rotate-sample")) || "";
+const rotateDegreesStartup =
+  (document.body && document.body.getAttribute("data-rotate-degrees")) || "";
 const startupSvg =
   sharedSvg ||
-  (viewboxIntentStartup && VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
-    ? VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
-    : cleanIntentStartup && CLEAN_DEFAULT_SVGS[cleanIntentStartup]
-      ? CLEAN_DEFAULT_SVGS[cleanIntentStartup]
-      : animationMode
-        ? ANIMATION_DEFAULT_SVG
-        : mirrorPathVMode
-          ? MIRROR_V_DEFAULT_SVG
-          : mirrorPathHMode
-            ? MIRROR_DEFAULT_SVG
-            : document.body.classList.contains("icon-editor-page")
-              ? ICON_DEFAULT_SVG
-              : DEFAULT_SVG);
+  (rotateIntentStartup && ROTATE_DEFAULT_SVGS[rotateSampleStartup]
+    ? ROTATE_DEFAULT_SVGS[rotateSampleStartup]
+    : viewboxIntentStartup && VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
+      ? VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
+      : cleanIntentStartup && CLEAN_DEFAULT_SVGS[cleanIntentStartup]
+        ? CLEAN_DEFAULT_SVGS[cleanIntentStartup]
+        : animationMode
+          ? ANIMATION_DEFAULT_SVG
+          : mirrorPathVMode
+            ? MIRROR_V_DEFAULT_SVG
+            : mirrorPathHMode
+              ? MIRROR_DEFAULT_SVG
+              : document.body.classList.contains("icon-editor-page")
+                ? ICON_DEFAULT_SVG
+                : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
 applyStartupSvg(
   startupSvg,
   sharedSvg
     ? "Loaded from share link"
-    : viewboxIntentStartup
-      ? "Sample SVG — click the action button to fix the viewBox"
-      : cleanIntentStartup
-        ? "Sample SVG — click the action button to clean it"
-        : mirrorPathVMode
-          ? flipPathVMode
-            ? "Sample arrow path — click Flip vertically to reflect it"
-            : "Sample arrow path — click Mirror vertically to flip it"
-          : mirrorPathHMode
-            ? flipWording
-              ? "Sample arrow path — click Flip horizontally to reflect it"
-              : "Sample arrow path — click Mirror horizontally to flip it"
-            : "Sample SVG — paste your own SVG to edit"
+    : rotateIntentStartup
+      ? "Sample SVG — click the action button to rotate around center" +
+        (rotateDegreesStartup ? " by " + rotateDegreesStartup + "°" : "")
+      : viewboxIntentStartup
+        ? "Sample SVG — click the action button to fix the viewBox"
+        : cleanIntentStartup
+          ? "Sample SVG — click the action button to clean it"
+          : mirrorPathVMode
+            ? flipPathVMode
+              ? "Sample arrow path — click Flip vertically to reflect it"
+              : "Sample arrow path — click Mirror vertically to flip it"
+            : mirrorPathHMode
+              ? flipWording
+                ? "Sample arrow path — click Flip horizontally to reflect it"
+                : "Sample arrow path — click Mirror horizontally to flip it"
+              : "Sample SVG — paste your own SVG to edit"
 );
 refreshSampleChip();
 
