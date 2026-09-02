@@ -1431,6 +1431,194 @@ if (mirrorVBtn) {
   });
 }
 
+function formatViewBoxNumber(n) {
+  if (!Number.isFinite(n)) return "0";
+  const rounded = Math.round(n * 1000) / 1000;
+  if (Object.is(rounded, -0)) return "0";
+  return String(rounded);
+}
+
+function measureSvgContentBBox(svg) {
+  const host = document.createElement("div");
+  host.setAttribute("aria-hidden", "true");
+  host.style.cssText =
+    "position:absolute;left:-99999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none";
+  const clone = svg.cloneNode(true);
+  clone.setAttribute("viewBox", "-100000 -100000 200000 200000");
+  clone.removeAttribute("width");
+  clone.removeAttribute("height");
+  clone.style.overflow = "visible";
+  document.body.appendChild(host);
+  host.appendChild(clone);
+
+  let bbox = null;
+  try {
+    bbox = clone.getBBox();
+  } catch (err) {
+    bbox = null;
+  }
+
+  if (!bbox || !(bbox.width > 0) || !(bbox.height > 0)) {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    const nodes = clone.querySelectorAll(
+      "path,rect,circle,ellipse,line,polyline,polygon,text,use,image"
+    );
+    nodes.forEach(function (el) {
+      try {
+        const b = el.getBBox();
+        if (!b) return;
+        minX = Math.min(minX, b.x);
+        minY = Math.min(minY, b.y);
+        maxX = Math.max(maxX, b.x + b.width);
+        maxY = Math.max(maxY, b.y + b.height);
+      } catch (err) {
+        /* skip unmeasurable nodes */
+      }
+    });
+    if (Number.isFinite(minX) && maxX > minX && maxY > minY) {
+      bbox = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+    } else {
+      bbox = null;
+    }
+  }
+
+  document.body.removeChild(host);
+  return bbox;
+}
+
+function stripRootSvgSizeAttrs(svg) {
+  svg.removeAttribute("width");
+  svg.removeAttribute("height");
+}
+
+function applyContentViewBox(svg, options) {
+  options = options || {};
+  const padRatio = options.padRatio != null ? options.padRatio : 0;
+  const padPx = options.padPx != null ? options.padPx : 0;
+  const bbox = measureSvgContentBBox(svg);
+  if (!bbox || !(bbox.width > 0) || !(bbox.height > 0)) {
+    throw new Error("Could not measure SVG content for viewBox");
+  }
+  const padX = bbox.width * padRatio + padPx;
+  const padY = bbox.height * padRatio + padPx;
+  const x = bbox.x - padX;
+  const y = bbox.y - padY;
+  const w = bbox.width + padX * 2;
+  const h = bbox.height + padY * 2;
+  const vb =
+    formatViewBoxNumber(x) +
+    " " +
+    formatViewBoxNumber(y) +
+    " " +
+    formatViewBoxNumber(w) +
+    " " +
+    formatViewBoxNumber(h);
+  svg.setAttribute("viewBox", vb);
+  stripRootSvgSizeAttrs(svg);
+  return vb;
+}
+
+function isInvalidViewBox(svg) {
+  const vb = svg.getAttribute("viewBox");
+  if (!vb) return true;
+  const parts = vb.trim().split(/[\s,]+/);
+  if (parts.length !== 4) return true;
+  const nums = parts.map(function (p) {
+    return parseFloat(p);
+  });
+  return nums.some(function (n) {
+    return !Number.isFinite(n);
+  }) || !(nums[2] > 0) || !(nums[3] > 0);
+}
+
+function fixSvgViewBoxMarkup(markup, intent) {
+  const svg = parseSvg(markup);
+  let padRatio = 0.02;
+  if (intent === "remove-svg-viewbox-whitespace") {
+    padRatio = 0;
+  } else if (intent === "fix-svg-viewbox-cropping") {
+    padRatio = 0.04;
+  } else if (intent === "fit-svg-to-viewbox") {
+    padRatio = 0.01;
+  } else if (intent === "calculate-svg-viewbox") {
+    padRatio = 0;
+  } else if (intent === "change-svg-viewbox") {
+    padRatio = 0.02;
+  } else if (intent === "fix-svg-viewbox-not-working") {
+    if (isInvalidViewBox(svg)) svg.removeAttribute("viewBox");
+    padRatio = 0.02;
+  } else if (intent === "fix-svg-viewbox") {
+    padRatio = 0.02;
+  }
+  const viewBox = applyContentViewBox(svg, { padRatio: padRatio });
+  return { markup: prettySerializeSvg(svg), viewBox: viewBox };
+}
+
+const VIEWBOX_DEFAULT_SVGS = {
+  "fix-svg-viewbox": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Star with a broken viewBox — click Fix viewBox">
+  <defs>
+    <linearGradient id="vb-fix-fill" x1="40" y1="30" x2="160" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#vb-fix-fill)" d="M100 36 L112 72 L150 72 L120 94 L132 130 L100 108 L68 130 L80 94 L50 72 L88 72 Z"/>
+</svg>`,
+  "remove-svg-viewbox-whitespace": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Tiny icon in a huge viewBox — click Remove whitespace">
+  <rect x="176" y="176" width="48" height="48" rx="10" fill="#22d3ee"/>
+  <path d="M188 200 H212 M200 188 V212" stroke="#031018" stroke-width="4" stroke-linecap="round"/>
+</svg>`,
+  "fix-svg-viewbox-not-working": `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" role="img" aria-label="SVG with no viewBox — click Fix viewBox">
+  <rect x="20" y="24" width="160" height="72" rx="14" fill="#0ea5e9"/>
+  <text x="100" y="68" text-anchor="middle" fill="#031018" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">no viewBox</text>
+</svg>`,
+  "fix-svg-viewbox-cropping": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="60" height="60" role="img" aria-label="Cropped ring — click Fix cropping">
+  <circle cx="48" cy="48" r="36" fill="none" stroke="#67e8f9" stroke-width="10"/>
+  <circle cx="48" cy="48" r="14" fill="#22d3ee"/>
+</svg>`,
+  "fit-svg-to-viewbox": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="300" height="200" role="img" aria-label="Loose artwork — click Fit to viewBox">
+  <path d="M118 78 H182 L162 98 H138 Z" fill="#38bdf8"/>
+  <circle cx="150" cy="118" r="22" fill="#67e8f9"/>
+</svg>`,
+  "calculate-svg-viewbox": `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" role="img" aria-label="Shapes without viewBox — click Calculate viewBox">
+  <ellipse cx="70" cy="80" rx="42" ry="28" fill="#0ea5e9"/>
+  <rect x="120" y="48" width="70" height="70" rx="12" fill="#22d3ee"/>
+  <path d="M210 40 L235 120 L185 120 Z" fill="#67e8f9"/>
+</svg>`,
+  "change-svg-viewbox": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Outdated 24x24 viewBox — click Change viewBox">
+  <g transform="translate(40 20)">
+    <rect width="80" height="50" rx="8" fill="#0284c7"/>
+    <path d="M16 25 H64" stroke="#e0f2fe" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>`,
+};
+
+const viewboxActionBtn = document.getElementById("btn-viewbox-action");
+const viewboxIntent =
+  (document.body && document.body.getAttribute("data-viewbox-intent")) || "";
+
+if (viewboxActionBtn && viewboxIntent) {
+  viewboxActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    try {
+      const result = fixSvgViewBoxMarkup(raw, viewboxIntent);
+      applyMirroredEditorMarkup(
+        result.markup,
+        "viewBox set to " + result.viewBox + " — width/height removed"
+      );
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not update viewBox");
+    }
+  });
+}
+
 if (uploadBtn && fileUpload) {
   uploadBtn.addEventListener("click", function () {
     fileUpload.value = "";
@@ -2578,31 +2766,37 @@ const mirrorPathHMode =
   window.location.pathname === "/mirror-svg-horizontally" ||
   window.location.pathname === "/mirror-svg-horizontally.html";
 const flipWording = flipPathVMode || flipPathHMode;
+const viewboxIntentStartup =
+  (document.body && document.body.getAttribute("data-viewbox-intent")) || "";
 const startupSvg =
   sharedSvg ||
-  (animationMode
-    ? ANIMATION_DEFAULT_SVG
-    : mirrorPathVMode
-      ? MIRROR_V_DEFAULT_SVG
-      : mirrorPathHMode
-        ? MIRROR_DEFAULT_SVG
-        : document.body.classList.contains("icon-editor-page")
-          ? ICON_DEFAULT_SVG
-          : DEFAULT_SVG);
+  (viewboxIntentStartup && VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
+    ? VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
+    : animationMode
+      ? ANIMATION_DEFAULT_SVG
+      : mirrorPathVMode
+        ? MIRROR_V_DEFAULT_SVG
+        : mirrorPathHMode
+          ? MIRROR_DEFAULT_SVG
+          : document.body.classList.contains("icon-editor-page")
+            ? ICON_DEFAULT_SVG
+            : DEFAULT_SVG);
 showingStartupSample = !sharedSvg;
 applyStartupSvg(
   startupSvg,
   sharedSvg
     ? "Loaded from share link"
-    : mirrorPathVMode
-      ? flipPathVMode
-        ? "Sample arrow path — click Flip vertically to reflect it"
-        : "Sample arrow path — click Mirror vertically to flip it"
-      : mirrorPathHMode
-        ? flipWording
-          ? "Sample arrow path — click Flip horizontally to reflect it"
-          : "Sample arrow path — click Mirror horizontally to flip it"
-        : "Sample SVG — paste your own SVG to edit"
+    : viewboxIntentStartup
+      ? "Sample SVG — click the action button to fix the viewBox"
+      : mirrorPathVMode
+        ? flipPathVMode
+          ? "Sample arrow path — click Flip vertically to reflect it"
+          : "Sample arrow path — click Mirror vertically to flip it"
+        : mirrorPathHMode
+          ? flipWording
+            ? "Sample arrow path — click Flip horizontally to reflect it"
+            : "Sample arrow path — click Mirror horizontally to flip it"
+          : "Sample SVG — paste your own SVG to edit"
 );
 refreshSampleChip();
 

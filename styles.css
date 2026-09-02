@@ -4317,6 +4317,26 @@ body.animation-editor-page {
   letter-spacing: .02em;
 }
 
+.viewbox-tool-page .tool-banner-copy {
+  display: block;
+}
+
+.viewbox-tool-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.viewbox-tool-page .tool-title {
+  display: block;
+}
+
+.viewbox-tool-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.viewbox-tool-page #btn-viewbox-action {
+  letter-spacing: .02em;
+}
+
 .animation-editor-page .site-header {
   height: 3.35rem;
 }

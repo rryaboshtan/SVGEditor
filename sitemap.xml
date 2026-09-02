@@ -91,6 +91,48 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/fix-svg-viewbox</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/remove-svg-viewbox-whitespace</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/fix-svg-viewbox-not-working</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/fix-svg-viewbox-cropping</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/fit-svg-to-viewbox</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/calculate-svg-viewbox</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/change-svg-viewbox</loc>
+    <lastmod>2026-09-02T20:55:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/blog/svg-to-png</loc>
     <lastmod>2026-08-25T21:16:26+03:00</lastmod>
     <changefreq>monthly</changefreq>
