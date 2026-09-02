@@ -3270,10 +3270,24 @@ body.is-resizing .preview-stage {
 
 .tool-note {
   margin: 0.18rem 0 0;
-  max-width: 40rem;
+  max-width: none;
   font-size: 0.68rem;
-  line-height: 1.25;
+  line-height: 1.35;
   color: #6f89a8;
+}
+
+.tool-note-pair {
+  white-space: nowrap;
+}
+
+.tool-note-sep {
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .tool-note-pair {
+    white-space: normal;
+  }
 }
 
 .tool-steps {
@@ -3500,6 +3514,7 @@ body.is-resizing .preview-stage {
   color: #7dd3fc;
   text-decoration: none;
   border-bottom: 1px solid rgba(125, 211, 252, 0.35);
+  white-space: nowrap;
 }
 
 .tool-note a:hover {

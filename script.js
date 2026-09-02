@@ -2547,12 +2547,19 @@ const animationMode =
   new URLSearchParams(window.location.search).get("animation") === "1";
 const flipPathVMode =
   document.body.classList.contains("flip-path-v-page") ||
+  document.body.classList.contains("flip-svg-v-page") ||
   window.location.pathname === "/flip-svg-path-vertically" ||
-  window.location.pathname === "/flip-svg-path-vertically.html";
+  window.location.pathname === "/flip-svg-path-vertically.html" ||
+  window.location.pathname === "/flip-svg-vertically" ||
+  window.location.pathname === "/flip-svg-vertically.html";
 const flipPathHMode =
-  (!flipPathVMode && document.body.classList.contains("flip-path-page")) ||
+  (!flipPathVMode &&
+    (document.body.classList.contains("flip-path-page") ||
+      document.body.classList.contains("flip-svg-page"))) ||
   window.location.pathname === "/flip-svg-path-horizontally" ||
-  window.location.pathname === "/flip-svg-path-horizontally.html";
+  window.location.pathname === "/flip-svg-path-horizontally.html" ||
+  window.location.pathname === "/flip-svg-horizontally" ||
+  window.location.pathname === "/flip-svg-horizontally.html";
 const mirrorPathVMode =
   flipPathVMode ||
   document.body.classList.contains("mirror-path-v-page") ||

@@ -105,6 +105,8 @@ files = [
     "mirror-svg-path-vertically.html",
     "flip-svg-path-horizontally.html",
     "flip-svg-path-vertically.html",
+    "flip-svg-horizontally.html",
+    "flip-svg-vertically.html",
     "embed.html",
     "privacy.html",
     "terms.html",
