@@ -1438,6 +1438,47 @@ function formatViewBoxNumber(n) {
   return String(rounded);
 }
 
+/** Half-stroke (and miter/cap) inset — getBBox() ignores stroke paint. */
+function strokeOutsetForElement(el) {
+  let stroke = el.getAttribute("stroke") || "";
+  let strokeWidth = el.getAttribute("stroke-width") || "";
+  let linejoin = el.getAttribute("stroke-linejoin") || "";
+  let linecap = el.getAttribute("stroke-linecap") || "";
+  let miterlimit = el.getAttribute("stroke-miterlimit") || "";
+  try {
+    const cs = window.getComputedStyle(el);
+    if (!stroke) stroke = cs.stroke || "";
+    if (!strokeWidth) strokeWidth = cs.strokeWidth || "";
+    if (!linejoin) linejoin = cs.strokeLinejoin || "";
+    if (!linecap) linecap = cs.strokeLinecap || "";
+    if (!miterlimit) miterlimit = cs.strokeMiterlimit || "";
+  } catch (err) {
+    /* keep attribute values */
+  }
+
+  if (!stroke || stroke === "none") return 0;
+
+  // Prefer unitless/user-space attribute values; computed style may be px-scaled.
+  const attrSw = el.getAttribute("stroke-width");
+  let sw = NaN;
+  if (attrSw && !/%/.test(attrSw)) sw = parseFloat(attrSw);
+  if (!(sw > 0)) sw = parseFloat(strokeWidth);
+  if (!(sw > 0)) return 0;
+
+  let outset = sw / 2;
+  const tag = (el.tagName || "").toLowerCase();
+  const isPolyline =
+    tag === "path" || tag === "polyline" || tag === "polygon" || tag === "line";
+  if (isPolyline && String(linejoin).toLowerCase() === "miter") {
+    const ml = parseFloat(miterlimit);
+    if (ml > 1) outset = Math.max(outset, (sw / 2) * ml);
+  }
+  if (isPolyline && String(linecap).toLowerCase() === "square") {
+    outset = Math.max(outset, (sw / 2) * Math.SQRT2);
+  }
+  return outset;
+}
+
 function measureSvgContentBBox(svg) {
   const host = document.createElement("div");
   host.setAttribute("aria-hidden", "true");
@@ -1451,36 +1492,44 @@ function measureSvgContentBBox(svg) {
   document.body.appendChild(host);
   host.appendChild(clone);
 
-  let bbox = null;
-  try {
-    bbox = clone.getBBox();
-  } catch (err) {
-    bbox = null;
-  }
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  const nodes = clone.querySelectorAll(
+    "path,rect,circle,ellipse,line,polyline,polygon,text,use,image"
+  );
+  nodes.forEach(function (el) {
+    try {
+      const b = el.getBBox();
+      if (!b) return;
+      const pad = strokeOutsetForElement(el);
+      // Lines / strokes can have zero width or height in the geometric box.
+      if (!(b.width > 0 || b.height > 0 || pad > 0)) return;
+      minX = Math.min(minX, b.x - pad);
+      minY = Math.min(minY, b.y - pad);
+      maxX = Math.max(maxX, b.x + b.width + pad);
+      maxY = Math.max(maxY, b.y + b.height + pad);
+    } catch (err) {
+      /* skip unmeasurable nodes */
+    }
+  });
 
-  if (!bbox || !(bbox.width > 0) || !(bbox.height > 0)) {
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    const nodes = clone.querySelectorAll(
-      "path,rect,circle,ellipse,line,polyline,polygon,text,use,image"
-    );
-    nodes.forEach(function (el) {
-      try {
-        const b = el.getBBox();
-        if (!b) return;
-        minX = Math.min(minX, b.x);
-        minY = Math.min(minY, b.y);
-        maxX = Math.max(maxX, b.x + b.width);
-        maxY = Math.max(maxY, b.y + b.height);
-      } catch (err) {
-        /* skip unmeasurable nodes */
+  let bbox = null;
+  if (Number.isFinite(minX) && maxX > minX && maxY > minY) {
+    bbox = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+  } else {
+    try {
+      const rootBox = clone.getBBox();
+      if (rootBox && rootBox.width > 0 && rootBox.height > 0) {
+        bbox = {
+          x: rootBox.x,
+          y: rootBox.y,
+          width: rootBox.width,
+          height: rootBox.height,
+        };
       }
-    });
-    if (Number.isFinite(minX) && maxX > minX && maxY > minY) {
-      bbox = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
-    } else {
+    } catch (err) {
       bbox = null;
     }
   }
@@ -1498,6 +1547,7 @@ function applyContentViewBox(svg, options) {
   options = options || {};
   const padRatio = options.padRatio != null ? options.padRatio : 0;
   const padPx = options.padPx != null ? options.padPx : 0;
+  const overflowVisible = options.overflowVisible === true;
   const bbox = measureSvgContentBBox(svg);
   if (!bbox || !(bbox.width > 0) || !(bbox.height > 0)) {
     throw new Error("Could not measure SVG content for viewBox");
@@ -1517,6 +1567,9 @@ function applyContentViewBox(svg, options) {
     " " +
     formatViewBoxNumber(h);
   svg.setAttribute("viewBox", vb);
+  if (overflowVisible) {
+    svg.setAttribute("overflow", "visible");
+  }
   stripRootSvgSizeAttrs(svg);
   return vb;
 }
@@ -1537,12 +1590,17 @@ function isInvalidViewBox(svg) {
 function fixSvgViewBoxMarkup(markup, intent) {
   const svg = parseSvg(markup);
   let padRatio = 0.02;
+  let padPx = 0;
+  let overflowVisible = false;
   if (intent === "remove-svg-viewbox-whitespace") {
     padRatio = 0;
   } else if (intent === "fix-svg-viewbox-cropping") {
-    padRatio = 0.04;
+    // Generous inset so thick strokes don't look clipped against the frame.
+    padRatio = 0.1;
+    padPx = 2;
+    overflowVisible = true;
   } else if (intent === "fit-svg-to-viewbox") {
-    padRatio = 0.01;
+    padRatio = 0.02;
   } else if (intent === "calculate-svg-viewbox") {
     padRatio = 0;
   } else if (intent === "change-svg-viewbox") {
@@ -1553,7 +1611,11 @@ function fixSvgViewBoxMarkup(markup, intent) {
   } else if (intent === "fix-svg-viewbox") {
     padRatio = 0.02;
   }
-  const viewBox = applyContentViewBox(svg, { padRatio: padRatio });
+  const viewBox = applyContentViewBox(svg, {
+    padRatio: padRatio,
+    padPx: padPx,
+    overflowVisible: overflowVisible,
+  });
   return { markup: prettySerializeSvg(svg), viewBox: viewBox };
 }
 
