@@ -1387,9 +1387,16 @@ if (mirrorHBtn) {
     try {
       const next = mirrorSvgMarkupHorizontally(raw);
       const flipped = next.indexOf(MIRROR_GROUP_ATTR + '="horizontal"') !== -1;
+      const useFlip = document.body.classList.contains("flip-path-page");
       applyMirroredEditorMarkup(
         next,
-        flipped ? "Mirrored horizontally — click again to flip back" : "Mirror removed — original orientation"
+        flipped
+          ? useFlip
+            ? "Flipped horizontally — click again to flip back"
+            : "Mirrored horizontally — click again to flip back"
+          : useFlip
+            ? "Flip removed — original orientation"
+            : "Mirror removed — original orientation"
       );
     } catch (err) {
       setStatus("error", (err && err.message) || "Could not mirror this SVG");
@@ -1407,9 +1414,16 @@ if (mirrorVBtn) {
     try {
       const next = mirrorSvgMarkupVertically(raw);
       const flipped = next.indexOf(MIRROR_GROUP_ATTR + '="vertical"') !== -1;
+      const useFlip = document.body.classList.contains("flip-path-page");
       applyMirroredEditorMarkup(
         next,
-        flipped ? "Mirrored vertically — click again to flip back" : "Mirror removed — original orientation"
+        flipped
+          ? useFlip
+            ? "Flipped vertically — click again to flip back"
+            : "Mirrored vertically — click again to flip back"
+          : useFlip
+            ? "Flip removed — original orientation"
+            : "Mirror removed — original orientation"
       );
     } catch (err) {
       setStatus("error", (err && err.message) || "Could not mirror this SVG");
@@ -2531,14 +2545,25 @@ if (sharedRaw && extractSvgMarkup(sharedRaw)) {
 const animationMode =
   window.location.pathname === "/svg-animation-editor" ||
   new URLSearchParams(window.location.search).get("animation") === "1";
+const flipPathVMode =
+  document.body.classList.contains("flip-path-v-page") ||
+  window.location.pathname === "/flip-svg-path-vertically" ||
+  window.location.pathname === "/flip-svg-path-vertically.html";
+const flipPathHMode =
+  (!flipPathVMode && document.body.classList.contains("flip-path-page")) ||
+  window.location.pathname === "/flip-svg-path-horizontally" ||
+  window.location.pathname === "/flip-svg-path-horizontally.html";
 const mirrorPathVMode =
+  flipPathVMode ||
   document.body.classList.contains("mirror-path-v-page") ||
   window.location.pathname === "/mirror-svg-path-vertically" ||
   window.location.pathname === "/mirror-svg-path-vertically.html";
 const mirrorPathHMode =
-  (!mirrorPathVMode && document.body.classList.contains("mirror-path-page")) ||
+  (!mirrorPathVMode &&
+    (flipPathHMode || document.body.classList.contains("mirror-path-page"))) ||
   window.location.pathname === "/mirror-svg-path-horizontally" ||
   window.location.pathname === "/mirror-svg-path-horizontally.html";
+const flipWording = flipPathVMode || flipPathHMode;
 const startupSvg =
   sharedSvg ||
   (animationMode
@@ -2556,9 +2581,13 @@ applyStartupSvg(
   sharedSvg
     ? "Loaded from share link"
     : mirrorPathVMode
-      ? "Sample arrow path — click Mirror vertically to flip it"
+      ? flipPathVMode
+        ? "Sample arrow path — click Flip vertically to reflect it"
+        : "Sample arrow path — click Mirror vertically to flip it"
       : mirrorPathHMode
-        ? "Sample arrow path — click Mirror horizontally to flip it"
+        ? flipWording
+          ? "Sample arrow path — click Flip horizontally to reflect it"
+          : "Sample arrow path — click Mirror horizontally to flip it"
         : "Sample SVG — paste your own SVG to edit"
 );
 refreshSampleChip();

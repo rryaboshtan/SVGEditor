@@ -3455,6 +3455,23 @@ body.is-resizing .preview-stage {
   color: #9fb6d1;
 }
 
+.tool-faq-list a {
+  color: #7dd3fc;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(125, 211, 252, 0.35);
+}
+
+.tool-faq-list a:hover {
+  color: #e0f2fe;
+  border-bottom-color: rgba(224, 242, 254, 0.55);
+}
+
+.tool-sub code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  color: #c8e7ff;
+}
+
 .tool-faq-list code {
   font-family: var(--font-mono);
   font-size: 0.86em;
@@ -3472,6 +3489,22 @@ body.is-resizing .preview-stage {
   font-weight: 700;
   color: #7dd3fc;
   text-decoration: none;
+}
+
+.tool-faq-guide + .tool-faq-guide {
+  display: block;
+  margin-top: 0.45rem;
+}
+
+.tool-note a {
+  color: #7dd3fc;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(125, 211, 252, 0.35);
+}
+
+.tool-note a:hover {
+  color: #e0f2fe;
+  border-bottom-color: rgba(224, 242, 254, 0.55);
 }
 
 .tool-faq-guide:hover {
