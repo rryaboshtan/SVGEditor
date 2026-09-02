@@ -167,7 +167,7 @@
                 "name": "How do I mirror an SVG path horizontally?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Paste your SVG or use the sample arrow path, then click Mirror horizontally. The path flips left to right and the source updates. Click again to flip back."
+                  "text": "Paste your SVG (or use the sample arrow path). Click Mirror horizontally — the path flips left↔right and the source updates. Click again to flip back."
                 }
               },
               {
@@ -175,15 +175,23 @@
                 "name": "Does this rewrite the path d attribute?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The tool wraps drawable content in transform=\"translate(W,0) scale(-1,1)\" using the SVG viewBox width, which mirrors every path, shape, and group reliably."
+                  "text": "The tool wraps drawable content in transform=\"translate(W,0) scale(-1,1)\" using the SVG viewBox width. That mirrors every path, shape, and group reliably."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is this SVG path mirror tool free?",
+                "name": "Is this free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. It runs entirely in your browser with no account and no file upload."
+                  "text": "Yes. Runs entirely in your browser — no account, no file upload."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What if my SVG has no viewBox?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The tool falls back to the root width attribute. For best results, keep an explicit viewBox on the SVG."
                 }
               }
             ]
