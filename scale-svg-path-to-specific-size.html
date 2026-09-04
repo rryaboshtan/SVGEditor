@@ -6,7 +6,7 @@
     <title>Scale SVG Path to Specific Size Online — Free Tool | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Scale an SVG path to a specific size online. Enter a target size in px (default 100) and rewrite coordinates — free, no upload."
+      content="Scale an SVG path to a specific size online. Enlarge or shrink so bounds match a target in px (default 100) — free, no upload."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -22,7 +22,7 @@
     <meta property="og:title" content="Scale SVG Path to Specific Size Online — Free Tool | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Scale an SVG path to a specific size online. Enter a target size in px (default 100) and rewrite coordinates — free, no upload."
+      content="Scale an SVG path to a specific size online. Enlarge or shrink so bounds match a target in px (default 100) — free, no upload."
     />
     <meta property="og:url" content="https://getsvgeditor.com/scale-svg-path-to-specific-size" />
     <meta property="og:locale" content="en_US" />
@@ -39,7 +39,7 @@
     <meta name="twitter:title" content="Scale SVG Path to Specific Size Online — Free Tool | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Scale an SVG path to a specific size online. Enter a target size in px (default 100) and rewrite coordinates — free, no upload."
+      content="Scale an SVG path to a specific size online. Enlarge or shrink so bounds match a target in px (default 100) — free, no upload."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
@@ -111,7 +111,7 @@
               "SVG path target size"
             ],
             "url": "https://getsvgeditor.com/scale-svg-path-to-specific-size",
-            "description": "Free online tool to scale an SVG path to a specific pixel size target.",
+            "description": "Free online tool to enlarge or shrink an SVG path to a specific pixel size. A smaller target shrinks the path; a larger one grows it.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -173,7 +173,7 @@
                 "name": "How do I scale an SVG path to a specific size?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Paste the SVG, set Size in px (default 100), then click Scale to size. Coordinates scale so the path approaches that size."
+                  "text": "Paste the SVG, set Size in px (default 100), then click Scale to size. If the path is larger than the target it shrinks; if smaller it enlarges."
                 }
               },
               {
@@ -206,7 +206,7 @@
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/scale-svg-path-to-specific-size#howto",
             "name": "Scale an SVG path to a specific size",
-            "description": "Enter a target size and scale path coordinates so the graphic matches that size.",
+            "description": "Enter a target size and enlarge or shrink path coordinates so the graphic matches that size.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
@@ -224,7 +224,7 @@
                 "@type": "HowToStep",
                 "position": 2,
                 "name": "Click Scale to size",
-                "text": "Set Size if needed, then click Scale to size. Path coordinates scale toward the target."
+                "text": "Set Size if needed (smaller than current bounds shrinks, larger enlarges), then click Scale to size."
               },
               {
                 "@type": "HowToStep",
@@ -342,7 +342,7 @@
           <span aria-current="page">Scale path to size</span>
         </nav>
         <h1 class="tool-title">Scale SVG Path to Specific Size</h1>
-        <p class="tool-sub">Resize path so its bounds approach a <strong>target size</strong> (default 100px)</p>
+        <p class="tool-sub">Enlarge or shrink so bounds match a <strong>target size</strong> (default 100px)</p>
         <p class="tool-note"><span class="tool-note-pair">Fit viewBox? <a href="/scale-svg-path-to-fit-viewbox">Scale to fit</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">By factor? <a href="/scale-svg-path-by-factor">Scale by factor</a></span></p>
       </div>
       <div class="tool-banner-actions">
@@ -353,7 +353,7 @@
             <dl class="tool-faq-list">
               <div>
                 <dt>How do I scale an SVG path to a specific size?</dt>
-                <dd>Paste the SVG, set Size in px (default 100), then click Scale to size. Coordinates scale so the path approaches that size.</dd>
+                <dd>Paste the SVG, set Size in px (default 100), then click Scale to size. If the path is larger than the target it shrinks; if smaller it enlarges.</dd>
               </div>
               <div>
                 <dt>Is size width, height, or max side?</dt>
@@ -446,7 +446,7 @@
               <label class="scale-path-factor-label" for="scale-path-factor-input">Size</label>
               <input type="number" id="scale-path-factor-input" class="scale-path-factor-input" value="100" step="any" inputmode="decimal" aria-label="Target size in pixels" />
               <span class="scale-path-factor-unit" aria-hidden="true">px</span>
-              <button type="button" class="btn btn-accent" id="btn-scale-path-action" title="Scale path to the target size">Scale to size</button>
+              <button type="button" class="btn btn-accent" id="btn-scale-path-action" title="Enlarge or shrink path to the target size">Scale to size</button>
             </div>
             <button type="button" class="btn btn-ghost" id="btn-download-svg" title="Download SVG file">
               Download
@@ -551,7 +551,7 @@
                 <div class="preview-empty-inner">
                   <p class="preview-empty-title">Live SVG preview</p>
                   <p class="preview-empty-body">
-                    Paste or upload an SVG with path data. Click the action button to scale the coordinates.
+                    Paste or upload an SVG with path data. Scale up or down — a factor above 1 enlarges, below 1 shrinks.
                   </p>
                   <p class="preview-empty-links">
                     <a href="/scale-svg-path-coordinates">Scale path coordinates</a>

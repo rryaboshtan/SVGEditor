@@ -11,10 +11,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-coordinates",
     "title": "Scale SVG Path Coordinates Online — Free Tool | getsvgeditor.com",
-    "description": "Scale SVG path coordinates online. Multiply path numbers in the d attribute with a live preview — free, in your browser, no upload.",
+    "description": "Scale SVG path coordinates up or down online. Enlarge or shrink numbers in the d attribute with a live preview — free, in your browser, no upload.",
     "h1": "Scale SVG Path Coordinates",
     "crumb": "Scale path coordinates",
-    "sub": "Multiply numbers in the path <code>d</code> attribute — bake scale into coordinates",
+    "sub": "Enlarge or shrink numbers in the path <code>d</code> attribute — factor &gt;1 grows, &lt;1 shrinks",
     "og_alt": "Scale SVG path coordinates in SVGEditor — live preview",
     "app_name": "Scale SVG Path Coordinates",
     "app_alts": [
@@ -23,7 +23,7 @@ PAGES = [
       "Multiply SVG path numbers",
       "Scale path d attribute online",
     ],
-    "app_desc": "Free online tool to scale SVG path coordinates. Paste the file, click Scale coordinates, and preview the resized path.",
+    "app_desc": "Free online tool to scale SVG path coordinates up or down. Paste the file, set a factor, and preview the enlarged or shrunk path.",
     "features": [
       "Scales numbers inside path d",
       "Updates viewBox to match when needed",
@@ -31,16 +31,21 @@ PAGES = [
       "Runs entirely in the browser — no file upload",
     ],
     "howto_name": "Scale SVG path coordinates",
-    "howto_desc": "Paste path markup, scale the coordinates in d, and preview the result in the browser.",
-    "howto_click": "Click Scale coordinates. Path numbers are multiplied and the preview updates.",
+    "howto_desc": "Paste path markup, enlarge or shrink the coordinates in d, and preview the result in the browser.",
+    "howto_click": "Set the factor if needed (above 1 enlarges, below 1 shrinks), then click Scale coordinates. Path numbers are multiplied and the preview updates.",
     "btn": "Scale coordinates",
-    "btn_title": "Scale the coordinates in this SVG path",
-    "factor_input": None,
+    "btn_title": "Enlarge or shrink the coordinates in this SVG path",
+    "factor_input": {
+      "label": "Factor",
+      "default": "1.25",
+      "unit": "×",
+      "aria": "Scale factor — above 1 enlarges, below 1 shrinks",
+    },
     "faq_aria": "Scale SVG path coordinates FAQ",
     "faqs": [
       (
         "How do I scale SVG path coordinates online?",
-        "Paste or upload the SVG, then click Scale coordinates. Numbers in the path d attribute are multiplied and the preview updates.",
+        "Paste or upload the SVG, set Factor (above 1 enlarges, below 1 shrinks, e.g. 0.5 halves the path), then click Scale coordinates. Numbers in the path d attribute are multiplied and the preview updates.",
       ),
       (
         "Is this the same as a transform scale?",
@@ -66,10 +71,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-by-factor",
     "title": "Scale SVG Path by Factor Online — Free Tool | getsvgeditor.com",
-    "description": "Scale an SVG path by a factor online. Enter a multiplier (default 1.5), bake it into path coordinates — free, no upload.",
+    "description": "Scale an SVG path by a factor online. Enlarge (e.g. 1.5) or shrink (e.g. 0.5) — bake the multiplier into path coordinates. Free, no upload.",
     "h1": "Scale SVG Path by Factor",
     "crumb": "Scale path by factor",
-    "sub": "Multiply path coordinates by a <strong>numeric factor</strong> (default 1.5×)",
+    "sub": "Enlarge or shrink by a <strong>numeric factor</strong> — &gt;1 grows, &lt;1 shrinks (default 1.5×)",
     "og_alt": "Scale SVG path by factor in SVGEditor",
     "app_name": "Scale SVG Path by Factor",
     "app_alts": [
@@ -78,7 +83,7 @@ PAGES = [
       "Multiply SVG path by factor",
       "Scale path d by N",
     ],
-    "app_desc": "Free online tool to scale an SVG path by a numeric factor. Set the multiplier and rewrite path coordinates.",
+    "app_desc": "Free online tool to enlarge or shrink an SVG path by a numeric factor. Values above 1 grow the path; below 1 shrink it.",
     "features": [
       "Editable scale factor input",
       "Bakes factor into path d",
@@ -86,21 +91,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path by a factor",
-    "howto_desc": "Enter a multiplier and scale path coordinates by that factor.",
-    "howto_click": "Set the factor if needed, then click Scale by factor. Path coordinates are multiplied by that value.",
+    "howto_desc": "Enter a multiplier and enlarge or shrink path coordinates by that factor.",
+    "howto_click": "Set the factor (above 1 enlarges, below 1 shrinks), then click Scale by factor. Path coordinates are multiplied by that value.",
     "btn": "Scale by factor",
-    "btn_title": "Scale path coordinates by the factor",
+    "btn_title": "Enlarge or shrink path coordinates by the factor",
     "factor_input": {
       "label": "Factor",
       "default": "1.5",
       "unit": "×",
-      "aria": "Scale factor",
+      "aria": "Scale factor — above 1 enlarges, below 1 shrinks",
     },
     "faq_aria": "Scale SVG path by factor FAQ",
     "faqs": [
       (
         "How do I scale an SVG path by a factor?",
-        "Paste the SVG, set Factor (default 1.5), then click Scale by factor. Path d numbers are multiplied.",
+        "Paste the SVG, set Factor (default 1.5 to enlarge, or 0.5 to shrink), then click Scale by factor. Path d numbers are multiplied.",
       ),
       (
         "Can I use 0.5 to shrink?",
@@ -126,10 +131,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-by-percentage",
     "title": "Scale SVG Path by Percentage Online — Free Tool | getsvgeditor.com",
-    "description": "Scale an SVG path by percentage online. Enter a percent (default 125%), rewrite path coordinates — free, no upload.",
+    "description": "Scale an SVG path by percentage online. Enlarge (e.g. 125%) or shrink (e.g. 50%) — rewrite path coordinates. Free, no upload.",
     "h1": "Scale SVG Path by Percentage",
     "crumb": "Scale path by %",
-    "sub": "Resize path coordinates by a <strong>percentage</strong> (default 125%)",
+    "sub": "Enlarge or shrink by a <strong>percentage</strong> — &gt;100% grows, &lt;100% shrinks (default 125%)",
     "og_alt": "Scale SVG path by percentage in SVGEditor",
     "app_name": "Scale SVG Path by Percentage",
     "app_alts": [
@@ -138,7 +143,7 @@ PAGES = [
       "Resize path d by %",
       "Scale SVG path 125%",
     ],
-    "app_desc": "Free online tool to scale an SVG path by percentage. Set the percent and bake it into path coordinates.",
+    "app_desc": "Free online tool to enlarge or shrink an SVG path by percentage. Above 100% grows the path; below 100% shrinks it.",
     "features": [
       "Editable percentage input",
       "Converts % to a scale factor",
@@ -146,21 +151,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path by percentage",
-    "howto_desc": "Enter a percentage and scale path coordinates accordingly.",
-    "howto_click": "Set the percent if needed, then click Scale by %. Path coordinates scale by percent ÷ 100.",
+    "howto_desc": "Enter a percentage and enlarge or shrink path coordinates accordingly.",
+    "howto_click": "Set the percent (above 100 enlarges, below 100 shrinks), then click Scale by %. Path coordinates scale by percent ÷ 100.",
     "btn": "Scale by %",
-    "btn_title": "Scale path coordinates by the percentage",
+    "btn_title": "Enlarge or shrink path coordinates by the percentage",
     "factor_input": {
       "label": "%",
       "default": "125",
       "unit": "%",
-      "aria": "Scale percentage",
+      "aria": "Scale percentage — above 100 enlarges, below 100 shrinks",
     },
     "faq_aria": "Scale SVG path by percentage FAQ",
     "faqs": [
       (
         "How do I scale an SVG path by percentage?",
-        "Paste the SVG, set % (default 125), then click Scale by %. 100% leaves size unchanged; 200% doubles it.",
+        "Paste the SVG, set % (default 125 to enlarge, or 50 to shrink), then click Scale by %. 100% leaves size unchanged; 200% doubles it; 50% halves it.",
       ),
       (
         "Is 125% the same as 1.25×?",
@@ -186,10 +191,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-proportionally",
     "title": "Scale SVG Path Proportionally Online — Free Tool | getsvgeditor.com",
-    "description": "Scale an SVG path proportionally online. Keep aspect ratio while resizing path coordinates — free, no upload.",
+    "description": "Scale an SVG path proportionally online. Enlarge or shrink while keeping aspect ratio — rewrite path coordinates. Free, no upload.",
     "h1": "Scale SVG Path Proportionally",
     "crumb": "Scale path proportionally",
-    "sub": "Resize path coordinates with a <strong>uniform</strong> X/Y scale",
+    "sub": "Enlarge or shrink with a <strong>uniform</strong> X/Y scale — factor &gt;1 grows, &lt;1 shrinks",
     "og_alt": "Scale SVG path proportionally in SVGEditor",
     "app_name": "Scale SVG Path Proportionally",
     "app_alts": [
@@ -198,7 +203,7 @@ PAGES = [
       "Keep aspect ratio SVG path",
       "Proportional path d scale",
     ],
-    "app_desc": "Free online tool to scale an SVG path proportionally so X and Y stay in sync.",
+    "app_desc": "Free online tool to enlarge or shrink an SVG path proportionally so X and Y stay in sync.",
     "features": [
       "Uniform X/Y scale",
       "Preserves path aspect ratio",
@@ -206,16 +211,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path proportionally",
-    "howto_desc": "Apply the same scale to X and Y path coordinates so the shape keeps its proportions.",
-    "howto_click": "Click Scale proportionally. Path coordinates grow or shrink with equal X and Y factors.",
+    "howto_desc": "Apply the same enlarge or shrink factor to X and Y path coordinates so the shape keeps its proportions.",
+    "howto_click": "Set the factor (above 1 enlarges, below 1 shrinks), then click Scale proportionally. Path coordinates grow or shrink with equal X and Y factors.",
     "btn": "Scale proportionally",
-    "btn_title": "Scale path coordinates proportionally",
-    "factor_input": None,
+    "btn_title": "Enlarge or shrink path coordinates proportionally",
+    "factor_input": {
+      "label": "Factor",
+      "default": "1.25",
+      "unit": "×",
+      "aria": "Uniform scale factor — above 1 enlarges, below 1 shrinks",
+    },
     "faq_aria": "Scale SVG path proportionally FAQ",
     "faqs": [
       (
         "How do I scale an SVG path proportionally?",
-        "Paste the SVG and click Scale proportionally. X and Y use the same factor so the silhouette stays undistorted.",
+        "Paste the SVG, set Factor (above 1 enlarges, below 1 shrinks), then click Scale proportionally. X and Y use the same factor so the silhouette stays undistorted.",
       ),
       (
         "What if I only want horizontal stretch?",
@@ -241,10 +251,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-x-coordinates",
     "title": "Scale SVG Path X Coordinates Online — Free Tool | getsvgeditor.com",
-    "description": "Scale SVG path X coordinates online. Stretch or shrink horizontal path numbers only — free, no upload.",
+    "description": "Scale SVG path X coordinates online. Stretch or shrink horizontal path numbers only — factor above 1 widens, below 1 narrows. Free, no upload.",
     "h1": "Scale SVG Path X Coordinates",
     "crumb": "Scale path X",
-    "sub": "Scale only the <strong>X</strong> numbers in the path <code>d</code> attribute",
+    "sub": "Enlarge or shrink only the <strong>X</strong> numbers — factor &gt;1 widens, &lt;1 narrows",
     "og_alt": "Scale SVG path X coordinates in SVGEditor",
     "app_name": "Scale SVG Path X Coordinates",
     "app_alts": [
@@ -253,7 +263,7 @@ PAGES = [
       "Stretch SVG path X",
       "Scale path d X only",
     ],
-    "app_desc": "Free online tool to scale only the X coordinates of an SVG path.",
+    "app_desc": "Free online tool to enlarge or shrink only the X coordinates of an SVG path.",
     "features": [
       "Scales X coordinates only",
       "Leaves Y numbers unchanged",
@@ -261,16 +271,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale SVG path X coordinates",
-    "howto_desc": "Multiply horizontal path coordinates while keeping vertical values the same.",
-    "howto_click": "Click Scale X. Horizontal path numbers are scaled; Y stays put.",
+    "howto_desc": "Enlarge or shrink horizontal path coordinates while keeping vertical values the same.",
+    "howto_click": "Set the factor (above 1 widens, below 1 narrows), then click Scale X. Horizontal path numbers are scaled; Y stays put.",
     "btn": "Scale X",
-    "btn_title": "Scale X coordinates of this SVG path",
-    "factor_input": None,
+    "btn_title": "Enlarge or shrink X coordinates of this SVG path",
+    "factor_input": {
+      "label": "Factor",
+      "default": "1.35",
+      "unit": "×",
+      "aria": "X scale factor — above 1 widens, below 1 narrows",
+    },
     "faq_aria": "Scale SVG path X coordinates FAQ",
     "faqs": [
       (
         "How do I scale SVG path X coordinates?",
-        "Paste the SVG and click Scale X. Only horizontal numbers in d are multiplied.",
+        "Paste the SVG, set Factor (above 1 widens, below 1 narrows), then click Scale X. Only horizontal numbers in d are multiplied.",
       ),
       (
         "Will the shape look stretched?",
@@ -296,10 +311,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-y-coordinates",
     "title": "Scale SVG Path Y Coordinates Online — Free Tool | getsvgeditor.com",
-    "description": "Scale SVG path Y coordinates online. Stretch or shrink vertical path numbers only — free, no upload.",
+    "description": "Scale SVG path Y coordinates online. Stretch or shrink vertical path numbers only — factor above 1 makes the path taller, below 1 shorter. Free, no upload.",
     "h1": "Scale SVG Path Y Coordinates",
     "crumb": "Scale path Y",
-    "sub": "Scale only the <strong>Y</strong> numbers in the path <code>d</code> attribute",
+    "sub": "Enlarge or shrink only the <strong>Y</strong> numbers — factor &gt;1 taller, &lt;1 shorter",
     "og_alt": "Scale SVG path Y coordinates in SVGEditor",
     "app_name": "Scale SVG Path Y Coordinates",
     "app_alts": [
@@ -308,7 +323,7 @@ PAGES = [
       "Stretch SVG path Y",
       "Scale path d Y only",
     ],
-    "app_desc": "Free online tool to scale only the Y coordinates of an SVG path.",
+    "app_desc": "Free online tool to enlarge or shrink only the Y coordinates of an SVG path.",
     "features": [
       "Scales Y coordinates only",
       "Leaves X numbers unchanged",
@@ -316,16 +331,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale SVG path Y coordinates",
-    "howto_desc": "Multiply vertical path coordinates while keeping horizontal values the same.",
-    "howto_click": "Click Scale Y. Vertical path numbers are scaled; X stays put.",
+    "howto_desc": "Enlarge or shrink vertical path coordinates while keeping horizontal values the same.",
+    "howto_click": "Set the factor (above 1 taller, below 1 shorter), then click Scale Y. Vertical path numbers are scaled; X stays put.",
     "btn": "Scale Y",
-    "btn_title": "Scale Y coordinates of this SVG path",
-    "factor_input": None,
+    "btn_title": "Enlarge or shrink Y coordinates of this SVG path",
+    "factor_input": {
+      "label": "Factor",
+      "default": "1.35",
+      "unit": "×",
+      "aria": "Y scale factor — above 1 taller, below 1 shorter",
+    },
     "faq_aria": "Scale SVG path Y coordinates FAQ",
     "faqs": [
       (
         "How do I scale SVG path Y coordinates?",
-        "Paste the SVG and click Scale Y. Only vertical numbers in d are multiplied.",
+        "Paste the SVG, set Factor (above 1 taller, below 1 shorter), then click Scale Y. Only vertical numbers in d are multiplied.",
       ),
       (
         "Does this distort circles and arcs?",
@@ -351,10 +371,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-without-transform",
     "title": "Scale SVG Path Without Transform Online — Free Tool | getsvgeditor.com",
-    "description": "Scale an SVG path without transform. Bake scale into path d instead of wrapping scale() — free, no upload.",
+    "description": "Scale an SVG path without transform. Enlarge or shrink by baking the factor into path d instead of wrapping scale() — free, no upload.",
     "h1": "Scale SVG Path Without Transform",
     "crumb": "Scale without transform",
-    "sub": "Bake scale into path <code>d</code> — no <code>transform=&quot;scale(...)&quot;</code> wrapper",
+    "sub": "Bake enlarge or shrink into path <code>d</code> — no <code>transform=&quot;scale(...)&quot;</code>",
     "og_alt": "Scale SVG path without transform in SVGEditor",
     "app_name": "Scale SVG Path Without Transform",
     "app_alts": [
@@ -363,7 +383,7 @@ PAGES = [
       "SVG path scale no transform",
       "Flatten scale into path data",
     ],
-    "app_desc": "Free online tool to scale an SVG path by rewriting coordinates instead of adding a transform.",
+    "app_desc": "Free online tool to enlarge or shrink an SVG path by rewriting coordinates instead of adding a transform.",
     "features": [
       "Rewrites path d instead of scale()",
       "Avoids nested transform groups",
@@ -371,16 +391,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path without a transform",
-    "howto_desc": "Multiply path coordinates so the scale lives in d, not in a transform attribute.",
-    "howto_click": "Click Scale without transform. Coordinates in d update; no scale() transform is added.",
+    "howto_desc": "Enlarge or shrink path coordinates so the scale lives in d, not in a transform attribute.",
+    "howto_click": "Set the factor (above 1 enlarges, below 1 shrinks), then click Scale without transform. Coordinates in d update; no scale() transform is added.",
     "btn": "Scale without transform",
-    "btn_title": "Scale path coordinates without using transform",
-    "factor_input": None,
+    "btn_title": "Enlarge or shrink path coordinates without using transform",
+    "factor_input": {
+      "label": "Factor",
+      "default": "1.25",
+      "unit": "×",
+      "aria": "Scale factor — above 1 enlarges, below 1 shrinks",
+    },
     "faq_aria": "Scale SVG path without transform FAQ",
     "faqs": [
       (
         "How do I scale an SVG path without transform?",
-        "Paste the SVG and click Scale without transform. The tool multiplies path coordinates so you do not need transform=\"scale(...)\".",
+        "Paste the SVG, set Factor (above 1 enlarges, below 1 shrinks), then click Scale without transform. The tool multiplies path coordinates so you do not need transform=\"scale(...)\".",
       ),
       (
         "Why avoid transform?",
@@ -406,10 +431,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-without-changing-viewbox",
     "title": "Scale SVG Path Without Changing ViewBox Online — Free Tool | getsvgeditor.com",
-    "description": "Scale an SVG path without changing viewBox. Resize path coordinates inside the existing window — free, no upload.",
+    "description": "Scale an SVG path without changing viewBox. Enlarge or shrink path coordinates inside the existing window — free, no upload.",
     "h1": "Scale SVG Path Without Changing ViewBox",
     "crumb": "Scale keep viewBox",
-    "sub": "Scale path coordinates while <strong>keeping the viewBox</strong> unchanged",
+    "sub": "Enlarge or shrink the path while <strong>keeping the viewBox</strong> unchanged",
     "og_alt": "Scale SVG path without changing viewBox in SVGEditor",
     "app_name": "Scale SVG Path Without Changing ViewBox",
     "app_alts": [
@@ -418,7 +443,7 @@ PAGES = [
       "Resize path inside viewBox",
       "SVG path scale fixed viewBox",
     ],
-    "app_desc": "Free online tool to scale path coordinates while leaving the SVG viewBox as-is.",
+    "app_desc": "Free online tool to enlarge or shrink path coordinates while leaving the SVG viewBox as-is.",
     "features": [
       "Scales path d numbers",
       "Preserves existing viewBox",
@@ -426,16 +451,21 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path without changing the viewBox",
-    "howto_desc": "Resize path coordinates inside a fixed viewBox window.",
-    "howto_click": "Click Scale (keep viewBox). Path coordinates update; the viewBox attribute stays the same.",
+    "howto_desc": "Enlarge or shrink path coordinates inside a fixed viewBox window.",
+    "howto_click": "Set the factor (above 1 enlarges, below 1 shrinks), then click Scale (keep viewBox). Path coordinates update; the viewBox attribute stays the same.",
     "btn": "Scale (keep viewBox)",
-    "btn_title": "Scale path while keeping the viewBox",
-    "factor_input": None,
+    "btn_title": "Enlarge or shrink path while keeping the viewBox",
+    "factor_input": {
+      "label": "Factor",
+      "default": "1.25",
+      "unit": "×",
+      "aria": "Scale factor — above 1 enlarges, below 1 shrinks",
+    },
     "faq_aria": "Scale SVG path without changing viewBox FAQ",
     "faqs": [
       (
         "How do I scale a path without changing the viewBox?",
-        "Paste the SVG and click Scale (keep viewBox). Path d updates; viewBox width/height/min stay put.",
+        "Paste the SVG, set Factor (above 1 enlarges, below 1 shrinks), then click Scale (keep viewBox). Path d updates; viewBox width/height/min stay put.",
       ),
       (
         "Will the path clip?",
@@ -461,10 +491,10 @@ PAGES = [
   {
     "slug": "scale-svg-path-to-specific-size",
     "title": "Scale SVG Path to Specific Size Online — Free Tool | getsvgeditor.com",
-    "description": "Scale an SVG path to a specific size online. Enter a target size in px (default 100) and rewrite coordinates — free, no upload.",
+    "description": "Scale an SVG path to a specific size online. Enlarge or shrink so bounds match a target in px (default 100) — free, no upload.",
     "h1": "Scale SVG Path to Specific Size",
     "crumb": "Scale path to size",
-    "sub": "Resize path so its bounds approach a <strong>target size</strong> (default 100px)",
+    "sub": "Enlarge or shrink so bounds match a <strong>target size</strong> (default 100px)",
     "og_alt": "Scale SVG path to specific size in SVGEditor",
     "app_name": "Scale SVG Path to Specific Size",
     "app_alts": [
@@ -473,7 +503,7 @@ PAGES = [
       "Scale path to 100px",
       "SVG path target size",
     ],
-    "app_desc": "Free online tool to scale an SVG path to a specific pixel size target.",
+    "app_desc": "Free online tool to enlarge or shrink an SVG path to a specific pixel size. A smaller target shrinks the path; a larger one grows it.",
     "features": [
       "Editable target size input",
       "Scales path to match target",
@@ -481,10 +511,10 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path to a specific size",
-    "howto_desc": "Enter a target size and scale path coordinates so the graphic matches that size.",
-    "howto_click": "Set Size if needed, then click Scale to size. Path coordinates scale toward the target.",
+    "howto_desc": "Enter a target size and enlarge or shrink path coordinates so the graphic matches that size.",
+    "howto_click": "Set Size if needed (smaller than current bounds shrinks, larger enlarges), then click Scale to size.",
     "btn": "Scale to size",
-    "btn_title": "Scale path to the target size",
+    "btn_title": "Enlarge or shrink path to the target size",
     "factor_input": {
       "label": "Size",
       "default": "100",
@@ -495,7 +525,7 @@ PAGES = [
     "faqs": [
       (
         "How do I scale an SVG path to a specific size?",
-        "Paste the SVG, set Size in px (default 100), then click Scale to size. Coordinates scale so the path approaches that size.",
+        "Paste the SVG, set Size in px (default 100), then click Scale to size. If the path is larger than the target it shrinks; if smaller it enlarges.",
       ),
       (
         "Is size width, height, or max side?",
@@ -541,8 +571,8 @@ PAGES = [
       "No file upload",
     ],
     "howto_name": "Scale an SVG path to fit the viewBox",
-    "howto_desc": "Scale path coordinates so the artwork fills the existing viewBox window.",
-    "howto_click": "Click Scale to fit viewBox. Path coordinates scale to fill the viewBox while keeping proportions.",
+    "howto_desc": "Enlarge or shrink path coordinates so the artwork fills the existing viewBox window.",
+    "howto_click": "Click Scale to fit viewBox. An undersized path enlarges; an oversized path shrinks — both stay proportional.",
     "btn": "Scale to fit viewBox",
     "btn_title": "Scale path to fit the viewBox",
     "factor_input": None,
@@ -816,7 +846,7 @@ def build_page(p):
 
     text = text.replace(
         "Paste or upload an SVG in the Source panel. Download a transparent PNG from the PNG\n                    tab — or export to React and share a link.",
-        "Paste or upload an SVG with path data. Click the action button to scale the coordinates.",
+        "Paste or upload an SVG with path data. Scale up or down — a factor above 1 enlarges, below 1 shrinks.",
     )
     text = text.replace(
         '<a href="/blog/svg-to-png">PNG guide</a>',
