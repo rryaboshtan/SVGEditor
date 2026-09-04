@@ -109,24 +109,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/rotate-svg-path-90-degrees</loc>
-    <lastmod>2026-09-03T01:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/rotate-svg-path-180-degrees</loc>
-    <lastmod>2026-09-03T01:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/rotate-svg-path-270-degrees</loc>
-    <lastmod>2026-09-03T01:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/rotate-svg-element</loc>
     <lastmod>2026-09-03T01:00:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
