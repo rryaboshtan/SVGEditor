@@ -2260,6 +2260,660 @@ if (bgRemoveActionBtn && bgRemoveIntent) {
   });
 }
 
+const STROKE_COLOR_PALETTE = [
+  "#0ea5e9",
+  "#f43f5e",
+  "#22c55e",
+  "#f59e0b",
+  "#a855f7",
+  "#06b6d4",
+];
+
+function nextStrokePaletteColor(current) {
+  const cur = String(current || "").trim().toLowerCase();
+  let idx = -1;
+  for (let i = 0; i < STROKE_COLOR_PALETTE.length; i++) {
+    if (STROKE_COLOR_PALETTE[i].toLowerCase() === cur) {
+      idx = i;
+      break;
+    }
+  }
+  return STROKE_COLOR_PALETTE[(idx + 1) % STROKE_COLOR_PALETTE.length];
+}
+
+function elementHasPaintStroke(el) {
+  const tag = String(el.tagName || "").toLowerCase();
+  if (
+    tag !== "path" &&
+    tag !== "line" &&
+    tag !== "polyline" &&
+    tag !== "polygon" &&
+    tag !== "circle" &&
+    tag !== "ellipse" &&
+    tag !== "rect" &&
+    tag !== "g" &&
+    tag !== "svg"
+  ) {
+    return false;
+  }
+  const stroke = el.getAttribute("stroke");
+  if (stroke && stroke !== "none") return true;
+  if (el.hasAttribute("style") && /(?:^|;)\s*stroke\s*:/i.test(el.getAttribute("style") || "")) {
+    return true;
+  }
+  return tag === "svg" || tag === "g";
+}
+
+function setElementStrokeColor(el, color, mode) {
+  const tag = String(el.tagName || "").toLowerCase();
+  if (tag === "defs" || tag === "style" || tag === "metadata" || tag === "title" || tag === "desc") {
+    return false;
+  }
+  let changed = false;
+  if (el.hasAttribute("style")) {
+    const style = el.getAttribute("style") || "";
+    if (/(?:^|;)\s*stroke\s*:/i.test(style)) {
+      const next = style.replace(/(?:^|;)\s*stroke\s*:[^;]*/i, function (m) {
+        const lead = m.charAt(0) === ";" ? ";" : "";
+        return lead + " stroke: " + color;
+      });
+      el.setAttribute("style", next.replace(/^;\s*/, "").trim());
+      changed = true;
+    }
+  }
+  const stroke = el.getAttribute("stroke");
+  const isShape =
+    tag === "path" ||
+    tag === "line" ||
+    tag === "polyline" ||
+    tag === "polygon" ||
+    tag === "circle" ||
+    tag === "ellipse" ||
+    tag === "rect";
+  if (mode === "paths-only" && tag !== "path") return changed;
+  if (stroke && stroke !== "none") {
+    el.setAttribute("stroke", color);
+    changed = true;
+  } else if ((mode === "force" || mode === "icon") && (isShape || tag === "svg")) {
+    if (tag === "svg" || isShape) {
+      el.setAttribute("stroke", color);
+      if (tag === "svg" && !el.getAttribute("fill")) el.setAttribute("fill", "none");
+      changed = true;
+    }
+  } else if (isShape && (stroke === null || stroke === "") && mode === "shapes") {
+    /* skip unstroked filled shapes */
+  }
+  return changed;
+}
+
+function rewriteSvgStrokeColor(markup, intent, preferredColor) {
+  const source = extractSvgMarkup(markup) || String(markup || "").trim();
+  if (!source) throw new Error("Paste an SVG first");
+  const svg = parseSvg(source);
+  stripRootSvgSizeAttrs(svg);
+
+  let mode = "shapes";
+  if (intent === "change-svg-path-stroke-color") mode = "paths-only";
+  if (
+    intent === "change-svg-icon-stroke-color" ||
+    intent === "change-inline-svg-stroke-color"
+  ) {
+    mode = "icon";
+  }
+
+  const useCurrent =
+    intent === "change-svg-stroke-color-currentcolor" ||
+    intent === "change-svg-stroke-color-css" ||
+    intent === "change-svg-stroke-color-hover" ||
+    intent === "change-svg-stroke-color-react" ||
+    intent === "change-svg-stroke-color-tailwind" ||
+    intent === "change-svg-stroke-color-without-editing-svg";
+
+  let sampleStroke = preferredColor || "#f43f5e";
+  if (!useCurrent) {
+    const probe = svg.querySelector("[stroke]");
+    sampleStroke = nextStrokePaletteColor(probe ? probe.getAttribute("stroke") : sampleStroke);
+  } else {
+    sampleStroke = "currentColor";
+  }
+
+  let count = 0;
+  const walk = function (node) {
+    if (!node || node.nodeType !== 1) return;
+    const tag = String(node.tagName || "").toLowerCase();
+    if (tag === "defs" || tag === "style") return;
+    if (setElementStrokeColor(node, sampleStroke, mode === "paths-only" ? "paths-only" : mode === "icon" ? "force" : "shapes")) {
+      if (elementHasPaintStroke(node) || node.getAttribute("stroke") === sampleStroke) count += 1;
+    }
+    Array.prototype.forEach.call(node.children || [], walk);
+  };
+  walk(svg);
+
+  if (useCurrent && !svg.getAttribute("stroke")) {
+    svg.setAttribute("stroke", "currentColor");
+    if (!svg.getAttribute("fill")) svg.setAttribute("fill", "none");
+  }
+
+  const out = formatSvgReadableMarkup(prettySerializeSvg(svg));
+  return {
+    markup: out,
+    color: sampleStroke,
+    count: count,
+    status: useCurrent
+      ? "Stroke set to currentColor — control color from CSS / parent"
+      : "Stroke color set to " + sampleStroke,
+  };
+}
+
+function strokeRecipeSnippet(intent, color) {
+  const c = color || "#f43f5e";
+  switch (intent) {
+    case "change-svg-stroke-color-css":
+      return (
+        "/* Parent or class controls stroke via currentColor */\n" +
+        ".icon {\n  color: " +
+        c +
+        ";\n}\n.icon svg {\n  stroke: currentColor;\n  fill: none;\n}"
+      );
+    case "change-svg-stroke-color-javascript":
+      return (
+        "const svg = document.querySelector('svg');\n" +
+        "svg.querySelectorAll('[stroke]').forEach((el) => {\n" +
+        "  if (el.getAttribute('stroke') !== 'none') el.setAttribute('stroke', '" +
+        c +
+        "');\n" +
+        "});"
+      );
+    case "change-svg-stroke-color-hover":
+      return (
+        ".icon {\n  color: #0ea5e9;\n}\n.icon:hover {\n  color: " +
+        c +
+        ";\n}\n.icon svg {\n  stroke: currentColor;\n  transition: color .15s ease;\n}"
+      );
+    case "change-svg-stroke-color-currentcolor":
+      return (
+        "<!-- SVG uses stroke=\"currentColor\" -->\n" +
+        "<span style=\"color: " +
+        c +
+        "\">\n  <!-- paste SVG here -->\n</span>"
+      );
+    case "change-svg-stroke-color-react":
+      return (
+        "export function Icon({ color = '" +
+        c +
+        "', ...props }) {\n" +
+        "  return (\n" +
+        "    <svg stroke={color} fill=\"none\" {...props}>\n" +
+        "      {/* paths */}\n" +
+        "    </svg>\n" +
+        "  );\n}"
+      );
+    case "change-svg-stroke-color-tailwind":
+      return (
+        "<span className=\"text-sky-500 hover:text-rose-500\">\n" +
+        "  <svg className=\"stroke-current fill-none\" {/* … */} />\n" +
+        "</span>"
+      );
+    case "change-svg-stroke-color-without-editing-svg":
+      return (
+        "/* Recolor without rewriting path d — use currentColor */\n" +
+        ".btn:hover svg { color: " +
+        c +
+        "; }\n" +
+        "/* SVG markup keeps stroke=\"currentColor\" */"
+      );
+    default:
+      return "";
+  }
+}
+
+const STROKE_DEFAULT_SVGS = {
+  "change-svg-stroke-color": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Stroked shapes — click to change stroke color">
+  <rect x="18" y="18" width="84" height="84" rx="16" stroke="#0ea5e9" stroke-width="6"/>
+  <circle cx="60" cy="60" r="22" stroke="#0ea5e9" stroke-width="6"/>
+  <path d="M40 60 H80" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round"/>
+</svg>`,
+  "change-svg-stroke-color-css": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" role="img" aria-label="currentColor stroke for CSS">
+  <circle cx="48" cy="48" r="28"/>
+  <path d="M48 28 V68 M28 48 H68"/>
+</svg>`,
+  "change-svg-stroke-color-javascript": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" fill="none" role="img" aria-label="Stroked polyline — click to recolor via JS-style update">
+  <polyline points="12,64 36,20 60,52 84,16 108,48" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "change-inline-svg-stroke-color": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="Inline SVG heart outline — click to change stroke">
+  <path d="M50 82 C50 82 16 60 16 38 C16 26 26 18 38 18 C44 18 49 21 50 26 C51 21 56 18 62 18 C74 18 84 26 84 38 C84 60 50 82 50 82 Z" stroke="#0ea5e9" stroke-width="5" stroke-linejoin="round"/>
+</svg>`,
+  "change-svg-stroke-color-hover": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Hover-ready icon stroke">
+  <path d="M28 48 H68"/>
+  <path d="M48 28 L68 48 L48 68"/>
+</svg>`,
+  "change-svg-stroke-color-currentcolor": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" role="img" aria-label="Hardcoded stroke — click to switch to currentColor">
+  <rect x="20" y="20" width="56" height="56" rx="12"/>
+  <path d="M36 48 H60"/>
+</svg>`,
+  "change-svg-stroke-color-react": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="React-ready star outline">
+  <path d="M48 16 L56 38 H80 L60 52 L68 76 L48 62 L28 76 L36 52 L16 38 H40 Z"/>
+</svg>`,
+  "change-svg-stroke-color-tailwind": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" role="img" aria-label="Tailwind stroke-current sample">
+  <circle cx="48" cy="48" r="26"/>
+  <path d="M48 30 V48 L60 60"/>
+</svg>`,
+  "change-svg-path-stroke-color": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" fill="none" role="img" aria-label="Path stroke sample — click to recolor path only">
+  <rect x="8" y="8" width="144" height="84" rx="14" stroke="#64748b" stroke-width="2" stroke-dasharray="4 6"/>
+  <path d="M28 70 C48 20 70 20 90 50 S130 80 140 36" stroke="#0ea5e9" stroke-width="8" stroke-linecap="round"/>
+</svg>`,
+  "change-svg-icon-stroke-color": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="UI icon — click to change stroke color">
+  <path d="M12 3v18"/>
+  <path d="M5 12h14"/>
+  <circle cx="12" cy="12" r="9"/>
+</svg>`,
+  "change-svg-stroke-color-without-editing-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Keep path d — switch stroke to currentColor">
+  <path d="M22 48 H74"/>
+  <path d="M48 22 V74"/>
+  <rect x="22" y="22" width="52" height="52" rx="10"/>
+</svg>`,
+};
+
+const strokeActionBtn = document.getElementById("btn-stroke-action");
+const strokeIntent =
+  (document.body && document.body.getAttribute("data-stroke-intent")) || "";
+
+if (strokeActionBtn && strokeIntent) {
+  strokeActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    try {
+      const recipeColor = "#f43f5e";
+      const result = rewriteSvgStrokeColor(raw, strokeIntent, recipeColor);
+      applyMirroredEditorMarkup(result.markup, result.status);
+      const snippet = strokeRecipeSnippet(strokeIntent, result.color === "currentColor" ? recipeColor : result.color);
+      if (snippet) {
+        copyTextToClipboard(snippet)
+          .then(function () {
+            flashCopyButton(strokeActionBtn, "Copied");
+            setStatus("ok", result.status + " — snippet copied");
+          })
+          .catch(function () {
+            setStatus("ok", result.status);
+          });
+      }
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not change stroke color");
+    }
+  });
+}
+
+function formatPathNumber(n) {
+  if (!Number.isFinite(n)) return "0";
+  const r = Math.round(n * 1000) / 1000;
+  if (Object.is(r, -0)) return "0";
+  return String(r);
+}
+
+function tokenizePathData(d) {
+  const tokens = [];
+  const re = /([MmLlHhVvCcSsQqTtAaZz])|([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/g;
+  let m;
+  while ((m = re.exec(String(d || "")))) {
+    if (m[1]) tokens.push({ type: "cmd", value: m[1] });
+    else tokens.push({ type: "num", value: parseFloat(m[2]) });
+  }
+  return tokens;
+}
+
+function scaleSvgPathData(d, sx, sy, ox, oy) {
+  ox = ox || 0;
+  oy = oy || 0;
+  const tokens = tokenizePathData(d);
+  if (!tokens.length) return d;
+  const out = [];
+  let cmd = "";
+  let nums = [];
+
+  function flush() {
+    if (!cmd) return;
+    const upper = cmd.toUpperCase();
+    const abs = cmd === upper;
+    const scaled = nums.slice();
+    const mapPairFrom = function (start) {
+      for (let i = start; i + 1 < scaled.length; i += 2) {
+        if (abs) {
+          scaled[i] = ox + (scaled[i] - ox) * sx;
+          scaled[i + 1] = oy + (scaled[i + 1] - oy) * sy;
+        } else {
+          scaled[i] = scaled[i] * sx;
+          scaled[i + 1] = scaled[i + 1] * sy;
+        }
+      }
+    };
+
+    if (upper === "H") {
+      for (let i = 0; i < scaled.length; i++) {
+        scaled[i] = abs ? ox + (scaled[i] - ox) * sx : scaled[i] * sx;
+      }
+    } else if (upper === "V") {
+      for (let i = 0; i < scaled.length; i++) {
+        scaled[i] = abs ? oy + (scaled[i] - oy) * sy : scaled[i] * sy;
+      }
+    } else if (upper === "A") {
+      for (let i = 0; i + 6 < scaled.length; i += 7) {
+        scaled[i] = scaled[i] * Math.abs(sx);
+        scaled[i + 1] = scaled[i + 1] * Math.abs(sy);
+        if (abs) {
+          scaled[i + 5] = ox + (scaled[i + 5] - ox) * sx;
+          scaled[i + 6] = oy + (scaled[i + 6] - oy) * sy;
+        } else {
+          scaled[i + 5] = scaled[i + 5] * sx;
+          scaled[i + 6] = scaled[i + 6] * sy;
+        }
+      }
+    } else if (upper !== "Z") {
+      mapPairFrom(0);
+    }
+
+    out.push(cmd);
+    scaled.forEach(function (n, idx) {
+      if (idx) out.push(" ");
+      else out.push("");
+      out.push(formatPathNumber(n));
+    });
+    cmd = "";
+    nums = [];
+  }
+
+  tokens.forEach(function (tok) {
+    if (tok.type === "cmd") {
+      flush();
+      cmd = tok.value;
+      if (cmd.toUpperCase() === "Z") {
+        out.push(cmd);
+        cmd = "";
+      }
+    } else {
+      nums.push(tok.value);
+    }
+  });
+  flush();
+  return out.join("").replace(/ -/g, "-").replace(/,/g, " ");
+}
+
+function forEachPathElement(svg, fn) {
+  Array.prototype.forEach.call(svg.querySelectorAll("path"), function (path) {
+    const d = path.getAttribute("d");
+    if (d) fn(path, d);
+  });
+}
+
+function measurePathsBBox(svg) {
+  const host = document.createElement("div");
+  host.setAttribute("aria-hidden", "true");
+  host.style.cssText =
+    "position:absolute;left:-99999px;top:0;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none";
+  const clone = svg.cloneNode(true);
+  host.appendChild(clone);
+  document.body.appendChild(host);
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  Array.prototype.forEach.call(clone.querySelectorAll("path"), function (path) {
+    try {
+      const b = path.getBBox();
+      if (!b || (!(b.width > 0) && !(b.height > 0))) return;
+      minX = Math.min(minX, b.x);
+      minY = Math.min(minY, b.y);
+      maxX = Math.max(maxX, b.x + b.width);
+      maxY = Math.max(maxY, b.y + b.height);
+    } catch (err) {
+      /* skip */
+    }
+  });
+  document.body.removeChild(host);
+  if (!Number.isFinite(minX) || !(maxX > minX) || !(maxY > minY)) return null;
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
+function scaleSvgPathMarkup(markup, intent, factorOverride) {
+  const source = extractSvgMarkup(markup) || String(markup || "").trim();
+  if (!source) throw new Error("Paste an SVG first");
+  const svg = parseSvg(source);
+  const paths = svg.querySelectorAll("path");
+  if (!paths.length) throw new Error("No <path> elements found to scale");
+
+  let sx = 1.25;
+  let sy = 1.25;
+  let keepViewBox = false;
+  let originMode = "viewbox"; // or bbox
+  let status = "Path scaled";
+
+  if (intent === "scale-svg-path-by-factor") {
+    sx = sy = factorOverride != null ? factorOverride : 1.5;
+    status = "Path scaled ×" + formatPathNumber(sx);
+  } else if (intent === "scale-svg-path-by-percentage") {
+    const pct = factorOverride != null ? factorOverride : 125;
+    sx = sy = pct / 100;
+    status = "Path scaled to " + formatPathNumber(pct) + "%";
+  } else if (intent === "scale-svg-path-proportionally") {
+    sx = sy = factorOverride != null ? factorOverride : 1.25;
+    status = "Path scaled proportionally ×" + formatPathNumber(sx);
+  } else if (intent === "scale-svg-path-x-coordinates") {
+    sx = factorOverride != null ? factorOverride : 1.35;
+    sy = 1;
+    status = "Path X coordinates scaled ×" + formatPathNumber(sx);
+  } else if (intent === "scale-svg-path-y-coordinates") {
+    sx = 1;
+    sy = factorOverride != null ? factorOverride : 1.35;
+    status = "Path Y coordinates scaled ×" + formatPathNumber(sy);
+  } else if (intent === "scale-svg-path-without-transform") {
+    sx = sy = factorOverride != null ? factorOverride : 1.25;
+    status = "Path d rewritten (no transform attribute)";
+  } else if (intent === "scale-svg-path-without-changing-viewbox") {
+    sx = sy = factorOverride != null ? factorOverride : 1.25;
+    keepViewBox = true;
+    status = "Path scaled — viewBox unchanged";
+  } else if (intent === "scale-svg-path-coordinates") {
+    sx = sy = factorOverride != null ? factorOverride : 1.25;
+    status = "Path coordinates scaled ×" + formatPathNumber(sx);
+  } else if (intent === "scale-svg-path-to-specific-size") {
+    originMode = "bbox";
+    const bbox = measurePathsBBox(svg);
+    if (!bbox) throw new Error("Could not measure path bounds");
+    const target = factorOverride != null ? factorOverride : 100;
+    const longSide = Math.max(bbox.width, bbox.height) || 1;
+    sx = sy = target / longSide;
+    status = "Path scaled to about " + formatPathNumber(target) + "px";
+  } else if (intent === "scale-svg-path-to-fit-viewbox") {
+    originMode = "bbox";
+    keepViewBox = true;
+    const vb = getSvgViewBoxBox(svg) || { minX: 0, minY: 0, width: 100, height: 100 };
+    const bbox = measurePathsBBox(svg);
+    if (!bbox) throw new Error("Could not measure path bounds");
+    const pad = 0.08;
+    const fitW = vb.width * (1 - pad * 2);
+    const fitH = vb.height * (1 - pad * 2);
+    sx = sy = Math.min(fitW / (bbox.width || 1), fitH / (bbox.height || 1));
+    // After uniform scale about bbox center, translate into viewBox center via coordinate rewrite:
+    // done in second pass below.
+    status = "Path scaled to fit viewBox";
+  }
+
+  let ox = 0;
+  let oy = 0;
+  if (originMode === "bbox" || intent === "scale-svg-path-to-fit-viewbox") {
+    const bbox = measurePathsBBox(svg);
+    if (bbox) {
+      ox = bbox.x + bbox.width / 2;
+      oy = bbox.y + bbox.height / 2;
+    }
+  } else {
+    const vb = getSvgViewBoxBox(svg);
+    if (vb) {
+      ox = vb.minX + vb.width / 2;
+      oy = vb.minY + vb.height / 2;
+    }
+  }
+
+  forEachPathElement(svg, function (path, d) {
+    path.setAttribute("d", scaleSvgPathData(d, sx, sy, ox, oy));
+    if (intent === "scale-svg-path-without-transform") {
+      const tr = path.getAttribute("transform");
+      if (tr && /scale\s*\(/i.test(tr)) {
+        const cleaned = tr
+          .replace(/scale\s*\([^)]*\)/gi, "")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+        if (cleaned) path.setAttribute("transform", cleaned);
+        else path.removeAttribute("transform");
+      }
+    }
+  });
+
+  if (intent === "scale-svg-path-to-fit-viewbox") {
+    const vb = getSvgViewBoxBox(svg) || { minX: 0, minY: 0, width: 100, height: 100 };
+    const bbox2 = measurePathsBBox(svg);
+    if (bbox2) {
+      const dx = vb.minX + vb.width / 2 - (bbox2.x + bbox2.width / 2);
+      const dy = vb.minY + vb.height / 2 - (bbox2.y + bbox2.height / 2);
+      forEachPathElement(svg, function (path, d) {
+        path.setAttribute("d", translatePathData(d, dx, dy));
+      });
+    }
+  }
+
+  if (!keepViewBox && intent !== "scale-svg-path-without-changing-viewbox" && intent !== "scale-svg-path-to-fit-viewbox") {
+    try {
+      applyContentViewBox(svg, { padRatio: 0.04, padPx: 0 });
+    } catch (err) {
+      stripRootSvgSizeAttrs(svg);
+    }
+  } else {
+    stripRootSvgSizeAttrs(svg);
+  }
+
+  return {
+    markup: formatSvgReadableMarkup(prettySerializeSvg(svg)),
+    status: status,
+    sx: sx,
+    sy: sy,
+  };
+}
+
+function translatePathData(d, dx, dy) {
+  const tokens = tokenizePathData(d);
+  if (!tokens.length) return d;
+  const out = [];
+  let cmd = "";
+  let nums = [];
+
+  function flush() {
+    if (!cmd) return;
+    const upper = cmd.toUpperCase();
+    const abs = cmd === upper;
+    const shifted = nums.slice();
+    if (abs) {
+      if (upper === "H") {
+        for (let i = 0; i < shifted.length; i++) shifted[i] += dx;
+      } else if (upper === "V") {
+        for (let i = 0; i < shifted.length; i++) shifted[i] += dy;
+      } else if (upper === "A") {
+        for (let i = 0; i + 6 < shifted.length; i += 7) {
+          shifted[i + 5] += dx;
+          shifted[i + 6] += dy;
+        }
+      } else if (upper !== "Z") {
+        for (let i = 0; i + 1 < shifted.length; i += 2) {
+          shifted[i] += dx;
+          shifted[i + 1] += dy;
+        }
+      }
+    }
+    out.push(cmd);
+    shifted.forEach(function (n, idx) {
+      out.push(idx ? " " : "");
+      out.push(formatPathNumber(n));
+    });
+    cmd = "";
+    nums = [];
+  }
+
+  tokens.forEach(function (tok) {
+    if (tok.type === "cmd") {
+      flush();
+      cmd = tok.value;
+      if (cmd.toUpperCase() === "Z") {
+        out.push(cmd);
+        cmd = "";
+      }
+    } else nums.push(tok.value);
+  });
+  flush();
+  return out.join("");
+}
+
+const SCALE_PATH_DEFAULT_SVGS = {
+  "scale-svg-path-coordinates": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Arrow path — click to scale coordinates">
+  <path d="M30 60 H78 L60 42 M78 60 L60 78" fill="none" stroke="#0ea5e9" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-by-factor": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Chevron path — click to scale by factor">
+  <path d="M40 36 L72 60 L40 84" fill="none" stroke="#22d3ee" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-by-percentage": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Corner path — click to scale by percentage">
+  <path d="M34 34 H78 V78" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-proportionally": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Wave path — click to scale proportionally">
+  <path d="M16 60 C36 20 52 20 70 50 S104 90 124 40" fill="none" stroke="#0ea5e9" stroke-width="7" stroke-linecap="round"/>
+</svg>`,
+  "scale-svg-path-x-coordinates": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Wide arrow — click to scale X only">
+  <path d="M24 50 H100 L80 32 M100 50 L80 68" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-y-coordinates": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" role="img" aria-label="Tall arrow — click to scale Y only">
+  <path d="M50 116 V40 L32 60 M50 40 L68 60" fill="none" stroke="#a855f7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-without-transform": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Path with transform noise — click to bake scale into d">
+  <path transform="scale(1)" d="M36 60 L60 36 L84 60 L60 84 Z" fill="none" stroke="#06b6d4" stroke-width="6" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-without-changing-viewbox": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Keep viewBox — scale path inside">
+  <rect x="8" y="8" width="104" height="104" rx="12" fill="none" stroke="#64748b" stroke-dasharray="4 5"/>
+  <path d="M40 60 H80 L66 46 M80 60 L66 74" fill="none" stroke="#0ea5e9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-to-specific-size": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Small path — click to scale to ~100px">
+  <path d="M90 100 H118 L108 90 M118 100 L108 110" fill="none" stroke="#f43f5e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "scale-svg-path-to-fit-viewbox": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Tiny path in large viewBox — click to fit">
+  <rect x="4" y="4" width="152" height="152" rx="14" fill="none" stroke="#334155" stroke-dasharray="5 6"/>
+  <path d="M70 80 H96 L86 70 M96 80 L86 90" fill="none" stroke="#22c55e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+};
+
+const scalePathActionBtn = document.getElementById("btn-scale-path-action");
+const scalePathIntent =
+  (document.body && document.body.getAttribute("data-scale-path-intent")) || "";
+const scalePathFactorInput = document.getElementById("scale-path-factor-input");
+
+if (scalePathActionBtn && scalePathIntent) {
+  scalePathActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    let factor = null;
+    if (scalePathFactorInput) {
+      const n = parseFloat(scalePathFactorInput.value);
+      if (Number.isFinite(n) && n > 0) factor = n;
+    }
+    try {
+      const result = scaleSvgPathMarkup(raw, scalePathIntent, factor);
+      applyMirroredEditorMarkup(result.markup, result.status);
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not scale path");
+    }
+  });
+}
+
 function stripSvgCommentsFromMarkup(markup) {
   return String(markup || "").replace(/<!--[\s\S]*?-->/g, "");
 }
@@ -3965,6 +4619,10 @@ const base64IntentStartup =
   (document.body && document.body.getAttribute("data-base64-intent")) || "";
 const bgRemoveIntentStartup =
   (document.body && document.body.getAttribute("data-bg-remove-intent")) || "";
+const strokeIntentStartup =
+  (document.body && document.body.getAttribute("data-stroke-intent")) || "";
+const scalePathIntentStartup =
+  (document.body && document.body.getAttribute("data-scale-path-intent")) || "";
 const startupSvg =
   sharedSvg ||
   (rotateIntentStartup && ROTATE_DEFAULT_SVGS[rotateSampleStartup]
@@ -3977,7 +4635,11 @@ const startupSvg =
           ? BASE64_DEFAULT_SVGS[base64IntentStartup]
           : bgRemoveIntentStartup && BG_REMOVE_DEFAULT_SVGS[bgRemoveIntentStartup]
             ? BG_REMOVE_DEFAULT_SVGS[bgRemoveIntentStartup]
-            : animationMode
+            : strokeIntentStartup && STROKE_DEFAULT_SVGS[strokeIntentStartup]
+              ? STROKE_DEFAULT_SVGS[strokeIntentStartup]
+              : scalePathIntentStartup && SCALE_PATH_DEFAULT_SVGS[scalePathIntentStartup]
+                ? SCALE_PATH_DEFAULT_SVGS[scalePathIntentStartup]
+                : animationMode
           ? ANIMATION_DEFAULT_SVG
           : mirrorPathVMode
             ? MIRROR_V_DEFAULT_SVG
@@ -4002,7 +4664,11 @@ applyStartupSvg(
             ? "Sample SVG — click the action button to copy Base64"
             : bgRemoveIntentStartup
               ? "Sample SVG — click the action button to remove the background"
-              : mirrorPathVMode
+              : strokeIntentStartup
+                ? "Sample SVG — click the action button to change stroke color"
+                : scalePathIntentStartup
+                  ? "Sample SVG — click the action button to scale the path"
+                  : mirrorPathVMode
             ? flipPathVMode
               ? "Sample arrow path — click Flip vertically to reflect it"
               : "Sample arrow path — click Mirror vertically to flip it"

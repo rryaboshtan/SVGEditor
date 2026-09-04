@@ -4550,6 +4550,117 @@ body.animation-editor-page {
   letter-spacing: .02em;
 }
 
+.stroke-tool-page .tool-banner-copy,
+.scale-path-tool-page .tool-banner-copy {
+  display: block;
+}
+
+.stroke-tool-page .tool-breadcrumbs,
+.scale-path-tool-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.stroke-tool-page .tool-title,
+.scale-path-tool-page .tool-title {
+  display: block;
+}
+
+.stroke-tool-page .tool-sub,
+.scale-path-tool-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.stroke-tool-page #btn-stroke-action,
+.scale-path-tool-page #btn-scale-path-action {
+  letter-spacing: .02em;
+}
+
+.scale-path-factor-group {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-width: 0;
+  max-width: 100%;
+  padding: .18rem .18rem .18rem .55rem;
+  border-radius: 999px;
+  background: #7dd3fc14;
+  box-shadow: inset 0 0 0 1px #7dd3fc2e;
+}
+
+.scale-path-factor-label {
+  flex: 0 0 auto;
+  margin: 0;
+  color: #8eb4d4;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.scale-path-factor-input {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  max-width: 3.5rem;
+  margin: 0;
+  padding: .28rem .2rem;
+  border: 0;
+  border-radius: 8px;
+  background: #040a128c;
+  color: #e8f4ff;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.scale-path-factor-input::-webkit-outer-spin-button,
+.scale-path-factor-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.scale-path-factor-input:focus {
+  outline: 2px solid #67e8f9;
+  outline-offset: 1px;
+}
+
+.scale-path-factor-unit {
+  flex: 0 0 auto;
+  margin: 0 .1rem 0 0;
+  color: #9fb6d1;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.scale-path-factor-group #btn-scale-path-action {
+  flex: 0 0 auto;
+  min-width: 8.5rem;
+  justify-content: center;
+  padding-inline: .55rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .scale-path-tool-page .panel-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .scale-path-tool-page .scale-path-factor-group {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: flex-start;
+    padding: .22rem .22rem .22rem .65rem;
+  }
+  .scale-path-tool-page .scale-path-factor-group #btn-scale-path-action {
+    margin-left: auto;
+    min-height: 2.15rem;
+  }
+}
+
 .animation-editor-page .site-header {
   height: 3.35rem;
 }
