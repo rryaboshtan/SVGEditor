@@ -1930,6 +1930,336 @@ if (viewboxActionBtn && viewboxIntent) {
   });
 }
 
+function parseCssColorChannels(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  if (!raw || raw === "none" || raw === "transparent" || raw.indexOf("url(") === 0) {
+    return null;
+  }
+  if (raw === "white" || raw === "#fff" || raw === "#ffffff") {
+    return { r: 255, g: 255, b: 255, a: 1 };
+  }
+  if (raw === "black" || raw === "#000" || raw === "#000000") {
+    return { r: 0, g: 0, b: 0, a: 1 };
+  }
+  const hex = raw.match(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
+  if (hex) {
+    let h = hex[1];
+    if (h.length === 3) {
+      h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    }
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    const a = h.length === 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1;
+    return { r: r, g: g, b: b, a: a };
+  }
+  const rgb = raw.match(
+    /^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/
+  );
+  if (rgb) {
+    return {
+      r: Number(rgb[1]),
+      g: Number(rgb[2]),
+      b: Number(rgb[3]),
+      a: rgb[4] != null ? Number(rgb[4]) : 1,
+    };
+  }
+  return null;
+}
+
+function colorLuma(c) {
+  return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+}
+
+function isNearWhiteColor(c) {
+  return c && c.a > 0.05 && colorLuma(c) >= 240 && c.r >= 230 && c.g >= 230 && c.b >= 230;
+}
+
+function isSolidOpaqueColor(c) {
+  return c && c.a >= 0.92;
+}
+
+function isColoredOpaqueColor(c) {
+  return isSolidOpaqueColor(c) && !isNearWhiteColor(c);
+}
+
+function isTransparentOrNoneFill(fill) {
+  const raw = String(fill || "").trim().toLowerCase();
+  return !raw || raw === "none" || raw === "transparent";
+}
+
+function readSvgCanvas(svg) {
+  const vb = svg.getAttribute("viewBox");
+  if (vb) {
+    const parts = vb.trim().split(/[\s,]+/).map(Number);
+    if (
+      parts.length === 4 &&
+      parts.every(function (n) {
+        return Number.isFinite(n);
+      }) &&
+      parts[2] > 0 &&
+      parts[3] > 0
+    ) {
+      return { x: parts[0], y: parts[1], width: parts[2], height: parts[3] };
+    }
+  }
+  const w = parseFloat(svg.getAttribute("width"));
+  const h = parseFloat(svg.getAttribute("height"));
+  if (w > 0 && h > 0) return { x: 0, y: 0, width: w, height: h };
+  return { x: 0, y: 0, width: 100, height: 100 };
+}
+
+function elementOpacity(el) {
+  const op = parseFloat(el.getAttribute("opacity"));
+  if (Number.isFinite(op)) return op;
+  const fo = parseFloat(el.getAttribute("fill-opacity"));
+  if (Number.isFinite(fo)) return fo;
+  return 1;
+}
+
+function resolveElementFill(el) {
+  let fill = el.getAttribute("fill");
+  if (!fill && el.hasAttribute("style")) {
+    const style = el.getAttribute("style") || "";
+    const m = style.match(/(?:^|;)\s*fill\s*:\s*([^;]+)/i);
+    if (m) fill = m[1].trim();
+  }
+  if (!fill || fill === "inherit") fill = "#000000";
+  return fill;
+}
+
+function rectCoversCanvas(el, canvas) {
+  if (!el || String(el.tagName || "").toLowerCase() !== "rect") return false;
+  const x = parseFloat(el.getAttribute("x") || "0");
+  const y = parseFloat(el.getAttribute("y") || "0");
+  let w = parseFloat(el.getAttribute("width") || "0");
+  let h = parseFloat(el.getAttribute("height") || "0");
+  if (String(el.getAttribute("width") || "").indexOf("%") >= 0) w = canvas.width;
+  if (String(el.getAttribute("height") || "").indexOf("%") >= 0) h = canvas.height;
+  if (!(w > 0) || !(h > 0)) return false;
+  const tolX = Math.max(1, canvas.width * 0.02);
+  const tolY = Math.max(1, canvas.height * 0.02);
+  return (
+    x <= canvas.x + tolX &&
+    y <= canvas.y + tolY &&
+    x + w >= canvas.x + canvas.width - tolX &&
+    y + h >= canvas.y + canvas.height - tolY
+  );
+}
+
+function clearRootBackgroundStyles(svg) {
+  let changed = false;
+  ["style", "fill"].forEach(function (attr) {
+    const val = svg.getAttribute(attr);
+    if (!val) return;
+    if (attr === "fill") {
+      const c = parseCssColorChannels(val);
+      if (isSolidOpaqueColor(c) || isTransparentOrNoneFill(val)) {
+        svg.removeAttribute("fill");
+        changed = true;
+      }
+      return;
+    }
+    const next = String(val)
+      .replace(/(?:^|;)\s*background(?:-color)?\s*:[^;]*/gi, "")
+      .replace(/^;+|;+$/g, "")
+      .trim();
+    if (next !== String(val).trim()) {
+      if (next) svg.setAttribute("style", next);
+      else svg.removeAttribute("style");
+      changed = true;
+    }
+  });
+  return changed;
+}
+
+function backgroundRectMatches(el, intent, canvas) {
+  if (!rectCoversCanvas(el, canvas)) return false;
+  const fill = resolveElementFill(el);
+  const opacity = elementOpacity(el);
+  const channels = parseCssColorChannels(fill);
+  const effective = channels
+    ? { r: channels.r, g: channels.g, b: channels.b, a: channels.a * opacity }
+    : null;
+
+  if (intent === "remove-transparent-background-from-svg") {
+    return (
+      isTransparentOrNoneFill(fill) ||
+      opacity <= 0.08 ||
+      (effective && effective.a <= 0.08)
+    );
+  }
+  if (intent === "remove-white-background-from-svg") {
+    return isNearWhiteColor(effective);
+  }
+  if (intent === "remove-colored-background-from-svg") {
+    return isColoredOpaqueColor(effective);
+  }
+  if (
+    intent === "remove-solid-background-from-svg" ||
+    intent === "remove-background-color-from-svg" ||
+    intent === "make-svg-background-transparent" ||
+    intent === "remove-background-from-svg" ||
+    intent === "remove-white-space-from-svg"
+  ) {
+    if (isTransparentOrNoneFill(fill) && intent === "remove-white-space-from-svg") {
+      return true;
+    }
+    return isSolidOpaqueColor(effective);
+  }
+  return isSolidOpaqueColor(effective);
+}
+
+function collectBackgroundRects(svg, intent) {
+  const canvas = readSvgCanvas(svg);
+  const found = [];
+  const kids = Array.prototype.slice.call(svg.children || []);
+  kids.forEach(function (el, index) {
+    const tag = String(el.tagName || "").toLowerCase();
+    if (tag === "rect" && backgroundRectMatches(el, intent, canvas)) {
+      // Prefer early siblings — typical export background layer.
+      if (index < 3 || found.length === 0) found.push(el);
+    }
+    if (tag === "g" && index === 0) {
+      const nested = Array.prototype.slice.call(el.children || []);
+      nested.forEach(function (child, nestedIndex) {
+        if (
+          nestedIndex < 2 &&
+          String(child.tagName || "").toLowerCase() === "rect" &&
+          backgroundRectMatches(child, intent, canvas)
+        ) {
+          found.push(child);
+        }
+      });
+    }
+  });
+  return found;
+}
+
+function removeSvgBackgroundMarkup(markup, intent) {
+  const source = extractSvgMarkup(markup) || String(markup || "").trim();
+  if (!source) throw new Error("Paste an SVG first");
+  const svg = parseSvg(source);
+  let removed = 0;
+
+  if (clearRootBackgroundStyles(svg)) removed += 1;
+
+  collectBackgroundRects(svg, intent).forEach(function (el) {
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+      removed += 1;
+    }
+  });
+
+  let viewBox = null;
+  if (intent === "remove-white-space-from-svg") {
+    viewBox = applyContentViewBox(svg, { padRatio: 0, padPx: 0 });
+  } else {
+    stripRootSvgSizeAttrs(svg);
+  }
+
+  const out = formatSvgReadableMarkup(prettySerializeSvg(svg));
+  let status = "Background removed";
+  if (intent === "remove-white-background-from-svg") {
+    status = removed
+      ? "White background removed"
+      : "No white background found — root size cleared";
+  } else if (intent === "remove-transparent-background-from-svg") {
+    status = removed
+      ? "Transparent background layer removed"
+      : "No transparent background layer found — root size cleared";
+  } else if (intent === "make-svg-background-transparent") {
+    status = removed
+      ? "Background cleared — SVG is transparent"
+      : "Already transparent — root size cleared";
+  } else if (intent === "remove-white-space-from-svg") {
+    status =
+      "Whitespace trimmed" +
+      (viewBox ? " — viewBox " + viewBox : "") +
+      (removed ? "; background cleared" : "");
+  } else if (intent === "remove-background-color-from-svg") {
+    status = removed
+      ? "Background color removed"
+      : "No background color found — root size cleared";
+  } else if (intent === "remove-solid-background-from-svg") {
+    status = removed
+      ? "Solid background removed"
+      : "No solid background found — root size cleared";
+  } else if (intent === "remove-colored-background-from-svg") {
+    status = removed
+      ? "Colored background removed"
+      : "No colored background found — root size cleared";
+  } else {
+    status = removed
+      ? "Background removed from SVG"
+      : "No background layer found — root size cleared";
+  }
+
+  return { markup: out, status: status, removed: removed, viewBox: viewBox };
+}
+
+const BG_REMOVE_DEFAULT_SVGS = {
+  "remove-background-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Icon on a solid plate — click Remove background">
+  <rect x="0" y="0" width="160" height="120" fill="#e2e8f0"/>
+  <circle cx="80" cy="60" r="34" fill="#0ea5e9"/>
+  <path d="M64 62 L76 74 L100 46" fill="none" stroke="#031018" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "remove-white-background-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Star on white canvas — click Remove white background">
+  <rect width="140" height="140" fill="#ffffff"/>
+  <path d="M70 22 L82 54 L116 54 L88 74 L98 108 L70 88 L42 108 L52 74 L24 54 L58 54 Z" fill="#0284c7"/>
+</svg>`,
+  "remove-transparent-background-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Graphic with invisible full-bleed rect — click Remove transparent background">
+  <rect x="0" y="0" width="160" height="100" fill="none"/>
+  <rect x="24" y="22" width="112" height="56" rx="12" fill="#22d3ee"/>
+  <circle cx="56" cy="50" r="14" fill="#031018"/>
+  <circle cx="104" cy="50" r="14" fill="#031018"/>
+</svg>`,
+  "make-svg-background-transparent": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Badge with gray plate — click Make transparent">
+  <rect width="120" height="120" rx="0" fill="#94a3b8"/>
+  <circle cx="60" cy="60" r="36" fill="#67e8f9"/>
+  <circle cx="60" cy="60" r="14" fill="#031018"/>
+</svg>`,
+  "remove-white-space-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" role="img" aria-label="Tiny mark in a large white frame — click Remove white space">
+  <rect width="300" height="220" fill="#ffffff"/>
+  <rect x="126" y="86" width="48" height="48" rx="10" fill="#0ea5e9"/>
+  <path d="M138 110 H162 M150 98 V122" stroke="#031018" stroke-width="4" stroke-linecap="round"/>
+</svg>`,
+  "remove-background-color-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100" role="img" aria-label="Shapes on a colored fill — click Remove background color">
+  <rect x="0" y="0" width="150" height="100" fill="#fef3c7"/>
+  <ellipse cx="52" cy="50" rx="28" ry="22" fill="#0ea5e9"/>
+  <rect x="88" y="28" width="40" height="44" rx="8" fill="#0284c7"/>
+</svg>`,
+  "remove-solid-background-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130" role="img" aria-label="Solid slate behind a gem — click Remove solid background">
+  <rect width="130" height="130" fill="#1e293b"/>
+  <path d="M65 18 L108 65 L65 112 L22 65 Z" fill="#38bdf8"/>
+</svg>`,
+  "remove-colored-background-from-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Icon on a teal plate — click Remove colored background">
+  <rect width="160" height="110" fill="#0f766e"/>
+  <path d="M36 70 L80 28 L124 70 V92 H36 Z" fill="#ecfeff"/>
+  <rect x="68" y="70" width="24" height="22" fill="#0f766e"/>
+</svg>`,
+};
+
+const bgRemoveActionBtn = document.getElementById("btn-bg-remove-action");
+const bgRemoveIntent =
+  (document.body && document.body.getAttribute("data-bg-remove-intent")) || "";
+
+if (bgRemoveActionBtn && bgRemoveIntent) {
+  bgRemoveActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    try {
+      const result = removeSvgBackgroundMarkup(raw, bgRemoveIntent);
+      applyMirroredEditorMarkup(result.markup, result.status);
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not remove background");
+    }
+  });
+}
+
 function stripSvgCommentsFromMarkup(markup) {
   return String(markup || "").replace(/<!--[\s\S]*?-->/g, "");
 }
@@ -3633,6 +3963,8 @@ const rotateDegreesStartup =
   (document.body && document.body.getAttribute("data-rotate-degrees")) || "";
 const base64IntentStartup =
   (document.body && document.body.getAttribute("data-base64-intent")) || "";
+const bgRemoveIntentStartup =
+  (document.body && document.body.getAttribute("data-bg-remove-intent")) || "";
 const startupSvg =
   sharedSvg ||
   (rotateIntentStartup && ROTATE_DEFAULT_SVGS[rotateSampleStartup]
@@ -3643,7 +3975,9 @@ const startupSvg =
         ? CLEAN_DEFAULT_SVGS[cleanIntentStartup]
         : base64IntentStartup && BASE64_DEFAULT_SVGS[base64IntentStartup]
           ? BASE64_DEFAULT_SVGS[base64IntentStartup]
-          : animationMode
+          : bgRemoveIntentStartup && BG_REMOVE_DEFAULT_SVGS[bgRemoveIntentStartup]
+            ? BG_REMOVE_DEFAULT_SVGS[bgRemoveIntentStartup]
+            : animationMode
           ? ANIMATION_DEFAULT_SVG
           : mirrorPathVMode
             ? MIRROR_V_DEFAULT_SVG
@@ -3666,7 +4000,9 @@ applyStartupSvg(
           ? "Sample SVG — click the action button to clean it"
           : base64IntentStartup
             ? "Sample SVG — click the action button to copy Base64"
-            : mirrorPathVMode
+            : bgRemoveIntentStartup
+              ? "Sample SVG — click the action button to remove the background"
+              : mirrorPathVMode
             ? flipPathVMode
               ? "Sample arrow path — click Flip vertically to reflect it"
               : "Sample arrow path — click Mirror vertically to flip it"

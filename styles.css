@@ -4530,6 +4530,26 @@ body.animation-editor-page {
   letter-spacing: .02em;
 }
 
+.bg-remove-tool-page .tool-banner-copy {
+  display: block;
+}
+
+.bg-remove-tool-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.bg-remove-tool-page .tool-title {
+  display: block;
+}
+
+.bg-remove-tool-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.bg-remove-tool-page #btn-bg-remove-action {
+  letter-spacing: .02em;
+}
+
 .animation-editor-page .site-header {
   height: 3.35rem;
 }
