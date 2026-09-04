@@ -2324,9 +2324,105 @@ const CLEAN_DEFAULT_SVGS = {
 </svg>`,
 };
 
+const BASE64_DEFAULT_SVGS = {
+  "svg-to-base64": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Star mark — click to copy a Base64 data URI">
+  <circle cx="60" cy="60" r="52" fill="#0b1b33"/>
+  <path d="M60 22 L70 48 L98 48 L76 66 L84 94 L60 78 L36 94 L44 66 L22 48 L50 48 Z" fill="#67e8f9"/>
+</svg>`,
+  "svg-to-base64-string": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 88" role="img" aria-label="Badge — click to copy a raw Base64 string">
+  <rect x="8" y="14" width="124" height="60" rx="14" fill="#0284c7"/>
+  <text x="70" y="52" text-anchor="middle" fill="#ecfeff" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">b64</text>
+</svg>`,
+  "svg-to-base64-data-uri": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Check mark — click to copy a Base64 data URI">
+  <circle cx="60" cy="60" r="46" fill="#22d3ee"/>
+  <path d="M40 62 L54 76 L84 42" fill="none" stroke="#031018" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "svg-to-base64-css": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Rounded CSS tile — click to copy a CSS rule">
+  <rect x="8" y="8" width="80" height="80" rx="20" fill="#0ea5e9"/>
+  <rect x="28" y="28" width="40" height="40" rx="8" fill="#ecfeff"/>
+</svg>`,
+  "svg-to-base64-html": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" role="img" aria-label="House mark — click to copy Base64 HTML">
+  <path d="M16 48 L60 14 L104 48 V90 H16 Z" fill="#38bdf8"/>
+  <rect x="48" y="58" width="24" height="32" fill="#031018"/>
+</svg>`,
+  "svg-to-base64-css-background-image": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Diamond — click to copy background-image">
+  <rect width="100" height="100" rx="16" fill="#071526"/>
+  <path d="M50 12 L88 50 L50 88 L12 50 Z" fill="#67e8f9"/>
+</svg>`,
+  "svg-to-base64-css-background": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" role="img" aria-label="Wave — click to copy CSS background shorthand">
+  <rect width="160" height="80" rx="12" fill="#0b1b33"/>
+  <path d="M0 48 C28 28 52 68 80 48 C108 28 132 68 160 48 V80 H0 Z" fill="#22d3ee"/>
+</svg>`,
+  "svg-to-base64-css-data-uri": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" role="img" aria-label="Plus mark — click to copy a CSS url() data URI">
+  <rect width="72" height="72" rx="16" fill="#2563eb"/>
+  <path d="M36 16 V56 M16 36 H56" stroke="#ecfeff" stroke-width="8" stroke-linecap="round"/>
+</svg>`,
+  "convert-svg-to-base64-css": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 90" role="img" aria-label="Folder — click Convert to CSS">
+  <path d="M8 28 H42 L52 38 H102 V82 H8 Z" fill="#0ea5e9"/>
+  <path d="M8 28 V22 H38 L46 30" fill="#38bdf8"/>
+</svg>`,
+  "convert-svg-to-base64-string": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120" role="img" aria-label="Lightning — click Convert to string">
+  <path d="M48 8 L18 68 H40 L32 112 L62 52 H40 Z" fill="#fbbf24"/>
+</svg>`,
+  "svg-image-to-base64-string": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 96" role="img" aria-label="Picture frame — click to copy image Base64">
+  <rect x="8" y="8" width="112" height="80" rx="10" fill="#0b1b33" stroke="#67e8f9" stroke-width="4"/>
+  <circle cx="40" cy="36" r="10" fill="#fbbf24"/>
+  <path d="M16 76 L48 48 L72 66 L92 44 L112 76 Z" fill="#22d3ee"/>
+</svg>`,
+  "convert-svg-to-base64-data-uri": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 110" role="img" aria-label="Map pin — click Convert to data URI">
+  <path d="M40 8 C22 8 10 22 10 40 C10 66 40 102 40 102 C40 102 70 66 70 40 C70 22 58 8 40 8 Z" fill="#fb7185"/>
+  <circle cx="40" cy="40" r="12" fill="#fff"/>
+</svg>`,
+  "svg-base64-data-uri-image": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Photo mark — click to copy an image data URI">
+  <rect x="12" y="20" width="76" height="60" rx="8" fill="#0284c7"/>
+  <circle cx="50" cy="44" r="14" fill="#e0f2fe"/>
+  <rect x="36" y="12" width="28" height="12" rx="3" fill="#67e8f9"/>
+</svg>`,
+  "convert-svg-to-base64-html": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Browser window — click Convert to HTML">
+  <rect x="6" y="10" width="128" height="80" rx="10" fill="#071526" stroke="#7dd3fc" stroke-width="3"/>
+  <circle cx="22" cy="26" r="4" fill="#fb7185"/>
+  <circle cx="34" cy="26" r="4" fill="#fbbf24"/>
+  <circle cx="46" cy="26" r="4" fill="#34d399"/>
+  <rect x="18" y="42" width="104" height="36" rx="6" fill="#0ea5e9"/>
+</svg>`,
+  "svg-to-base64-html-img": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 112" role="img" aria-label="Image tile — click to copy an HTML img tag">
+  <rect x="10" y="10" width="92" height="92" rx="18" fill="#0c4a6e"/>
+  <path d="M28 78 L48 52 L64 68 L80 46 L94 78 Z" fill="#67e8f9"/>
+  <circle cx="40" cy="40" r="8" fill="#fde68a"/>
+</svg>`,
+};
+
+const base64ActionBtn = document.getElementById("btn-base64-action");
+const base64Intent =
+  (document.body && document.body.getAttribute("data-base64-intent")) || "";
+
 const cleanActionBtn = document.getElementById("btn-clean-action");
 const cleanIntent =
   (document.body && document.body.getAttribute("data-clean-intent")) || "";
+
+if (base64ActionBtn && base64Intent) {
+  base64ActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    setDataUriFormat("base64");
+    setActiveTab("data-uri");
+    const text = formatBase64IntentOutput(raw, base64Intent);
+    if (dataUriOutput) dataUriOutput.textContent = text;
+    if (dataUriSize) dataUriSize.textContent = formatByteSize(byteLengthUtf8(text));
+    copyTextToClipboard(text)
+      .then(function () {
+        flashCopyButton(base64ActionBtn, "Copied");
+        setStatus("ok", "Copied Base64 output");
+      })
+      .catch(function () {
+        flashCopyButton(base64ActionBtn, "Failed");
+        setStatus("error", "Copy failed");
+      });
+  });
+}
 
 if (cleanActionBtn && cleanIntent) {
   cleanActionBtn.addEventListener("click", function () {
@@ -2982,7 +3078,7 @@ function tabStatusLabel(tab) {
   if (tab === "react") return "React output";
   if (tab === "react-native") return "RN output";
   if (tab === "png") return "PNG export";
-  if (tab === "data-uri") return "Data URI";
+  if (tab === "data-uri") return base64Intent ? "Base64 output" : "Data URI";
   return "Ready";
 }
 
@@ -3139,6 +3235,36 @@ function toBase64DataUri(svgString) {
   return "data:image/svg+xml;base64," + base64;
 }
 
+function toRawBase64(svgString) {
+  return window.btoa(unescape(encodeURIComponent(svgString)));
+}
+
+function formatBase64IntentOutput(markup, intent) {
+  const uri = toBase64DataUri(markup);
+  const raw = toRawBase64(markup);
+  switch (intent) {
+    case "svg-to-base64-string":
+    case "convert-svg-to-base64-string":
+    case "svg-image-to-base64-string":
+      return raw;
+    case "svg-to-base64-html":
+    case "convert-svg-to-base64-html":
+    case "svg-to-base64-html-img":
+      return '<img src="' + uri + '" alt="" />';
+    case "svg-to-base64-css":
+    case "convert-svg-to-base64-css":
+      return '.icon {\n  background-image: url("' + uri + '");\n}';
+    case "svg-to-base64-css-background-image":
+      return 'background-image: url("' + uri + '");';
+    case "svg-to-base64-css-background":
+      return 'background: url("' + uri + '") center / contain no-repeat;';
+    case "svg-to-base64-css-data-uri":
+      return 'url("' + uri + '")';
+    default:
+      return uri;
+  }
+}
+
 function formatByteSize(bytes) {
   if (!bytes || bytes < 0) return "0 B";
   if (bytes < 1024) return bytes + " B";
@@ -3163,7 +3289,9 @@ function refreshDataUriOutput(markup) {
     return;
   }
   try {
-    const uri = buildDataUri(markup);
+    const uri = base64Intent
+      ? formatBase64IntentOutput(markup, base64Intent)
+      : buildDataUri(markup);
     dataUriOutput.textContent = uri;
     if (dataUriSize) dataUriSize.textContent = formatByteSize(byteLengthUtf8(uri));
   } catch (err) {
@@ -3376,6 +3504,7 @@ if (downloadPngBtn) {
   });
 }
 
+if (base64Intent) setDataUriFormat("base64");
 setActiveTab(document.body.getAttribute("data-default-tab") || "preview");
 
 /* ——— Mobile: Source | Output (single panel under 900px) ——— */
@@ -3502,6 +3631,8 @@ const rotateSampleStartup =
   (document.body && document.body.getAttribute("data-rotate-sample")) || "";
 const rotateDegreesStartup =
   (document.body && document.body.getAttribute("data-rotate-degrees")) || "";
+const base64IntentStartup =
+  (document.body && document.body.getAttribute("data-base64-intent")) || "";
 const startupSvg =
   sharedSvg ||
   (rotateIntentStartup && ROTATE_DEFAULT_SVGS[rotateSampleStartup]
@@ -3510,7 +3641,9 @@ const startupSvg =
       ? VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
       : cleanIntentStartup && CLEAN_DEFAULT_SVGS[cleanIntentStartup]
         ? CLEAN_DEFAULT_SVGS[cleanIntentStartup]
-        : animationMode
+        : base64IntentStartup && BASE64_DEFAULT_SVGS[base64IntentStartup]
+          ? BASE64_DEFAULT_SVGS[base64IntentStartup]
+          : animationMode
           ? ANIMATION_DEFAULT_SVG
           : mirrorPathVMode
             ? MIRROR_V_DEFAULT_SVG
@@ -3531,7 +3664,9 @@ applyStartupSvg(
         ? "Sample SVG — click the action button to fix the viewBox"
         : cleanIntentStartup
           ? "Sample SVG — click the action button to clean it"
-          : mirrorPathVMode
+          : base64IntentStartup
+            ? "Sample SVG — click the action button to copy Base64"
+            : mirrorPathVMode
             ? flipPathVMode
               ? "Sample arrow path — click Flip vertically to reflect it"
               : "Sample arrow path — click Mirror vertically to flip it"

@@ -4510,6 +4510,26 @@ body.animation-editor-page {
   letter-spacing: .02em;
 }
 
+.base64-tool-page .tool-banner-copy {
+  display: block;
+}
+
+.base64-tool-page .tool-breadcrumbs {
+  margin-bottom: .25rem;
+}
+
+.base64-tool-page .tool-title {
+  display: block;
+}
+
+.base64-tool-page .tool-sub {
+  margin-top: .2rem;
+}
+
+.base64-tool-page #btn-base64-action {
+  letter-spacing: .02em;
+}
+
 .animation-editor-page .site-header {
   height: 3.35rem;
 }
