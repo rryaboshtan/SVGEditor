@@ -4560,7 +4560,10 @@ body.animation-editor-page {
 .scale-path-tool-page .tool-banner-copy,
 .path-edit-tool-page .tool-banner-copy,
 .translate-path-tool-page .tool-banner-copy,
-.gradient-tool-page .tool-banner-copy {
+.gradient-tool-page .tool-banner-copy,
+.vue-tool-page .tool-banner-copy,
+.anim-tool-page .tool-banner-copy,
+.style-tool-page .tool-banner-copy {
   display: block;
 }
 
@@ -4568,7 +4571,10 @@ body.animation-editor-page {
 .scale-path-tool-page .tool-breadcrumbs,
 .path-edit-tool-page .tool-breadcrumbs,
 .translate-path-tool-page .tool-breadcrumbs,
-.gradient-tool-page .tool-breadcrumbs {
+.gradient-tool-page .tool-breadcrumbs,
+.vue-tool-page .tool-breadcrumbs,
+.anim-tool-page .tool-breadcrumbs,
+.style-tool-page .tool-breadcrumbs {
   margin-bottom: .25rem;
 }
 
@@ -4576,7 +4582,10 @@ body.animation-editor-page {
 .scale-path-tool-page .tool-title,
 .path-edit-tool-page .tool-title,
 .translate-path-tool-page .tool-title,
-.gradient-tool-page .tool-title {
+.gradient-tool-page .tool-title,
+.vue-tool-page .tool-title,
+.anim-tool-page .tool-title,
+.style-tool-page .tool-title {
   display: block;
 }
 
@@ -4584,7 +4593,10 @@ body.animation-editor-page {
 .scale-path-tool-page .tool-sub,
 .path-edit-tool-page .tool-sub,
 .translate-path-tool-page .tool-sub,
-.gradient-tool-page .tool-sub {
+.gradient-tool-page .tool-sub,
+.vue-tool-page .tool-sub,
+.anim-tool-page .tool-sub,
+.style-tool-page .tool-sub {
   margin-top: .2rem;
 }
 
@@ -4592,7 +4604,10 @@ body.animation-editor-page {
 .scale-path-tool-page #btn-scale-path-action,
 .path-edit-tool-page #btn-path-edit-action,
 .translate-path-tool-page #btn-translate-path-action,
-.gradient-tool-page #btn-gradient-action {
+.gradient-tool-page #btn-gradient-action,
+.vue-tool-page #btn-vue-action,
+.anim-tool-page #btn-anim-action,
+.style-tool-page #btn-style-action {
   letter-spacing: .02em;
 }
 
@@ -4695,7 +4710,10 @@ body.animation-editor-page {
   .scale-path-tool-page .panel-actions,
   .path-edit-tool-page .panel-actions,
   .translate-path-tool-page .panel-actions,
-  .gradient-tool-page .panel-actions {
+  .gradient-tool-page .panel-actions,
+  .vue-tool-page .panel-actions,
+  .anim-tool-page .panel-actions,
+  .style-tool-page .panel-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .scale-path-tool-page .scale-path-factor-group,

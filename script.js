@@ -1750,6 +1750,14 @@ function measureSvgContentBBox(svg) {
   );
   nodes.forEach(function (el) {
     try {
+      // Skip clip/mask/pattern scaffolding — measuring clipPath circles
+      // otherwise inflates crop viewBoxes on re-apply.
+      if (
+        el.closest &&
+        el.closest("defs, clipPath, mask, symbol, marker, pattern, linearGradient, radialGradient")
+      ) {
+        return;
+      }
       const b = el.getBBox();
       if (!b) return;
       const pad = strokeOutsetForElement(el);
@@ -1837,6 +1845,13 @@ function isInvalidViewBox(svg) {
 }
 
 function fixSvgViewBoxMarkup(markup, intent) {
+  if (
+    typeof applyBatchCropMarkup === "function" &&
+    typeof BATCH_VIEWBOX_DEFAULT_SVGS !== "undefined" &&
+    BATCH_VIEWBOX_DEFAULT_SVGS[intent]
+  ) {
+    return applyBatchCropMarkup(markup, intent);
+  }
   const svg = parseSvg(markup);
   let padRatio = 0.02;
   let padPx = 0;
@@ -1922,7 +1937,8 @@ if (viewboxActionBtn && viewboxIntent) {
       const result = fixSvgViewBoxMarkup(raw, viewboxIntent);
       applyMirroredEditorMarkup(
         result.markup,
-        "viewBox set to " + result.viewBox + " — width/height removed"
+        result.status ||
+          "viewBox set to " + result.viewBox + " — width/height removed"
       );
     } catch (err) {
       setStatus("error", (err && err.message) || "Could not update viewBox");
@@ -4114,6 +4130,13 @@ function applyGradientEditMarkup(markup, intent) {
 }
 
 function applySvgGradientMarkup(markup, intent, angleOverride) {
+  if (
+    typeof applyBatchGradientStrokeMarkup === "function" &&
+    typeof BATCH_GRADIENT_DEFAULT_SVGS !== "undefined" &&
+    BATCH_GRADIENT_DEFAULT_SVGS[intent]
+  ) {
+    return applyBatchGradientStrokeMarkup(markup, intent, angleOverride);
+  }
   if (GRADIENT_EDIT_INTENTS[intent]) {
     return applyGradientEditMarkup(markup, intent);
   }
@@ -4640,6 +4663,13 @@ function updateCleanSizeStat(beforeLen, afterLen) {
 }
 
 function cleanSvgMarkup(markup, intent) {
+  if (
+    typeof applyBatchCleanSanitizeMarkup === "function" &&
+    typeof BATCH_CLEAN_DEFAULT_SVGS !== "undefined" &&
+    BATCH_CLEAN_DEFAULT_SVGS[intent]
+  ) {
+    return applyBatchCleanSanitizeMarkup(markup, intent);
+  }
   let source = extractSvgMarkup(markup) || String(markup || "").trim();
   if (!source) throw new Error("Paste an SVG first");
 
@@ -5556,7 +5586,11 @@ const RN_TAG_MAP = {
 
 function tabStatusLabel(tab) {
   if (tab === "preview") return "Live preview";
-  if (tab === "react") return "React output";
+  if (tab === "react") {
+    return document.body && document.body.getAttribute("data-vue-intent")
+      ? "Vue output"
+      : "React output";
+  }
   if (tab === "react-native") return "RN output";
   if (tab === "png") return "PNG export";
   if (tab === "data-uri") return base64Intent ? "Base64 output" : "Data URI";
@@ -5852,23 +5886,47 @@ function renderPngPreview(markup) {
 function updateExports(markup) {
   latestMarkup = markup;
   if (!markup) {
-    reactOutput.textContent = "// Paste valid SVG to generate a React component.";
-    rnOutput.textContent = "// Paste valid SVG to generate a React Native component.";
+    if (document.body && document.body.getAttribute("data-vue-intent")) {
+      reactOutput.textContent = "// Paste valid SVG to generate a Vue component.";
+      if (rnOutput) rnOutput.textContent = "";
+    } else {
+      reactOutput.textContent = "// Paste valid SVG to generate a React component.";
+      rnOutput.textContent = "// Paste valid SVG to generate a React Native component.";
+    }
     refreshDataUriOutput(null);
     clearPngPreview();
     return;
   }
 
-  try {
-    reactOutput.textContent = svgToReactComponent(markup);
-  } catch (err) {
-    reactOutput.textContent = "// Couldn’t convert SVG to React.\n// " + (err && err.message ? err.message : "Unknown error");
-  }
+  var vueIntentExport =
+    (document.body && document.body.getAttribute("data-vue-intent")) || "";
+  if (vueIntentExport && typeof applyBatchVueMarkup === "function") {
+    try {
+      reactOutput.textContent = applyBatchVueMarkup(markup, vueIntentExport).code;
+    } catch (err) {
+      reactOutput.textContent =
+        "// Couldn’t convert SVG to Vue.\n// " +
+        (err && err.message ? err.message : "Unknown error");
+    }
+    if (rnOutput) {
+      rnOutput.textContent = "// React Native export is hidden on Vue converter pages.";
+    }
+  } else {
+    try {
+      reactOutput.textContent = svgToReactComponent(markup);
+    } catch (err) {
+      reactOutput.textContent =
+        "// Couldn’t convert SVG to React.\n// " +
+        (err && err.message ? err.message : "Unknown error");
+    }
 
-  try {
-    rnOutput.textContent = svgToReactNativeComponent(markup);
-  } catch (err) {
-    rnOutput.textContent = "// Couldn’t convert SVG to React Native.\n// " + (err && err.message ? err.message : "Unknown error");
+    try {
+      rnOutput.textContent = svgToReactNativeComponent(markup);
+    } catch (err) {
+      rnOutput.textContent =
+        "// Couldn’t convert SVG to React Native.\n// " +
+        (err && err.message ? err.message : "Unknown error");
+    }
   }
 
   refreshDataUriOutput(markup);
@@ -6138,8 +6196,11 @@ const gradientIntentStartup =
   (document.body && document.body.getAttribute("data-gradient-intent")) || "";
 const pathEditIntentStartup =
   (document.body && document.body.getAttribute("data-path-edit-intent")) || "";
+const batchStartup =
+  typeof getBatchLongtailStartup === "function" ? getBatchLongtailStartup() : null;
 const startupSvg =
   sharedSvg ||
+  (batchStartup && batchStartup.svg) ||
   (rotateIntentStartup && ROTATE_DEFAULT_SVGS[rotateSampleStartup]
     ? ROTATE_DEFAULT_SVGS[rotateSampleStartup]
     : viewboxIntentStartup && VIEWBOX_DEFAULT_SVGS[viewboxIntentStartup]
@@ -6174,7 +6235,9 @@ applyStartupSvg(
   startupSvg,
   sharedSvg
     ? "Loaded from share link"
-    : rotateIntentStartup
+    : batchStartup && batchStartup.status
+      ? batchStartup.status
+      : rotateIntentStartup
       ? "Sample SVG — click the action button to rotate around center" +
         (rotateDegreesStartup ? " by " + rotateDegreesStartup + "°" : "")
       : viewboxIntentStartup
@@ -6512,4 +6575,8 @@ if (appChrome && chromeShutter) {
     });
     chromeRo.observe(appChrome);
   }
+}
+
+if (typeof initBatchLongtailIntents === "function") {
+  initBatchLongtailIntents();
 }
