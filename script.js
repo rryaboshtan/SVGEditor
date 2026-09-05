@@ -2914,6 +2914,487 @@ if (scalePathActionBtn && scalePathIntent) {
   });
 }
 
+function splitPathCommands(d) {
+  const tokens = tokenizePathData(d);
+  const cmds = [];
+  let cur = null;
+  tokens.forEach(function (tok) {
+    if (tok.type === "cmd") {
+      if (cur) cmds.push(cur);
+      cur = { cmd: tok.value, nums: tok.value.toUpperCase() === "Z" ? [] : [] };
+    } else if (cur) cur.nums.push(tok.value);
+  });
+  if (cur) cmds.push(cur);
+  return cmds;
+}
+
+function serializePathCommands(cmds, formatFn) {
+  formatFn = formatFn || formatPathNumber;
+  return cmds
+    .map(function (c) {
+      const body = c.nums
+        .map(function (n, i) {
+          return (i ? " " : "") + formatFn(n);
+        })
+        .join("");
+      return c.cmd + body;
+    })
+    .join("");
+}
+
+function pathCommandsToAbsolute(cmds) {
+  let x = 0;
+  let y = 0;
+  let sx = 0;
+  let sy = 0;
+  return cmds.map(function (c) {
+    const u = c.cmd.toUpperCase();
+    const abs = c.cmd === u;
+    const n = c.nums.slice();
+    if (u === "Z") {
+      x = sx;
+      y = sy;
+      return { cmd: "Z", nums: [] };
+    }
+    if (u === "M" || u === "L" || u === "T") {
+      for (let i = 0; i + 1 < n.length; i += 2) {
+        if (!abs) {
+          n[i] += x;
+          n[i + 1] += y;
+        }
+        x = n[i];
+        y = n[i + 1];
+        if (u === "M" && i === 0) {
+          sx = x;
+          sy = y;
+        }
+      }
+    } else if (u === "H") {
+      for (let i = 0; i < n.length; i++) {
+        if (!abs) n[i] += x;
+        x = n[i];
+      }
+    } else if (u === "V") {
+      for (let i = 0; i < n.length; i++) {
+        if (!abs) n[i] += y;
+        y = n[i];
+      }
+    } else if (u === "C") {
+      for (let i = 0; i + 5 < n.length; i += 6) {
+        if (!abs) {
+          n[i] += x;
+          n[i + 1] += y;
+          n[i + 2] += x;
+          n[i + 3] += y;
+          n[i + 4] += x;
+          n[i + 5] += y;
+        }
+        x = n[i + 4];
+        y = n[i + 5];
+      }
+    } else if (u === "S" || u === "Q") {
+      for (let i = 0; i + 3 < n.length; i += 4) {
+        if (!abs) {
+          n[i] += x;
+          n[i + 1] += y;
+          n[i + 2] += x;
+          n[i + 3] += y;
+        }
+        x = n[i + 2];
+        y = n[i + 3];
+      }
+    } else if (u === "A") {
+      for (let i = 0; i + 6 < n.length; i += 7) {
+        if (!abs) {
+          n[i + 5] += x;
+          n[i + 6] += y;
+        }
+        x = n[i + 5];
+        y = n[i + 6];
+      }
+    }
+    return { cmd: u, nums: n };
+  });
+}
+
+function pathCommandsToRelative(cmds) {
+  const abs = pathCommandsToAbsolute(cmds);
+  let x = 0;
+  let y = 0;
+  let sx = 0;
+  let sy = 0;
+  return abs.map(function (c, idx) {
+    const u = c.cmd;
+    const n = c.nums.slice();
+    if (u === "Z") {
+      x = sx;
+      y = sy;
+      return { cmd: "z", nums: [] };
+    }
+    const firstMove = u === "M" && idx === 0;
+    if (u === "M" || u === "L" || u === "T") {
+      for (let i = 0; i + 1 < n.length; i += 2) {
+        const nx = n[i];
+        const ny = n[i + 1];
+        if (!(firstMove && i === 0)) {
+          n[i] = nx - x;
+          n[i + 1] = ny - y;
+        }
+        x = nx;
+        y = ny;
+        if (u === "M" && i === 0) {
+          sx = x;
+          sy = y;
+        }
+      }
+    } else if (u === "H") {
+      for (let i = 0; i < n.length; i++) {
+        const nx = n[i];
+        n[i] = nx - x;
+        x = nx;
+      }
+    } else if (u === "V") {
+      for (let i = 0; i < n.length; i++) {
+        const ny = n[i];
+        n[i] = ny - y;
+        y = ny;
+      }
+    } else if (u === "C") {
+      for (let i = 0; i + 5 < n.length; i += 6) {
+        const nx = n[i + 4];
+        const ny = n[i + 5];
+        n[i] -= x;
+        n[i + 1] -= y;
+        n[i + 2] -= x;
+        n[i + 3] -= y;
+        n[i + 4] -= x;
+        n[i + 5] -= y;
+        x = nx;
+        y = ny;
+      }
+    } else if (u === "S" || u === "Q") {
+      for (let i = 0; i + 3 < n.length; i += 4) {
+        const nx = n[i + 2];
+        const ny = n[i + 3];
+        n[i] -= x;
+        n[i + 1] -= y;
+        n[i + 2] -= x;
+        n[i + 3] -= y;
+        x = nx;
+        y = ny;
+      }
+    } else if (u === "A") {
+      for (let i = 0; i + 6 < n.length; i += 7) {
+        const nx = n[i + 5];
+        const ny = n[i + 6];
+        n[i + 5] -= x;
+        n[i + 6] -= y;
+        x = nx;
+        y = ny;
+      }
+    }
+    const rel = firstMove ? "M" : u.toLowerCase();
+    return { cmd: rel, nums: n };
+  });
+}
+
+function reverseAbsolutePathCommands(cmds) {
+  const abs = pathCommandsToAbsolute(cmds);
+  const subpaths = [];
+  let cur = [];
+  abs.forEach(function (c) {
+    if (c.cmd === "M" && cur.length) {
+      subpaths.push(cur);
+      cur = [c];
+    } else cur.push(c);
+  });
+  if (cur.length) subpaths.push(cur);
+
+  function lastPoint(seg) {
+    const n = seg.nums;
+    if (seg.cmd === "H") return { x: n[n.length - 1], y: null };
+    if (seg.cmd === "V") return { x: null, y: n[n.length - 1] };
+    if (!n.length) return { x: null, y: null };
+    if (seg.cmd === "A") return { x: n[n.length - 2], y: n[n.length - 1] };
+    return { x: n[n.length - 2], y: n[n.length - 1] };
+  }
+
+  const out = [];
+  subpaths.forEach(function (sub) {
+    let closed = false;
+    const segs = sub.slice();
+    if (segs.length && segs[segs.length - 1].cmd === "Z") {
+      closed = true;
+      segs.pop();
+    }
+    if (!segs.length) return;
+    const pts = [];
+    let cx = segs[0].nums[0];
+    let cy = segs[0].nums[1];
+    pts.push({ x: cx, y: cy, cmd: segs[0] });
+    for (let i = 1; i < segs.length; i++) {
+      const lp = lastPoint(segs[i]);
+      if (lp.x != null) cx = lp.x;
+      if (lp.y != null) cy = lp.y;
+      pts.push({ x: cx, y: cy, cmd: segs[i] });
+    }
+    const end = pts[pts.length - 1];
+    out.push({ cmd: "M", nums: [end.x, end.y] });
+    for (let i = segs.length - 1; i >= 1; i--) {
+      const prev = pts[i - 1];
+      const seg = segs[i];
+      if (seg.cmd === "L" || seg.cmd === "H" || seg.cmd === "V" || seg.cmd === "T") {
+        out.push({ cmd: "L", nums: [prev.x, prev.y] });
+      } else if (seg.cmd === "C") {
+        const n = seg.nums;
+        out.push({ cmd: "C", nums: [n[2], n[3], n[0], n[1], prev.x, prev.y] });
+      } else if (seg.cmd === "Q" || seg.cmd === "S") {
+        const n = seg.nums;
+        out.push({ cmd: seg.cmd, nums: [n[0], n[1], prev.x, prev.y] });
+      } else if (seg.cmd === "A") {
+        const n = seg.nums.slice();
+        n[4] = n[4] ? 0 : 1;
+        n[5] = prev.x;
+        n[6] = prev.y;
+        out.push({ cmd: "A", nums: n });
+      } else {
+        out.push({ cmd: "L", nums: [prev.x, prev.y] });
+      }
+    }
+    if (closed) out.push({ cmd: "Z", nums: [] });
+  });
+  return out;
+}
+
+function formatPathNumberDigits(n, digits) {
+  if (!Number.isFinite(n)) return "0";
+  const d = Math.max(0, Math.min(8, digits | 0));
+  let s = n.toFixed(d);
+  if (d > 0) s = s.replace(/\.?0+$/, "");
+  if (s === "-0") s = "0";
+  return s || "0";
+}
+
+function douglasPeucker(points, epsilon) {
+  if (points.length < 3) return points.slice();
+  let maxDist = 0;
+  let idx = 0;
+  const a = points[0];
+  const b = points[points.length - 1];
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  for (let i = 1; i < points.length - 1; i++) {
+    const p = points[i];
+    const dist = Math.abs(dy * p[0] - dx * p[1] + b[0] * a[1] - b[1] * a[0]) / len;
+    if (dist > maxDist) {
+      maxDist = dist;
+      idx = i;
+    }
+  }
+  if (maxDist > epsilon) {
+    const left = douglasPeucker(points.slice(0, idx + 1), epsilon);
+    const right = douglasPeucker(points.slice(idx), epsilon);
+    return left.slice(0, -1).concat(right);
+  }
+  return [a, b];
+}
+
+function simplifyPathDataInSvg(svg, tolerance) {
+  const host = document.createElement("div");
+  host.setAttribute("aria-hidden", "true");
+  host.style.cssText =
+    "position:absolute;left:-99999px;top:0;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none";
+  const clone = svg.cloneNode(true);
+  host.appendChild(clone);
+  document.body.appendChild(host);
+  Array.prototype.forEach.call(clone.querySelectorAll("path"), function (path, i) {
+    try {
+      const len = path.getTotalLength();
+      if (!(len > 0)) return;
+      const steps = Math.min(360, Math.max(24, Math.ceil(len / 2)));
+      const pts = [];
+      for (let s = 0; s <= steps; s++) {
+        const p = path.getPointAtLength((len * s) / steps);
+        pts.push([p.x, p.y]);
+      }
+      const simple = douglasPeucker(pts, tolerance);
+      if (simple.length < 2) return;
+      let d = "M" + formatPathNumber(simple[0][0]) + " " + formatPathNumber(simple[0][1]);
+      for (let k = 1; k < simple.length; k++) {
+        d += "L" + formatPathNumber(simple[k][0]) + " " + formatPathNumber(simple[k][1]);
+      }
+      const originals = svg.querySelectorAll("path");
+      if (originals[i]) originals[i].setAttribute("d", d);
+    } catch (err) {
+      /* skip */
+    }
+  });
+  document.body.removeChild(host);
+}
+
+function removeRedundantPathPoints(d, epsilon) {
+  const abs = pathCommandsToAbsolute(splitPathCommands(d));
+  const out = [];
+  let x = null;
+  let y = null;
+  abs.forEach(function (c) {
+    if (c.cmd === "L" && x != null) {
+      const nx = c.nums[c.nums.length - 2];
+      const ny = c.nums[c.nums.length - 1];
+      if (Math.hypot(nx - x, ny - y) <= epsilon) return;
+    }
+    out.push(c);
+    if (c.nums.length >= 2) {
+      x = c.nums[c.nums.length - 2];
+      y = c.nums[c.nums.length - 1];
+    }
+  });
+  return serializePathCommands(out);
+}
+
+function applyPathEditMarkup(markup, intent, factorOverride) {
+  const source = extractSvgMarkup(markup) || String(markup || "").trim();
+  if (!source) throw new Error("Paste an SVG first");
+  const svg = parseSvg(source);
+  const paths = svg.querySelectorAll("path");
+  if (!paths.length) throw new Error("No <path> elements found");
+  stripRootSvgSizeAttrs(svg);
+
+  let status = "Path updated";
+  const simplifyIntents = {
+    "simplify-svg-path-data-online": 1,
+    "reduce-svg-path-nodes-online": 1,
+    "compress-svg-path-data": 1,
+    "remove-redundant-svg-path-points": 1,
+  };
+  const reverseIntents = {
+    "reverse-svg-path-direction": 1,
+    "change-svg-path-winding-order": 1,
+  };
+  const roundIntents = {
+    "round-svg-path-decimals-online": 1,
+    "truncate-svg-path-numbers-online": 1,
+  };
+  const toRel = {
+    "convert-svg-absolute-to-relative-path-commands": 1,
+    "change-svg-path-commands-to-lowercase-relative": 1,
+  };
+  const toAbs = {
+    "convert-svg-relative-to-absolute-path-commands": 1,
+  };
+
+  if (simplifyIntents[intent]) {
+    const tol = factorOverride != null && factorOverride > 0 ? factorOverride : 2;
+    if (intent === "remove-redundant-svg-path-points") {
+      forEachPathElement(svg, function (path, d) {
+        path.setAttribute("d", removeRedundantPathPoints(d, tol));
+      });
+      status = "Redundant path points removed";
+    } else {
+      simplifyPathDataInSvg(svg, tol);
+      status = "Path nodes reduced (tolerance " + formatPathNumber(tol) + ")";
+    }
+  } else if (reverseIntents[intent]) {
+    forEachPathElement(svg, function (path, d) {
+      path.setAttribute("d", serializePathCommands(reverseAbsolutePathCommands(splitPathCommands(d))));
+    });
+    status = "Path direction reversed";
+  } else if (roundIntents[intent]) {
+    let digits = 2;
+    if (intent === "truncate-svg-path-numbers-online") digits = 1;
+    if (factorOverride != null && Number.isFinite(factorOverride) && factorOverride >= 0) {
+      digits = Math.round(factorOverride);
+    }
+    const fmt = function (n) {
+      return formatPathNumberDigits(n, digits);
+    };
+    forEachPathElement(svg, function (path, d) {
+      path.setAttribute("d", serializePathCommands(splitPathCommands(d), fmt));
+    });
+    status = "Path numbers rounded to " + digits + " decimal" + (digits === 1 ? "" : "s");
+  } else if (toRel[intent]) {
+    forEachPathElement(svg, function (path, d) {
+      path.setAttribute("d", serializePathCommands(pathCommandsToRelative(splitPathCommands(d))));
+    });
+    status = "Path commands converted to relative";
+  } else if (toAbs[intent]) {
+    forEachPathElement(svg, function (path, d) {
+      path.setAttribute("d", serializePathCommands(pathCommandsToAbsolute(splitPathCommands(d))));
+    });
+    status = "Path commands converted to absolute";
+  } else {
+    throw new Error("Unknown path tool");
+  }
+
+  return {
+    markup: formatSvgReadableMarkup(prettySerializeSvg(svg)),
+    status: status,
+  };
+}
+
+const PATH_EDIT_DEFAULT_SVGS = {
+  "simplify-svg-path-data-online": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" role="img" aria-label="Noisy polyline — click to simplify">
+  <path d="M16 80 L24 78 L32 76 L40 74 L48 70 L56 62 L64 50 L72 44 L80 48 L88 60 L96 70 L104 74 L112 72 L120 66 L128 58 L136 52 L144 54 L152 62 L160 70 L168 74 L176 72 L184 68" fill="none" stroke="#0ea5e9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "reduce-svg-path-nodes-online": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" role="img" aria-label="Many nodes — click to reduce">
+  <path d="M12 50 L20 48 L28 47 L36 46 L44 48 L52 54 L60 62 L68 66 L76 64 L84 58 L92 50 L100 46 L108 48 L116 54 L124 60 L132 62 L140 58 L148 50 L156 46 L164 48 L172 52 L180 54" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+</svg>`,
+  "compress-svg-path-data": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 120" role="img" aria-label="Verbose path — click to compress">
+  <path d="M20 90 L40 40 L70 70 L100 30 L140 80 L160 50" fill="none" stroke="#a855f7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "remove-redundant-svg-path-points": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Stacked points — click to drop extras">
+  <path d="M28 88 L28 88 L60 36 L60.05 36.02 L100 36 L132 88 L132 88" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "reverse-svg-path-direction": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Chevron — click to reverse direction">
+  <path d="M40 28 L116 60 L40 92" fill="none" stroke="#22d3ee" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "change-svg-path-winding-order": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Closed diamond — click to change winding">
+  <path d="M70 18 L122 70 L70 122 L18 70 Z" fill="#38bdf8" fill-rule="evenodd"/>
+</svg>`,
+  "round-svg-path-decimals-online": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Long decimals — click to round">
+  <path d="M22.4187 88.9021 C40.1256 21.447 79.8801 19.0034 98.5512 61.7743 S141.229 108.6621 142.018 39.441" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round"/>
+</svg>`,
+  "truncate-svg-path-numbers-online": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Tiny fractions — click to truncate">
+  <path d="M18.049 70.812 H70.441 L98.773 32.009 L142.618 84.227" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+</svg>`,
+  "convert-svg-absolute-to-relative-path-commands": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Absolute commands — click to convert to relative">
+  <path d="M24 88 L60 32 L100 70 L136 28" fill="none" stroke="#0ea5e9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "convert-svg-relative-to-absolute-path-commands": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Relative commands — click to convert to absolute">
+  <path d="m24 88 l36-56 l40 38 l36-42" fill="none" stroke="#22d3ee" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+  "change-svg-path-commands-to-lowercase-relative": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Uppercase path — click for lowercase relative">
+  <path d="M30 90 C50 20 90 20 110 70 S150 110 140 40" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+</svg>`,
+};
+
+const pathEditActionBtn = document.getElementById("btn-path-edit-action");
+const pathEditIntent =
+  (document.body && document.body.getAttribute("data-path-edit-intent")) || "";
+const pathEditFactorInput = document.getElementById("scale-path-factor-input");
+
+if (pathEditActionBtn && pathEditIntent) {
+  pathEditActionBtn.addEventListener("click", function () {
+    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    if (!raw) {
+      setStatus("empty", "Paste an SVG first");
+      return;
+    }
+    let factor = null;
+    if (pathEditFactorInput) {
+      const n = parseFloat(pathEditFactorInput.value);
+      if (Number.isFinite(n)) factor = n;
+    }
+    try {
+      const result = applyPathEditMarkup(raw, pathEditIntent, factor);
+      applyMirroredEditorMarkup(result.markup, result.status);
+    } catch (err) {
+      setStatus("error", (err && err.message) || "Could not edit path");
+    }
+  });
+}
+
 function translateSvgPathMarkup(markup, intent, dxOverride, dyOverride) {
   const source = extractSvgMarkup(markup) || String(markup || "").trim();
   if (!source) throw new Error("Paste an SVG first");
@@ -3285,7 +3766,357 @@ function gradientCssSnippet(colors, angle, textMode) {
   );
 }
 
+const GRADIENT_EDIT_INTENTS = {
+  "invert-svg-gradient-colors": 1,
+  "invert-svg-gradient-direction": 1,
+  "reverse-svg-gradient-stops": 1,
+  "extract-colors-from-svg-gradient": 1,
+  "svg-gradient-color-picker-from-code": 1,
+  "extract-svg-gradient-stops": 1,
+  "svg-gradient-fill-transparent-to-color": 1,
+  "svg-linear-gradient-fade-to-transparent": 1,
+  "svg-gradient-transparent-edges": 1,
+  "svg-fade-out-gradient-generator": 1,
+  "transparent-to-color-gradient-svg-code": 1,
+  "convert-css-linear-gradient-to-svg": 1,
+  "transform-css-gradient-to-svg-code": 1,
+  "css-to-svg-gradient-generator": 1,
+  "export-css-gradient-as-svg": 1,
+};
+
+function collectGradientNodes(svg) {
+  return svg.querySelectorAll("linearGradient, radialGradient");
+}
+
+function collectGradientStops(grad) {
+  return Array.prototype.filter.call(grad.children || [], function (el) {
+    return String(el.tagName || "").toLowerCase() === "stop";
+  });
+}
+
+function stopColorOf(stop) {
+  return stop.getAttribute("stop-color") || stop.style.stopColor || "#000000";
+}
+
+function invertGradientDirection(grad) {
+  const tag = String(grad.tagName || "").toLowerCase();
+  if (tag === "lineargradient") {
+    const x1 = grad.getAttribute("x1") || "0";
+    const y1 = grad.getAttribute("y1") || "0";
+    const x2 = grad.getAttribute("x2") || "1";
+    const y2 = grad.getAttribute("y2") || "0";
+    grad.setAttribute("x1", x2);
+    grad.setAttribute("y1", y2);
+    grad.setAttribute("x2", x1);
+    grad.setAttribute("y2", y1);
+  } else {
+    const fx = grad.getAttribute("fx") || grad.getAttribute("cx") || "50%";
+    const fy = grad.getAttribute("fy") || grad.getAttribute("cy") || "50%";
+    const cx = grad.getAttribute("cx") || "50%";
+    const cy = grad.getAttribute("cy") || "50%";
+    grad.setAttribute("fx", cx);
+    grad.setAttribute("fy", cy);
+    grad.setAttribute("cx", fx);
+    grad.setAttribute("cy", fy);
+  }
+  const xf = grad.getAttribute("gradientTransform");
+  if (xf && String(xf).trim()) {
+    grad.setAttribute("gradientTransform", String(xf).trim() + " rotate(180)");
+  }
+}
+
+function invertGradientColorOrder(grad) {
+  const stops = collectGradientStops(grad);
+  if (stops.length < 2) return;
+  const colors = stops.map(stopColorOf);
+  colors.reverse().forEach(function (color, i) {
+    stops[i].setAttribute("stop-color", color);
+  });
+}
+
+function reverseGradientStopElements(grad) {
+  const stops = collectGradientStops(grad);
+  if (stops.length < 2) return;
+  const offsets = stops.map(function (stop) {
+    return stop.getAttribute("offset");
+  });
+  stops
+    .slice()
+    .reverse()
+    .forEach(function (stop, i) {
+      if (offsets[i] != null) stop.setAttribute("offset", offsets[i]);
+      else stop.removeAttribute("offset");
+      grad.appendChild(stop);
+    });
+}
+
+function listGradientPalette(svg) {
+  const colors = [];
+  const rows = [];
+  Array.prototype.forEach.call(collectGradientNodes(svg), function (grad) {
+    collectGradientStops(grad).forEach(function (stop) {
+      const color = stopColorOf(stop);
+      const opacity = stop.getAttribute("stop-opacity");
+      const offset = stop.getAttribute("offset") || "";
+      rows.push({ color: color, opacity: opacity, offset: offset, id: grad.getAttribute("id") || "" });
+      if (colors.indexOf(color) === -1) colors.push(color);
+    });
+  });
+  return { colors: colors, rows: rows };
+}
+
+function ensureGradientLegend(svg, colors) {
+  let g = svg.querySelector("[data-svgeditor-swatches]");
+  if (g && g.parentNode) g.parentNode.removeChild(g);
+  if (!colors.length) return;
+  const vb = getSvgViewBoxBox(svg) || { minX: 0, minY: 0, width: 220, height: 140 };
+  g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("data-svgeditor-swatches", "1");
+  colors.forEach(function (color, i) {
+    const c = document.createElementNS(SVG_NS, "circle");
+    c.setAttribute("cx", String(vb.minX + 16 + i * 22));
+    c.setAttribute("cy", String(vb.minY + vb.height - 14));
+    c.setAttribute("r", "8");
+    c.setAttribute("fill", color);
+    c.setAttribute("stroke", "#0f172a");
+    c.setAttribute("stroke-width", "1");
+    g.appendChild(c);
+  });
+  svg.appendChild(g);
+}
+
+function applyTransparentGradientPreset(svg, intent) {
+  removeGradientArtifacts(svg);
+  const defs = ensureSvgDefs(svg);
+  const color = nextGradientColors(2)[0] || "#0ea5e9";
+  const grad = document.createElementNS(SVG_NS, "linearGradient");
+  grad.setAttribute("id", "svgeditor-grad");
+  grad.setAttribute("data-svgeditor-grad", "1");
+  grad.setAttribute("x1", "0");
+  grad.setAttribute("y1", "0");
+  grad.setAttribute("x2", "1");
+  grad.setAttribute("y2", "0");
+  function addStop(offset, col, op) {
+    const stop = document.createElementNS(SVG_NS, "stop");
+    stop.setAttribute("offset", offset);
+    stop.setAttribute("stop-color", col);
+    stop.setAttribute("stop-opacity", String(op));
+    grad.appendChild(stop);
+  }
+  if (intent === "svg-gradient-transparent-edges") {
+    addStop("0%", color, 0);
+    addStop("50%", color, 1);
+    addStop("100%", color, 0);
+  } else if (
+    intent === "svg-linear-gradient-fade-to-transparent" ||
+    intent === "svg-fade-out-gradient-generator"
+  ) {
+    addStop("0%", color, 1);
+    if (intent === "svg-fade-out-gradient-generator") addStop("55%", color, 0.45);
+    addStop("100%", color, 0);
+  } else {
+    addStop("0%", color, 0);
+    addStop("100%", color, 1);
+  }
+  defs.appendChild(grad);
+  paintShapesWithGradient(svg, "url(#svgeditor-grad)");
+  return color;
+}
+
+function parseCssLinearGradient(text) {
+  const src = String(text || "");
+  const m = src.match(/linear-gradient\s*\(([\s\S]*?)\)/i);
+  if (!m) return null;
+  const inner = m[1];
+  const parts = [];
+  let buf = "";
+  let depth = 0;
+  for (let i = 0; i < inner.length; i++) {
+    const ch = inner[i];
+    if (ch === "(") depth += 1;
+    if (ch === ")") depth -= 1;
+    if (ch === "," && depth === 0) {
+      parts.push(buf.trim());
+      buf = "";
+    } else buf += ch;
+  }
+  if (buf.trim()) parts.push(buf.trim());
+  if (!parts.length) return null;
+  let angle = 90;
+  let start = 0;
+  const first = parts[0];
+  const deg = first.match(/^(-?[0-9.]+)\s*deg$/i);
+  const toDir = first.match(/^to\s+(left|right|top|bottom)(?:\s+(left|right|top|bottom))?/i);
+  if (deg) {
+    angle = parseFloat(deg[1]);
+    start = 1;
+  } else if (toDir) {
+    const a = toDir[1].toLowerCase();
+    const b = (toDir[2] || "").toLowerCase();
+    if (a === "right") angle = 90;
+    else if (a === "left") angle = 270;
+    else if (a === "bottom") angle = 180;
+    else if (a === "top") angle = 0;
+    if (b === "right") angle = a === "top" ? 45 : 135;
+    if (b === "left") angle = a === "top" ? 315 : 225;
+    start = 1;
+  }
+  const colors = [];
+  for (let i = start; i < parts.length; i++) {
+    const token = parts[i].replace(/\s+[0-9.]+%?\s*$/, "").trim();
+    if (token) colors.push(token);
+  }
+  if (colors.length < 2) return null;
+  return { angle: angle, colors: colors };
+}
+
+function svgFromCssGradient(parsed) {
+  const vec = gradientAngleToVector(parsed.angle);
+  const stops = parsed.colors
+    .map(function (color, i) {
+      const off = parsed.colors.length === 1 ? 0 : (i / (parsed.colors.length - 1)) * 100;
+      return '    <stop offset="' + formatPathNumber(off) + '%" stop-color="' + color + '"/>';
+    })
+    .join("\n");
+  return (
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="CSS linear gradient as SVG">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="svgeditor-grad" x1="' +
+    vec.x1 +
+    '" y1="' +
+    vec.y1 +
+    '" x2="' +
+    vec.x2 +
+    '" y2="' +
+    vec.y2 +
+    '">\n' +
+    stops +
+    "\n    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect x="12" y="18" width="216" height="84" rx="16" fill="url(#svgeditor-grad)"/>\n' +
+    "</svg>"
+  );
+}
+
+function convertCssGradientToSvg(markup, intent) {
+  const text = String(markup || "");
+  const extracted = extractSvgMarkup(text);
+  let parsed = parseCssLinearGradient(text);
+  if (!parsed && extracted) {
+    try {
+      const svg = parseSvg(extracted);
+      const styleText = Array.prototype.map
+        .call(svg.querySelectorAll("style"), function (el) {
+          return el.textContent || "";
+        })
+        .join("\n");
+      parsed = parseCssLinearGradient(styleText) || parseCssLinearGradient(extracted);
+    } catch (err) {
+      parsed = parseCssLinearGradient(text);
+    }
+  }
+  if (!parsed) throw new Error("Paste a CSS linear-gradient() to convert");
+  const out = formatSvgReadableMarkup(svgFromCssGradient(parsed));
+  const snippet =
+    intent === "transform-css-gradient-to-svg-code" || intent === "export-css-gradient-as-svg"
+      ? out
+      : gradientCssSnippet(parsed.colors, parsed.angle, false);
+  return {
+    markup: out,
+    status: "CSS linear-gradient converted to SVG",
+    snippet: snippet,
+  };
+}
+
+function applyGradientEditMarkup(markup, intent) {
+  if (
+    intent === "convert-css-linear-gradient-to-svg" ||
+    intent === "transform-css-gradient-to-svg-code" ||
+    intent === "css-to-svg-gradient-generator" ||
+    intent === "export-css-gradient-as-svg"
+  ) {
+    return convertCssGradientToSvg(markup, intent);
+  }
+
+  const source = extractSvgMarkup(markup) || String(markup || "").trim();
+  if (!source) throw new Error("Paste an SVG first");
+  const svg = parseSvg(source);
+  stripRootSvgSizeAttrs(svg);
+
+  if (
+    intent === "svg-gradient-fill-transparent-to-color" ||
+    intent === "svg-linear-gradient-fade-to-transparent" ||
+    intent === "svg-gradient-transparent-edges" ||
+    intent === "svg-fade-out-gradient-generator" ||
+    intent === "transparent-to-color-gradient-svg-code"
+  ) {
+    const color = applyTransparentGradientPreset(svg, intent);
+    const outFade = formatSvgReadableMarkup(prettySerializeSvg(svg));
+    return {
+      markup: outFade,
+      status: "Transparent gradient applied",
+      snippet:
+        intent === "transparent-to-color-gradient-svg-code"
+          ? gradientCssSnippet(["transparent", color], 90, false)
+          : "",
+    };
+  }
+
+  const grads = collectGradientNodes(svg);
+  if (!grads.length) throw new Error("No SVG gradient found");
+
+  if (intent === "invert-svg-gradient-colors") {
+    Array.prototype.forEach.call(grads, invertGradientColorOrder);
+  } else if (intent === "invert-svg-gradient-direction") {
+    Array.prototype.forEach.call(grads, invertGradientDirection);
+  } else if (intent === "reverse-svg-gradient-stops") {
+    Array.prototype.forEach.call(grads, reverseGradientStopElements);
+  }
+
+  const palette = listGradientPalette(svg);
+  if (
+    intent === "extract-colors-from-svg-gradient" ||
+    intent === "svg-gradient-color-picker-from-code" ||
+    intent === "extract-svg-gradient-stops"
+  ) {
+    ensureGradientLegend(svg, palette.colors);
+  }
+
+  const out = formatSvgReadableMarkup(prettySerializeSvg(svg));
+  let snippet = "";
+  let status = "Gradient updated";
+  if (intent === "invert-svg-gradient-colors") status = "Gradient color order inverted";
+  if (intent === "invert-svg-gradient-direction") status = "Gradient direction inverted";
+  if (intent === "reverse-svg-gradient-stops") status = "Gradient stop elements reversed";
+  if (
+    intent === "extract-colors-from-svg-gradient" ||
+    intent === "svg-gradient-color-picker-from-code"
+  ) {
+    snippet = palette.colors.join("\n");
+    status = "Extracted " + palette.colors.length + " gradient colors";
+  }
+  if (intent === "extract-svg-gradient-stops") {
+    snippet = palette.rows
+      .map(function (row) {
+        return (
+          (row.offset || "0") +
+          " " +
+          row.color +
+          (row.opacity != null ? " / " + row.opacity : "") +
+          (row.id ? " #" + row.id : "")
+        );
+      })
+      .join("\n");
+    status = "Parsed " + palette.rows.length + " gradient stops";
+  }
+
+  return { markup: out, status: status, snippet: snippet };
+}
+
 function applySvgGradientMarkup(markup, intent, angleOverride) {
+  if (GRADIENT_EDIT_INTENTS[intent]) {
+    return applyGradientEditMarkup(markup, intent);
+  }
   const source = extractSvgMarkup(markup) || String(markup || "").trim();
   if (!source) throw new Error("Paste an SVG first");
   const svg = parseSvg(source);
@@ -3438,6 +4269,104 @@ const GRADIENT_DEFAULT_SVGS = {
   "svg-text-gradient-for-web-design": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 120" role="img" aria-label="Web design text gradient">
   <text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-family="Syne, Segoe UI, sans-serif" font-size="40" font-weight="700" fill="#ec4899">Web Design</text>
 </svg>`,
+  "invert-svg-gradient-colors": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Three-stop gradient — click to invert color order">
+  <defs>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="20" width="216" height="80" rx="16" fill="url(#warm)"/>
+</svg>`,
+  "invert-svg-gradient-direction": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Left-to-right gradient — click to invert direction">
+  <defs>
+    <linearGradient id="ltr" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+  <rect x="14" y="22" width="192" height="76" rx="18" fill="url(#ltr)"/>
+</svg>`,
+  "reverse-svg-gradient-stops": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Uneven stops — click to reverse stop order">
+  <defs>
+    <linearGradient id="uneven" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="28%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="20" width="216" height="80" rx="16" fill="url(#uneven)"/>
+</svg>`,
+  "extract-colors-from-svg-gradient": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Gradient palette — click to extract colors">
+  <defs>
+    <linearGradient id="palette" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="50%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#f43f5e"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="20" width="216" height="80" rx="14" fill="url(#palette)"/>
+</svg>`,
+  "svg-gradient-color-picker-from-code": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Gradient code — click to pick colors">
+  <defs>
+    <linearGradient id="pick" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <path d="M20 96 L70 28 H170 L220 96 Z" fill="url(#pick)"/>
+</svg>`,
+  "extract-svg-gradient-stops": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Four stops — click to extract stop list">
+  <defs>
+    <linearGradient id="four" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="35%" stop-color="#eab308"/>
+      <stop offset="68%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="20" width="216" height="80" rx="10" fill="url(#four)"/>
+</svg>`,
+  "svg-gradient-fill-transparent-to-color": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Solid bar — click for transparent-to-color fill">
+  <rect x="16" y="24" width="188" height="72" rx="14" fill="#0ea5e9"/>
+</svg>`,
+  "svg-linear-gradient-fade-to-transparent": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Solid bar — click to fade to transparent">
+  <rect x="16" y="24" width="188" height="72" rx="14" fill="#a855f7"/>
+</svg>`,
+  "svg-gradient-transparent-edges": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Solid bar — click for transparent edges">
+  <rect x="16" y="24" width="188" height="72" rx="14" fill="#f43f5e"/>
+</svg>`,
+  "svg-fade-out-gradient-generator": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Solid bar — click to generate a fade-out">
+  <rect x="16" y="24" width="188" height="72" rx="14" fill="#22c55e"/>
+</svg>`,
+  "transparent-to-color-gradient-svg-code": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Solid bar — click for transparent-to-color code">
+  <rect x="16" y="24" width="188" height="72" rx="14" fill="#38bdf8"/>
+</svg>`,
+  "convert-css-linear-gradient-to-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="CSS gradient in style — click to convert">
+  <style>rect{fill:url(#css-src)}</style>
+  <defs>
+    <linearGradient id="css-src" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="18" width="216" height="84" rx="16" fill="#334155"/>
+</svg>
+<!-- linear-gradient(90deg, #f43f5e, #8b5cf6, #22d3ee) -->`,
+  "transform-css-gradient-to-svg-code": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Transform CSS gradient sample">
+  <rect x="12" y="18" width="216" height="84" rx="16" fill="#0f172a"/>
+</svg>
+<!-- linear-gradient(to right, #f59e0b, #ec4899) -->`,
+  "css-to-svg-gradient-generator": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="CSS to SVG generator sample">
+  <rect x="12" y="18" width="216" height="84" rx="16" fill="#334155"/>
+</svg>
+<!-- linear-gradient(45deg, #22c55e, #0ea5e9, #a855f7) -->`,
+  "export-css-gradient-as-svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Export CSS gradient as SVG sample">
+  <rect x="12" y="18" width="216" height="84" rx="16" fill="#1e3a5f"/>
+</svg>
+<!-- linear-gradient(180deg, #67e8f9, #0284c7) -->`,
 };
 
 const gradientActionBtn = document.getElementById("btn-gradient-action");
@@ -3447,7 +4376,10 @@ const gradientAngleInput = document.getElementById("gradient-angle-input");
 
 if (gradientActionBtn && gradientIntent) {
   gradientActionBtn.addEventListener("click", function () {
-    const raw = extractSvgMarkup(editor.value) || editor.value.trim();
+    const raw =
+      GRADIENT_EDIT_INTENTS[gradientIntent] && /css/.test(gradientIntent)
+        ? editor.value.trim()
+        : extractSvgMarkup(editor.value) || editor.value.trim();
     if (!raw) {
       setStatus("empty", "Paste an SVG first");
       return;
@@ -5204,6 +6136,8 @@ const translatePathIntentStartup =
   (document.body && document.body.getAttribute("data-translate-path-intent")) || "";
 const gradientIntentStartup =
   (document.body && document.body.getAttribute("data-gradient-intent")) || "";
+const pathEditIntentStartup =
+  (document.body && document.body.getAttribute("data-path-edit-intent")) || "";
 const startupSvg =
   sharedSvg ||
   (rotateIntentStartup && ROTATE_DEFAULT_SVGS[rotateSampleStartup]
@@ -5224,6 +6158,8 @@ const startupSvg =
                   ? TRANSLATE_PATH_DEFAULT_SVGS[translatePathIntentStartup]
                   : gradientIntentStartup && GRADIENT_DEFAULT_SVGS[gradientIntentStartup]
                     ? GRADIENT_DEFAULT_SVGS[gradientIntentStartup]
+                    : pathEditIntentStartup && PATH_EDIT_DEFAULT_SVGS[pathEditIntentStartup]
+                      ? PATH_EDIT_DEFAULT_SVGS[pathEditIntentStartup]
                     : animationMode
           ? ANIMATION_DEFAULT_SVG
           : mirrorPathVMode
@@ -5258,7 +6194,11 @@ applyStartupSvg(
                       ? "Sample SVG — click the action button to center the path"
                       : "Sample SVG — click the action button to translate the path"
                     : gradientIntentStartup
-                      ? "Sample SVG — click the action button to apply a gradient"
+                      ? GRADIENT_EDIT_INTENTS[gradientIntentStartup]
+                        ? "Sample SVG — click the action button for this gradient tool"
+                        : "Sample SVG — click the action button to apply a gradient"
+                      : pathEditIntentStartup
+                        ? "Sample SVG — click the action button to rewrite the path"
                       : mirrorPathVMode
             ? flipPathVMode
               ? "Sample arrow path — click Flip vertically to reflect it"

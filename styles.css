@@ -4558,6 +4558,7 @@ body.animation-editor-page {
 
 .stroke-tool-page .tool-banner-copy,
 .scale-path-tool-page .tool-banner-copy,
+.path-edit-tool-page .tool-banner-copy,
 .translate-path-tool-page .tool-banner-copy,
 .gradient-tool-page .tool-banner-copy {
   display: block;
@@ -4565,6 +4566,7 @@ body.animation-editor-page {
 
 .stroke-tool-page .tool-breadcrumbs,
 .scale-path-tool-page .tool-breadcrumbs,
+.path-edit-tool-page .tool-breadcrumbs,
 .translate-path-tool-page .tool-breadcrumbs,
 .gradient-tool-page .tool-breadcrumbs {
   margin-bottom: .25rem;
@@ -4572,6 +4574,7 @@ body.animation-editor-page {
 
 .stroke-tool-page .tool-title,
 .scale-path-tool-page .tool-title,
+.path-edit-tool-page .tool-title,
 .translate-path-tool-page .tool-title,
 .gradient-tool-page .tool-title {
   display: block;
@@ -4579,6 +4582,7 @@ body.animation-editor-page {
 
 .stroke-tool-page .tool-sub,
 .scale-path-tool-page .tool-sub,
+.path-edit-tool-page .tool-sub,
 .translate-path-tool-page .tool-sub,
 .gradient-tool-page .tool-sub {
   margin-top: .2rem;
@@ -4586,6 +4590,7 @@ body.animation-editor-page {
 
 .stroke-tool-page #btn-stroke-action,
 .scale-path-tool-page #btn-scale-path-action,
+.path-edit-tool-page #btn-path-edit-action,
 .translate-path-tool-page #btn-translate-path-action,
 .gradient-tool-page #btn-gradient-action {
   letter-spacing: .02em;
@@ -4677,7 +4682,8 @@ body.animation-editor-page {
   font-weight: 700;
 }
 
-.scale-path-factor-group #btn-scale-path-action {
+.scale-path-factor-group #btn-scale-path-action,
+.scale-path-factor-group #btn-path-edit-action {
   flex: 0 0 auto;
   min-width: 8.5rem;
   justify-content: center;
@@ -4687,11 +4693,13 @@ body.animation-editor-page {
 
 @media (max-width: 900px) {
   .scale-path-tool-page .panel-actions,
+  .path-edit-tool-page .panel-actions,
   .translate-path-tool-page .panel-actions,
   .gradient-tool-page .panel-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .scale-path-tool-page .scale-path-factor-group,
+  .path-edit-tool-page .scale-path-factor-group,
   .translate-path-tool-page .scale-path-factor-group,
   .translate-path-tool-page .translate-path-offset-group,
   .gradient-tool-page .scale-path-factor-group {
@@ -4706,6 +4714,7 @@ body.animation-editor-page {
   }
   /* Do not inherit width:100% from .panel-actions .btn — that overflows beside inputs */
   .scale-path-tool-page .scale-path-factor-group #btn-scale-path-action,
+  .path-edit-tool-page .scale-path-factor-group #btn-path-edit-action,
   .translate-path-tool-page .translate-path-offset-group #btn-translate-path-action,
   .translate-path-tool-page .scale-path-factor-group #btn-translate-path-action,
   .gradient-tool-page .scale-path-factor-group #btn-gradient-action {
