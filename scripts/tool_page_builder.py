@@ -44,6 +44,24 @@ FAMILY = {
         "btn_id": "btn-style-action",
         "keep_size_stat": False,
     },
+    "aspect": {
+        "class": "aspect-tool-page",
+        "attr": "data-aspect-intent",
+        "btn_id": "btn-aspect-action",
+        "keep_size_stat": False,
+    },
+    "svelte": {
+        "class": "svelte-tool-page",
+        "attr": "data-svelte-intent",
+        "btn_id": "btn-svelte-action",
+        "keep_size_stat": False,
+    },
+    "rn": {
+        "class": "rn-tool-page",
+        "attr": "data-rn-intent",
+        "btn_id": "btn-rn-action",
+        "keep_size_stat": False,
+    },
 }
 
 

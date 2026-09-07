@@ -326,6 +326,288 @@ var BATCH_STYLE_DEFAULT_SVGS = {
     "</svg>",
 };
 
+var BATCH_ASPECT_DEFAULT_SVGS = {
+  "fix-svg-gradient-stretch-in-flexbox":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="120" viewBox="0 0 160 80" role="img" aria-label="Flexbox gradient stretch sample">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="flexObb" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">\n' +
+    '      <stop offset="0" stop-color="#0ea5e9"/>\n' +
+    '      <stop offset="1" stop-color="#a855f7"/>\n' +
+    "    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect x="8" y="12" width="144" height="56" rx="12" fill="url(#flexObb)"/>\n' +
+    "</svg>",
+  "fix-svg-gradient-stretch-in-css-grid":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160" viewBox="0 0 150 100" role="img" aria-label="CSS Grid gradient stretch sample">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="gridObb" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">\n' +
+    '      <stop offset="0" stop-color="#22d3ee"/>\n' +
+    '      <stop offset="1" stop-color="#2563eb"/>\n' +
+    "    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect x="10" y="10" width="130" height="80" rx="8" fill="url(#gridObb)"/>\n' +
+    '  <rect x="24" y="28" width="40" height="44" rx="4" fill="#e0f2fe" opacity="0.35"/>\n' +
+    '  <rect x="72" y="28" width="54" height="44" rx="4" fill="#e0f2fe" opacity="0.35"/>\n' +
+    "</svg>",
+  "set-svg-preserveaspectratio-for-flexbox":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="260" height="90" viewBox="0 0 120 80" preserveAspectRatio="none" role="img" aria-label="Flexbox preserveAspectRatio sample">\n' +
+    '  <rect x="8" y="12" width="104" height="56" rx="10" fill="#0ea5e9"/>\n' +
+    '  <circle cx="60" cy="40" r="18" fill="#e0f2fe"/>\n' +
+    "</svg>",
+  "svg-gradient-objectboundingbox-stretch-fix":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 100 100" role="img" aria-label="objectBoundingBox gradient fix sample">\n' +
+    "  <defs>\n" +
+    '    <radialGradient id="obbRad" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">\n' +
+    '      <stop offset="0" stop-color="#fef08a"/>\n' +
+    '      <stop offset="1" stop-color="#a855f7"/>\n' +
+    "    </radialGradient>\n" +
+    "  </defs>\n" +
+    '  <circle cx="50" cy="50" r="40" fill="url(#obbRad)"/>\n' +
+    "</svg>",
+  "set-svg-preserveaspectratio-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 80 100" preserveAspectRatio="none" role="img" aria-label="Set preserveAspectRatio sample">\n' +
+    '  <polygon points="40,8 72,88 8,88" fill="#38bdf8"/>\n' +
+    '  <circle cx="40" cy="52" r="10" fill="#0c4a6e"/>\n' +
+    "</svg>",
+  "svg-preserveaspectratio-meet-slice-none":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="80" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Meet slice none sample">\n' +
+    '  <rect x="10" y="10" width="80" height="80" rx="8" fill="#67e8f9"/>\n' +
+    '  <text x="50" y="58" text-anchor="middle" font-size="22" font-family="sans-serif" fill="#083344">PAR</text>\n' +
+    "</svg>",
+};
+
+var BATCH_SVELTE_DEFAULT_SVGS = {
+  "svg-to-svelte":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="SVG to Svelte sample">\n' +
+    '  <path fill="#ff3e00" d="M28 62 L48 28 L68 62 Z"/>\n' +
+    '  <circle cx="48" cy="68" r="10" fill="#0ea5e9"/>\n' +
+    "</svg>",
+  "svg-to-svelte-typescript":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Svelte TypeScript sample">\n' +
+    '  <rect x="14" y="14" width="68" height="68" rx="12" fill="#1e293b"/>\n' +
+    '  <text x="48" y="58" text-anchor="middle" font-size="28" font-family="sans-serif" font-weight="700" fill="#ff3e00">TS</text>\n' +
+    "</svg>",
+  "svg-to-svelte-single-file-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Svelte SFC sample">\n' +
+    '  <rect x="18" y="14" width="60" height="68" rx="8" fill="none" stroke="#ff3e00" stroke-width="4"/>\n' +
+    '  <path d="M30 32 H66 M30 46 H58 M30 60 H50" stroke="#ff3e00" stroke-width="3" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-icon-to-svelte":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Svelte icon sample">\n' +
+    '  <circle cx="12" cy="12" r="9" fill="none" stroke="#ff3e00" stroke-width="2"/>\n' +
+    '  <path d="M8 12 L11 15 L16 9" fill="none" stroke="#ff3e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+    "</svg>",
+  "svg-to-sveltekit":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="SvelteKit sample">\n' +
+    '  <path fill="#ff3e00" d="M18 70 L48 18 L78 70 Z"/>\n' +
+    '  <path fill="#ff8a65" d="M34 70 L48 44 L62 70 Z"/>\n' +
+    '  <circle cx="48" cy="78" r="6" fill="#0ea5e9"/>\n' +
+    "</svg>",
+};
+
+var BATCH_RN_DEFAULT_SVGS = {
+  "svg-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="SVG to React Native sample">\n' +
+    '  <circle cx="48" cy="48" r="28" fill="#61dafb"/>\n' +
+    '  <path d="M36 48 L44 56 L62 38" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+    "</svg>",
+  "svg-to-react-native-svg-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN SVG component sample">\n' +
+    '  <rect x="16" y="16" width="64" height="64" rx="14" fill="#111827"/>\n' +
+    '  <circle cx="48" cy="48" r="18" fill="#61dafb"/>\n' +
+    "</svg>",
+  "svg-to-react-native-jsx":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN JSX sample">\n' +
+    '  <rect x="12" y="20" width="72" height="56" rx="8" fill="#1e293b"/>\n' +
+    '  <text x="48" y="54" text-anchor="middle" font-size="20" font-family="monospace" fill="#61dafb">&lt;/&gt;</text>\n' +
+    "</svg>",
+  "paste-svg-to-react-native-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Paste SVG to RN sample">\n' +
+    '  <rect x="28" y="18" width="40" height="52" rx="6" fill="#e2e8f0" stroke="#64748b" stroke-width="3"/>\n' +
+    '  <rect x="34" y="12" width="28" height="12" rx="3" fill="#94a3b8"/>\n' +
+    '  <path d="M40 40 H56 M40 50 H52" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-react-native-component-generator":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN generator sample">\n' +
+    '  <circle cx="48" cy="48" r="30" fill="#0f172a"/>\n' +
+    '  <path d="M48 28 V48 L62 56" fill="none" stroke="#61dafb" stroke-width="5" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-to-react-native-typescript":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN TypeScript sample">\n' +
+    '  <rect x="14" y="14" width="68" height="68" rx="12" fill="#3178c6"/>\n' +
+    '  <text x="48" y="58" text-anchor="middle" font-size="26" font-family="sans-serif" font-weight="700" fill="#fff">TS</text>\n' +
+    "</svg>",
+  "svg-icon-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Icon to RN sample">\n' +
+    '  <path fill="#61dafb" d="M12 2 L4 20 H9 L12 12 L15 20 H20 Z"/>\n' +
+    "</svg>",
+  "convert-svg-icon-to-react-native-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Icon to react-native-svg sample">\n' +
+    '  <circle cx="12" cy="12" r="9" fill="none" stroke="#61dafb" stroke-width="2"/>\n' +
+    '  <path d="M8 12 L11 15 L16 9" fill="none" stroke="#61dafb" stroke-width="2" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "figma-svg-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120" role="img" aria-label="Figma SVG to RN sample">\n' +
+    "  <!-- figma export junk -->\n" +
+    '  <script>/* remove me */</script>\n' +
+    '  <rect onclick="alert(1)" x="24" y="28" width="152" height="64" rx="16" fill="#a259ff"/>\n' +
+    '  <circle cx="64" cy="60" r="16" fill="#f24e1e"/>\n' +
+    "</svg>",
+  "convert-figma-svg-export-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="220" height="140" viewBox="0 0 220 140" role="img" aria-label="Figma export cleanup sample">\n' +
+    "  <!-- Frame 123 -->\n" +
+    '  <script type="text/javascript">void 0</script>\n' +
+    '  <g id="Group_1" onclick="return false">\n' +
+    '    <rect x="30" y="30" width="160" height="80" rx="12" fill="#0acf83"/>\n' +
+    '    <text x="110" y="78" text-anchor="middle" font-size="18" fill="#042f2e">Figma</text>\n' +
+    "  </g>\n" +
+    "</svg>",
+  "svg-logo-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" role="img" aria-label="Logo to RN sample">\n' +
+    '  <rect x="4" y="8" width="112" height="32" rx="8" fill="#0f172a"/>\n' +
+    '  <circle cx="24" cy="24" r="10" fill="#61dafb"/>\n' +
+    '  <text x="42" y="30" font-size="16" font-family="sans-serif" font-weight="700" fill="#e2e8f0">LOGO</text>\n' +
+    "</svg>",
+  "svg-illustration-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Illustration to RN sample">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="illustSky" x1="0" y1="0" x2="0" y2="1">\n' +
+    '      <stop offset="0" stop-color="#7dd3fc"/>\n' +
+    '      <stop offset="1" stop-color="#0284c7"/>\n' +
+    "    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect width="160" height="120" fill="url(#illustSky)"/>\n' +
+    '  <circle cx="120" cy="28" r="14" fill="#fef08a"/>\n' +
+    '  <path d="M0 90 L40 60 L80 90 L120 55 L160 90 V120 H0 Z" fill="#166534"/>\n' +
+    "</svg>",
+  "svg-to-expo-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Expo RN sample">\n' +
+    '  <rect x="16" y="16" width="64" height="64" rx="16" fill="#000"/>\n' +
+    '  <path d="M32 62 L48 28 L64 62 Z" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>\n' +
+    "</svg>",
+  "convert-svg-to-expo-svg-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Expo SVG component sample">\n' +
+    '  <circle cx="48" cy="48" r="32" fill="#4630EB"/>\n' +
+    '  <path d="M34 50 L44 60 L64 38" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-to-react-native-android":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN Android sample">\n' +
+    '  <path fill="#3DDC84" d="M24 40 H72 V70 H24 Z"/>\n' +
+    '  <circle cx="36" cy="36" r="6" fill="#3DDC84"/>\n' +
+    '  <circle cx="60" cy="36" r="6" fill="#3DDC84"/>\n' +
+    '  <path d="M30 28 L24 18 M66 28 L72 18" stroke="#3DDC84" stroke-width="3" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-to-react-native-ios":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN iOS sample">\n' +
+    '  <rect x="28" y="12" width="40" height="72" rx="8" fill="#111827" stroke="#9ca3af" stroke-width="3"/>\n' +
+    '  <circle cx="48" cy="74" r="4" fill="#9ca3af"/>\n' +
+    '  <rect x="40" y="18" width="16" height="3" rx="1.5" fill="#4b5563"/>\n' +
+    "</svg>",
+  "svg-to-svgxml-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="SvgXml sample">\n' +
+    '  <rect x="14" y="22" width="68" height="52" rx="8" fill="#0f172a"/>\n' +
+    '  <text x="48" y="54" text-anchor="middle" font-size="14" font-family="monospace" fill="#61dafb">xml</text>\n' +
+    "</svg>",
+  "svg-string-to-react-native-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="SVG string to RN sample">\n' +
+    '  <rect x="12" y="28" width="72" height="40" rx="6" fill="#1e293b"/>\n' +
+    '  <text x="48" y="54" text-anchor="middle" font-size="12" font-family="monospace" fill="#94a3b8">"&lt;svg/&gt;"</text>\n' +
+    "</svg>",
+  "inline-svg-to-react-native-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Inline SVG to RN sample">\n' +
+    '  <rect x="20" y="20" width="56" height="56" rx="6" fill="none" stroke="#61dafb" stroke-width="3" stroke-dasharray="6 4"/>\n' +
+    '  <circle cx="48" cy="48" r="14" fill="#61dafb"/>\n' +
+    "</svg>",
+  "svg-path-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Path to RN sample">\n' +
+    '  <path d="M20 90 C50 20 110 20 140 90" fill="none" stroke="#0ea5e9" stroke-width="8" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "convert-svg-path-to-react-native-svg-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Path to RN Path sample">\n' +
+    '  <path d="M24 96 L48 24 L80 72 L112 32 L136 96" fill="none" stroke="#61dafb" stroke-width="6" stroke-linejoin="round"/>\n' +
+    "</svg>",
+  "svg-circle-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Circle to RN sample">\n' +
+    '  <circle cx="60" cy="60" r="40" fill="#61dafb"/>\n' +
+    "</svg>",
+  "svg-rect-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Rect to RN sample">\n' +
+    '  <rect x="20" y="20" width="120" height="60" rx="12" fill="#0ea5e9"/>\n' +
+    "</svg>",
+  "convert-svg-lineargradient-to-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="LinearGradient to RN sample">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="rnGrad" x1="0" y1="0" x2="1" y2="1">\n' +
+    '      <stop offset="0" stop-color="#61dafb"/>\n' +
+    '      <stop offset="1" stop-color="#0ea5e9"/>\n' +
+    "    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect x="16" y="16" width="128" height="68" rx="14" fill="url(#rnGrad)"/>\n' +
+    "</svg>",
+  "convert-svg-attributes-to-react-native-props":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" role="img" aria-label="Attrs to RN props sample">\n' +
+    '  <rect x="16" y="16" width="88" height="48" rx="10" fill="#0ea5e9" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "camelcase-svg-attributes-for-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" role="img" aria-label="CamelCase attrs sample">\n' +
+    '  <path d="M20 60 Q60 10 100 60" fill="none" stroke="#61dafb" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 6"/>\n' +
+    "</svg>",
+  "svg-to-react-native-currentcolor":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="RN currentColor sample">\n' +
+    '  <path fill="#ef4444" d="M48 18 L72 70 H24 Z"/>\n' +
+    '  <circle cx="48" cy="58" r="8" fill="#b91c1c"/>\n' +
+    "</svg>",
+  "convert-svg-fill-to-color-prop-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Fill to color prop sample">\n' +
+    '  <rect x="20" y="20" width="56" height="56" rx="12" fill="#22c55e"/>\n' +
+    '  <circle cx="48" cy="48" r="14" fill="#166534"/>\n' +
+    "</svg>",
+  "svg-icon-with-size-props-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Size props icon sample">\n' +
+    '  <rect x="3" y="3" width="18" height="18" rx="4" fill="#61dafb"/>\n' +
+    '  <path d="M8 12 H16 M12 8 V16" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "responsive-svg-icon-react-native-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Responsive RN icon sample">\n' +
+    '  <circle cx="24" cy="24" r="18" fill="none" stroke="#61dafb" stroke-width="3"/>\n' +
+    '  <path d="M16 24 H32 M24 16 V32" stroke="#61dafb" stroke-width="3" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-to-react-native-with-viewbox":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" role="img" aria-label="RN with viewBox sample">\n' +
+    '  <rect x="10" y="20" width="180" height="60" rx="10" fill="#0ea5e9"/>\n' +
+    '  <text x="100" y="58" text-anchor="middle" font-size="18" fill="#082f49">viewBox</text>\n' +
+    "</svg>",
+  "optimize-svg-for-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120" role="img" aria-label="Optimize for RN sample">\n' +
+    "  <!-- unused comment clutter -->\n" +
+    '  <script>/* junk */</script>\n' +
+    '  <rect onclick="alert(1)" x="20" y="24" width="160" height="72" rx="12" fill="#f59e0b"/>\n' +
+    '  <g id="empty-group"></g>\n' +
+    "</svg>",
+  "remove-unsupported-svg-for-react-native":
+    '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120" role="img" aria-label="Remove unsupported sample">\n' +
+    '  <script type="text/ecmascript">1</script>\n' +
+    '  <foreignObject x="0" y="0" width="40" height="20"></foreignObject>\n' +
+    '  <rect x="40" y="30" width="120" height="60" rx="10" fill="#ef4444" onclick="x()"/>\n' +
+    "</svg>",
+  "svgr-native-svg-to-react-native-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="SVGR Native sample">\n' +
+    '  <rect x="18" y="18" width="60" height="60" rx="12" fill="#f97316"/>\n' +
+    '  <text x="48" y="56" text-anchor="middle" font-size="16" font-family="sans-serif" font-weight="700" fill="#fff">SVGR</text>\n' +
+    "</svg>",
+  "svg-to-react-native-functional-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Functional RN component sample">\n' +
+    '  <rect x="16" y="24" width="64" height="48" rx="10" fill="#0ea5e9"/>\n' +
+    '  <text x="48" y="54" text-anchor="middle" font-size="14" font-family="monospace" fill="#082f49">fn()</text>\n' +
+    "</svg>",
+  "svg-to-react-native-forwardref-component":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="forwardRef RN sample">\n' +
+    '  <circle cx="48" cy="48" r="28" fill="none" stroke="#61dafb" stroke-width="5"/>\n' +
+    '  <path d="M48 28 V48 L64 56" fill="none" stroke="#61dafb" stroke-width="4" stroke-linecap="round"/>\n' +
+    '  <text x="48" y="78" text-anchor="middle" font-size="10" font-family="monospace" fill="#64748b">ref</text>\n' +
+    "</svg>",
+};
+
 function batchBodyAttr(name) {
   return (document.body && document.body.getAttribute(name)) || "";
 }
@@ -371,6 +653,27 @@ function getBatchLongtailStartup() {
     return {
       svg: BATCH_STYLE_DEFAULT_SVGS[styleIntent],
       status: "Sample SVG — click the action button to rewrite styles",
+    };
+  }
+  var aspect = batchBodyAttr("data-aspect-intent");
+  if (aspect && BATCH_ASPECT_DEFAULT_SVGS[aspect]) {
+    return {
+      svg: BATCH_ASPECT_DEFAULT_SVGS[aspect],
+      status: "Sample SVG — click the action button to fix aspect / gradient stretch",
+    };
+  }
+  var svelte = batchBodyAttr("data-svelte-intent");
+  if (svelte && BATCH_SVELTE_DEFAULT_SVGS[svelte]) {
+    return {
+      svg: BATCH_SVELTE_DEFAULT_SVGS[svelte],
+      status: "Sample SVG — click the action button to convert to Svelte",
+    };
+  }
+  var rn = batchBodyAttr("data-rn-intent");
+  if (rn && BATCH_RN_DEFAULT_SVGS[rn]) {
+    return {
+      svg: BATCH_RN_DEFAULT_SVGS[rn],
+      status: "Sample SVG — click the action button to convert to React Native",
     };
   }
   return null;
@@ -1457,6 +1760,317 @@ function applyBatchStyleMarkup(markup, intent) {
   return { markup: batchSerialize(svg), status: status };
 }
 
+function applyBatchAspectMarkup(markup, intent) {
+  if (!BATCH_ASPECT_DEFAULT_SVGS[intent]) {
+    throw new Error("Unknown aspect intent");
+  }
+  var svg =
+    typeof parseSvg === "function" ? parseSvg(markup) : batchParseSvgRaw(markup);
+  var status = "Aspect ratio fixed";
+
+  var setUserSpace = function () {
+    Array.from(
+      svg.querySelectorAll("linearGradient, radialGradient, lineargradient, radialgradient")
+    ).forEach(function (g) {
+      g.setAttribute("gradientUnits", "userSpaceOnUse");
+      var vb = (svg.getAttribute("viewBox") || "0 0 160 80").trim().split(/\s+/);
+      var x = parseFloat(vb[0]) || 0;
+      var y = parseFloat(vb[1]) || 0;
+      var w = parseFloat(vb[2]) || 160;
+      var h = parseFloat(vb[3]) || 80;
+      if (!g.getAttribute("x1") || String(g.getAttribute("x1")).indexOf("%") >= 0 || Number(g.getAttribute("x1")) <= 1) {
+        g.setAttribute("x1", String(x));
+        g.setAttribute("y1", String(y + h / 2));
+        g.setAttribute("x2", String(x + w));
+        g.setAttribute("y2", String(y + h / 2));
+      }
+    });
+  };
+
+  if (
+    intent === "fix-svg-gradient-stretch-in-flexbox" ||
+    intent === "fix-svg-gradient-stretch-in-css-grid" ||
+    intent === "prevent-svg-gradient-stretch-in-flex-container" ||
+    intent === "svg-gradient-objectboundingbox-stretch-fix" ||
+    intent === "stop-svg-linear-gradient-from-stretching-in-grid"
+  ) {
+    setUserSpace();
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    status =
+      intent.indexOf("grid") !== -1
+        ? "gradientUnits=userSpaceOnUse + preserveAspectRatio meet (grid-safe)"
+        : "gradientUnits=userSpaceOnUse + preserveAspectRatio meet (flex-safe)";
+  } else if (intent === "set-svg-preserveaspectratio-for-flexbox") {
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    status = "preserveAspectRatio set to xMidYMid meet for flexbox";
+  } else if (intent === "set-svg-preserveaspectratio-online") {
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    status = "preserveAspectRatio set to xMidYMid meet";
+  } else if (intent === "svg-preserveaspectratio-meet-slice-none") {
+    var current = (svg.getAttribute("preserveAspectRatio") || "none").toLowerCase();
+    var next = "xMidYMid meet";
+    if (current.indexOf("meet") !== -1) next = "xMidYMid slice";
+    else if (current.indexOf("slice") !== -1) next = "none";
+    svg.setAttribute("preserveAspectRatio", next);
+    status = "preserveAspectRatio set to " + next;
+  } else if (intent === "make-svg-fill-container-without-distortion") {
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    status = "Fills container without distortion (meet)";
+  } else if (intent === "svg-responsive-scale-with-parent-container") {
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    var styleMap =
+      typeof batchParseStyleDecl === "function"
+        ? batchParseStyleDecl(svg.getAttribute("style") || "")
+        : {};
+    styleMap.width = "100%";
+    styleMap.height = "auto";
+    styleMap.display = "block";
+    if (typeof batchStyleToString === "function") {
+      svg.setAttribute("style", batchStyleToString(styleMap));
+    } else {
+      svg.setAttribute("style", "width:100%;height:auto;display:block");
+    }
+    status = "Responsive scale with parent (width 100%, height auto, meet)";
+  } else {
+    throw new Error("Unknown aspect intent");
+  }
+
+  batchStripRoot(svg);
+  return { markup: batchSerialize(svg), status: status };
+}
+
+function applyBatchSvelteMarkup(markup, intent) {
+  if (!BATCH_SVELTE_DEFAULT_SVGS[intent]) {
+    throw new Error("Unknown Svelte intent");
+  }
+  var svg =
+    typeof parseSvg === "function" ? parseSvg(markup) : batchParseSvgRaw(markup);
+  batchStripRoot(svg);
+  var svgMarkup = batchSerialize(svg);
+  var indented = batchIndentSvg(svgMarkup, 2);
+  var code;
+  var status = "Converted to Svelte";
+
+  if (intent === "svg-to-svelte-typescript") {
+    code =
+      '<script lang="ts">\n' +
+      "  export let title: string = '';\n" +
+      "  export let size: number | string = 24;\n" +
+      "</script>\n\n" +
+      indented.replace(
+        /^(\s*)<svg\b/,
+        '$1<svg width={size} height={size} aria-hidden={title ? undefined : true}'
+      ) +
+      "\n";
+    status = "Converted to Svelte TypeScript component";
+  } else if (intent === "svg-to-sveltekit") {
+    code =
+      "<!-- SvelteKit-friendly icon component -->\n" +
+      "<script>\n" +
+      "  export let title = '';\n" +
+      "  export let size = 24;\n" +
+      "</script>\n\n" +
+      indented.replace(
+        /^(\s*)<svg\b/,
+        "$1<svg width={size} height={size} role={title ? 'img' : undefined}"
+      ) +
+      "\n";
+    status = "Converted to SvelteKit component";
+  } else if (intent === "svg-icon-to-svelte") {
+    code =
+      "<script>\n" +
+      "  export let size = 24;\n" +
+      "  export let color = 'currentColor';\n" +
+      "</script>\n\n" +
+      indented.replace(
+        /^(\s*)<svg\b/,
+        "$1<svg width={size} height={size} fill={color}"
+      ) +
+      "\n";
+    status = "Converted to Svelte icon component";
+  } else {
+    code =
+      "<script>\n" +
+      "  export let title = '';\n" +
+      "</script>\n\n" +
+      indented +
+      "\n";
+    status =
+      intent === "svg-to-svelte-single-file-component"
+        ? "Converted to Svelte single-file component"
+        : "Converted to Svelte component";
+  }
+
+  return { code: code, status: status, markup: svgMarkup };
+}
+
+function batchRnPrepareSvg(markup, intent) {
+  var svg =
+    typeof parseSvg === "function" ? parseSvg(markup) : batchParseSvgRaw(markup);
+
+  if (
+    intent === "optimize-svg-for-react-native" ||
+    intent === "remove-unsupported-svg-for-react-native" ||
+    intent === "figma-svg-to-react-native" ||
+    intent === "convert-figma-svg-export-to-react-native"
+  ) {
+    Array.from(svg.querySelectorAll("script, foreignObject")).forEach(function (el) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+    Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+      Array.from(el.attributes).forEach(function (attr) {
+        var n = attr.name.toLowerCase();
+        if (n.indexOf("on") === 0 || n === "href" && String(el.localName).toLowerCase() === "script") {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
+  }
+
+  if (
+    intent === "svg-to-react-native-currentcolor" ||
+    intent === "convert-svg-fill-to-color-prop-react-native"
+  ) {
+    Array.from(svg.querySelectorAll("[fill]")).forEach(function (el) {
+      var fill = el.getAttribute("fill");
+      if (!fill || fill === "none" || fill.indexOf("url(") === 0) return;
+      el.setAttribute("fill", "currentColor");
+    });
+  }
+
+  batchStripRoot(svg);
+  return svg;
+}
+
+function applyBatchRnMarkup(markup, intent) {
+  if (!BATCH_RN_DEFAULT_SVGS[intent]) {
+    throw new Error("Unknown React Native intent");
+  }
+  var svg = batchRnPrepareSvg(markup, intent);
+  var svgMarkup = batchSerialize(svg);
+  var status = "Converted to React Native";
+  var code;
+
+  if (
+    intent === "svg-to-svgxml-react-native" ||
+    intent === "svg-string-to-react-native-component"
+  ) {
+    var escaped = svgMarkup.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$");
+    code =
+      'import { SvgXml } from "react-native-svg";\n\n' +
+      "const xml = `" +
+      escaped +
+      "`;\n\n" +
+      "export default function Icon(props) {\n" +
+      "  return <SvgXml xml={xml} {...props} />;\n" +
+      "}\n";
+    status = "Converted to SvgXml React Native component";
+  } else if (typeof svgToReactNativeComponent === "function") {
+    code = svgToReactNativeComponent(svgMarkup);
+  } else {
+    throw new Error("React Native converter unavailable");
+  }
+
+  if (intent === "svg-to-react-native-typescript") {
+    code = code
+      .replace(
+        "export default function Icon(props) {",
+        "import type { SvgProps } from \"react-native-svg\";\n\nexport default function Icon(props: SvgProps) {"
+      )
+      .replace(
+        'import type { SvgProps } from "react-native-svg";\n\nimport type { SvgProps } from "react-native-svg";\n\n',
+        'import type { SvgProps } from "react-native-svg";\n\n'
+      );
+    if (code.indexOf("SvgProps") === -1) {
+      code =
+        'import type { SvgProps } from "react-native-svg";\n' +
+        code.replace(
+          "export default function Icon(props)",
+          "export default function Icon(props: SvgProps)"
+        );
+    }
+    status = "Converted to typed React Native (TSX) component";
+  } else if (intent === "svg-to-react-native-forwardref-component") {
+    code = code
+      .replace(
+        /import Svg(, \{[^}]+\})? from "react-native-svg";/,
+        'import React, { forwardRef } from "react";\nimport Svg$1 from "react-native-svg";'
+      )
+      .replace(
+        "export default function Icon(props) {\n  return (\n",
+        "const Icon = forwardRef(function Icon(props, ref) {\n  return (\n"
+      )
+      .replace(
+        /^(\s*)<Svg \{\.\.\.props\}/m,
+        "$1<Svg ref={ref} {...props}"
+      );
+    if (code.indexOf("forwardRef") !== -1 && code.indexOf("export default Icon") === -1) {
+      code = code.replace(/\}\n$/, "});\n\nexport default Icon;\n");
+    }
+    status = "Converted to forwardRef React Native component";
+  } else if (
+    intent === "svg-icon-with-size-props-react-native" ||
+    intent === "responsive-svg-icon-react-native-component"
+  ) {
+    code = code.replace(
+      "export default function Icon(props) {\n  return (\n",
+      "export default function Icon({ size = 24, color, ...props }) {\n  return (\n"
+    );
+    code = code.replace(
+      /^(\s*)<Svg \{\.\.\.props\}/m,
+      "$1<Svg width={size} height={size} color={color} {...props}"
+    );
+    status =
+      intent === "responsive-svg-icon-react-native-component"
+        ? "Converted to responsive RN icon with size props"
+        : "Converted to RN icon with size props";
+  } else if (
+    intent === "svg-to-react-native-currentcolor" ||
+    intent === "convert-svg-fill-to-color-prop-react-native"
+  ) {
+    code = code.replace(
+      "export default function Icon(props) {\n  return (\n",
+      "export default function Icon({ color = \"#000\", ...props }) {\n  return (\n"
+    );
+    code = code.replace(
+      /^(\s*)<Svg \{\.\.\.props\}/m,
+      "$1<Svg color={color} {...props}"
+    );
+    status = "Converted to RN with color prop / currentColor fills";
+  } else if (
+    intent === "optimize-svg-for-react-native" ||
+    intent === "remove-unsupported-svg-for-react-native"
+  ) {
+    status = "Cleaned unsupported bits and converted to React Native";
+  } else if (intent === "svg-to-expo-react-native") {
+    code =
+      "// Expo: install with `npx expo install react-native-svg`\n" + code;
+    status = "Converted to Expo-friendly react-native-svg component";
+  } else if (intent === "convert-svg-to-expo-svg-component") {
+    code =
+      "// Expo SVG component — use inside your Expo Router / App screens\n" +
+      code;
+    status = "Converted to Expo SVG component";
+  } else if (intent === "svg-to-react-native-android") {
+    code =
+      "// Android: prefer vector SVG over bitmap; test on API 24+\n" + code;
+    status = "Converted for React Native Android";
+  } else if (intent === "svg-to-react-native-ios") {
+    code =
+      "// iOS: works with react-native-svg; verify on device/simulator\n" + code;
+    status = "Converted for React Native iOS";
+  } else if (
+    intent.indexOf("path") !== -1 ||
+    intent.indexOf("circle") !== -1 ||
+    intent.indexOf("rect") !== -1 ||
+    intent.indexOf("lineargradient") !== -1
+  ) {
+    status = "Converted SVG primitives to react-native-svg";
+  }
+
+  return { code: code, status: status, markup: svgMarkup };
+}
+
 function initBatchLongtailIntents() {
   var vueBtn = document.getElementById("btn-vue-action");
   var vueIntent = batchBodyAttr("data-vue-intent");
@@ -1562,6 +2176,135 @@ function initBatchLongtailIntents() {
       }
     });
   }
+
+  var aspectBtn = document.getElementById("btn-aspect-action");
+  var aspectIntent = batchBodyAttr("data-aspect-intent");
+  if (aspectBtn && aspectIntent) {
+    aspectBtn.addEventListener("click", function () {
+      var raw =
+        (typeof extractSvgMarkup === "function"
+          ? extractSvgMarkup(editor.value)
+          : null) || editor.value.trim();
+      if (!raw) {
+        setStatus("empty", "Paste an SVG first");
+        return;
+      }
+      try {
+        var aspectResult = applyBatchAspectMarkup(raw, aspectIntent);
+        applyMirroredEditorMarkup(aspectResult.markup, aspectResult.status);
+      } catch (err) {
+        setStatus("error", (err && err.message) || "Could not fix aspect ratio");
+      }
+    });
+  }
+
+  var svelteBtn = document.getElementById("btn-svelte-action");
+  var svelteIntent = batchBodyAttr("data-svelte-intent");
+  if (svelteIntent) {
+    var svelteTabReact = document.getElementById("tab-react");
+    var svelteTabRn = document.getElementById("tab-react-native");
+    var svelteReactPanel = document.getElementById("panel-view-react");
+    if (svelteTabReact) {
+      svelteTabReact.textContent = "Svelte";
+      svelteTabReact.removeAttribute("aria-label");
+    }
+    if (svelteTabRn) {
+      svelteTabRn.hidden = true;
+      svelteTabRn.setAttribute("aria-hidden", "true");
+      svelteTabRn.style.display = "none";
+    }
+    if (svelteReactPanel) {
+      var svelteLabelEl = svelteReactPanel.querySelector(".code-output-label");
+      if (svelteLabelEl) svelteLabelEl.textContent = "Svelte component";
+    }
+  }
+  if (svelteBtn && svelteIntent) {
+    svelteBtn.addEventListener("click", function () {
+      var raw =
+        (typeof extractSvgMarkup === "function"
+          ? extractSvgMarkup(editor.value)
+          : null) || editor.value.trim();
+      if (!raw) {
+        setStatus("empty", "Paste an SVG first");
+        return;
+      }
+      try {
+        var svelteResult = applyBatchSvelteMarkup(raw, svelteIntent);
+        if (typeof applyMirroredEditorMarkup === "function") {
+          applyMirroredEditorMarkup(svelteResult.markup, svelteResult.status);
+        }
+        if (typeof reactOutput !== "undefined" && reactOutput) {
+          reactOutput.textContent = svelteResult.code;
+        }
+        if (typeof setActiveTab === "function") setActiveTab("react");
+        if (typeof copyTextToClipboard === "function") {
+          copyTextToClipboard(svelteResult.code)
+            .then(function () {
+              if (typeof flashCopyButton === "function") {
+                flashCopyButton(svelteBtn, "Copied");
+              }
+              setStatus("ok", svelteResult.status + " — Svelte code copied");
+            })
+            .catch(function () {
+              setStatus("ok", svelteResult.status);
+            });
+        }
+      } catch (err) {
+        setStatus("error", (err && err.message) || "Could not convert to Svelte");
+      }
+    });
+  }
+
+  var rnBtn = document.getElementById("btn-rn-action");
+  var rnIntent = batchBodyAttr("data-rn-intent");
+  if (rnIntent) {
+    var rnTab = document.getElementById("tab-react-native");
+    var rnPanel = document.getElementById("panel-view-react-native");
+    if (rnTab) rnTab.textContent = "RN";
+    if (rnPanel) {
+      var rnLabelEl = rnPanel.querySelector(".code-output-label");
+      if (rnLabelEl) rnLabelEl.textContent = "React Native (react-native-svg)";
+    }
+  }
+  if (rnBtn && rnIntent) {
+    rnBtn.addEventListener("click", function () {
+      var raw =
+        (typeof extractSvgMarkup === "function"
+          ? extractSvgMarkup(editor.value)
+          : null) || editor.value.trim();
+      if (!raw) {
+        setStatus("empty", "Paste an SVG first");
+        return;
+      }
+      try {
+        var rnResult = applyBatchRnMarkup(raw, rnIntent);
+        if (typeof applyMirroredEditorMarkup === "function") {
+          applyMirroredEditorMarkup(rnResult.markup, rnResult.status);
+        }
+        if (typeof rnOutput !== "undefined" && rnOutput) {
+          rnOutput.textContent = rnResult.code;
+        }
+        if (typeof setActiveTab === "function") setActiveTab("react-native");
+        if (typeof copyTextToClipboard === "function") {
+          copyTextToClipboard(rnResult.code)
+            .then(function () {
+              if (typeof flashCopyButton === "function") {
+                flashCopyButton(rnBtn, "Copied");
+              }
+              setStatus("ok", rnResult.status + " — RN code copied");
+            })
+            .catch(function () {
+              setStatus("ok", rnResult.status);
+            });
+        }
+      } catch (err) {
+        setStatus(
+          "error",
+          (err && err.message) || "Could not convert to React Native"
+        );
+      }
+    });
+  }
 }
 
 if (typeof globalThis !== "undefined") {
@@ -1572,6 +2315,9 @@ if (typeof globalThis !== "undefined") {
   globalThis.applyBatchVueMarkup = applyBatchVueMarkup;
   globalThis.applyBatchAnimMarkup = applyBatchAnimMarkup;
   globalThis.applyBatchStyleMarkup = applyBatchStyleMarkup;
+  globalThis.applyBatchAspectMarkup = applyBatchAspectMarkup;
+  globalThis.applyBatchSvelteMarkup = applyBatchSvelteMarkup;
+  globalThis.applyBatchRnMarkup = applyBatchRnMarkup;
   globalThis.initBatchLongtailIntents = initBatchLongtailIntents;
   globalThis.BATCH_GRADIENT_DEFAULT_SVGS = BATCH_GRADIENT_DEFAULT_SVGS;
   globalThis.BATCH_CLEAN_DEFAULT_SVGS = BATCH_CLEAN_DEFAULT_SVGS;
@@ -1579,4 +2325,7 @@ if (typeof globalThis !== "undefined") {
   globalThis.BATCH_VUE_DEFAULT_SVGS = BATCH_VUE_DEFAULT_SVGS;
   globalThis.BATCH_ANIM_DEFAULT_SVGS = BATCH_ANIM_DEFAULT_SVGS;
   globalThis.BATCH_STYLE_DEFAULT_SVGS = BATCH_STYLE_DEFAULT_SVGS;
+  globalThis.BATCH_ASPECT_DEFAULT_SVGS = BATCH_ASPECT_DEFAULT_SVGS;
+  globalThis.BATCH_SVELTE_DEFAULT_SVGS = BATCH_SVELTE_DEFAULT_SVGS;
+  globalThis.BATCH_RN_DEFAULT_SVGS = BATCH_RN_DEFAULT_SVGS;
 }

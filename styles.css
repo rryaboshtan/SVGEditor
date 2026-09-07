@@ -4563,7 +4563,10 @@ body.animation-editor-page {
 .gradient-tool-page .tool-banner-copy,
 .vue-tool-page .tool-banner-copy,
 .anim-tool-page .tool-banner-copy,
-.style-tool-page .tool-banner-copy {
+.style-tool-page .tool-banner-copy,
+.aspect-tool-page .tool-banner-copy,
+.svelte-tool-page .tool-banner-copy,
+.rn-tool-page .tool-banner-copy {
   display: block;
 }
 
@@ -4574,7 +4577,10 @@ body.animation-editor-page {
 .gradient-tool-page .tool-breadcrumbs,
 .vue-tool-page .tool-breadcrumbs,
 .anim-tool-page .tool-breadcrumbs,
-.style-tool-page .tool-breadcrumbs {
+.style-tool-page .tool-breadcrumbs,
+.aspect-tool-page .tool-breadcrumbs,
+.svelte-tool-page .tool-breadcrumbs,
+.rn-tool-page .tool-breadcrumbs {
   margin-bottom: .25rem;
 }
 
@@ -4585,7 +4591,10 @@ body.animation-editor-page {
 .gradient-tool-page .tool-title,
 .vue-tool-page .tool-title,
 .anim-tool-page .tool-title,
-.style-tool-page .tool-title {
+.style-tool-page .tool-title,
+.aspect-tool-page .tool-title,
+.svelte-tool-page .tool-title,
+.rn-tool-page .tool-title {
   display: block;
 }
 
@@ -4596,7 +4605,10 @@ body.animation-editor-page {
 .gradient-tool-page .tool-sub,
 .vue-tool-page .tool-sub,
 .anim-tool-page .tool-sub,
-.style-tool-page .tool-sub {
+.style-tool-page .tool-sub,
+.aspect-tool-page .tool-sub,
+.svelte-tool-page .tool-sub,
+.rn-tool-page .tool-sub {
   margin-top: .2rem;
 }
 
@@ -4607,7 +4619,10 @@ body.animation-editor-page {
 .gradient-tool-page #btn-gradient-action,
 .vue-tool-page #btn-vue-action,
 .anim-tool-page #btn-anim-action,
-.style-tool-page #btn-style-action {
+.style-tool-page #btn-style-action,
+.aspect-tool-page #btn-aspect-action,
+.svelte-tool-page #btn-svelte-action,
+.rn-tool-page #btn-rn-action {
   letter-spacing: .02em;
 }
 
@@ -4713,7 +4728,10 @@ body.animation-editor-page {
   .gradient-tool-page .panel-actions,
   .vue-tool-page .panel-actions,
   .anim-tool-page .panel-actions,
-  .style-tool-page .panel-actions {
+  .style-tool-page .panel-actions,
+  .aspect-tool-page .panel-actions,
+  .svelte-tool-page .panel-actions,
+  .rn-tool-page .panel-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .scale-path-tool-page .scale-path-factor-group,

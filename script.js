@@ -5885,21 +5885,32 @@ function renderPngPreview(markup) {
 
 function updateExports(markup) {
   latestMarkup = markup;
+  var svelteIntentExport =
+    (document.body && document.body.getAttribute("data-svelte-intent")) || "";
+  var rnIntentExport =
+    (document.body && document.body.getAttribute("data-rn-intent")) || "";
+  var vueIntentExport =
+    (document.body && document.body.getAttribute("data-vue-intent")) || "";
+
   if (!markup) {
-    if (document.body && document.body.getAttribute("data-vue-intent")) {
+    if (vueIntentExport) {
       reactOutput.textContent = "// Paste valid SVG to generate a Vue component.";
+      if (rnOutput) rnOutput.textContent = "";
+    } else if (svelteIntentExport) {
+      reactOutput.textContent = "// Paste valid SVG to generate a Svelte component.";
       if (rnOutput) rnOutput.textContent = "";
     } else {
       reactOutput.textContent = "// Paste valid SVG to generate a React component.";
-      rnOutput.textContent = "// Paste valid SVG to generate a React Native component.";
+      if (rnOutput) {
+        rnOutput.textContent =
+          "// Paste valid SVG to generate a React Native component.";
+      }
     }
     refreshDataUriOutput(null);
     clearPngPreview();
     return;
   }
 
-  var vueIntentExport =
-    (document.body && document.body.getAttribute("data-vue-intent")) || "";
   if (vueIntentExport && typeof applyBatchVueMarkup === "function") {
     try {
       reactOutput.textContent = applyBatchVueMarkup(markup, vueIntentExport).code;
@@ -5911,6 +5922,21 @@ function updateExports(markup) {
     if (rnOutput) {
       rnOutput.textContent = "// React Native export is hidden on Vue converter pages.";
     }
+  } else if (svelteIntentExport && typeof applyBatchSvelteMarkup === "function") {
+    try {
+      reactOutput.textContent = applyBatchSvelteMarkup(
+        markup,
+        svelteIntentExport
+      ).code;
+    } catch (err) {
+      reactOutput.textContent =
+        "// Couldn’t convert SVG to Svelte.\n// " +
+        (err && err.message ? err.message : "Unknown error");
+    }
+    if (rnOutput) {
+      rnOutput.textContent =
+        "// React Native export is hidden on Svelte converter pages.";
+    }
   } else {
     try {
       reactOutput.textContent = svgToReactComponent(markup);
@@ -5920,12 +5946,18 @@ function updateExports(markup) {
         (err && err.message ? err.message : "Unknown error");
     }
 
-    try {
-      rnOutput.textContent = svgToReactNativeComponent(markup);
-    } catch (err) {
-      rnOutput.textContent =
-        "// Couldn’t convert SVG to React Native.\n// " +
-        (err && err.message ? err.message : "Unknown error");
+    if (rnOutput) {
+      try {
+        if (rnIntentExport && typeof applyBatchRnMarkup === "function") {
+          rnOutput.textContent = applyBatchRnMarkup(markup, rnIntentExport).code;
+        } else {
+          rnOutput.textContent = svgToReactNativeComponent(markup);
+        }
+      } catch (err) {
+        rnOutput.textContent =
+          "// Couldn’t convert SVG to React Native.\n// " +
+          (err && err.message ? err.message : "Unknown error");
+      }
     }
   }
 
