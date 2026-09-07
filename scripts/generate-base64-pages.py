@@ -38,7 +38,7 @@ PAGES = [
       ("/svg-to-base64-data-uri", "SVG to Base64 data URI →"),
       ("/svg-to-base64-css", "SVG to Base64 CSS →"),
       ("/svg-to-base64-html", "SVG to Base64 HTML →"),
-    ],
+    ]
   },
   {
     "slug": "svg-to-base64-string",
@@ -67,9 +67,9 @@ PAGES = [
     "note_html": '<span class="tool-note-pair">Full data URI? <a href="/svg-to-base64-data-uri">SVG to Base64 data URI</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Hub? <a href="/svg-to-base64">SVG to Base64</a></span>',
     "guides": [
       ("/svg-to-base64", "SVG to Base64 →"),
-      ("/convert-svg-to-base64-string", "Convert SVG to Base64 string →"),
       ("/svg-image-to-base64-string", "SVG image to Base64 string →"),
       ("/svg-to-base64-data-uri", "SVG to Base64 data URI →"),
+      ("/svg-to-base64-css", "SVG to Base64 CSS →"),
     ],
   },
   {
@@ -99,9 +99,9 @@ PAGES = [
     "note_html": '<span class="tool-note-pair">HTML img? <a href="/svg-to-base64-html-img">SVG to Base64 HTML img</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Raw string? <a href="/svg-to-base64-string">SVG to Base64 string</a></span>',
     "guides": [
       ("/svg-to-base64", "SVG to Base64 →"),
-      ("/convert-svg-to-base64-data-uri", "Convert SVG to Base64 data URI →"),
       ("/svg-base64-data-uri-image", "SVG Base64 data URI image →"),
       ("/svg-to-base64-html-img", "SVG to Base64 HTML img →"),
+      ("/svg-to-base64-string", "SVG to Base64 string →"),
     ],
   },
   {
@@ -133,7 +133,7 @@ PAGES = [
       ("/svg-to-base64", "SVG to Base64 →"),
       ("/svg-to-base64-css-background-image", "CSS background-image →"),
       ("/svg-to-base64-css-background", "CSS background →"),
-      ("/convert-svg-to-base64-css", "Convert SVG to Base64 CSS →"),
+      ("/svg-to-base64-css-data-uri", "CSS data URI →"),
     ],
   },
   {
@@ -164,8 +164,8 @@ PAGES = [
     "guides": [
       ("/svg-to-base64", "SVG to Base64 →"),
       ("/svg-to-base64-html-img", "SVG to Base64 HTML img →"),
-      ("/convert-svg-to-base64-html", "Convert SVG to Base64 HTML →"),
       ("/svg-to-base64-data-uri", "SVG to Base64 data URI →"),
+      ("/svg-to-base64-string", "SVG to Base64 string →"),
     ],
   },
   {
@@ -198,7 +198,7 @@ PAGES = [
       ("/svg-to-base64-css-background", "CSS background →"),
       ("/svg-to-base64-css-data-uri", "CSS data URI →"),
       ("/svg-to-base64", "SVG to Base64 →"),
-    ],
+    ]
   },
   {
     "slug": "svg-to-base64-css-background",
@@ -230,7 +230,7 @@ PAGES = [
       ("/svg-to-base64-css", "SVG to Base64 CSS →"),
       ("/svg-to-base64-css-data-uri", "CSS data URI →"),
       ("/svg-to-base64", "SVG to Base64 →"),
-    ],
+    ]
   },
   {
     "slug": "svg-to-base64-css-data-uri",
@@ -260,73 +260,8 @@ PAGES = [
     "guides": [
       ("/svg-to-base64-css", "SVG to Base64 CSS →"),
       ("/svg-to-base64-css-background-image", "CSS background-image →"),
-      ("/convert-svg-to-base64-css", "Convert SVG to Base64 CSS →"),
       ("/svg-to-base64-data-uri", "SVG to Base64 data URI →"),
-    ],
-  },
-  {
-    "slug": "convert-svg-to-base64-css",
-    "title": "Convert SVG to Base64 CSS Online — Free Tool | getsvgeditor.com",
-    "description": "Convert SVG to Base64 CSS in one click. Paste SVG and copy a stylesheet-ready background-image rule — free, no upload.",
-    "h1": "Convert SVG to Base64 CSS",
-    "crumb": "Convert to Base64 CSS",
-    "sub": "One-click convert: SVG in, <strong>CSS rule</strong> with Base64 <code>url()</code> out",
-    "og_alt": "Convert SVG to Base64 CSS rule in SVGEditor",
-    "app_name": "Convert SVG to Base64 CSS",
-    "app_alts": ["Convert SVG to Base64 CSS", "SVG to CSS Base64 converter", "Encode SVG for stylesheet", "SVG CSS converter Base64"],
-    "app_desc": "Free converter from SVG markup to a CSS class using a Base64 data URI.",
-    "features": ["One-click CSS convert", "Base64 background-image", "Live preview", "No file upload"],
-    "howto_name": "Convert SVG to Base64 CSS",
-    "howto_desc": "Turn pasted SVG into a CSS class with a Base64 background-image.",
-    "howto_click": "Click Convert to CSS. The Data URI panel shows the class rule; it is also copied.",
-    "btn": "Convert to CSS",
-    "btn_title": "Convert SVG to a CSS class with Base64 background-image",
-    "faq_aria": "Convert SVG to Base64 CSS FAQ",
-    "faqs": [
-      ("How do I convert SVG to Base64 CSS?", "Paste the SVG and click Convert to CSS. A .icon rule with background-image is copied and shown in the Data URI tab."),
-      ("Is convert different from the CSS page?", "Same encoding. This page uses convert wording and a convert button for people searching that verb."),
-      ("Can I rename .icon?", "Yes. The class name is a starter — change it after paste to match your design system."),
-      ("Need only url()?", "Open SVG to Base64 CSS Data URI."),
-    ],
-    "note_html": '<span class="tool-note-pair">CSS hub? <a href="/svg-to-base64-css">SVG to Base64 CSS</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">url() only? <a href="/svg-to-base64-css-data-uri">CSS data URI</a></span>',
-    "guides": [
-      ("/svg-to-base64-css", "SVG to Base64 CSS →"),
-      ("/svg-to-base64-css-data-uri", "CSS data URI →"),
-      ("/svg-to-base64-css-background", "CSS background →"),
-      ("/svg-to-base64", "SVG to Base64 →"),
-    ],
-  },
-  {
-    "slug": "convert-svg-to-base64-string",
-    "title": "Convert SVG to Base64 String Online — Free Tool | getsvgeditor.com",
-    "description": "Convert SVG to a Base64 string in one click. Copy raw encoded characters for APIs and payloads — free, no upload.",
-    "h1": "Convert SVG to Base64 String",
-    "crumb": "Convert to Base64 string",
-    "sub": "One-click convert: SVG in, <strong>raw Base64 characters</strong> out",
-    "og_alt": "Convert SVG to a Base64 string in SVGEditor",
-    "app_name": "Convert SVG to Base64 String",
-    "app_alts": ["Convert SVG to Base64 string", "SVG Base64 converter", "Encode SVG string", "SVG to Base64 encode"],
-    "app_desc": "Free converter from SVG markup to a raw Base64 string.",
-    "features": ["One-click string convert", "Raw Base64 output", "Live preview", "No file upload"],
-    "howto_name": "Convert SVG to a Base64 string",
-    "howto_desc": "Turn pasted SVG into raw Base64 characters with one click.",
-    "howto_click": "Click Convert to string. The panel shows PHN2Zy… without a data: prefix.",
-    "btn": "Convert to string",
-    "btn_title": "Convert SVG to a raw Base64 string",
-    "faq_aria": "Convert SVG to Base64 string FAQ",
-    "faqs": [
-      ("How do I convert SVG to a Base64 string?", "Paste markup and click Convert to string. The clipboard gets only the encoded characters."),
-      ("Will UTF-8 in the SVG survive encoding?", "Yes. The encoder uses UTF-8 then Base64, so text and non-ASCII attributes stay intact."),
-      ("Convert vs SVG to Base64 String?", "Same output. This page matches convert-style searches; the other matches to-string wording."),
-      ("Need an image-focused sample?", "SVG Image to Base64 String uses a picture-frame sample and the same raw string output."),
-    ],
-    "note_html": '<span class="tool-note-pair">To-string wording? <a href="/svg-to-base64-string">SVG to Base64 string</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Image sample? <a href="/svg-image-to-base64-string">SVG image to Base64 string</a></span>',
-    "guides": [
-      ("/svg-to-base64-string", "SVG to Base64 string →"),
-      ("/svg-image-to-base64-string", "SVG image to Base64 string →"),
-      ("/convert-svg-to-base64-data-uri", "Convert to data URI →"),
-      ("/svg-to-base64", "SVG to Base64 →"),
-    ],
+    ]
   },
   {
     "slug": "svg-image-to-base64-string",
@@ -355,42 +290,9 @@ PAGES = [
     "note_html": '<span class="tool-note-pair">Data URI image? <a href="/svg-base64-data-uri-image">SVG Base64 data URI image</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Generic string? <a href="/svg-to-base64-string">SVG to Base64 string</a></span>',
     "guides": [
       ("/svg-to-base64-string", "SVG to Base64 string →"),
-      ("/convert-svg-to-base64-string", "Convert to Base64 string →"),
       ("/svg-base64-data-uri-image", "SVG Base64 data URI image →"),
       ("/svg-to-base64-html-img", "SVG to Base64 HTML img →"),
-    ],
-  },
-  {
-    "slug": "convert-svg-to-base64-data-uri",
-    "title": "Convert SVG to Base64 Data URI Online — Free Tool | getsvgeditor.com",
-    "description": "Convert SVG to a Base64 data URI in one click. Copy data:image/svg+xml;base64,… — free, no upload.",
-    "h1": "Convert SVG to Base64 Data URI",
-    "crumb": "Convert to data URI",
-    "sub": "One-click convert: SVG in, <code>data:image/svg+xml;base64,...</code> out",
-    "og_alt": "Convert SVG to a Base64 data URI in SVGEditor",
-    "app_name": "Convert SVG to Base64 Data URI",
-    "app_alts": ["Convert SVG to Base64 data URI", "SVG to data URI converter", "Encode SVG data URI", "SVG Base64 data URL convert"],
-    "app_desc": "Free converter from SVG markup to a Base64 data URI.",
-    "features": ["One-click data URI convert", "Base64 encoding", "Live preview", "No file upload"],
-    "howto_name": "Convert SVG to a Base64 data URI",
-    "howto_desc": "Turn pasted SVG into data:image/svg+xml;base64,… with one click.",
-    "howto_click": "Click Convert to data URI. The string is copied and shown in the Data URI tab.",
-    "btn": "Convert to data URI",
-    "btn_title": "Convert SVG to a Base64 data URI",
-    "faq_aria": "Convert SVG to Base64 data URI FAQ",
-    "faqs": [
-      ("How do I convert SVG to a Base64 data URI?", "Paste the SVG and click Convert to data URI. The result starts with data:image/svg+xml;base64,"),
-      ("Convert vs SVG to Base64 Data URI?", "Same payload. This page uses convert wording; the other uses to-data-URI wording."),
-      ("Can I switch to urlencoded?", "The chip is there for comparison. This intent copies Base64 because that is what the query asks for."),
-      ("Need an image-oriented sample?", "SVG Base64 Data URI Image uses a photo-mark sample and the same URI shape."),
-    ],
-    "note_html": '<span class="tool-note-pair">To-data-URI wording? <a href="/svg-to-base64-data-uri">SVG to Base64 data URI</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Image sample? <a href="/svg-base64-data-uri-image">Data URI image</a></span>',
-    "guides": [
-      ("/svg-to-base64-data-uri", "SVG to Base64 data URI →"),
-      ("/svg-base64-data-uri-image", "SVG Base64 data URI image →"),
-      ("/convert-svg-to-base64-string", "Convert to string →"),
-      ("/svg-to-base64", "SVG to Base64 →"),
-    ],
+    ]
   },
   {
     "slug": "svg-base64-data-uri-image",
@@ -419,42 +321,9 @@ PAGES = [
     "note_html": '<span class="tool-note-pair">HTML img? <a href="/svg-to-base64-html-img">SVG to Base64 HTML img</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Generic URI? <a href="/svg-to-base64-data-uri">SVG to Base64 data URI</a></span>',
     "guides": [
       ("/svg-to-base64-data-uri", "SVG to Base64 data URI →"),
-      ("/convert-svg-to-base64-data-uri", "Convert to data URI →"),
       ("/svg-image-to-base64-string", "SVG image to Base64 string →"),
       ("/svg-to-base64-html-img", "SVG to Base64 HTML img →"),
-    ],
-  },
-  {
-    "slug": "convert-svg-to-base64-html",
-    "title": "Convert SVG to Base64 HTML Online — Free Tool | getsvgeditor.com",
-    "description": "Convert SVG to Base64 HTML in one click. Copy an img tag with a Base64 data URI src — free, no upload.",
-    "h1": "Convert SVG to Base64 HTML",
-    "crumb": "Convert to Base64 HTML",
-    "sub": "One-click convert: SVG in, <code>&lt;img src=\"data:…\"&gt;</code> out",
-    "og_alt": "Convert SVG to Base64 HTML in SVGEditor",
-    "app_name": "Convert SVG to Base64 HTML",
-    "app_alts": ["Convert SVG to Base64 HTML", "SVG to HTML Base64 converter", "SVG img data URI convert", "Encode SVG as HTML img"],
-    "app_desc": "Free converter from SVG markup to an HTML img tag with a Base64 src.",
-    "features": ["One-click HTML convert", "img with Base64 src", "Live preview", "No file upload"],
-    "howto_name": "Convert SVG to Base64 HTML",
-    "howto_desc": "Turn pasted SVG into an HTML img tag with a Base64 data URI.",
-    "howto_click": "Click Convert to HTML. An img tag is copied and shown in the Data URI tab.",
-    "btn": "Convert to HTML",
-    "btn_title": "Convert SVG to an HTML img with Base64 src",
-    "faq_aria": "Convert SVG to Base64 HTML FAQ",
-    "faqs": [
-      ("How do I convert SVG to Base64 HTML?", "Paste the SVG and click Convert to HTML. You get <img src=\"data:image/svg+xml;base64,…\" alt=\"\" />."),
-      ("Should I fill in alt text?", "Yes before shipping. The empty alt is a placeholder so you can describe the graphic for assistive tech."),
-      ("Convert vs SVG to Base64 HTML?", "Same snippet. This page matches convert searches."),
-      ("Need img-specific wording?", "SVG to Base64 HTML Img."),
-    ],
-    "note_html": '<span class="tool-note-pair">HTML hub? <a href="/svg-to-base64-html">SVG to Base64 HTML</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Img wording? <a href="/svg-to-base64-html-img">SVG to Base64 HTML img</a></span>',
-    "guides": [
-      ("/svg-to-base64-html", "SVG to Base64 HTML →"),
-      ("/svg-to-base64-html-img", "SVG to Base64 HTML img →"),
-      ("/convert-svg-to-base64-data-uri", "Convert to data URI →"),
-      ("/svg-to-base64", "SVG to Base64 →"),
-    ],
+    ]
   },
   {
     "slug": "svg-to-base64-html-img",
@@ -483,11 +352,10 @@ PAGES = [
     "note_html": '<span class="tool-note-pair">HTML hub? <a href="/svg-to-base64-html">SVG to Base64 HTML</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">URI only? <a href="/svg-base64-data-uri-image">Data URI image</a></span>',
     "guides": [
       ("/svg-to-base64-html", "SVG to Base64 HTML →"),
-      ("/convert-svg-to-base64-html", "Convert to Base64 HTML →"),
       ("/svg-base64-data-uri-image", "Data URI image →"),
       ("/svg-to-base64", "SVG to Base64 →"),
-    ],
-  },
+    ]
+  }
 ]
 
 
@@ -724,7 +592,7 @@ def build_page(p):
 
 
 def main():
-    assert len(PAGES) == 15
+    assert len(PAGES) == 11
     for p in PAGES:
         build_page(p)
     print("done", len(PAGES))

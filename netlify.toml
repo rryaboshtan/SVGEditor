@@ -40,3 +40,45 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=300"
+
+# Base64 convert-* → hub 301s (indexed cannibals)
+[[redirects]]
+  from = "/convert-svg-to-base64-string"
+  to = "/svg-to-base64-string"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-string.html"
+  to = "/svg-to-base64-string"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-data-uri"
+  to = "/svg-to-base64-data-uri"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-data-uri.html"
+  to = "/svg-to-base64-data-uri"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-css"
+  to = "/svg-to-base64-css"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-css.html"
+  to = "/svg-to-base64-css"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-html"
+  to = "/svg-to-base64-html"
+  status = 301
+
+[[redirects]]
+  from = "/convert-svg-to-base64-html.html"
+  to = "/svg-to-base64-html"
+  status = 301
+
