@@ -488,6 +488,59 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Pie wedge with arcs">\n' +
     '  <path fill="#f59e0b" d="M80 60 L80 18 A42 42 0 0 1 118 84 Z"/>\n' +
     "</svg>",
+  "fix-svg-stretching-in-flexbox":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
+    '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
+    '  <circle cx="48" cy="40" r="16" fill="#082f49"/>\n' +
+    "</svg>",
+  "prevent-svg-distortion-in-css-grid":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 160" preserveAspectRatio="none" role="img" aria-label="Tall tower that grid will squash">\n' +
+    '  <rect x="16" y="12" width="48" height="136" rx="10" fill="#22c55e"/>\n' +
+    '  <rect x="28" y="28" width="24" height="16" rx="4" fill="#dcfce7"/>\n' +
+    "</svg>",
+  "remove-inkscape-namespaces-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 120 120" inkscape:version="1.3" role="img" aria-label="Inkscape labeled bolt">\n' +
+    '  <path inkscape:label="Bolt" inkscape:transform-center-x="0" fill="#facc15" d="M64 12 L28 68 H56 L48 108 L96 48 H64 Z"/>\n' +
+    "</svg>",
+  "remove-sodipodi-attributes-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" viewBox="0 0 140 100" role="img" aria-label="Sodipodi leftover shield">\n' +
+    '  <sodipodi:namedview pagecolor="#ffffff"/>\n' +
+    '  <path sodipodi:nodetypes="cccc" sodipodi:absref="/tmp/shield" fill="#64748b" d="M70 12 L118 36 V68 C118 88 70 96 70 96 C70 96 22 88 22 68 V36 Z"/>\n' +
+    "</svg>",
+  "clean-sketch-svg-export-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" viewBox="0 0 140 110" role="img" aria-label="Sketch slice leftovers">\n' +
+    '  <g sketch:type="MSLayerGroup" id="slice-home">\n' +
+    '    <rect sketch:type="MSShapeGroup" x="22" y="22" width="96" height="66" rx="14" fill="#fb7185"/>\n' +
+    '    <circle sketch:type="MSShapeGroup" cx="70" cy="55" r="16" fill="#fff1f2"/>\n' +
+    "  </g>\n" +
+    "</svg>",
+  "remove-unused-svg-namespaces-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:foo="http://example.com/foo" xmlns:bar="http://example.com/bar" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 140 100" role="img" aria-label="Unused xmlns prefixes">\n' +
+    '  <rect x="20" y="22" width="100" height="56" rx="12" fill="#38bdf8"/>\n' +
+    "</svg>",
+  "crop-svg-to-bounding-box":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Small gem on a huge canvas">\n' +
+    '  <path fill="#06b6d4" d="M190 120 L220 150 L190 190 L160 150 Z"/>\n' +
+    "</svg>",
+  "calculate-svg-bounding-box-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" role="img" aria-label="Scattered shapes to measure">\n' +
+    '  <circle cx="70" cy="60" r="22" fill="#f43f5e"/>\n' +
+    '  <rect x="140" y="90" width="50" height="36" rx="8" fill="#3b82f6"/>\n' +
+    "</svg>",
+  "convert-svg-colors-to-currentcolor":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 120" role="img" aria-label="Bird with fill and stroke">\n' +
+    '  <path fill="#f97316" stroke="#9a3412" stroke-width="6" d="M24 80 C40 40 80 28 118 48 L96 62 C78 50 52 54 40 78 Z"/>\n' +
+    '  <circle cx="100" cy="46" r="5" fill="#9a3412"/>\n' +
+    "</svg>",
+  "remove-hardcoded-stroke-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Outlined hex">\n' +
+    '  <path fill="#e0f2fe" stroke="#0369a1" stroke-width="8" stroke-linejoin="round" d="M60 16 L100 38 V82 L60 104 L20 82 V38 Z"/>\n' +
+    "</svg>",
+  "change-svg-fill-and-stroke-on-hover":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Play button fill and stroke">\n' +
+    '  <circle cx="60" cy="60" r="40" fill="#1e293b" stroke="#38bdf8" stroke-width="8"/>\n' +
+    '  <path fill="#38bdf8" stroke="#e0f2fe" stroke-width="4" stroke-linejoin="round" d="M50 42 L82 60 L50 78 Z"/>\n' +
+    "</svg>",
 };
 
 var BATCH_ASPECT_DEFAULT_SVGS = {
@@ -772,6 +825,116 @@ var BATCH_RN_DEFAULT_SVGS = {
     "</svg>",
 };
 
+var BATCH_PNG_DEFAULT_SVGS = {
+  "convert-svg-to-transparent-png":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Hex tile on a white plate">\n' +
+    '  <rect data-svgeditor-bg="1" x="0" y="0" width="160" height="160" fill="#ffffff"/>\n' +
+    '  <path fill="#0ea5e9" d="M80 18 L132 48 V112 L80 142 L28 112 V48 Z"/>\n' +
+    '  <circle cx="80" cy="80" r="18" fill="#e0f2fe"/>\n' +
+    "</svg>",
+  "svg-to-png-high-resolution":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img" aria-label="Mountain mark for 4x PNG">\n' +
+    '  <path fill="#0369a1" d="M12 118 L58 48 L86 78 L124 34 L188 118 Z"/>\n' +
+    '  <circle cx="158" cy="36" r="14" fill="#f59e0b"/>\n' +
+    "</svg>",
+  "svg-icon-to-png-converter":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Bookmark icon">\n' +
+    '  <path fill="#7c3aed" d="M28 16 H68 A8 8 0 0 1 76 24 V84 L48 68 L20 84 V24 A8 8 0 0 1 28 16 Z"/>\n' +
+    "</svg>",
+  "svg-logo-to-png-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 96" role="img" aria-label="NOVA wordmark">\n' +
+    '  <circle cx="36" cy="48" r="22" fill="#22d3ee"/>\n' +
+    '  <path d="M28 56 L36 32 L44 56" fill="none" stroke="#082f49" stroke-width="4" stroke-linejoin="round"/>\n' +
+    '  <text x="72" y="62" font-family="Syne, Segoe UI, sans-serif" font-size="42" font-weight="800" fill="#e2e8f0">NOVA</text>\n' +
+    "</svg>",
+  "svg-to-png-custom-size":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" role="img" aria-label="Wide banner for custom PNG size">\n' +
+    '  <rect x="12" y="20" width="296" height="100" rx="20" fill="#1d4ed8"/>\n' +
+    '  <rect x="36" y="44" width="120" height="14" rx="7" fill="#dbeafe"/>\n' +
+    '  <rect x="36" y="72" width="80" height="10" rx="5" fill="#93c5fd"/>\n' +
+    "</svg>",
+  "svg-to-retina-png-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Diamond for @3x retina">\n' +
+    '  <path fill="#ec4899" d="M60 10 L110 60 L60 110 L10 60 Z"/>\n' +
+    '  <path fill="#fbcfe8" d="M60 34 L86 60 L60 86 L34 60 Z"/>\n' +
+    "</svg>",
+  "svg-code-to-png-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Code chevrons">\n' +
+    '  <path d="M48 28 L20 50 L48 72" fill="none" stroke="#22c55e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+    '  <path d="M112 28 L140 50 L112 72" fill="none" stroke="#22c55e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+    "</svg>",
+  "inline-svg-to-png-converter":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 120" role="img" aria-label="Map pin inline SVG">\n' +
+    '  <path fill="#ef4444" d="M48 8 C70 8 84 24 84 44 C84 70 48 112 48 112 C48 112 12 70 12 44 C12 24 26 8 48 8 Z"/>\n' +
+    '  <circle cx="48" cy="44" r="12" fill="#fee2e2"/>\n' +
+    "</svg>",
+  "export-svg-as-transparent-png":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Leaf already on alpha">\n' +
+    '  <path fill="#16a34a" d="M28 112 C28 60 70 20 122 18 C110 72 78 104 28 112 Z"/>\n' +
+    '  <path d="M40 100 C70 78 92 50 108 28" fill="none" stroke="#14532d" stroke-width="6" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-to-png-without-background":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Sun on a cream artboard">\n' +
+    '  <rect x="0" y="0" width="180" height="180" fill="#fef3c7"/>\n' +
+    '  <circle cx="90" cy="90" r="36" fill="#f59e0b"/>\n' +
+    '  <g stroke="#d97706" stroke-width="8" stroke-linecap="round">\n' +
+    '    <path d="M90 18 V36"/><path d="M90 144 V162"/><path d="M18 90 H36"/><path d="M144 90 H162"/>\n' +
+    "  </g>\n" +
+    "</svg>",
+  "svg-favicon-to-png-converter":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Letter G favicon">\n' +
+    '  <rect x="2" y="2" width="28" height="28" rx="8" fill="#0f172a"/>\n' +
+    '  <text x="16" y="23" text-anchor="middle" font-family="Syne, sans-serif" font-size="18" font-weight="800" fill="#38bdf8">G</text>\n' +
+    "</svg>",
+  "svg-illustration-to-png-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Tiny landscape illustration">\n' +
+    '  <rect x="0" y="0" width="240" height="96" fill="#7dd3fc"/>\n' +
+    '  <circle cx="48" cy="36" r="16" fill="#fde047"/>\n' +
+    '  <path fill="#15803d" d="M0 96 L70 70 L120 96 L170 62 L240 96 V160 H0 Z"/>\n' +
+    "</svg>",
+  "download-svg-as-png-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Download tray">\n' +
+    '  <path d="M48 16 V58" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/>\n' +
+    '  <path d="M28 44 L48 64 L68 44" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+    '  <path d="M20 72 H76" fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "paste-svg-export-as-png":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 120" role="img" aria-label="Clipboard paste">\n' +
+    '  <rect x="22" y="28" width="66" height="80" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="6"/>\n' +
+    '  <rect x="38" y="14" width="34" height="22" rx="6" fill="#0ea5e9"/>\n' +
+    "</svg>",
+  "svg-to-png-512-pixels":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="App tile for 512 PNG">\n' +
+    '  <rect x="12" y="12" width="104" height="104" rx="28" fill="#4f46e5"/>\n' +
+    '  <circle cx="64" cy="64" r="22" fill="#c7d2fe"/>\n' +
+    "</svg>",
+  "convert-svg-path-to-png":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" role="img" aria-label="Single path curve">\n' +
+    '  <path d="M16 88 C48 16 96 16 120 64 S176 120 188 40" fill="none" stroke="#f97316" stroke-width="10" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "svg-to-png-for-email":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" role="img" aria-label="Envelope for email PNG">\n' +
+    '  <rect x="16" y="28" width="168" height="72" rx="10" fill="#2563eb"/>\n' +
+    '  <path d="M16 40 L100 78 L184 40" fill="none" stroke="#dbeafe" stroke-width="8" stroke-linejoin="round"/>\n' +
+    "</svg>",
+  "svg-to-apple-touch-icon":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Rounded mark for Apple touch">\n' +
+    '  <rect x="10" y="10" width="160" height="160" rx="36" fill="#111827"/>\n' +
+    '  <path fill="#f43f5e" d="M90 46 C78 28 48 34 48 62 C48 92 90 124 90 124 C90 124 132 92 132 62 C132 34 102 28 90 46 Z"/>\n' +
+    "</svg>",
+  "svg-to-png-2x-scale":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Plus mark for 2x PNG">\n' +
+    '  <path d="M16 40 H64 M40 16 V64" fill="none" stroke="#a855f7" stroke-width="10" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "batch-convert-svg-to-png":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Batch star">\n' +
+    '  <path fill="#eab308" d="M40 8 L48 30 H72 L52 44 L60 68 L40 54 L20 68 L28 44 L8 30 H32 Z"/>\n' +
+    "</svg>\n" +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Batch moon">\n' +
+    '  <path fill="#64748b" d="M70 42.63A30 30 0 1 1 37.37 10 23.33 23.33 0 0 0 70 42.63z"/>\n' +
+    "</svg>",
+};
+
 function batchBodyAttr(name) {
   return (document.body && document.body.getAttribute(name)) || "";
 }
@@ -845,6 +1008,16 @@ function getBatchLongtailStartup() {
     return {
       svg: BATCH_RN_DEFAULT_SVGS[rn],
       status: "Sample SVG — click the action button to convert to React Native",
+    };
+  }
+  var png = batchBodyAttr("data-png-intent");
+  if (png && BATCH_PNG_DEFAULT_SVGS[png]) {
+    return {
+      svg: BATCH_PNG_DEFAULT_SVGS[png],
+      status:
+        png === "batch-convert-svg-to-png"
+          ? "2 sample SVGs — click Batch export PNGs to download both"
+          : "Sample SVG — click the action button to export PNG for this intent",
     };
   }
   return null;
@@ -2589,6 +2762,48 @@ function craftIsPaint(v) {
   return true;
 }
 
+function craftAttrPrefix(name) {
+  var i = String(name || "").indexOf(":");
+  return i > 0 ? String(name).slice(0, i).toLowerCase() : "";
+}
+
+function craftDropPrefixed(svg, prefix) {
+  var p = String(prefix || "").toLowerCase();
+  var kill = [];
+  craftWalk(svg, function (el) {
+    var ln = String(el.localName || "").toLowerCase();
+    var pre = (el.prefix && String(el.prefix).toLowerCase()) || craftAttrPrefix(el.nodeName || "");
+    if (el !== svg && (pre === p || ln.indexOf(p + ":") === 0)) kill.push(el);
+    Array.from(el.attributes || []).forEach(function (attr) {
+      var n = attr.name.toLowerCase();
+      if (n === "xmlns:" + p || craftAttrPrefix(n) === p) el.removeAttribute(attr.name);
+    });
+  });
+  kill.forEach(function (el) {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  });
+  svg.removeAttribute("xmlns:" + p);
+}
+
+function craftRemoveUnusedNamespaces(svg) {
+  var used = { svg: true, xml: true, xmlns: true };
+  craftWalk(svg, function (el) {
+    if (el.prefix) used[String(el.prefix).toLowerCase()] = true;
+    Array.from(el.attributes || []).forEach(function (attr) {
+      var n = attr.name.toLowerCase();
+      var pre = craftAttrPrefix(n);
+      if (pre && pre !== "xmlns") used[pre] = true;
+      if (n.indexOf("xmlns:") === 0) return;
+    });
+  });
+  Array.from(svg.attributes || []).forEach(function (attr) {
+    var n = attr.name.toLowerCase();
+    if (n.indexOf("xmlns:") !== 0) return;
+    var pre = n.slice(6);
+    if (!used[pre]) svg.removeAttribute(attr.name);
+  });
+}
+
 function applyBatchCraftMarkup(markup, intent) {
   if (!BATCH_CRAFT_DEFAULT_SVGS[intent]) throw new Error("Unknown craft intent");
   var raw = String(markup || "");
@@ -3072,12 +3287,307 @@ function applyBatchCraftMarkup(markup, intent) {
       p.setAttribute("d", craftSerializePath(craftPathToAbsoluteCubics(d)));
     });
     status = "Arc commands converted to cubics";
+  } else if (intent === "fix-svg-stretching-in-flexbox") {
+    craftEnsureViewBox(svg);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    var flexStyle = batchParseStyleDecl(svg.getAttribute("style") || "");
+    flexStyle.display = "block";
+    flexStyle.height = "auto";
+    flexStyle["max-width"] = "100%";
+    flexStyle["flex-shrink"] = "0";
+    flexStyle["align-self"] = "center";
+    svg.setAttribute("style", batchStyleToString(flexStyle));
+    status = "Flexbox stretch fixed — meet + flex-shrink:0";
+  } else if (intent === "prevent-svg-distortion-in-css-grid") {
+    craftEnsureViewBox(svg);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    var gridStyle = batchParseStyleDecl(svg.getAttribute("style") || "");
+    gridStyle.display = "block";
+    gridStyle.width = "100%";
+    gridStyle.height = "auto";
+    gridStyle["max-width"] = "100%";
+    gridStyle["justify-self"] = "center";
+    gridStyle["align-self"] = "center";
+    svg.setAttribute("style", batchStyleToString(gridStyle));
+    status = "Grid distortion prevented — meet + self-center";
+  } else if (intent === "remove-inkscape-namespaces-from-svg") {
+    craftDropPrefixed(svg, "inkscape");
+    status = "Inkscape namespaces and attributes removed";
+  } else if (intent === "remove-sodipodi-attributes-from-svg") {
+    craftDropPrefixed(svg, "sodipodi");
+    status = "sodipodi attributes and namespace removed";
+  } else if (intent === "clean-sketch-svg-export-online") {
+    craftDropPrefixed(svg, "sketch");
+    status = "Sketch export leftovers removed";
+  } else if (intent === "remove-unused-svg-namespaces-online") {
+    craftRemoveUnusedNamespaces(svg);
+    status = "Unused xmlns declarations removed";
+  } else if (intent === "crop-svg-to-bounding-box") {
+    if (typeof applyContentViewBox === "function") {
+      applyContentViewBox(svg, { padRatio: 0, padPx: 0 });
+    } else {
+      var tight = measureSvgContentBBox(svg);
+      if (!tight) throw new Error("Could not measure bounding box");
+      batchSetViewBox(svg, tight.x, tight.y, tight.width, tight.height);
+    }
+    status = "Cropped to tight bounding box " + (svg.getAttribute("viewBox") || "");
+  } else if (intent === "calculate-svg-bounding-box-online") {
+    var measured = measureSvgContentBBox(svg);
+    if (!measured) throw new Error("Could not measure bounding box");
+    var bx = batchFormatVb(measured.x);
+    var by = batchFormatVb(measured.y);
+    var bw = batchFormatVb(measured.width);
+    var bh = batchFormatVb(measured.height);
+    Array.from(svg.querySelectorAll("[data-svgeditor-bbox]")).forEach(function (el) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+    var desc = svg.querySelector("desc");
+    if (!desc) {
+      desc = document.createElementNS("http://www.w3.org/2000/svg", "desc");
+      svg.insertBefore(desc, svg.firstChild);
+    }
+    desc.textContent = "bounding-box x=" + bx + " y=" + by + " width=" + bw + " height=" + bh;
+    var overlay = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    overlay.setAttribute("data-svgeditor-bbox", "1");
+    overlay.setAttribute("x", bx);
+    overlay.setAttribute("y", by);
+    overlay.setAttribute("width", bw);
+    overlay.setAttribute("height", bh);
+    overlay.setAttribute("fill", "none");
+    overlay.setAttribute("stroke", "#f43f5e");
+    overlay.setAttribute("stroke-width", "2");
+    overlay.setAttribute("stroke-dasharray", "6 4");
+    svg.appendChild(overlay);
+    status = "Bounding box " + bx + "," + by + " " + bw + "×" + bh + " — viewBox unchanged";
+  } else if (intent === "convert-svg-colors-to-currentcolor") {
+    Array.from(svg.querySelectorAll("[fill],[stroke]")).forEach(function (el) {
+      ["fill", "stroke"].forEach(function (prop) {
+        if (craftIsPaint(el.getAttribute(prop))) el.setAttribute(prop, "currentColor");
+      });
+    });
+    status = "Fill and stroke converted to currentColor";
+  } else if (intent === "remove-hardcoded-stroke-from-svg") {
+    Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+      [
+        "stroke",
+        "stroke-width",
+        "stroke-linecap",
+        "stroke-linejoin",
+        "stroke-dasharray",
+        "stroke-dashoffset",
+        "stroke-miterlimit",
+        "stroke-opacity",
+      ].forEach(function (a) {
+        if (el.hasAttribute(a)) el.removeAttribute(a);
+      });
+      if (el.hasAttribute("style")) {
+        var sm = batchParseStyleDecl(el.getAttribute("style") || "");
+        Object.keys(sm).forEach(function (k) {
+          if (k.indexOf("stroke") === 0) delete sm[k];
+        });
+        var next = batchStyleToString(sm);
+        if (next) el.setAttribute("style", next);
+        else el.removeAttribute("style");
+      }
+    });
+    status = "Hardcoded stroke attributes removed";
+  } else if (intent === "change-svg-fill-and-stroke-on-hover") {
+    var hoverStyle = svg.querySelector("style");
+    if (!hoverStyle) {
+      hoverStyle = document.createElementNS("http://www.w3.org/2000/svg", "style");
+      svg.insertBefore(hoverStyle, svg.firstChild);
+    }
+    hoverStyle.textContent =
+      ".svg-hover-paint{fill:#1e293b;stroke:#38bdf8}.svg-hover-paint:hover{fill:#0ea5e9;stroke:#e0f2fe}";
+    Array.from(svg.querySelectorAll("path,circle,rect,polygon,ellipse")).forEach(function (el) {
+      if (el.getAttribute("data-svgeditor-bg") === "1") return;
+      var cls = (el.getAttribute("class") || "").replace(/\bsvg-hover-paint\b/g, "").trim();
+      el.setAttribute("class", (cls + " svg-hover-paint").trim());
+      if (craftIsPaint(el.getAttribute("fill"))) el.removeAttribute("fill");
+      if (craftIsPaint(el.getAttribute("stroke"))) el.removeAttribute("stroke");
+    });
+    status = "Hover fill and stroke CSS applied — hover the preview";
   } else {
     throw new Error("Unknown craft intent");
   }
 
   batchStripRoot(svg);
   return { markup: batchSerialize(svg), status: status };
+}
+
+var PNG_INTENT_PRESETS = {
+  "convert-svg-to-transparent-png": { scale: 2, stripBg: true, file: "transparent.png" },
+  "svg-to-png-high-resolution": { scale: 4, file: "high-res.png" },
+  "svg-icon-to-png-converter": { width: 256, file: "icon.png" },
+  "svg-logo-to-png-online": { width: 800, file: "logo.png" },
+  "svg-to-png-custom-size": { width: 640, height: 360, file: "custom.png" },
+  "svg-to-retina-png-online": { scale: 3, file: "retina@3x.png" },
+  "svg-code-to-png-online": { scale: 2, file: "from-code.png" },
+  "inline-svg-to-png-converter": { scale: 2, file: "inline.png" },
+  "export-svg-as-transparent-png": { scale: 2, file: "export-transparent.png" },
+  "svg-to-png-without-background": { scale: 2, stripBg: true, file: "no-background.png" },
+  "svg-favicon-to-png-converter": { width: 32, height: 32, file: "favicon-32.png" },
+  "svg-illustration-to-png-online": { width: 1024, file: "illustration.png" },
+  "download-svg-as-png-online": { scale: 2, file: "svgeditor-download.png" },
+  "paste-svg-export-as-png": { scale: 2, file: "pasted.png" },
+  "svg-to-png-512-pixels": { width: 512, height: 512, file: "512.png" },
+  "convert-svg-path-to-png": { scale: 3, file: "path.png" },
+  "svg-to-png-for-email": { width: 600, file: "email.png" },
+  "svg-to-apple-touch-icon": { width: 180, height: 180, file: "apple-touch-icon.png" },
+  "svg-to-png-2x-scale": { scale: 2, file: "icon@2x.png" },
+  "batch-convert-svg-to-png": { scale: 2, batch: true, file: "batch.png" },
+};
+
+function pngCollectSvgBlocks(raw) {
+  if (typeof collectTopLevelSvgBlocks === "function") {
+    return collectTopLevelSvgBlocks(raw);
+  }
+  var blocks = [];
+  var re = /<svg\b[\s\S]*?<\/svg>/gi;
+  var m;
+  while ((m = re.exec(String(raw || "")))) blocks.push(m[0]);
+  return blocks;
+}
+
+function pngIsBackdropRect(el, svg) {
+  if (!el || el === svg) return false;
+  if (el.getAttribute("data-svgeditor-bg") === "1") return true;
+  if (String(el.localName || "").toLowerCase() !== "rect") return false;
+  var parts = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(parseFloat);
+  if (parts.length !== 4 || !(parts[2] > 0) || !(parts[3] > 0)) return false;
+  var x = parseFloat(el.getAttribute("x") || 0);
+  var y = parseFloat(el.getAttribute("y") || 0);
+  var w = parseFloat(el.getAttribute("width") || 0);
+  var h = parseFloat(el.getAttribute("height") || 0);
+  if (!(w > 0 && h > 0)) return false;
+  var covers =
+    Math.abs(x - parts[0]) < 1 &&
+    Math.abs(y - parts[1]) < 1 &&
+    Math.abs(w - parts[2]) < 1 &&
+    Math.abs(h - parts[3]) < 1;
+  if (!covers) return false;
+  var fill = String(el.getAttribute("fill") || "").trim().toLowerCase();
+  return fill && fill !== "none" && fill.indexOf("url(") !== 0;
+}
+
+function preparePngIntentMarkup(markup, intent) {
+  if (!BATCH_PNG_DEFAULT_SVGS[intent]) throw new Error("Unknown PNG intent");
+  var preset = PNG_INTENT_PRESETS[intent] || {};
+  var svg =
+    typeof parseSvg === "function" ? parseSvg(markup) : batchParseSvgRaw(markup);
+  if (preset.stripBg) {
+    Array.from(svg.querySelectorAll("rect")).forEach(function (el) {
+      if (pngIsBackdropRect(el, svg) && el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+  batchStripRoot(svg);
+  craftEnsureViewBox(svg);
+  var status = preset.stripBg
+    ? "Backdrop stripped — ready for transparent PNG"
+    : "Root width/height removed — ready for PNG";
+  return { markup: batchSerialize(svg), status: status, preset: preset };
+}
+
+function getPngIntentRenderOptions() {
+  var intent = batchBodyAttr("data-png-intent");
+  if (!intent || !BATCH_PNG_DEFAULT_SVGS[intent]) return null;
+  var preset = PNG_INTENT_PRESETS[intent] || { scale: 2 };
+  var opts = {
+    scale: preset.scale || 2,
+    filename: preset.file || "svgeditor-export.png",
+  };
+  if (preset.width) opts.width = preset.width;
+  if (preset.height) opts.height = preset.height;
+  var wIn = document.getElementById("png-width-input");
+  var hIn = document.getElementById("png-height-input");
+  if (wIn) {
+    var w = parseFloat(wIn.value);
+    if (Number.isFinite(w) && w > 0) opts.width = Math.round(w);
+  }
+  if (hIn) {
+    var h = parseFloat(hIn.value);
+    if (Number.isFinite(h) && h > 0) opts.height = Math.round(h);
+  }
+  return opts;
+}
+
+function pngViewBoxSize(svg) {
+  var parts = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(parseFloat);
+  if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+    return { width: parts[2], height: parts[3] };
+  }
+  return { width: 512, height: 512 };
+}
+
+function pngCanvasSize(nat, opts) {
+  if (opts.width && opts.height) {
+    return { width: Math.max(1, Math.round(opts.width)), height: Math.max(1, Math.round(opts.height)) };
+  }
+  if (opts.width) {
+    var w = Math.max(1, Math.round(opts.width));
+    return { width: w, height: Math.max(1, Math.round(w * (nat.height / nat.width))) };
+  }
+  var scale = opts.scale || 2;
+  return {
+    width: Math.max(1, Math.round(nat.width * scale)),
+    height: Math.max(1, Math.round(nat.height * scale)),
+  };
+}
+
+function rasterizeSvgMarkupToPng(markup, opts) {
+  opts = opts || {};
+  return new Promise(function (resolve, reject) {
+    var svg =
+      typeof parseSvg === "function" ? parseSvg(markup) : batchParseSvgRaw(markup);
+    if (!svg.getAttribute("xmlns")) {
+      svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    }
+    batchStripRoot(svg);
+    craftEnsureViewBox(svg);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    var nat = pngViewBoxSize(svg);
+    var size = pngCanvasSize(nat, opts);
+    var serialized =
+      typeof XMLSerializer !== "undefined"
+        ? new XMLSerializer().serializeToString(svg)
+        : batchSerialize(svg);
+    var blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var canvas = document.createElement("canvas");
+        canvas.width = size.width;
+        canvas.height = size.height;
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, size.width, size.height);
+        var fit = Math.min(size.width / nat.width, size.height / nat.height);
+        var dw = nat.width * fit;
+        var dh = nat.height * fit;
+        var dx = (size.width - dw) / 2;
+        var dy = (size.height - dh) / 2;
+        ctx.drawImage(img, dx, dy, dw, dh);
+        var dataUrl = canvas.toDataURL("image/png");
+        URL.revokeObjectURL(url);
+        resolve({ dataUrl: dataUrl, width: size.width, height: size.height });
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      reject(new Error("Couldn’t rasterize this SVG to PNG"));
+    };
+    img.src = url;
+  });
+}
+
+function pngDownloadDataUrl(dataUrl, filename) {
+  var link = document.createElement("a");
+  link.download = filename || "svgeditor-export.png";
+  link.href = dataUrl;
+  link.click();
 }
 
 function initBatchLongtailIntents() {
@@ -3167,6 +3677,83 @@ function initBatchLongtailIntents() {
 
   var craftBtn = document.getElementById("btn-craft-action");
   var craftIntentClick = batchBodyAttr("data-craft-intent");
+  var pngBtn = document.getElementById("btn-png-action");
+  var pngIntentClick = batchBodyAttr("data-png-intent");
+  if (pngIntentClick === "batch-convert-svg-to-png") {
+    var fileUploadEl = document.getElementById("file-upload");
+    if (fileUploadEl) fileUploadEl.setAttribute("multiple", "multiple");
+  }
+  if (pngBtn && pngIntentClick) {
+    pngBtn.addEventListener("click", function () {
+      var raw = editor && editor.value ? editor.value.trim() : "";
+      if (!raw) {
+        setStatus("empty", "Paste an SVG first");
+        return;
+      }
+      var blocks = pngCollectSvgBlocks(raw);
+      if (!blocks.length) {
+        var one =
+          typeof extractSvgMarkup === "function" ? extractSvgMarkup(raw) : raw;
+        if (one) blocks = [one];
+      }
+      if (!blocks.length) {
+        setStatus("empty", "Paste an SVG first");
+        return;
+      }
+      var opts = getPngIntentRenderOptions() || { scale: 2, filename: "svgeditor-export.png" };
+      var isBatch = pngIntentClick === "batch-convert-svg-to-png" && blocks.length > 1;
+      try {
+        var prepared = preparePngIntentMarkup(blocks[0], pngIntentClick);
+        if (typeof applyMirroredEditorMarkup === "function") {
+          applyMirroredEditorMarkup(
+            isBatch ? raw : prepared.markup,
+            prepared.status
+          );
+        }
+        if (typeof setActiveTab === "function") setActiveTab("png");
+      } catch (err) {
+        setStatus("error", (err && err.message) || "Could not prepare PNG");
+        return;
+      }
+      var jobs = (isBatch ? blocks : [blocks[0]]).map(function (block, idx) {
+        var piece = block;
+        try {
+          piece = preparePngIntentMarkup(block, pngIntentClick).markup;
+        } catch (err2) {
+          return Promise.reject(err2);
+        }
+        var name = opts.filename || "svgeditor-export.png";
+        if (isBatch) {
+          name = name.replace(/\.png$/i, "") + "-" + (idx + 1) + ".png";
+        }
+        return rasterizeSvgMarkupToPng(piece, opts).then(function (out) {
+          return { dataUrl: out.dataUrl, filename: name, width: out.width, height: out.height };
+        });
+      });
+      Promise.all(jobs)
+        .then(function (files) {
+          files.forEach(function (file, idx) {
+            window.setTimeout(function () {
+              pngDownloadDataUrl(file.dataUrl, file.filename);
+            }, idx * 350);
+          });
+          var last = files[files.length - 1];
+          if (typeof flashCopyButton === "function") {
+            flashCopyButton(pngBtn, files.length > 1 ? "Downloaded" : "Downloaded");
+          }
+          setStatus(
+            "ok",
+            files.length > 1
+              ? "Downloaded " + files.length + " PNGs"
+              : "PNG downloaded " + last.width + "×" + last.height
+          );
+        })
+        .catch(function (err) {
+          setStatus("error", (err && err.message) || "Could not export PNG");
+        });
+    });
+  }
+
   if (craftBtn && craftIntentClick) {
     craftBtn.addEventListener("click", function () {
       var raw =
@@ -3349,6 +3936,9 @@ if (typeof globalThis !== "undefined") {
   globalThis.applyBatchAspectMarkup = applyBatchAspectMarkup;
   globalThis.applyBatchSvelteMarkup = applyBatchSvelteMarkup;
   globalThis.applyBatchRnMarkup = applyBatchRnMarkup;
+  globalThis.preparePngIntentMarkup = preparePngIntentMarkup;
+  globalThis.getPngIntentRenderOptions = getPngIntentRenderOptions;
+  globalThis.rasterizeSvgMarkupToPng = rasterizeSvgMarkupToPng;
   globalThis.initBatchLongtailIntents = initBatchLongtailIntents;
   globalThis.BATCH_GRADIENT_DEFAULT_SVGS = BATCH_GRADIENT_DEFAULT_SVGS;
   globalThis.BATCH_CLEAN_DEFAULT_SVGS = BATCH_CLEAN_DEFAULT_SVGS;
@@ -3360,4 +3950,5 @@ if (typeof globalThis !== "undefined") {
   globalThis.BATCH_ASPECT_DEFAULT_SVGS = BATCH_ASPECT_DEFAULT_SVGS;
   globalThis.BATCH_SVELTE_DEFAULT_SVGS = BATCH_SVELTE_DEFAULT_SVGS;
   globalThis.BATCH_RN_DEFAULT_SVGS = BATCH_RN_DEFAULT_SVGS;
+  globalThis.BATCH_PNG_DEFAULT_SVGS = BATCH_PNG_DEFAULT_SVGS;
 }

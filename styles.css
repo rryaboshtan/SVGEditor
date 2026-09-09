@@ -1712,7 +1712,7 @@ body.is-resizing .preview-stage {
 }
 
 .png-canvas {
-  max-width: min(100%, 28rem);
+  max-width: min(100%, 36rem);
   max-height: min(70%, 28rem);
   width: auto;
   height: auto;
@@ -4718,7 +4718,8 @@ body.animation-editor-page {
 }
 
 .scale-path-factor-group #btn-scale-path-action,
-.scale-path-factor-group #btn-path-edit-action {
+.scale-path-factor-group #btn-path-edit-action,
+.scale-path-factor-group #btn-png-action {
   flex: 0 0 auto;
   min-width: 8.5rem;
   justify-content: center;
@@ -4737,14 +4738,16 @@ body.animation-editor-page {
   .aspect-tool-page .panel-actions,
   .svelte-tool-page .panel-actions,
   .rn-tool-page .panel-actions,
-  .craft-tool-page .panel-actions {
+  .craft-tool-page .panel-actions,
+  .png-tool-page .panel-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .scale-path-tool-page .scale-path-factor-group,
   .path-edit-tool-page .scale-path-factor-group,
   .translate-path-tool-page .scale-path-factor-group,
   .translate-path-tool-page .translate-path-offset-group,
-  .gradient-tool-page .scale-path-factor-group {
+  .gradient-tool-page .scale-path-factor-group,
+  .png-tool-page .scale-path-factor-group {
     grid-column: 1 / -1;
     width: 100%;
     max-width: 100%;
@@ -4759,7 +4762,8 @@ body.animation-editor-page {
   .path-edit-tool-page .scale-path-factor-group #btn-path-edit-action,
   .translate-path-tool-page .translate-path-offset-group #btn-translate-path-action,
   .translate-path-tool-page .scale-path-factor-group #btn-translate-path-action,
-  .gradient-tool-page .scale-path-factor-group #btn-gradient-action {
+  .gradient-tool-page .scale-path-factor-group #btn-gradient-action,
+  .png-tool-page .scale-path-factor-group #btn-png-action {
     flex: 1 1 6.5rem;
     width: auto;
     min-width: 0;

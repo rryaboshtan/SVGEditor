@@ -29,3 +29,14 @@ subtract-svg-paths-online
 intersect-svg-paths-online
 create-compound-svg-path
 convert-svg-arcs-to-cubic-curves
+fix-svg-stretching-in-flexbox
+prevent-svg-distortion-in-css-grid
+remove-inkscape-namespaces-from-svg
+remove-sodipodi-attributes-from-svg
+clean-sketch-svg-export-online
+remove-unused-svg-namespaces-online
+crop-svg-to-bounding-box
+calculate-svg-bounding-box-online
+convert-svg-colors-to-currentcolor
+remove-hardcoded-stroke-from-svg
+change-svg-fill-and-stroke-on-hover

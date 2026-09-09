@@ -68,6 +68,12 @@ FAMILY = {
         "btn_id": "btn-craft-action",
         "keep_size_stat": False,
     },
+    "png": {
+        "class": "png-tool-page",
+        "attr": "data-png-intent",
+        "btn_id": "btn-png-action",
+        "keep_size_stat": False,
+    },
 }
 
 
@@ -134,6 +140,23 @@ def guides_html(guide_list):
 def action_button_html(p):
     cfg = FAMILY[p["family"]]
     btn_id = cfg["btn_id"]
+    extras = p.get("extra_inputs") or []
+    if extras:
+        fields = []
+        for inp in extras:
+            fields.append(
+                f'''<label class="scale-path-factor-label" for="{esc(inp["id"])}">{esc(inp["label"])}</label>
+              <input type="number" id="{esc(inp["id"])}" class="scale-path-factor-input" value="{esc(str(inp["default"]))}" min="1" step="1" inputmode="numeric" aria-label="{esc(inp["aria"])}" />
+              <span class="scale-path-factor-unit" aria-hidden="true">{esc(inp.get("unit", "px"))}</span>'''
+            )
+        return (
+            '<div class="scale-path-factor-group">\n              '
+            + "\n              ".join(fields)
+            + f'''
+              <button type="button" class="btn btn-accent" id="{btn_id}" title="{esc(p["btn_title"])}">
+              {esc(p["btn"])}</button>
+            </div>'''
+        )
     return f'''<button
               type="button"
               class="btn btn-accent"
@@ -204,13 +227,13 @@ def build_page(p):
 
     text = re.sub(
         r'(<span aria-current="page">)Optimize SVG(</span>)',
-        rf'\1{esc(p["crumb"])}\2',
+        lambda m: m.group(1) + esc(p["crumb"]) + m.group(2),
         text,
         count=1,
     )
     text = re.sub(
         r'(<h1 class="tool-title">)Optimize SVG File(</h1>)',
-        rf'\1{esc(p["h1"])}\2',
+        lambda m: m.group(1) + esc(p["h1"]) + m.group(2),
         text,
         count=1,
     )

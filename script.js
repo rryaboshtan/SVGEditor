@@ -236,12 +236,113 @@ function setStatus(state, message) {
   });
 }
 
+/** First top-level <svg>…</svg> starting at fromIndex (nesting-aware). */
+function extractMatchingSvgBlock(text, fromIndex) {
+  const source = String(text || "");
+  const startAt = Math.max(0, fromIndex | 0);
+  const tagRe = /<svg\b[^>]*>|<\/svg\s*>/gi;
+  tagRe.lastIndex = startAt;
+  let depth = 0;
+  let blockStart = -1;
+  let match;
+  while ((match = tagRe.exec(source)) !== null) {
+    if (match.index < startAt) continue;
+    const token = match[0];
+    if (/^<\/svg/i.test(token)) {
+      depth -= 1;
+      if (depth === 0 && blockStart >= 0) {
+        return source.slice(blockStart, match.index + token.length);
+      }
+      continue;
+    }
+    const selfClosing = /\/>\s*$/.test(token);
+    if (selfClosing) {
+      if (depth === 0) return source.slice(match.index, match.index + token.length);
+      continue;
+    }
+    if (depth === 0) blockStart = match.index;
+    depth += 1;
+  }
+  return null;
+}
+
+/** Every top-level <svg>…</svg> in document order (sibling roots, not nested). */
+function collectTopLevelSvgBlocks(raw) {
+  const text = String(raw || "");
+  const blocks = [];
+  let pos = 0;
+  while (pos < text.length) {
+    const rel = text.slice(pos).search(/<svg\b/i);
+    if (rel < 0) break;
+    const openIdx = pos + rel;
+    const block = extractMatchingSvgBlock(text, openIdx);
+    if (!block) break;
+    blocks.push(block);
+    pos = openIdx + block.length;
+  }
+  return blocks;
+}
+
 function extractSvgMarkup(raw) {
-  const trimmed = raw.trim();
+  const trimmed = String(raw || "").trim();
   if (!trimmed) return null;
 
-  const match = trimmed.match(/<svg\b[\s\S]*<\/svg>/i);
-  return match ? match[0] : trimmed;
+  const openIdx = trimmed.search(/<svg\b/i);
+  if (openIdx < 0) return trimmed;
+
+  return extractMatchingSvgBlock(trimmed, openIdx) || trimmed;
+}
+
+/** Side-by-side composite for batch PNG preview (display only). */
+function buildMultiSvgPreviewMarkup(blocks) {
+  const gap = 12;
+  let x = 0;
+  let maxH = 0;
+  const parts = [];
+
+  blocks.forEach(function (block) {
+    const svg = parseSvg(block);
+    let w = 80;
+    let h = 80;
+    const vb = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(parseFloat);
+    if (vb.length === 4 && vb[2] > 0 && vb[3] > 0) {
+      w = vb[2];
+      h = vb[3];
+    } else {
+      const aw = parseFloat(svg.getAttribute("width"));
+      const ah = parseFloat(svg.getAttribute("height"));
+      if (Number.isFinite(aw) && aw > 0 && Number.isFinite(ah) && ah > 0) {
+        w = aw;
+        h = ah;
+      }
+    }
+    maxH = Math.max(maxH, h);
+    svg.setAttribute("x", String(x));
+    svg.setAttribute("y", "0");
+    svg.setAttribute("width", String(w));
+    svg.setAttribute("height", String(h));
+    if (!svg.getAttribute("viewBox")) {
+      svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    }
+    if (!svg.hasAttribute("xmlns")) {
+      svg.setAttribute("xmlns", SVG_NS);
+    }
+    parts.push(new XMLSerializer().serializeToString(svg));
+    x += w + gap;
+  });
+
+  const totalW = Math.max(1, x - gap);
+  return (
+    '<svg xmlns="' +
+    SVG_NS +
+    '" viewBox="0 0 ' +
+    totalW +
+    " " +
+    maxH +
+    '" role="img" aria-label="Batch SVG preview">' +
+    parts.join("") +
+    "</svg>"
+  );
 }
 
 /** Clean markup string for share / download / data-URI (may re-serialize). */
@@ -646,7 +747,12 @@ function selectionFromCaret() {
 
 function renderPreview(source, options) {
   const renderOptions = options || {};
-  const markup = extractSvgMarkup(source);
+  const isBatchPng =
+    document.body &&
+    document.body.getAttribute("data-png-intent") === "batch-convert-svg-to-png";
+  const batchBlocks = isBatchPng ? collectTopLevelSvgBlocks(source) : null;
+  const isBatchMulti = Boolean(batchBlocks && batchBlocks.length > 1);
+  const markup = isBatchMulti ? batchBlocks[0] : extractSvgMarkup(source);
   const sourceOffset = markup ? source.indexOf(markup) : 0;
   const wasInspecting = inspectActive;
 
@@ -662,7 +768,10 @@ function renderPreview(source, options) {
   }
 
   try {
-    const svg = parseSvg(markup);
+    const displayMarkup = isBatchMulti
+      ? buildMultiSvgPreviewMarkup(batchBlocks)
+      : markup;
+    const svg = parseSvg(displayMarkup);
     const stripped = svg.__svgStripped || 0;
 
     if (!svg.hasAttribute("xmlns")) {
@@ -682,8 +791,8 @@ function renderPreview(source, options) {
     });
 
     const nodes = listPreviewElements(svg);
-    // Element→editor mapping is only safe if we didn't remove nodes mid-tree
-    if (stripped === 0) {
+    // Element→editor mapping is only safe for a single root matching Source.
+    if (!isBatchMulti && stripped === 0) {
       nodes.forEach(function (node, index) {
         node.setAttribute("data-el-index", String(index));
         if (!DEF_TAGS.has(node.localName.toLowerCase()) && node.style) {
@@ -705,7 +814,9 @@ function renderPreview(source, options) {
     try {
       exportMarkup = sanitizeSvgSource(markup) || markup;
     } catch (err) {
-      exportMarkup = new XMLSerializer().serializeToString(svg);
+      exportMarkup = isBatchMulti
+        ? markup
+        : new XMLSerializer().serializeToString(svg);
     }
 
     if (renderOptions.deferExports) {
@@ -735,13 +846,18 @@ function renderPreview(source, options) {
       }
     }
 
-    if (stripped > 0) {
+    if (isBatchMulti) {
+      setStatus(
+        "ok",
+        batchBlocks.length + " SVGs — previewing all; Batch export downloads each"
+      );
+    } else if (stripped > 0) {
       setStatus("ok", "Removed unsafe SVG parts");
     } else {
       setStatus("ok", typeof activeTab !== "undefined" ? tabStatusLabel(activeTab) : "Live preview");
     }
 
-    if (wasInspecting && stripped === 0) {
+    if (wasInspecting && !isBatchMulti && stripped === 0) {
       requestAnimationFrame(selectionFromCaret);
     } else {
       selectedIndex = -1;
@@ -4956,35 +5072,65 @@ if (uploadBtn && fileUpload) {
   });
 
   fileUpload.addEventListener("change", function () {
-    const file = fileUpload.files && fileUpload.files[0];
-    if (!file) return;
+    const files = fileUpload.files ? Array.from(fileUpload.files) : [];
+    const batchPng =
+      document.body &&
+      document.body.getAttribute("data-png-intent") === "batch-convert-svg-to-png";
+    if (!files.length) return;
 
-    const reader = new FileReader();
-    reader.onload = function () {
-      const text = typeof reader.result === "string" ? reader.result : "";
-      let markup = extractSvgMarkup(text) || text.trim();
-      try {
-        markup = sanitizeSvgSource(markup) || markup;
-      } catch (err) {
-      setStatus("error", "Upload blocked — unsafe SVG content");
-        return;
-      }
-      markUserEdited();
-      flushHistory();
-      editor.value = markup;
-      editor.focus();
-      editor.setSelectionRange(0, 0);
-      commitHistory();
-      scheduleRefreshEditorChrome();
-      scheduleRender();
-      clearHighlight();
-      setStatus("ok", "Loaded " + file.name);
-      maybeShowOutputOnMobile();
+    const readOne = function (file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const text = typeof reader.result === "string" ? reader.result : "";
+          resolve({ name: file.name, text: text });
+        };
+        reader.onerror = function () {
+          reject(new Error("Couldn’t read that file"));
+        };
+        reader.readAsText(file);
+      });
     };
-    reader.onerror = function () {
-      setStatus("error", "Couldn’t read that file");
-    };
-    reader.readAsText(file);
+
+    Promise.all(files.map(readOne))
+      .then(function (parts) {
+        const blocks = [];
+        parts.forEach(function (part) {
+          const found = String(part.text || "").match(/<svg\b[\s\S]*?<\/svg>/gi);
+          if (found && found.length) found.forEach(function (b) { blocks.push(b); });
+          else if (part.text.trim()) blocks.push(part.text.trim());
+        });
+        if (!blocks.length) {
+          setStatus("error", "No SVG markup in the uploaded file");
+          return;
+        }
+        let markup = batchPng ? blocks.join("\n") : blocks[0];
+        try {
+          if (!batchPng) markup = sanitizeSvgSource(markup) || markup;
+        } catch (err) {
+          setStatus("error", "Upload blocked — unsafe SVG content");
+          return;
+        }
+        markUserEdited();
+        flushHistory();
+        editor.value = markup;
+        editor.focus();
+        editor.setSelectionRange(0, 0);
+        commitHistory();
+        scheduleRefreshEditorChrome();
+        scheduleRender();
+        clearHighlight();
+        setStatus(
+          "ok",
+          batchPng && files.length > 1
+            ? "Loaded " + files.length + " SVG files"
+            : "Loaded " + files[0].name
+        );
+        maybeShowOutputOnMobile();
+      })
+      .catch(function () {
+        setStatus("error", "Couldn’t read that file");
+      });
   });
 }
 
@@ -5838,7 +5984,94 @@ function clearPngPreview() {
   downloadPngBtn.disabled = true;
 }
 
+function isBatchPngPage() {
+  return (
+    document.body &&
+    document.body.getAttribute("data-png-intent") === "batch-convert-svg-to-png"
+  );
+}
+
+function renderPngPreviewBatch(blocks) {
+  clearPngPreview();
+  if (!blocks || !blocks.length) {
+    pngEmpty.hidden = false;
+    pngEmpty.textContent = "Paste valid SVG to export a transparent PNG at 2×.";
+    return;
+  }
+
+  const opts =
+    (typeof getPngIntentRenderOptions === "function" && getPngIntentRenderOptions()) ||
+    { scale: 2 };
+  const gap = 20;
+
+  Promise.all(
+    blocks.map(function (block) {
+      var piece = block;
+      try {
+        if (typeof preparePngIntentMarkup === "function") {
+          piece = preparePngIntentMarkup(block, "batch-convert-svg-to-png").markup;
+        }
+      } catch (err) {
+        /* use raw block */
+      }
+      return rasterizeSvgMarkupToPng(piece, opts);
+    })
+  )
+    .then(function (results) {
+      const cellW = Math.max.apply(
+        null,
+        results.map(function (r) {
+          return r.width;
+        })
+      );
+      const cellH = Math.max.apply(
+        null,
+        results.map(function (r) {
+          return r.height;
+        })
+      );
+      const totalW = results.length * cellW + (results.length - 1) * gap;
+      pngCanvas.width = totalW;
+      pngCanvas.height = cellH;
+      const ctx = pngCanvas.getContext("2d");
+      ctx.clearRect(0, 0, totalW, cellH);
+
+      return Promise.all(
+        results.map(function (out, idx) {
+          return new Promise(function (resolve, reject) {
+            const img = new Image();
+            img.onload = function () {
+              const dx = idx * (cellW + gap) + (cellW - out.width) / 2;
+              const dy = (cellH - out.height) / 2;
+              ctx.drawImage(img, dx, dy);
+              resolve();
+            };
+            img.onerror = reject;
+            img.src = out.dataUrl;
+          });
+        })
+      );
+    })
+    .then(function () {
+      pngEmpty.hidden = true;
+      downloadPngBtn.disabled = false;
+    })
+    .catch(function () {
+      pngEmpty.hidden = false;
+      pngEmpty.textContent = "Couldn’t rasterize this SVG to PNG.";
+      downloadPngBtn.disabled = true;
+    });
+}
+
 function renderPngPreview(markup) {
+  if (isBatchPngPage() && typeof collectTopLevelSvgBlocks === "function" && editor) {
+    const blocks = collectTopLevelSvgBlocks(editor.value);
+    if (blocks.length > 1) {
+      renderPngPreviewBatch(blocks);
+      return;
+    }
+  }
+
   clearPngPreview();
   const svg = parseSvg(markup);
   if (!svg.getAttribute("xmlns")) svg.setAttribute("xmlns", SVG_NS);
@@ -5856,6 +6089,22 @@ function renderPngPreview(markup) {
   width = width || 512;
   height = height || 512;
 
+  const pngOpts =
+    typeof getPngIntentRenderOptions === "function" ? getPngIntentRenderOptions() : null;
+  let canvasW;
+  let canvasH;
+  if (pngOpts && pngOpts.width && pngOpts.height) {
+    canvasW = Math.max(1, Math.round(pngOpts.width));
+    canvasH = Math.max(1, Math.round(pngOpts.height));
+  } else if (pngOpts && pngOpts.width) {
+    canvasW = Math.max(1, Math.round(pngOpts.width));
+    canvasH = Math.max(1, Math.round(canvasW * (height / width)));
+  } else {
+    const scale = (pngOpts && pngOpts.scale) || 2;
+    canvasW = Math.max(1, Math.round(width * scale));
+    canvasH = Math.max(1, Math.round(height * scale));
+  }
+
   const serialized = new XMLSerializer().serializeToString(svg);
   const blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -5863,12 +6112,14 @@ function renderPngPreview(markup) {
 
   const img = new Image();
   img.onload = function () {
-    const scale = 2;
-    pngCanvas.width = Math.max(1, Math.round(width * scale));
-    pngCanvas.height = Math.max(1, Math.round(height * scale));
+    pngCanvas.width = canvasW;
+    pngCanvas.height = canvasH;
     const ctx = pngCanvas.getContext("2d");
     ctx.clearRect(0, 0, pngCanvas.width, pngCanvas.height);
-    ctx.drawImage(img, 0, 0, pngCanvas.width, pngCanvas.height);
+    const fit = Math.min(canvasW / width, canvasH / height);
+    const dw = width * fit;
+    const dh = height * fit;
+    ctx.drawImage(img, (canvasW - dw) / 2, (canvasH - dh) / 2, dw, dh);
     pngEmpty.hidden = true;
     downloadPngBtn.disabled = false;
     URL.revokeObjectURL(url);
