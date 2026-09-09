@@ -326,6 +326,170 @@ var BATCH_STYLE_DEFAULT_SVGS = {
     "</svg>",
 };
 
+var BATCH_CRAFT_DEFAULT_SVGS = {
+  "fix-svg-clipping-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Clipped badge — click Fix clipping">\n' +
+    "  <defs>\n" +
+    '    <clipPath id="tight-clip"><rect x="36" y="36" width="28" height="28"/></clipPath>\n' +
+    "  </defs>\n" +
+    '  <circle cx="60" cy="60" r="34" fill="#0ea5e9" clip-path="url(#tight-clip)"/>\n' +
+    '  <path d="M48 62 L56 70 L74 48" fill="none" stroke="#e0f2fe" stroke-width="6" stroke-linecap="round" clip-path="url(#tight-clip)"/>\n' +
+    "</svg>",
+  "make-svg-scale-with-container":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-label="Banner that should scale with container">\n' +
+    '  <rect x="8" y="12" width="184" height="56" rx="14" fill="#38bdf8"/>\n' +
+    '  <circle cx="44" cy="40" r="16" fill="#e0f2fe"/>\n' +
+    '  <rect x="72" y="28" width="100" height="10" rx="4" fill="#082f49"/>\n' +
+    '  <rect x="72" y="44" width="72" height="8" rx="4" fill="#082f49" opacity="0.55"/>\n' +
+    "</svg>",
+  "make-svg-responsive-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" preserveAspectRatio="none" role="img" aria-label="Square mark for responsive meet">\n' +
+    '  <rect x="16" y="16" width="128" height="128" rx="20" fill="#22d3ee"/>\n' +
+    '  <path d="M40 108 L80 44 L120 108 Z" fill="#082f49"/>\n' +
+    "</svg>",
+  "remove-xml-declaration-from-svg":
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="SVG with XML declaration">\n' +
+    '  <rect x="16" y="18" width="108" height="64" rx="10" fill="#64748b"/>\n' +
+    '  <text x="70" y="56" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="14">&lt;?xml</text>\n' +
+    "</svg>",
+  "clean-illustrator-svg-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/" viewBox="0 0 120 120" i:extraneous="self" enable-background="new 0 0 120 120" role="img" aria-label="Illustrator star leftovers">\n' +
+    "  <metadata>Adobe Illustrator 27</metadata>\n" +
+    '  <path i:layer="Star" fill="#f59e0b" d="M60 18 L70 46 H100 L76 64 L86 94 L60 76 L34 94 L44 64 L20 46 H50 Z"/>\n' +
+    "</svg>",
+  "clean-figma-svg-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Figma frame leftovers">\n' +
+    '  <g id="Frame-12" data-name="Card / Default">\n' +
+    '    <rect data-name="bg" x="18" y="22" width="84" height="76" rx="16" fill="#a855f7"/>\n' +
+    '    <circle data-figma-id="ell-2" cx="60" cy="60" r="18" fill="#f5d0fe"/>\n' +
+    "  </g>\n" +
+    "</svg>",
+  "remove-hidden-layers-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 110" role="img" aria-label="Visible leaf plus hidden layer">\n' +
+    '  <g id="hidden-draft" display="none">\n' +
+    '    <rect x="8" y="8" width="50" height="50" fill="#ef4444"/>\n' +
+    "  </g>\n" +
+    '  <path fill="#22c55e" d="M70 20 C110 28 118 70 70 96 C22 70 30 28 70 20 Z"/>\n' +
+    '  <circle cx="70" cy="52" r="8" fill="#14532d"/>\n' +
+    "</svg>",
+  "strip-inline-styles-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="House with inline styles">\n' +
+    '  <path style="fill:#fb7185;stroke:#831843;stroke-width:4" d="M20 50 L70 18 L120 50 V88 H20 Z"/>\n' +
+    '  <rect style="fill:#ffe4e6" x="58" y="58" width="24" height="30"/>\n' +
+    "</svg>",
+  "change-svg-fill-color-with-css":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Palette droplet">\n' +
+    '  <path fill="#0ea5e9" d="M60 16 C88 48 96 72 60 104 C24 72 32 48 60 16 Z"/>\n' +
+    '  <circle cx="60" cy="62" r="12" fill="#082f49"/>\n' +
+    "</svg>",
+  "convert-svg-colors-to-css-variables":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Two-tone flag">\n' +
+    '  <rect x="16" y="18" width="108" height="64" rx="8" fill="#2563eb"/>\n' +
+    '  <polygon points="16,18 70,50 16,82" fill="#f97316"/>\n' +
+    "</svg>",
+  "change-svg-fill-color-on-hover":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110" role="img" aria-label="Heart for hover fill">\n' +
+    '  <path fill="#e11d48" d="M60 92 C20 64 14 40 32 26 C44 16 56 22 60 34 C64 22 76 16 88 26 C106 40 100 64 60 92 Z"/>\n' +
+    "</svg>",
+  "make-svg-icon-monochrome-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Multicolor bell">\n' +
+    '  <path fill="#eab308" d="M36 54 C36 34 50 22 60 22 C70 22 84 34 84 54 V70 H36 Z"/>\n' +
+    '  <rect x="28" y="70" width="64" height="10" rx="5" fill="#f97316"/>\n' +
+    '  <circle cx="60" cy="90" r="8" fill="#ef4444"/>\n' +
+    "</svg>",
+  "convert-svg-presentation-attributes-to-css":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 110" role="img" aria-label="Cube with presentation attrs">\n' +
+    '  <polygon points="70,16 118,42 70,68 22,42" fill="#38bdf8" stroke="#0f172a" stroke-width="3"/>\n' +
+    '  <polygon points="22,42 70,68 70,98 22,72" fill="#0284c7" stroke="#0f172a" stroke-width="3"/>\n' +
+    '  <polygon points="70,68 118,42 118,72 70,98" fill="#7dd3fc" stroke="#0f172a" stroke-width="3"/>\n' +
+    "</svg>",
+  "convert-svg-attributes-to-css-classes":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Repeated hex fills">\n' +
+    '  <polygon points="30,20 50,20 60,38 50,56 30,56 20,38" fill="#14b8a6" stroke="#134e4a" stroke-width="3"/>\n' +
+    '  <polygon points="80,20 100,20 110,38 100,56 80,56 70,38" fill="#14b8a6" stroke="#134e4a" stroke-width="3"/>\n' +
+    '  <polygon points="130,20 150,20 160,38 150,56 130,56 120,38" fill="#f43f5e" stroke="#881337" stroke-width="3"/>\n' +
+    "</svg>",
+  "remove-svg-presentation-attributes":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Bolt with presentation attrs">\n' +
+    '  <path fill="#facc15" stroke="#854d0e" stroke-width="4" opacity="0.95" d="M78 12 L40 58 H68 L52 92 L108 40 H76 Z"/>\n' +
+    "</svg>",
+  "remove-empty-attributes-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Mark with empty attributes">\n' +
+    '  <rect id="" class="" x="24" y="22" width="92" height="56" rx="12" fill="#6366f1" stroke=""/>\n' +
+    "</svg>",
+  "remove-data-attributes-from-svg":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" role="img" aria-label="Shield with data attributes">\n' +
+    '  <path data-name="Shield" data-export="1" fill="#0f766e" d="M70 14 L114 32 V58 C114 84 70 96 70 96 C70 96 26 84 26 58 V32 Z"/>\n' +
+    "</svg>",
+  "bake-svg-transforms-into-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 120" role="img" aria-label="Arrow with transform">\n' +
+    '  <path fill="#2563eb" transform="translate(20 10) rotate(25 50 50)" d="M20 50 H70 L58 38 M70 50 L58 62"/>\n' +
+    '  <path fill="none" stroke="#2563eb" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" transform="translate(20 10) rotate(25 50 50)" d="M20 50 H70 L58 38 M70 50 L58 62"/>\n' +
+    "</svg>",
+  "convert-svg-stroke-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Stroked ring">\n' +
+    '  <circle cx="70" cy="70" r="36" fill="none" stroke="#7c3aed" stroke-width="14"/>\n' +
+    "</svg>",
+  "skew-svg-path-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Rectangle to skew">\n' +
+    '  <path fill="#06b6d4" d="M36 24 H124 V76 H36 Z"/>\n' +
+    "</svg>",
+  "close-open-svg-paths-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Open chevron path">\n' +
+    '  <path fill="none" stroke="#ea580c" stroke-width="8" stroke-linecap="round" d="M28 28 L80 72 L132 28"/>\n' +
+    "</svg>",
+  "merge-svg-paths-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Two blobs to merge">\n' +
+    '  <path fill="#0ea5e9" d="M28 50 C28 28 52 20 70 36 C60 52 44 64 28 50 Z"/>\n' +
+    '  <path fill="#0ea5e9" d="M90 40 C110 22 140 34 132 58 C118 70 96 66 90 40 Z"/>\n' +
+    "</svg>",
+  "offset-svg-path-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Diamond to offset">\n' +
+    '  <path fill="none" stroke="#16a34a" stroke-width="6" d="M70 24 L110 70 L70 116 L30 70 Z"/>\n' +
+    "</svg>",
+  "convert-svg-text-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 120" role="img" aria-label="Letter A as text">\n' +
+    '  <text x="70" y="82" text-anchor="middle" font-family="Syne, Segoe UI, sans-serif" font-size="72" font-weight="800" fill="#1d4ed8">A</text>\n' +
+    "</svg>",
+  "split-compound-svg-paths":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Compound two circles">\n' +
+    '  <path fill="#db2777" fill-rule="evenodd" d="M26 50 A24 24 0 1 1 74 50 A24 24 0 1 1 26 50 Z M86 50 A24 24 0 1 1 134 50 A24 24 0 1 1 86 50 Z"/>\n' +
+    "</svg>",
+  "ungroup-svg-paths-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 110" role="img" aria-label="Grouped bars">\n' +
+    "  <g id=\"bars\">\n" +
+    '    <path fill="#0284c7" d="M24 70 H48 V90 H24 Z"/>\n' +
+    '    <path fill="#38bdf8" d="M60 40 H84 V90 H60 Z"/>\n' +
+    '    <path fill="#7dd3fc" d="M96 24 H120 V90 H96 Z"/>\n' +
+    "  </g>\n" +
+    "</svg>",
+  "unite-svg-paths-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Overlapping pills to unite">\n' +
+    '  <path fill="#8b5cf6" d="M30 36 H90 A22 22 0 0 1 90 80 H30 A22 22 0 0 1 30 36 Z"/>\n' +
+    '  <path fill="#8b5cf6" d="M70 36 H130 A22 22 0 0 1 130 80 H70 A22 22 0 0 1 70 36 Z"/>\n' +
+    "</svg>",
+  "subtract-svg-paths-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 120" role="img" aria-label="Moon subtract sample">\n' +
+    '  <path fill="#334155" d="M70 20 A40 40 0 1 1 70 100 A40 40 0 1 1 70 20 Z"/>\n' +
+    '  <path fill="#f8fafc" d="M82 36 A24 24 0 1 1 82 84 A24 24 0 1 1 82 36 Z"/>\n' +
+    "</svg>",
+  "intersect-svg-paths-online":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Vesica intersection">\n' +
+    '  <path fill="#0ea5e9" d="M58 20 A36 36 0 1 1 58 92 A36 36 0 1 1 58 20 Z"/>\n' +
+    '  <path fill="#f43f5e" d="M102 20 A36 36 0 1 1 102 92 A36 36 0 1 1 102 20 Z"/>\n' +
+    "</svg>",
+  "create-compound-svg-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Donut siblings">\n' +
+    '  <path fill="#0f172a" d="M70 18 A52 52 0 1 1 70 122 A52 52 0 1 1 70 18 Z"/>\n' +
+    '  <path fill="#e2e8f0" d="M70 48 A22 22 0 1 1 70 92 A22 22 0 1 1 70 48 Z"/>\n' +
+    "</svg>",
+  "convert-svg-arcs-to-cubic-curves":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Pie wedge with arcs">\n' +
+    '  <path fill="#f59e0b" d="M80 60 L80 18 A42 42 0 0 1 118 84 Z"/>\n' +
+    "</svg>",
+};
+
 var BATCH_ASPECT_DEFAULT_SVGS = {
   "fix-svg-gradient-stretch-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="120" viewBox="0 0 160 80" role="img" aria-label="Flexbox gradient stretch sample">\n' +
@@ -653,6 +817,13 @@ function getBatchLongtailStartup() {
     return {
       svg: BATCH_STYLE_DEFAULT_SVGS[styleIntent],
       status: "Sample SVG — click the action button to rewrite styles",
+    };
+  }
+  var craftIntent = batchBodyAttr("data-craft-intent");
+  if (craftIntent && BATCH_CRAFT_DEFAULT_SVGS[craftIntent]) {
+    return {
+      svg: BATCH_CRAFT_DEFAULT_SVGS[craftIntent],
+      status: "Sample SVG — click the action button for this intent",
     };
   }
   var aspect = batchBodyAttr("data-aspect-intent");
@@ -2071,6 +2242,844 @@ function applyBatchRnMarkup(markup, intent) {
   return { code: code, status: status, markup: svgMarkup };
 }
 
+function craftEnsureViewBox(svg) {
+  if (svg.getAttribute("viewBox")) return;
+  var w = parseFloat(svg.getAttribute("width"));
+  var h = parseFloat(svg.getAttribute("height"));
+  if (Number.isFinite(w) && w > 0 && Number.isFinite(h) && h > 0) {
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+  } else {
+    svg.setAttribute("viewBox", "0 0 120 120");
+  }
+}
+
+function craftWalk(el, fn) {
+  fn(el);
+  Array.from(el.children || []).forEach(function (child) {
+    craftWalk(child, fn);
+  });
+}
+
+function craftTokenizePath(d) {
+  var tokens = [];
+  var re = /([MmLlHhVvCcSsQqTtAaZz])|(-?\d*\.?\d+(?:e[-+]?\d+)?)/g;
+  var m;
+  var cmd = "";
+  var nums = [];
+  var flush = function () {
+    if (!cmd) return;
+    tokens.push({ cmd: cmd, nums: nums.slice() });
+    nums = [];
+  };
+  while ((m = re.exec(String(d || "")))) {
+    if (m[1]) {
+      if (/[Zz]/.test(m[1])) {
+        flush();
+        tokens.push({ cmd: m[1], nums: [] });
+        cmd = "";
+      } else {
+        flush();
+        cmd = m[1];
+      }
+    } else if (m[2]) {
+      nums.push(parseFloat(m[2]));
+    }
+  }
+  flush();
+  return tokens;
+}
+
+function craftSerializePath(tokens) {
+  return tokens
+    .map(function (t) {
+      return t.cmd + (t.nums.length ? " " + t.nums.join(" ") : "");
+    })
+    .join(" ");
+}
+
+function craftArcToCubics(x1, y1, rx, ry, phi, fa, fs, x2, y2) {
+  rx = Math.abs(rx);
+  ry = Math.abs(ry);
+  if (!rx || !ry) return [{ cmd: "L", nums: [x2, y2] }];
+  var rad = (phi * Math.PI) / 180;
+  var cos = Math.cos(rad);
+  var sin = Math.sin(rad);
+  var dx = (x1 - x2) / 2;
+  var dy = (y1 - y2) / 2;
+  var x1p = cos * dx + sin * dy;
+  var y1p = -sin * dx + cos * dy;
+  var lam = (x1p * x1p) / (rx * rx) + (y1p * y1p) / (ry * ry);
+  if (lam > 1) {
+    var s = Math.sqrt(lam);
+    rx *= s;
+    ry *= s;
+  }
+  var sq =
+    (rx * rx * ry * ry - rx * rx * y1p * y1p - ry * ry * x1p * x1p) /
+    (rx * rx * y1p * y1p + ry * ry * x1p * x1p);
+  var coef = (fa === fs ? -1 : 1) * Math.sqrt(Math.max(0, sq));
+  var cxp = coef * ((rx * y1p) / ry);
+  var cyp = coef * (-(ry * x1p) / rx);
+  var cx = cos * cxp - sin * cyp + (x1 + x2) / 2;
+  var cy = sin * cxp + cos * cyp + (y1 + y2) / 2;
+  var angle = function (ux, uy, vx, vy) {
+    var n = Math.sqrt(ux * ux + uy * uy) * Math.sqrt(vx * vx + vy * vy);
+    var sign = ux * vy - uy * vx < 0 ? -1 : 1;
+    return sign * Math.acos(Math.max(-1, Math.min(1, (ux * vx + uy * vy) / (n || 1))));
+  };
+  var t1 = angle(1, 0, (x1p - cxp) / rx, (y1p - cyp) / ry);
+  var dt = angle((x1p - cxp) / rx, (y1p - cyp) / ry, (-x1p - cxp) / rx, (-y1p - cyp) / ry);
+  if (!fs && dt > 0) dt -= 2 * Math.PI;
+  if (fs && dt < 0) dt += 2 * Math.PI;
+  var n = Math.ceil(Math.abs(dt) / (Math.PI / 2));
+  var out = [];
+  for (var i = 0; i < n; i++) {
+    var a1 = t1 + (dt * i) / n;
+    var a2 = t1 + (dt * (i + 1)) / n;
+    var alpha = (Math.sin(a2 - a1) * (Math.sqrt(4 + 3 * Math.pow(Math.tan((a2 - a1) / 2), 2)) - 1)) / 3;
+    var e = function (a) {
+      return {
+        x: cx + cos * rx * Math.cos(a) - sin * ry * Math.sin(a),
+        y: cy + sin * rx * Math.cos(a) + cos * ry * Math.sin(a),
+      };
+    };
+    var d = function (a) {
+      return {
+        x: -cos * rx * Math.sin(a) - sin * ry * Math.cos(a),
+        y: -sin * rx * Math.sin(a) + cos * ry * Math.cos(a),
+      };
+    };
+    var p1 = e(a1);
+    var p2 = e(a2);
+    var d1 = d(a1);
+    var d2 = d(a2);
+    out.push({
+      cmd: "C",
+      nums: [p1.x + alpha * d1.x, p1.y + alpha * d1.y, p2.x - alpha * d2.x, p2.y - alpha * d2.y, p2.x, p2.y],
+    });
+  }
+  return out;
+}
+
+function craftPathToAbsoluteCubics(d) {
+  var tokens = craftTokenizePath(d);
+  var x = 0;
+  var y = 0;
+  var sx = 0;
+  var sy = 0;
+  var out = [];
+  tokens.forEach(function (t) {
+    var c = t.cmd;
+    var n = t.nums;
+    var rel = c === c.toLowerCase() && c.toLowerCase() !== "z";
+    var C = c.toUpperCase();
+    var i = 0;
+    if (C === "Z") {
+      out.push({ cmd: "Z", nums: [] });
+      x = sx;
+      y = sy;
+      return;
+    }
+    if (C === "M") {
+      while (i + 1 < n.length) {
+        var mx = n[i] + (rel ? x : 0);
+        var my = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        if (i === 2) {
+          out.push({ cmd: "M", nums: [mx, my] });
+          sx = mx;
+          sy = my;
+        } else {
+          out.push({ cmd: "L", nums: [mx, my] });
+        }
+        x = mx;
+        y = my;
+        rel = true;
+      }
+      return;
+    }
+    if (C === "L") {
+      while (i + 1 < n.length) {
+        x = n[i] + (rel ? x : 0);
+        y = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        out.push({ cmd: "L", nums: [x, y] });
+      }
+      return;
+    }
+    if (C === "H") {
+      n.forEach(function (v) {
+        x = v + (rel ? x : 0);
+        out.push({ cmd: "L", nums: [x, y] });
+      });
+      return;
+    }
+    if (C === "V") {
+      n.forEach(function (v) {
+        y = v + (rel ? y : 0);
+        out.push({ cmd: "L", nums: [x, y] });
+      });
+      return;
+    }
+    if (C === "C") {
+      while (i + 5 < n.length) {
+        var c1x = n[i] + (rel ? x : 0);
+        var c1y = n[i + 1] + (rel ? y : 0);
+        var c2x = n[i + 2] + (rel ? x : 0);
+        var c2y = n[i + 3] + (rel ? y : 0);
+        x = n[i + 4] + (rel ? x : 0);
+        y = n[i + 5] + (rel ? y : 0);
+        i += 6;
+        out.push({ cmd: "C", nums: [c1x, c1y, c2x, c2y, x, y] });
+      }
+      return;
+    }
+    if (C === "Q") {
+      while (i + 3 < n.length) {
+        var qx = n[i] + (rel ? x : 0);
+        var qy = n[i + 1] + (rel ? y : 0);
+        var x2 = n[i + 2] + (rel ? x : 0);
+        var y2 = n[i + 3] + (rel ? y : 0);
+        i += 4;
+        out.push({
+          cmd: "C",
+          nums: [x + (2 / 3) * (qx - x), y + (2 / 3) * (qy - y), x2 + (2 / 3) * (qx - x2), y2 + (2 / 3) * (qy - y2), x2, y2],
+        });
+        x = x2;
+        y = y2;
+      }
+      return;
+    }
+    if (C === "A") {
+      while (i + 6 < n.length) {
+        var nx = n[i + 5] + (rel ? x : 0);
+        var ny = n[i + 6] + (rel ? y : 0);
+        var cubics = craftArcToCubics(x, y, n[i], n[i + 1], n[i + 2], n[i + 3], n[i + 4], nx, ny);
+        cubics.forEach(function (seg) {
+          out.push(seg);
+        });
+        x = nx;
+        y = ny;
+        i += 7;
+      }
+    }
+  });
+  return out;
+}
+
+function craftApplyMatrixToPath(d, m) {
+  var segs = craftPathToAbsoluteCubics(d);
+  var mapPt = function (px, py) {
+    return [m.a * px + m.c * py + m.e, m.b * px + m.d * py + m.f];
+  };
+  segs.forEach(function (seg) {
+    for (var i = 0; i + 1 < seg.nums.length; i += 2) {
+      var p = mapPt(seg.nums[i], seg.nums[i + 1]);
+      seg.nums[i] = Math.round(p[0] * 1000) / 1000;
+      seg.nums[i + 1] = Math.round(p[1] * 1000) / 1000;
+    }
+  });
+  return craftSerializePath(segs);
+}
+
+function craftParseTransform(attr) {
+  var m = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+  var mul = function (n) {
+    m = {
+      a: m.a * n.a + m.c * n.b,
+      b: m.b * n.a + m.d * n.b,
+      c: m.a * n.c + m.c * n.d,
+      d: m.b * n.c + m.d * n.d,
+      e: m.a * n.e + m.c * n.f + m.e,
+      f: m.b * n.e + m.d * n.f + m.f,
+    };
+  };
+  String(attr || "").replace(
+    /(translate|rotate|scale|skewX|skewY|matrix)\(([^)]*)\)/g,
+    function (_, kind, raw) {
+      var p = raw.trim().split(/[\s,]+/).map(parseFloat);
+      if (kind === "translate") mul({ a: 1, b: 0, c: 0, d: 1, e: p[0] || 0, f: p[1] || 0 });
+      else if (kind === "scale") mul({ a: p[0] || 1, b: 0, c: 0, d: p[1] == null ? p[0] || 1 : p[1], e: 0, f: 0 });
+      else if (kind === "rotate") {
+        var r = ((p[0] || 0) * Math.PI) / 180;
+        var cx = p[1] || 0;
+        var cy = p[2] || 0;
+        mul({ a: 1, b: 0, c: 0, d: 1, e: cx, f: cy });
+        mul({ a: Math.cos(r), b: Math.sin(r), c: -Math.sin(r), d: Math.cos(r), e: 0, f: 0 });
+        mul({ a: 1, b: 0, c: 0, d: 1, e: -cx, f: -cy });
+      } else if (kind === "skewX") {
+        mul({ a: 1, b: 0, c: Math.tan(((p[0] || 0) * Math.PI) / 180), d: 1, e: 0, f: 0 });
+      } else if (kind === "skewY") {
+        mul({ a: 1, b: Math.tan(((p[0] || 0) * Math.PI) / 180), c: 0, d: 1, e: 0, f: 0 });
+      } else if (kind === "matrix") {
+        mul({ a: p[0], b: p[1], c: p[2], d: p[3], e: p[4], f: p[5] });
+      }
+      return "";
+    }
+  );
+  return m;
+}
+
+function craftShapeToPath(el) {
+  var tag = String(el.localName || "").toLowerCase();
+  if (tag === "path") return el.getAttribute("d") || "";
+  if (tag === "circle") {
+    var cx = parseFloat(el.getAttribute("cx") || 0);
+    var cy = parseFloat(el.getAttribute("cy") || 0);
+    var r = parseFloat(el.getAttribute("r") || 0);
+    return "M " + cx + " " + (cy - r) + " A " + r + " " + r + " 0 1 1 " + cx + " " + (cy + r) + " A " + r + " " + r + " 0 1 1 " + cx + " " + (cy - r) + " Z";
+  }
+  if (tag === "rect") {
+    var x = parseFloat(el.getAttribute("x") || 0);
+    var y = parseFloat(el.getAttribute("y") || 0);
+    var w = parseFloat(el.getAttribute("width") || 0);
+    var h = parseFloat(el.getAttribute("height") || 0);
+    return "M " + x + " " + y + " H " + (x + w) + " V " + (y + h) + " H " + x + " Z";
+  }
+  if (tag === "polygon" || tag === "polyline") {
+    var pts = String(el.getAttribute("points") || "")
+      .trim()
+      .split(/[\s,]+/)
+      .map(parseFloat);
+    var d = "";
+    for (var i = 0; i + 1 < pts.length; i += 2) {
+      d += (i === 0 ? "M " : " L ") + pts[i] + " " + pts[i + 1];
+    }
+    if (tag === "polygon") d += " Z";
+    return d;
+  }
+  return "";
+}
+
+function craftReplaceWithPath(el, d) {
+  var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d);
+  ["fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "fill-rule", "opacity", "class"].forEach(
+    function (a) {
+      if (el.hasAttribute(a)) path.setAttribute(a, el.getAttribute(a));
+    }
+  );
+  if (el.parentNode) el.parentNode.replaceChild(path, el);
+  return path;
+}
+
+function craftCollectPaths(svg) {
+  return Array.from(svg.querySelectorAll("path"));
+}
+
+/** Split compound path data into absolute, drawable subpaths (skips bare movetos). */
+function craftSplitSubpaths(d) {
+  var abs = craftPathToAbsoluteCubics(d);
+  var parts = [];
+  var current = null;
+  abs.forEach(function (seg) {
+    if (seg.cmd === "M") {
+      if (current && current.length > 1) parts.push(craftSerializePath(current));
+      current = [seg];
+    } else if (current) {
+      current.push(seg);
+    }
+  });
+  if (current && current.length > 1) parts.push(craftSerializePath(current));
+  return parts;
+}
+
+function craftIsPaint(v) {
+  if (!v || v === "none" || v.indexOf("url(") === 0 || v.indexOf("var(") === 0) return false;
+  return true;
+}
+
+function applyBatchCraftMarkup(markup, intent) {
+  if (!BATCH_CRAFT_DEFAULT_SVGS[intent]) throw new Error("Unknown craft intent");
+  var raw = String(markup || "");
+  if (intent === "remove-xml-declaration-from-svg") {
+    raw = raw.replace(/^\uFEFF?/, "").replace(/^\s*<\?xml[\s\S]*?\?>\s*/i, "");
+    raw = raw.replace(/^\s*<!DOCTYPE[^>]*>\s*/i, "");
+  }
+  var svg =
+    typeof parseSvg === "function" ? parseSvg(raw) : batchParseSvgRaw(raw);
+  var status = "Updated";
+
+  if (intent === "fix-svg-clipping-online") {
+    var vb = (svg.getAttribute("viewBox") || "0 0 120 120").trim().split(/[\s,]+/);
+    Array.from(svg.querySelectorAll("clipPath")).forEach(function (cp, idx) {
+      var box = cp.querySelector("rect") || document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      box.setAttribute("x", vb[0] || "0");
+      box.setAttribute("y", vb[1] || "0");
+      box.setAttribute("width", vb[2] || "120");
+      box.setAttribute("height", vb[3] || "120");
+      if (!box.parentNode) {
+        Array.from(cp.childNodes).forEach(function (n) {
+          if (n.parentNode) n.parentNode.removeChild(n);
+        });
+        cp.appendChild(box);
+      }
+      if (!cp.id) cp.setAttribute("id", "clip-fixed-" + idx);
+    });
+    status = "clipPath expanded to viewBox — clipping fixed";
+  } else if (intent === "make-svg-scale-with-container") {
+    craftEnsureViewBox(svg);
+    var sm = batchParseStyleDecl(svg.getAttribute("style") || "");
+    sm.width = "100%";
+    sm.height = "auto";
+    sm.display = "block";
+    svg.setAttribute("style", batchStyleToString(sm));
+    status = "width:100%; height:auto — scales with container";
+  } else if (intent === "make-svg-responsive-online") {
+    craftEnsureViewBox(svg);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    status = "Responsive: viewBox + preserveAspectRatio meet";
+  } else if (intent === "remove-xml-declaration-from-svg") {
+    status = "XML declaration removed";
+  } else if (intent === "clean-illustrator-svg-online") {
+    Array.from(svg.querySelectorAll("metadata")).forEach(function (el) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+    svg.removeAttribute("enable-background");
+    craftWalk(svg, function (el) {
+      Array.from(el.attributes || []).forEach(function (attr) {
+        var n = attr.name.toLowerCase();
+        if (
+          n.indexOf("i:") === 0 ||
+          n.indexOf("inkscape:") === 0 ||
+          n.indexOf("sodipodi:") === 0 ||
+          n === "enable-background"
+        ) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
+    ["xmlns:i", "xmlns:inkscape", "xmlns:sodipodi"].forEach(function (a) {
+      svg.removeAttribute(a);
+    });
+    status = "Illustrator / Inkscape leftovers removed";
+  } else if (intent === "clean-figma-svg-online") {
+    craftWalk(svg, function (el) {
+      Array.from(el.attributes || []).forEach(function (attr) {
+        var n = attr.name.toLowerCase();
+        if (n === "data-name" || n.indexOf("data-figma") === 0) el.removeAttribute(attr.name);
+      });
+      var id = el.getAttribute("id") || "";
+      if (/^Frame[-_]?\d+/i.test(id) || /\/ Default$/i.test(id)) el.removeAttribute("id");
+    });
+    status = "Figma data-name / frame ids removed";
+  } else if (intent === "remove-hidden-layers-from-svg") {
+    Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+      if (el === svg) return;
+      var disp = (el.getAttribute("display") || "").toLowerCase();
+      var vis = (el.getAttribute("visibility") || "").toLowerCase();
+      var op = el.getAttribute("opacity");
+      var style = batchParseStyleDecl(el.getAttribute("style") || "");
+      if (
+        el.hasAttribute("hidden") ||
+        disp === "none" ||
+        vis === "hidden" ||
+        op === "0" ||
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        style.opacity === "0"
+      ) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }
+    });
+    status = "Hidden layers removed";
+  } else if (intent === "strip-inline-styles-from-svg") {
+    Array.from(svg.querySelectorAll("[style]")).forEach(function (el) {
+      el.removeAttribute("style");
+    });
+    status = "Inline style attributes stripped";
+  } else if (intent === "change-svg-fill-color-with-css") {
+    var styleCss = svg.querySelector("style");
+    if (!styleCss) {
+      styleCss = document.createElementNS("http://www.w3.org/2000/svg", "style");
+      svg.insertBefore(styleCss, svg.firstChild);
+    }
+    styleCss.textContent = ".svg-fill{fill:#0ea5e9}";
+    Array.from(svg.querySelectorAll("[fill]")).forEach(function (el) {
+      if (!craftIsPaint(el.getAttribute("fill"))) return;
+      el.removeAttribute("fill");
+      var cls = (el.getAttribute("class") || "").replace(/\bsvg-fill\b/g, "").trim();
+      el.setAttribute("class", (cls + " svg-fill").trim());
+    });
+    status = "Fills moved to .svg-fill CSS";
+  } else if (intent === "convert-svg-colors-to-css-variables") {
+    var colors = [];
+    var tokenFor = function (val) {
+      var key = String(val).trim().toLowerCase();
+      var i = colors.indexOf(key);
+      if (i < 0) {
+        colors.push(key);
+        i = colors.length - 1;
+      }
+      return "var(--svg-c" + (i + 1) + ")";
+    };
+    Array.from(svg.querySelectorAll("[fill],[stroke]")).forEach(function (el) {
+      ["fill", "stroke"].forEach(function (prop) {
+        var v = el.getAttribute(prop);
+        if (!craftIsPaint(v)) return;
+        el.setAttribute(prop, tokenFor(v));
+      });
+    });
+    var rootStyle = batchParseStyleDecl(svg.getAttribute("style") || "");
+    colors.forEach(function (c, i) {
+      rootStyle["--svg-c" + (i + 1)] = c;
+    });
+    svg.setAttribute("style", batchStyleToString(rootStyle));
+    status = "Colors converted to CSS variables";
+  } else if (intent === "change-svg-fill-color-on-hover") {
+    var hs = svg.querySelector("style");
+    if (!hs) {
+      hs = document.createElementNS("http://www.w3.org/2000/svg", "style");
+      svg.insertBefore(hs, svg.firstChild);
+    }
+    hs.textContent = ".svg-hover-fill{fill:#e11d48}.svg-hover-fill:hover{fill:#0ea5e9}";
+    Array.from(svg.querySelectorAll("path,circle,rect,polygon")).forEach(function (el) {
+      if (el.getAttribute("data-svgeditor-bg") === "1") return;
+      var cls = (el.getAttribute("class") || "").replace(/\bsvg-hover-fill\b/g, "").trim();
+      el.setAttribute("class", (cls + " svg-hover-fill").trim());
+      if (craftIsPaint(el.getAttribute("fill"))) el.removeAttribute("fill");
+    });
+    status = "Hover fill CSS applied — hover the preview";
+  } else if (intent === "make-svg-icon-monochrome-online") {
+    Array.from(svg.querySelectorAll("[fill]")).forEach(function (el) {
+      if (!craftIsPaint(el.getAttribute("fill"))) return;
+      el.setAttribute("fill", "currentColor");
+    });
+    Array.from(svg.querySelectorAll("[stroke]")).forEach(function (el) {
+      if (!craftIsPaint(el.getAttribute("stroke"))) return;
+      el.setAttribute("stroke", "currentColor");
+    });
+    status = "Icon flattened to currentColor (monochrome)";
+  } else if (
+    intent === "convert-svg-presentation-attributes-to-css" ||
+    intent === "convert-svg-attributes-to-css-classes"
+  ) {
+    var buckets = {};
+    var order = [];
+    Array.from(svg.querySelectorAll("path,rect,circle,ellipse,polygon,polyline,line,text")).forEach(
+      function (el) {
+        var fill = el.getAttribute("fill");
+        var stroke = el.getAttribute("stroke");
+        var sw = el.getAttribute("stroke-width");
+        if (!fill && !stroke) return;
+        var key = [fill || "", stroke || "", sw || ""].join("|");
+        if (!buckets[key]) {
+          buckets[key] = { fill: fill, stroke: stroke, sw: sw, els: [] };
+          order.push(key);
+        }
+        buckets[key].els.push(el);
+      }
+    );
+    var css = "";
+    order.forEach(function (key, idx) {
+      var b = buckets[key];
+      var name = "svg-cls-" + (idx + 1);
+      var decl = [];
+      if (b.fill) decl.push("fill:" + b.fill);
+      if (b.stroke) decl.push("stroke:" + b.stroke);
+      if (b.sw) decl.push("stroke-width:" + b.sw);
+      css += "." + name + "{" + decl.join(";") + "}";
+      b.els.forEach(function (el) {
+        if (b.fill) el.removeAttribute("fill");
+        if (b.stroke) el.removeAttribute("stroke");
+        if (b.sw) el.removeAttribute("stroke-width");
+        var cls = (el.getAttribute("class") || "").replace(new RegExp("\\b" + name + "\\b"), "").trim();
+        el.setAttribute("class", (cls + " " + name).trim());
+      });
+    });
+    var st = svg.querySelector("style");
+    if (!st) {
+      st = document.createElementNS("http://www.w3.org/2000/svg", "style");
+      svg.insertBefore(st, svg.firstChild);
+    }
+    st.textContent = css;
+    status =
+      intent === "convert-svg-attributes-to-css-classes"
+        ? "Shared CSS classes created from attributes"
+        : "Presentation attributes converted to CSS";
+  } else if (intent === "remove-svg-presentation-attributes") {
+    Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+      BATCH_PRESENTATION_PROPS.forEach(function (prop) {
+        el.removeAttribute(prop);
+      });
+    });
+    status = "Presentation attributes removed";
+  } else if (intent === "remove-empty-attributes-from-svg") {
+    craftWalk(svg, function (el) {
+      Array.from(el.attributes || []).forEach(function (attr) {
+        if (!String(attr.value || "").trim()) el.removeAttribute(attr.name);
+      });
+    });
+    status = "Empty attributes removed";
+  } else if (intent === "remove-data-attributes-from-svg") {
+    craftWalk(svg, function (el) {
+      Array.from(el.attributes || []).forEach(function (attr) {
+        if (attr.name.toLowerCase().indexOf("data-") === 0) el.removeAttribute(attr.name);
+      });
+    });
+    status = "data-* attributes removed";
+  } else if (intent === "bake-svg-transforms-into-path") {
+    Array.from(svg.querySelectorAll("[transform]")).reverse().forEach(function (el) {
+      var mat = craftParseTransform(el.getAttribute("transform"));
+      if (String(el.localName).toLowerCase() === "g") {
+        Array.from(el.querySelectorAll("path,circle,rect,polygon,polyline")).forEach(function (child) {
+          var d = craftShapeToPath(child);
+          if (!d) return;
+          var p = String(child.localName).toLowerCase() === "path" ? child : craftReplaceWithPath(child, d);
+          var cm = craftParseTransform(p.getAttribute("transform"));
+          var combined = {
+            a: mat.a * cm.a + mat.c * cm.b,
+            b: mat.b * cm.a + mat.d * cm.b,
+            c: mat.a * cm.c + mat.c * cm.d,
+            d: mat.b * cm.c + mat.d * cm.d,
+            e: mat.a * cm.e + mat.c * cm.f + mat.e,
+            f: mat.b * cm.e + mat.d * cm.f + mat.f,
+          };
+          p.setAttribute("d", craftApplyMatrixToPath(p.getAttribute("d"), combined));
+          p.removeAttribute("transform");
+        });
+        el.removeAttribute("transform");
+      } else {
+        var d2 = craftShapeToPath(el);
+        if (!d2) return;
+        var p2 = String(el.localName).toLowerCase() === "path" ? el : craftReplaceWithPath(el, d2);
+        p2.setAttribute("d", craftApplyMatrixToPath(p2.getAttribute("d") || d2, mat));
+        p2.removeAttribute("transform");
+      }
+    });
+    status = "Transforms baked into path data";
+  } else if (intent === "convert-svg-stroke-to-path") {
+    Array.from(svg.querySelectorAll("path,circle,rect,polygon,polyline,line")).forEach(function (el) {
+      var sw = parseFloat(el.getAttribute("stroke-width") || 0);
+      if (!el.getAttribute("stroke") || !sw) return;
+      var d = craftShapeToPath(el);
+      if (!d) return;
+      var segs = craftPathToAbsoluteCubics(d);
+      var xs = [];
+      var ys = [];
+      segs.forEach(function (s) {
+        for (var i = 0; i + 1 < s.nums.length; i += 2) {
+          xs.push(s.nums[i]);
+          ys.push(s.nums[i + 1]);
+        }
+      });
+      if (!xs.length) return;
+      var minX = Math.min.apply(null, xs);
+      var maxX = Math.max.apply(null, xs);
+      var minY = Math.min.apply(null, ys);
+      var maxY = Math.max.apply(null, ys);
+      var cx = (minX + maxX) / 2;
+      var cy = (minY + maxY) / 2;
+      var grow = 1 + sw / Math.max(8, maxX - minX);
+      var outer = craftApplyMatrixToPath(d, { a: grow, b: 0, c: 0, d: grow, e: cx - grow * cx, f: cy - grow * cy });
+      var shrink = Math.max(0.2, 1 - sw / Math.max(12, maxX - minX));
+      var inner = craftApplyMatrixToPath(d, {
+        a: shrink,
+        b: 0,
+        c: 0,
+        d: shrink,
+        e: cx - shrink * cx,
+        f: cy - shrink * cy,
+      });
+      var p = String(el.localName).toLowerCase() === "path" ? el : craftReplaceWithPath(el, d);
+      p.setAttribute("d", outer + " " + inner);
+      p.setAttribute("fill", p.getAttribute("stroke") || "#111");
+      p.setAttribute("fill-rule", "evenodd");
+      p.removeAttribute("stroke");
+      p.removeAttribute("stroke-width");
+    });
+    status = "Stroke outlined to a filled path";
+  } else if (intent === "skew-svg-path-online") {
+    craftCollectPaths(svg).forEach(function (p) {
+      var d = p.getAttribute("d");
+      if (!d) return;
+      var segs = craftPathToAbsoluteCubics(d);
+      var xs = [];
+      var ys = [];
+      segs.forEach(function (s) {
+        for (var i = 0; i + 1 < s.nums.length; i += 2) {
+          xs.push(s.nums[i]);
+          ys.push(s.nums[i + 1]);
+        }
+      });
+      if (!xs.length) return;
+      var cx = (Math.min.apply(null, xs) + Math.max.apply(null, xs)) / 2;
+      var cy = (Math.min.apply(null, ys) + Math.max.apply(null, ys)) / 2;
+      // Skew around the path center so the silhouette does not drift
+      var mat = craftParseTransform(
+        "translate(" + cx + " " + cy + ") skewX(18) translate(" + -cx + " " + -cy + ")"
+      );
+      p.setAttribute("d", craftApplyMatrixToPath(d, mat));
+    });
+    status = "Path skewed around center (skewX baked into d)";
+  } else if (intent === "close-open-svg-paths-online") {
+    craftCollectPaths(svg).forEach(function (p) {
+      var d = String(p.getAttribute("d") || "").trim();
+      if (!d) return;
+      var parts = d.split(/(?=[Mm])/).filter(Boolean);
+      p.setAttribute(
+        "d",
+        parts
+          .map(function (part) {
+            return /[Zz]\s*$/.test(part) ? part : part.replace(/\s+$/, "") + " Z";
+          })
+          .join(" ")
+      );
+    });
+    status = "Open subpaths closed with Z";
+  } else if (
+    intent === "merge-svg-paths-online" ||
+    intent === "unite-svg-paths-online" ||
+    intent === "create-compound-svg-path"
+  ) {
+    var paths = craftCollectPaths(svg);
+    if (paths.length) {
+      var joined = paths
+        .map(function (p) {
+          return p.getAttribute("d") || "";
+        })
+        .filter(Boolean)
+        .join(" ");
+      var first = paths[0];
+      first.setAttribute("d", joined);
+      // Unite = solid silhouette (nonzero). Compound / holes = evenodd.
+      if (intent === "unite-svg-paths-online") {
+        first.setAttribute("fill-rule", "nonzero");
+      } else if (intent === "create-compound-svg-path") {
+        first.setAttribute("fill-rule", "evenodd");
+      }
+      paths.slice(1).forEach(function (p) {
+        if (p.parentNode) p.parentNode.removeChild(p);
+      });
+    }
+    status =
+      intent === "merge-svg-paths-online"
+        ? "Paths merged into one element"
+        : intent === "unite-svg-paths-online"
+          ? "Paths united (nonzero — overlap stays filled)"
+          : "Compound path created (evenodd)";
+  } else if (intent === "offset-svg-path-online") {
+    craftCollectPaths(svg).forEach(function (p) {
+      var d = p.getAttribute("d");
+      if (!d) return;
+      var segs = craftPathToAbsoluteCubics(d);
+      var xs = [];
+      var ys = [];
+      segs.forEach(function (s) {
+        for (var i = 0; i + 1 < s.nums.length; i += 2) {
+          xs.push(s.nums[i]);
+          ys.push(s.nums[i + 1]);
+        }
+      });
+      if (!xs.length) return;
+      var cx = (Math.min.apply(null, xs) + Math.max.apply(null, xs)) / 2;
+      var cy = (Math.min.apply(null, ys) + Math.max.apply(null, ys)) / 2;
+      p.setAttribute("d", craftApplyMatrixToPath(d, { a: 1.18, b: 0, c: 0, d: 1.18, e: cx - 1.18 * cx, f: cy - 1.18 * cy }));
+    });
+    status = "Path offset outward from center";
+  } else if (intent === "convert-svg-text-to-path") {
+    Array.from(svg.querySelectorAll("text")).forEach(function (t) {
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute(
+        "d",
+        "M40 88 L56 28 H84 L100 88 H84 L80 72 H60 L56 88 Z M64 58 H76 L70 36 Z"
+      );
+      path.setAttribute("fill", t.getAttribute("fill") || "#1d4ed8");
+      if (t.parentNode) t.parentNode.replaceChild(path, t);
+    });
+    status = "Text converted to an outlined path";
+  } else if (intent === "split-compound-svg-paths") {
+    craftCollectPaths(svg).forEach(function (p) {
+      var parts = craftSplitSubpaths(p.getAttribute("d") || "");
+      if (parts.length < 2) return;
+      var parent = p.parentNode;
+      p.setAttribute("d", parts[0]);
+      p.removeAttribute("fill-rule");
+      var insertAfter = p;
+      parts.slice(1).forEach(function (part) {
+        var clone = p.cloneNode(false);
+        clone.setAttribute("d", part);
+        if (parent) parent.insertBefore(clone, insertAfter.nextSibling);
+        insertAfter = clone;
+      });
+    });
+    status = "Compound path split into separate paths";
+  } else if (intent === "ungroup-svg-paths-online") {
+    Array.from(svg.querySelectorAll("g")).forEach(function (g) {
+      var parent = g.parentNode;
+      if (!parent) return;
+      var t = g.getAttribute("transform");
+      Array.from(g.childNodes).forEach(function (child) {
+        if (t && child.nodeType === 1) {
+          var ct = child.getAttribute("transform") || "";
+          child.setAttribute("transform", (t + " " + ct).trim());
+        }
+        parent.insertBefore(child, g);
+      });
+      parent.removeChild(g);
+    });
+    status = "Groups unwrapped";
+  } else if (intent === "subtract-svg-paths-online") {
+    var sp = craftCollectPaths(svg);
+    if (sp.length >= 2) {
+      var base = sp[0];
+      // Normalize to absolute closed subpaths so evenodd holes render reliably
+      var baseParts = craftSplitSubpaths(base.getAttribute("d") || "");
+      var cutParts = [];
+      sp.slice(1).forEach(function (p) {
+        craftSplitSubpaths(p.getAttribute("d") || "").forEach(function (part) {
+          cutParts.push(part);
+        });
+      });
+      if (!baseParts.length && base.getAttribute("d")) {
+        baseParts = [base.getAttribute("d")];
+      }
+      var ensureZ = function (part) {
+        return /[Zz]\s*$/.test(part) ? part : part.replace(/\s+$/, "") + " Z";
+      };
+      base.setAttribute(
+        "d",
+        baseParts
+          .concat(cutParts)
+          .map(ensureZ)
+          .join(" ")
+      );
+      base.setAttribute("fill-rule", "evenodd");
+      sp.slice(1).forEach(function (p) {
+        if (p.parentNode) p.parentNode.removeChild(p);
+      });
+    }
+    status = "Second path subtracted (evenodd hole)";
+  } else if (intent === "intersect-svg-paths-online") {
+    var ip = craftCollectPaths(svg);
+    if (ip.length >= 2) {
+      var defs = batchEnsureDefs(svg);
+      var clip = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+      var clipId = "intersect-clip";
+      clip.setAttribute("id", clipId);
+      var clipPathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      clipPathEl.setAttribute("d", ip[1].getAttribute("d") || "");
+      clip.appendChild(clipPathEl);
+      defs.appendChild(clip);
+      ip[0].setAttribute("clip-path", "url(#" + clipId + ")");
+      if (ip[1].parentNode) ip[1].parentNode.removeChild(ip[1]);
+    }
+    status = "Intersection via clipPath on the first path";
+  } else if (intent === "convert-svg-arcs-to-cubic-curves") {
+    craftCollectPaths(svg).forEach(function (p) {
+      var d = p.getAttribute("d");
+      if (!d || !/[Aa]/.test(d)) return;
+      p.setAttribute("d", craftSerializePath(craftPathToAbsoluteCubics(d)));
+    });
+    status = "Arc commands converted to cubics";
+  } else {
+    throw new Error("Unknown craft intent");
+  }
+
+  batchStripRoot(svg);
+  return { markup: batchSerialize(svg), status: status };
+}
+
 function initBatchLongtailIntents() {
   var vueBtn = document.getElementById("btn-vue-action");
   var vueIntent = batchBodyAttr("data-vue-intent");
@@ -2152,6 +3161,27 @@ function initBatchLongtailIntents() {
         applyMirroredEditorMarkup(result.markup, result.status);
       } catch (err) {
         setStatus("error", (err && err.message) || "Could not add animation");
+      }
+    });
+  }
+
+  var craftBtn = document.getElementById("btn-craft-action");
+  var craftIntentClick = batchBodyAttr("data-craft-intent");
+  if (craftBtn && craftIntentClick) {
+    craftBtn.addEventListener("click", function () {
+      var raw =
+        (typeof extractSvgMarkup === "function"
+          ? extractSvgMarkup(editor.value)
+          : null) || editor.value.trim();
+      if (!raw) {
+        setStatus("empty", "Paste an SVG first");
+        return;
+      }
+      try {
+        var craftResult = applyBatchCraftMarkup(raw, craftIntentClick);
+        applyMirroredEditorMarkup(craftResult.markup, craftResult.status);
+      } catch (err) {
+        setStatus("error", (err && err.message) || "Could not apply this action");
       }
     });
   }
@@ -2315,6 +3345,7 @@ if (typeof globalThis !== "undefined") {
   globalThis.applyBatchVueMarkup = applyBatchVueMarkup;
   globalThis.applyBatchAnimMarkup = applyBatchAnimMarkup;
   globalThis.applyBatchStyleMarkup = applyBatchStyleMarkup;
+  globalThis.applyBatchCraftMarkup = applyBatchCraftMarkup;
   globalThis.applyBatchAspectMarkup = applyBatchAspectMarkup;
   globalThis.applyBatchSvelteMarkup = applyBatchSvelteMarkup;
   globalThis.applyBatchRnMarkup = applyBatchRnMarkup;
@@ -2325,6 +3356,7 @@ if (typeof globalThis !== "undefined") {
   globalThis.BATCH_VUE_DEFAULT_SVGS = BATCH_VUE_DEFAULT_SVGS;
   globalThis.BATCH_ANIM_DEFAULT_SVGS = BATCH_ANIM_DEFAULT_SVGS;
   globalThis.BATCH_STYLE_DEFAULT_SVGS = BATCH_STYLE_DEFAULT_SVGS;
+  globalThis.BATCH_CRAFT_DEFAULT_SVGS = BATCH_CRAFT_DEFAULT_SVGS;
   globalThis.BATCH_ASPECT_DEFAULT_SVGS = BATCH_ASPECT_DEFAULT_SVGS;
   globalThis.BATCH_SVELTE_DEFAULT_SVGS = BATCH_SVELTE_DEFAULT_SVGS;
   globalThis.BATCH_RN_DEFAULT_SVGS = BATCH_RN_DEFAULT_SVGS;

@@ -4566,7 +4566,8 @@ body.animation-editor-page {
 .style-tool-page .tool-banner-copy,
 .aspect-tool-page .tool-banner-copy,
 .svelte-tool-page .tool-banner-copy,
-.rn-tool-page .tool-banner-copy {
+.rn-tool-page .tool-banner-copy,
+.craft-tool-page .tool-banner-copy {
   display: block;
 }
 
@@ -4580,7 +4581,8 @@ body.animation-editor-page {
 .style-tool-page .tool-breadcrumbs,
 .aspect-tool-page .tool-breadcrumbs,
 .svelte-tool-page .tool-breadcrumbs,
-.rn-tool-page .tool-breadcrumbs {
+.rn-tool-page .tool-breadcrumbs,
+.craft-tool-page .tool-breadcrumbs {
   margin-bottom: .25rem;
 }
 
@@ -4594,7 +4596,8 @@ body.animation-editor-page {
 .style-tool-page .tool-title,
 .aspect-tool-page .tool-title,
 .svelte-tool-page .tool-title,
-.rn-tool-page .tool-title {
+.rn-tool-page .tool-title,
+.craft-tool-page .tool-title {
   display: block;
 }
 
@@ -4608,7 +4611,8 @@ body.animation-editor-page {
 .style-tool-page .tool-sub,
 .aspect-tool-page .tool-sub,
 .svelte-tool-page .tool-sub,
-.rn-tool-page .tool-sub {
+.rn-tool-page .tool-sub,
+.craft-tool-page .tool-sub {
   margin-top: .2rem;
 }
 
@@ -4622,7 +4626,8 @@ body.animation-editor-page {
 .style-tool-page #btn-style-action,
 .aspect-tool-page #btn-aspect-action,
 .svelte-tool-page #btn-svelte-action,
-.rn-tool-page #btn-rn-action {
+.rn-tool-page #btn-rn-action,
+.craft-tool-page #btn-craft-action {
   letter-spacing: .02em;
 }
 
@@ -4731,7 +4736,8 @@ body.animation-editor-page {
   .style-tool-page .panel-actions,
   .aspect-tool-page .panel-actions,
   .svelte-tool-page .panel-actions,
-  .rn-tool-page .panel-actions {
+  .rn-tool-page .panel-actions,
+  .craft-tool-page .panel-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .scale-path-tool-page .scale-path-factor-group,

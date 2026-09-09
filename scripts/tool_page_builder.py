@@ -62,6 +62,12 @@ FAMILY = {
         "btn_id": "btn-rn-action",
         "keep_size_stat": False,
     },
+    "craft": {
+        "class": "craft-tool-page",
+        "attr": "data-craft-intent",
+        "btn_id": "btn-craft-action",
+        "keep_size_stat": False,
+    },
 }
 
 
