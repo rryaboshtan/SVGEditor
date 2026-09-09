@@ -35,7 +35,7 @@ else:
         entries.append(
             "  <url>\n"
             f"    <loc>https://getsvgeditor.com/{s}</loc>\n"
-            "    <lastmod>2026-09-10T00:00:00+03:00</lastmod>\n"
+            "    <lastmod>2026-09-10T01:41:57+03:00</lastmod>\n"
             "    <changefreq>weekly</changefreq>\n"
             "    <priority>0.85</priority>\n"
             "  </url>"
