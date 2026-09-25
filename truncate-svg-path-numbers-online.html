@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Truncate SVG Path Numbers Online — Free Tool | getsvgeditor.com</title>
+    <title>Truncate SVG Path Numbers (Chop Digits, No Rounding) | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Truncate SVG path numbers online. Keep one decimal (or your value) — free, in your browser, no upload."
+      content="Chop SVG path numbers to a short fraction. Default 1 decimal. Does not half-up round — leftover digits are dropped."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Truncate SVG Path Numbers Online — Free Tool | getsvgeditor.com" />
+    <meta property="og:title" content="Truncate SVG Path Numbers (Chop Digits, No Rounding) | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Truncate SVG path numbers online. Keep one decimal (or your value) — free, in your browser, no upload."
+      content="Chop SVG path numbers to a short fraction. Default 1 decimal. Does not half-up round — leftover digits are dropped."
     />
     <meta property="og:url" content="https://getsvgeditor.com/truncate-svg-path-numbers-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Truncate SVG path numbers online in SVGEditor"
+      content="Truncate SVG path numbers without rounding"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Truncate SVG Path Numbers Online — Free Tool | getsvgeditor.com" />
+    <meta name="twitter:title" content="Truncate SVG Path Numbers (Chop Digits, No Rounding) | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Truncate SVG path numbers online. Keep one decimal (or your value) — free, in your browser, no upload."
+      content="Chop SVG path numbers to a short fraction. Default 1 decimal. Does not half-up round — leftover digits are dropped."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Truncate SVG path numbers online in SVGEditor"
+      content="Truncate SVG path numbers without rounding"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,15 +103,14 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/truncate-svg-path-numbers-online#app",
-            "name": "Truncate SVG Path Numbers Online",
+            "name": "Truncate SVG Path Numbers (Chop)",
             "alternateName": [
-              "Truncate SVG path numbers online",
-              "Short SVG path numbers",
-              "One decimal SVG path",
-              "Truncate path floats"
+              "Chop SVG path fractions",
+              "Drop trailing path digits",
+              "Aggressive SVG path number trim"
             ],
             "url": "https://getsvgeditor.com/truncate-svg-path-numbers-online",
-            "description": "Free online tool to truncate SVG path numbers to a short fractional part.",
+            "description": "Browser tool that truncates path-data numbers to a short fraction. Separate from math rounding.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -123,9 +122,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Default 1 decimal",
-              "Editable places",
-              "Live preview",
+              "Default one decimal place",
+              "Drops leftover digits instead of rounding up",
+              "Keeps path command letters",
               "No upload"
             ],
             "publisher": {
@@ -170,34 +169,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "How do I truncate SVG path numbers online?",
+                "name": "Is truncate the same as the decimal rounder?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Click Truncate. Default keeps one decimal place."
+                  "text": "No. This page chops leftover digits. 1.29 at 1 place becomes 1.2. The rounder would make 1.3."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is truncate the same as floor?",
+                "name": "Why does this page default to 1 decimal?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "It rounds to N places (standard rounding), then strips trailing zeros."
+                  "text": "It is the aggressive-shrink preset. Use Round SVG Path Decimals when you want a safer 2-place look."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Why start at 1 place?",
+                "name": "Will a 1-place chop look stepped on a tiny icon?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "This page is for aggressive shrinkage. Use 2–3 on the other rounding tools."
+                  "text": "It can. Preview first. Large illustrations usually hide a 1-place chop."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Will 1 place look stepped?",
+                "name": "Does truncate remove unused xmlns prefixes?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "On large viewBoxes, rarely. On tiny icons, preview first."
+                  "text": "No. Numbers only. Unused namespace declarations belong on Remove Unused SVG Namespaces."
                 }
               }
             ]
@@ -205,32 +204,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/truncate-svg-path-numbers-online#howto",
-            "name": "Truncate SVG path numbers online",
-            "description": "Shorten fractional path numbers aggressively.",
+            "name": "Truncate SVG path numbers without rounding",
+            "description": "Chop fractional digits in path data for a smaller d string.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Truncate SVG Path Numbers Online"
+              "name": "SVGEditor Truncate SVG Path Numbers"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste or use the sample SVG",
-                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
+                "name": "Paste a verbose path",
+                "text": "Use the sample or your own d with tiny fractions."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
                 "name": "Click Truncate",
-                "text": "Click Truncate. Numbers are rounded to one decimal by default."
+                "text": "Default keeps one decimal place and drops the rest."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Download or export",
-                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
+                "name": "Check the preview",
+                "text": "If edges look stepped, switch to the 2-place rounder."
               }
             ]
           }
@@ -342,8 +341,8 @@
           <span aria-current="page">Truncate path numbers</span>
         </nav>
         <h1 class="tool-title">Truncate SVG Path Numbers Online</h1>
-        <p class="tool-sub">Keep a short fractional part — default <strong>1</strong> decimal place</p>
-        <p class="tool-note"><span class="tool-note-pair">Round decimals? <a href="/round-svg-path-decimals-online">Round decimals</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Simplify path? <a href="/simplify-svg-path-data-online">Simplify path</a></span></p>
+        <p class="tool-sub">Hard <strong>chop</strong> of the fractional part — default <strong>1</strong> place, no half-up rounding</p>
+        <p class="tool-note"><span class="tool-note-pair">Need half-up rounding? <a href="/round-svg-path-decimals-online">Round path decimals</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need fewer path commands? <a href="/simplify-svg-path-data-online">Simplify path</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
@@ -352,25 +351,25 @@
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>How do I truncate SVG path numbers online?</dt>
-                <dd>Click Truncate. Default keeps one decimal place.</dd>
+                <dt>Is truncate the same as the decimal rounder?</dt>
+                <dd>No. This page chops leftover digits. 1.29 at 1 place becomes 1.2. The rounder would make 1.3.</dd>
               </div>
               <div>
-                <dt>Is truncate the same as floor?</dt>
-                <dd>It rounds to N places (standard rounding), then strips trailing zeros.</dd>
+                <dt>Why does this page default to 1 decimal?</dt>
+                <dd>It is the aggressive-shrink preset. Use Round SVG Path Decimals when you want a safer 2-place look.</dd>
               </div>
               <div>
-                <dt>Why start at 1 place?</dt>
-                <dd>This page is for aggressive shrinkage. Use 2–3 on the other rounding tools.</dd>
+                <dt>Will a 1-place chop look stepped on a tiny icon?</dt>
+                <dd>It can. Preview first. Large illustrations usually hide a 1-place chop.</dd>
               </div>
               <div>
-                <dt>Will 1 place look stepped?</dt>
-                <dd>On large viewBoxes, rarely. On tiny icons, preview first.</dd>
+                <dt>Does truncate remove unused xmlns prefixes?</dt>
+                <dd>No. Numbers only. Unused namespace declarations belong on Remove Unused SVG Namespaces.</dd>
               </div>
             </dl>
-            <a class="tool-faq-guide" href="/round-svg-path-decimals-online">Round decimals →</a>
-            <a class="tool-faq-guide" href="/simplify-svg-path-data-online">Simplify path →</a>
-            <a class="tool-faq-guide" href="/compress-svg-path-data">Compress path →</a>
+            <a class="tool-faq-guide" href="/round-svg-path-decimals-online">Round (half-up) instead →</a>
+            <a class="tool-faq-guide" href="/simplify-svg-path-data-online">Simplify path commands →</a>
+            <a class="tool-faq-guide" href="/remove-unused-svg-namespaces-online">Drop unused xmlns →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -548,12 +547,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-title">Chop path digits</p>
                   <p class="preview-empty-body">
-                    Paste tiny fractions. Click Truncate to keep one decimal.
+                    Paste a path. Truncate drops leftover fractions. It will not half-up round.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/round-svg-path-decimals-online">Round decimals</a>
+                    <a href="/round-svg-path-decimals-online">Round instead of chop</a>
                   </p>
                 </div>
               </div>

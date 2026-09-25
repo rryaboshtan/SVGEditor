@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Calculate SVG Bounding Box Online — Free Tool | getsvgeditor.com</title>
+    <title>Measure SVG Content Box (viewBox Unchanged) | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Calculate SVG bounding box online. Measure content x, y, width, height without cropping viewBox — free tool."
+      content="Calculate the SVG content bounding box and write it to desc. Does not crop, change viewBox, close paths, or export PNG."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Calculate SVG Bounding Box Online — Free Tool | getsvgeditor.com" />
+    <meta property="og:title" content="Measure SVG Content Box (viewBox Unchanged) | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Calculate SVG bounding box online. Measure content x, y, width, height without cropping viewBox — free tool."
+      content="Calculate the SVG content bounding box and write it to desc. Does not crop, change viewBox, close paths, or export PNG."
     />
     <meta property="og:url" content="https://getsvgeditor.com/calculate-svg-bounding-box-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Calculate SVG bounding box online in SVGEditor"
+      content="Calculate SVG bounding box without cropping"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Calculate SVG Bounding Box Online — Free Tool | getsvgeditor.com" />
+    <meta name="twitter:title" content="Measure SVG Content Box (viewBox Unchanged) | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Calculate SVG bounding box online. Measure content x, y, width, height without cropping viewBox — free tool."
+      content="Calculate the SVG content bounding box and write it to desc. Does not crop, change viewBox, close paths, or export PNG."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Calculate SVG bounding box online in SVGEditor"
+      content="Calculate SVG bounding box without cropping"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,15 +103,14 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/calculate-svg-bounding-box-online#app",
-            "name": "Calculate SVG Bounding Box Online",
+            "name": "Calculate SVG Bounding Box (No Crop)",
             "alternateName": [
-              "Calculate SVG bounding box online",
-              "Measure SVG getBBox",
-              "SVG content box calculator",
-              "Read SVG bounding box"
+              "Measure SVG content box",
+              "Write bbox to SVG desc",
+              "Bounding box without viewBox change"
             ],
             "url": "https://getsvgeditor.com/calculate-svg-bounding-box-online",
-            "description": "Free online tool to calculate an SVG content bounding box without changing the viewBox.",
+            "description": "Measures the visual content box of an SVG and records it without altering viewBox or cropping.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -123,9 +122,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Reports x y width height",
-              "Keeps viewBox",
-              "Optional overlay rect",
+              "viewBox left intact",
+              "Box written to desc",
+              "Not a crop tool",
               "No upload"
             ],
             "publisher": {
@@ -170,34 +169,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Does calculate SVG bounding box change the viewBox?",
+                "name": "Does this change viewBox or crop the canvas?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. It measures content, writes the numbers into <desc>, and draws a dashed overlay. Use Crop to Bounding Box to apply the box."
+                  "text": "No. It only measures and writes the box. Cropping is a different product and is not this URL."
                 }
               },
               {
                 "@type": "Question",
-                "name": "How is this different from Calculate SVG viewBox?",
+                "name": "Where do I read the numbers?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Calculate viewBox derives or shows the root viewBox string. This page measures painted content, which can be smaller than the canvas."
+                  "text": "In the <desc> the tool writes, and in the live markup. Copy from Source."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Can I copy the bounding box numbers?",
+                "name": "Are defs or hidden layers included?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. They appear in the status line and inside <desc> in Source."
+                  "text": "Measurement follows visible content. Hidden/defs geometry is not the content box."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Are hidden or defs shapes included?",
+                "name": "Should I close open paths first?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. Measurement skips defs, clipPath, mask, and invisible scaffolding."
+                  "text": "If a leaked fill changes the visual extent, Close Open SVG Paths, then measure."
                 }
               }
             ]
@@ -205,32 +204,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/calculate-svg-bounding-box-online#howto",
-            "name": "Calculate SVG bounding box online",
-            "description": "Measure painted content and store the box.",
+            "name": "Calculate an SVG bounding box without cropping",
+            "description": "Measure content extent and keep the existing viewBox.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Calculate SVG Bounding Box Online"
+              "name": "SVGEditor Calculate SVG Bounding Box"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste or use the sample SVG",
-                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
+                "name": "Paste scattered shapes",
+                "text": "The sample is intentionally not flush to the viewBox."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Click Calculate bounding box",
-                "text": "Click Calculate bounding box. A <desc> records x/y/width/height and a dashed overlay shows the box."
+                "name": "Calculate bounding box",
+                "text": "Numbers go to desc. viewBox stays."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Download or export",
-                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
+                "name": "Use the numbers in your pipeline",
+                "text": "Export PNG on a PNG page if you need pixels."
               }
             ]
           }
@@ -339,11 +338,11 @@
         <nav class="tool-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="tool-breadcrumbs-sep" aria-hidden="true">/</span>
-          <span aria-current="page">Calculate bounding box</span>
+          <span aria-current="page">Measure bounding box</span>
         </nav>
         <h1 class="tool-title">Calculate SVG Bounding Box Online</h1>
-        <p class="tool-sub">Measure the content box and write it into <code>&lt;desc&gt;</code> — <strong>viewBox stays</strong></p>
-        <p class="tool-note"><span class="tool-note-pair">Crop to bounding box? <a href="/crop-svg-to-bounding-box">Crop to bounding box</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Crop SVG? <a href="/crop-svg-online">Crop SVG</a></span></p>
+        <p class="tool-sub">Write the content box into <code>&lt;desc&gt;</code> — <strong>viewBox does not change</strong>, nothing is cropped</p>
+        <p class="tool-note"><span class="tool-note-pair">Need the canvas cropped? <a href="/crop-svg-to-bounding-box">Crop to bounding box</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need a general crop? <a href="/crop-svg-online">Crop SVG</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
@@ -352,25 +351,25 @@
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>Does calculate SVG bounding box change the viewBox?</dt>
-                <dd>No. It measures content, writes the numbers into &lt;desc&gt;, and draws a dashed overlay. Use Crop to Bounding Box to apply the box.</dd>
+                <dt>Does this change viewBox or crop the canvas?</dt>
+                <dd>No. It only measures and writes the box. Cropping is a different product and is not this URL.</dd>
               </div>
               <div>
-                <dt>How is this different from Calculate SVG viewBox?</dt>
-                <dd>Calculate viewBox derives or shows the root viewBox string. This page measures painted content, which can be smaller than the canvas.</dd>
+                <dt>Where do I read the numbers?</dt>
+                <dd>In the &lt;desc&gt; the tool writes, and in the live markup. Copy from Source.</dd>
               </div>
               <div>
-                <dt>Can I copy the bounding box numbers?</dt>
-                <dd>Yes. They appear in the status line and inside &lt;desc&gt; in Source.</dd>
+                <dt>Are defs or hidden layers included?</dt>
+                <dd>Measurement follows visible content. Hidden/defs geometry is not the content box.</dd>
               </div>
               <div>
-                <dt>Are hidden or defs shapes included?</dt>
-                <dd>No. Measurement skips defs, clipPath, mask, and invisible scaffolding.</dd>
+                <dt>Should I close open paths first?</dt>
+                <dd>If a leaked fill changes the visual extent, Close Open SVG Paths, then measure.</dd>
               </div>
             </dl>
+            <a class="tool-faq-guide" href="/close-open-svg-paths-online">Close open paths →</a>
             <a class="tool-faq-guide" href="/crop-svg-to-bounding-box">Crop to bounding box →</a>
             <a class="tool-faq-guide" href="/crop-svg-online">Crop SVG →</a>
-            <a class="tool-faq-guide" href="/calculate-svg-viewbox">Calculate viewBox →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -549,12 +548,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-title">Measure, don’t crop</p>
                   <p class="preview-empty-body">
-                    Paste an SVG. Click Calculate bounding box to read x/y/width/height.
+                    Writes the content box. Does not crop, close, or rasterize.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/crop-svg-to-bounding-box">Crop to bounding box</a>
+                    <a href="/close-open-svg-paths-online">Close paths first</a>
                   </p>
                 </div>
               </div>

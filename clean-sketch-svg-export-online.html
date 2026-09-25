@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Clean Sketch SVG Export Online — Free Tool | getsvgeditor.com</title>
+    <title>Strip Sketch xmlns and sketch:* from SVG | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Clean Sketch SVG export online. Strip xmlns:sketch, sketch:type, and Sketch slice leftovers — free, no upload."
+      content="Remove Bohemian Sketch namespaces and sketch:* leftovers from an SVG export. Does not drop unused generic xmlns or RN-unsupported nodes."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Clean Sketch SVG Export Online — Free Tool | getsvgeditor.com" />
+    <meta property="og:title" content="Strip Sketch xmlns and sketch:* from SVG | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Clean Sketch SVG export online. Strip xmlns:sketch, sketch:type, and Sketch slice leftovers — free, no upload."
+      content="Remove Bohemian Sketch namespaces and sketch:* leftovers from an SVG export. Does not drop unused generic xmlns or RN-unsupported nodes."
     />
     <meta property="og:url" content="https://getsvgeditor.com/clean-sketch-svg-export-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Clean Sketch SVG export online in SVGEditor"
+      content="Clean Sketch SVG export namespaces"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Clean Sketch SVG Export Online — Free Tool | getsvgeditor.com" />
+    <meta name="twitter:title" content="Strip Sketch xmlns and sketch:* from SVG | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Clean Sketch SVG export online. Strip xmlns:sketch, sketch:type, and Sketch slice leftovers — free, no upload."
+      content="Remove Bohemian Sketch namespaces and sketch:* leftovers from an SVG export. Does not drop unused generic xmlns or RN-unsupported nodes."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Clean Sketch SVG export online in SVGEditor"
+      content="Clean Sketch SVG export namespaces"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,15 +103,14 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/clean-sketch-svg-export-online#app",
-            "name": "Clean Sketch SVG Export Online",
+            "name": "Clean Sketch SVG Export",
             "alternateName": [
-              "Clean Sketch SVG export online",
-              "Remove sketch:type from SVG",
-              "Strip xmlns:sketch",
-              "Sketch SVG cleaner"
+              "Remove xmlns:sketch",
+              "Strip sketch:type from SVG",
+              "Sketch export cleaner"
             ],
             "url": "https://getsvgeditor.com/clean-sketch-svg-export-online",
-            "description": "Free online tool to clean Sketch SVG exports: drop sketch namespace and slice metadata.",
+            "description": "Removes Sketch-specific namespaces and attributes from SVG exports.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -123,9 +122,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Drops xmlns:sketch",
-              "Removes sketch:* attrs",
-              "Keeps paths",
+              "Targets Sketch leftovers only",
+              "Keeps human <title> text",
+              "Does not hunt unused foo xmlns",
               "No upload"
             ],
             "publisher": {
@@ -170,34 +169,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "What does clean Sketch SVG export online remove?",
+                "name": "What exactly is removed?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "xmlns:sketch, sketch:type, and Sketch slice/artboard attributes. Geometry stays."
+                  "text": "Sketch’s xmlns and sketch:* attributes. Generic unused prefixes belong on Remove Unused SVG Namespaces."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is Sketch cleanup the same as Clean Figma SVG?",
+                "name": "Is this the React Native sanitizer?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. Figma uses data-name and Frame ids. Sketch uses the sketch: prefix."
+                  "text": "No. RN-unsupported nodes (script, foreignObject) are Remove Unsupported SVG for React Native."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Will layer names in Sketch survive this cleaner?",
+                "name": "Do Sketch layer titles in <title> stay?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Human titles in <title> stay. sketch:* attributes do not."
+                  "text": "Human titles stay. sketch:* metadata does not."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Can I also drop unused namespaces after a Sketch export?",
+                "name": "Should I measure the box after cleanup?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Remove Unused SVG Namespaces clears empty xmlns leftovers."
+                  "text": "Optional. Calculate SVG Bounding Box writes the content box without changing viewBox."
                 }
               }
             ]
@@ -205,32 +204,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/clean-sketch-svg-export-online#howto",
-            "name": "Clean Sketch SVG export online",
-            "description": "Strip Sketch exporter naming from SVG.",
+            "name": "Clean a Sketch SVG export",
+            "description": "Strip Sketch-only namespaces from the markup.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Clean Sketch SVG Export Online"
+              "name": "SVGEditor Clean Sketch SVG"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste or use the sample SVG",
-                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
+                "name": "Paste a Sketch export",
+                "text": "Look for xmlns:sketch on the root."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Click Clean Sketch SVG",
-                "text": "Click Clean Sketch SVG. sketch:type, slice ids, and the Sketch xmlns are removed."
+                "name": "Clean Sketch leftovers",
+                "text": "sketch:* attributes disappear."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Download or export",
-                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
+                "name": "Optionally drop unused xmlns",
+                "text": "Use the unused-namespace page for leftover prefixes."
               }
             ]
           }
@@ -339,11 +338,11 @@
         <nav class="tool-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="tool-breadcrumbs-sep" aria-hidden="true">/</span>
-          <span aria-current="page">Clean Sketch SVG</span>
+          <span aria-current="page">Clean Sketch export</span>
         </nav>
         <h1 class="tool-title">Clean Sketch SVG Export Online</h1>
-        <p class="tool-sub">Remove <strong>Sketch</strong> xmlns:sketch / sketch:type leftovers — not Figma data-name or Illustrator i:*</p>
-        <p class="tool-note"><span class="tool-note-pair">Remove Inkscape NS? <a href="/remove-inkscape-namespaces-from-svg">Remove Inkscape NS</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Remove sodipodi attrs? <a href="/remove-sodipodi-attributes-from-svg">Remove sodipodi attrs</a></span></p>
+        <p class="tool-sub">Delete <code>xmlns:sketch</code> and <code>sketch:*</code> — not a generic unused-xmlns sweeper</p>
+        <p class="tool-note"><span class="tool-note-pair">Need unused xmlns gone? <a href="/remove-unused-svg-namespaces-online">Remove unused namespaces</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need Inkscape NS gone? <a href="/remove-inkscape-namespaces-from-svg">Remove Inkscape NS</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
@@ -352,26 +351,25 @@
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>What does clean Sketch SVG export online remove?</dt>
-                <dd>xmlns:sketch, sketch:type, and Sketch slice/artboard attributes. Geometry stays.</dd>
+                <dt>What exactly is removed?</dt>
+                <dd>Sketch’s xmlns and sketch:* attributes. Generic unused prefixes belong on Remove Unused SVG Namespaces.</dd>
               </div>
               <div>
-                <dt>Is Sketch cleanup the same as Clean Figma SVG?</dt>
-                <dd>No. Figma uses data-name and Frame ids. Sketch uses the sketch: prefix.</dd>
+                <dt>Is this the React Native sanitizer?</dt>
+                <dd>No. RN-unsupported nodes (script, foreignObject) are Remove Unsupported SVG for React Native.</dd>
               </div>
               <div>
-                <dt>Will layer names in Sketch survive this cleaner?</dt>
-                <dd>Human titles in &lt;title&gt; stay. sketch:* attributes do not.</dd>
+                <dt>Do Sketch layer titles in &lt;title&gt; stay?</dt>
+                <dd>Human titles stay. sketch:* metadata does not.</dd>
               </div>
               <div>
-                <dt>Can I also drop unused namespaces after a Sketch export?</dt>
-                <dd>Yes. Remove Unused SVG Namespaces clears empty xmlns leftovers.</dd>
+                <dt>Should I measure the box after cleanup?</dt>
+                <dd>Optional. Calculate SVG Bounding Box writes the content box without changing viewBox.</dd>
               </div>
             </dl>
+            <a class="tool-faq-guide" href="/remove-unused-svg-namespaces-online">Drop unused xmlns →</a>
             <a class="tool-faq-guide" href="/remove-inkscape-namespaces-from-svg">Remove Inkscape NS →</a>
             <a class="tool-faq-guide" href="/remove-sodipodi-attributes-from-svg">Remove sodipodi attrs →</a>
-            <a class="tool-faq-guide" href="/remove-unused-svg-namespaces-online">Unused namespaces →</a>
-            <a class="tool-faq-guide" href="/clean-illustrator-svg-online">Clean Illustrator SVG →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -550,12 +548,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-title">Sketch leftovers</p>
                   <p class="preview-empty-body">
-                    Paste a Sketch SVG export. Click Clean Sketch SVG.
+                    Sketch-only cleanup. Unused generic xmlns and RN sanitizing are other pages.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/remove-inkscape-namespaces-from-svg">Remove Inkscape NS</a>
+                    <a href="/remove-unused-svg-namespaces-online">Unused xmlns</a>
                   </p>
                 </div>
               </div>

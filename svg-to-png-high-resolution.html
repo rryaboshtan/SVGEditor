@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SVG to PNG High Resolution — Free Tool | getsvgeditor.com</title>
+    <title>SVG to 4× High-DPI PNG (Print / Zoom) | getsvgeditor.com</title>
     <meta
       name="description"
-      content="SVG to PNG high resolution. Rasterize at 4× so the PNG stays sharp in print and zoom — free browser export."
+      content="Rasterize SVG at 4× pixel scale for print and zoom. Not the 1024px illustration preset and not a generic Save-as download."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="SVG to PNG High Resolution — Free Tool | getsvgeditor.com" />
+    <meta property="og:title" content="SVG to 4× High-DPI PNG (Print / Zoom) | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="SVG to PNG high resolution. Rasterize at 4× so the PNG stays sharp in print and zoom — free browser export."
+      content="Rasterize SVG at 4× pixel scale for print and zoom. Not the 1024px illustration preset and not a generic Save-as download."
     />
     <meta property="og:url" content="https://getsvgeditor.com/svg-to-png-high-resolution" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="SVG to PNG high resolution in SVGEditor"
+      content="SVG to 4x high-resolution PNG"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SVG to PNG High Resolution — Free Tool | getsvgeditor.com" />
+    <meta name="twitter:title" content="SVG to 4× High-DPI PNG (Print / Zoom) | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="SVG to PNG high resolution. Rasterize at 4× so the PNG stays sharp in print and zoom — free browser export."
+      content="Rasterize SVG at 4× pixel scale for print and zoom. Not the 1024px illustration preset and not a generic Save-as download."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="SVG to PNG high resolution in SVGEditor"
+      content="SVG to 4x high-resolution PNG"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,15 +103,14 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/svg-to-png-high-resolution#app",
-            "name": "SVG to PNG High Resolution",
+            "name": "SVG to 4× High-Resolution PNG",
             "alternateName": [
-              "SVG to PNG high resolution",
-              "4x SVG raster",
+              "4x SVG rasterizer",
               "High DPI SVG to PNG",
-              "Print-sharp SVG PNG"
+              "Print-sharp 4× PNG"
             ],
             "url": "https://getsvgeditor.com/svg-to-png-high-resolution",
-            "description": "Free online tool to convert SVG to a high-resolution 4× PNG in the browser.",
+            "description": "Exports SVG as a 4× PNG so the bitmap stays sharp when printed or zoomed.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -124,8 +123,8 @@
             },
             "featureList": [
               "4× pixel scale",
-              "Transparent canvas",
-              "Root size attrs stripped",
+              "Print and zoom target",
+              "Not a 1024px width lock",
               "No upload"
             ],
             "publisher": {
@@ -170,34 +169,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "What does SVG to PNG high resolution actually scale?",
+                "name": "Why 4× instead of 1024px wide?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The PNG pixel size is 4× the viewBox (or content aspect). Vectors stay crisp; you are not photographing a screenshot."
+                  "text": "4× multiplies the SVG’s own size. Illustration to PNG locks width at 1024 for scenes. Different jobs."
                 }
               },
               {
                 "@type": "Question",
-                "name": "How is high-res different from retina PNG or 2× scale?",
+                "name": "Is this the download/save page?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "High-res is 4×. Retina PNG uses 3×. 2× scale is the @2x asset size."
+                  "text": "No. Download SVG as PNG is the Save-file action. This page is the high-DPI scale preset."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Will a huge 4× PNG freeze the tab?",
+                "name": "Should I measure the box before a 4× export?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Very large viewBoxes can. If the canvas is already 2000px, try Custom Size instead of 4×."
+                  "text": "If the canvas is oversized, Calculate SVG Bounding Box first so you know the content size."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is the high-res PNG transparent?",
+                "name": "Does export upload the file?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. The canvas is cleared before drawImage — no white plate unless your SVG paints one."
+                  "text": "No. Raster stays in the browser."
                 }
               }
             ]
@@ -205,32 +204,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/svg-to-png-high-resolution#howto",
-            "name": "SVG to PNG high resolution",
-            "description": "Rasterize the SVG at four times the viewBox size.",
+            "name": "Export SVG as a 4× PNG",
+            "description": "Rasterize at four times the source pixels.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor SVG to PNG High Resolution"
+              "name": "SVGEditor High-Resolution PNG"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste or use the sample SVG",
-                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
+                "name": "Paste the SVG",
+                "text": "Logos and marks work well at 4×."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Click Export high-res PNG",
-                "text": "Click Export high-res PNG. The PNG is drawn at 4× the viewBox, then downloads."
+                "name": "Export high-resolution PNG",
+                "text": "Scale is 4×, not a 1024 width lock."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Download or export",
-                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
+                "name": "Use the PNG in print or zoom UI",
+                "text": "For a scene at 1024px, switch pages."
               }
             ]
           }
@@ -339,11 +338,11 @@
         <nav class="tool-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="tool-breadcrumbs-sep" aria-hidden="true">/</span>
-          <span aria-current="page">High-resolution PNG</span>
+          <span aria-current="page">4× high-res PNG</span>
         </nav>
         <h1 class="tool-title">SVG to PNG High Resolution</h1>
-        <p class="tool-sub">Export a <strong>4×</strong> PNG from the vector — sharper than the default 2× preview scale</p>
-        <p class="tool-note"><span class="tool-note-pair">Retina PNG? <a href="/svg-to-retina-png-online">Retina PNG</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">2× PNG? <a href="/svg-to-png-2x-scale">2× PNG</a></span></p>
+        <p class="tool-sub">Fixed <strong>4×</strong> raster — print and zoom sharpness, not 1024px-wide scenes or a Save dialog</p>
+        <p class="tool-note"><span class="tool-note-pair">Need a 1024px-wide scene? <a href="/svg-illustration-to-png-online">Illustration to PNG</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need a file Save? <a href="/download-svg-as-png-online">Download SVG as PNG</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
@@ -352,26 +351,25 @@
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>What does SVG to PNG high resolution actually scale?</dt>
-                <dd>The PNG pixel size is 4× the viewBox (or content aspect). Vectors stay crisp; you are not photographing a screenshot.</dd>
+                <dt>Why 4× instead of 1024px wide?</dt>
+                <dd>4× multiplies the SVG’s own size. Illustration to PNG locks width at 1024 for scenes. Different jobs.</dd>
               </div>
               <div>
-                <dt>How is high-res different from retina PNG or 2× scale?</dt>
-                <dd>High-res is 4×. Retina PNG uses 3×. 2× scale is the @2x asset size.</dd>
+                <dt>Is this the download/save page?</dt>
+                <dd>No. Download SVG as PNG is the Save-file action. This page is the high-DPI scale preset.</dd>
               </div>
               <div>
-                <dt>Will a huge 4× PNG freeze the tab?</dt>
-                <dd>Very large viewBoxes can. If the canvas is already 2000px, try Custom Size instead of 4×.</dd>
+                <dt>Should I measure the box before a 4× export?</dt>
+                <dd>If the canvas is oversized, Calculate SVG Bounding Box first so you know the content size.</dd>
               </div>
               <div>
-                <dt>Is the high-res PNG transparent?</dt>
-                <dd>Yes. The canvas is cleared before drawImage — no white plate unless your SVG paints one.</dd>
+                <dt>Does export upload the file?</dt>
+                <dd>No. Raster stays in the browser.</dd>
               </div>
             </dl>
-            <a class="tool-faq-guide" href="/svg-to-retina-png-online">Retina PNG →</a>
-            <a class="tool-faq-guide" href="/svg-to-png-2x-scale">2× PNG →</a>
-            <a class="tool-faq-guide" href="/svg-to-png-512-pixels">512px PNG →</a>
-            <a class="tool-faq-guide" href="/svg-to-png-custom-size">Custom-size PNG →</a>
+            <a class="tool-faq-guide" href="/svg-illustration-to-png-online">1024px illustration PNG →</a>
+            <a class="tool-faq-guide" href="/svg-to-retina-png-online">2× retina PNG (not 4×) →</a>
+            <a class="tool-faq-guide" href="/download-svg-as-png-online">Save PNG to disk →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -550,12 +548,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-title">4× PNG</p>
                   <p class="preview-empty-body">
-                    Paste an SVG. Click Export high-res PNG for a 4× raster.
+                    High-DPI scale only. 1024px scenes and Save-as live on sibling pages.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/svg-to-retina-png-online">Retina PNG</a>
+                    <a href="/download-svg-as-png-online">Save PNG file</a>
                   </p>
                 </div>
               </div>

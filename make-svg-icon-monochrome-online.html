@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Make SVG Icon Monochrome Online — Free Tool | getsvgeditor.com</title>
+    <title>Flatten SVG Icon to One Ink (currentColor) | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Make SVG icon monochrome online. Flatten multi-color fills to one currentColor — free, no upload."
+      content="Collapse multi-color SVG icon fills to a single currentColor ink. For icons, not RN sanitizing, not PNG export, not path closing."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Make SVG Icon Monochrome Online — Free Tool | getsvgeditor.com" />
+    <meta property="og:title" content="Flatten SVG Icon to One Ink (currentColor) | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Make SVG icon monochrome online. Flatten multi-color fills to one currentColor — free, no upload."
+      content="Collapse multi-color SVG icon fills to a single currentColor ink. For icons, not RN sanitizing, not PNG export, not path closing."
     />
     <meta property="og:url" content="https://getsvgeditor.com/make-svg-icon-monochrome-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Make SVG icon monochrome online in SVGEditor"
+      content="Make SVG icon monochrome"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Make SVG Icon Monochrome Online — Free Tool | getsvgeditor.com" />
+    <meta name="twitter:title" content="Flatten SVG Icon to One Ink (currentColor) | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Make SVG icon monochrome online. Flatten multi-color fills to one currentColor — free, no upload."
+      content="Collapse multi-color SVG icon fills to a single currentColor ink. For icons, not RN sanitizing, not PNG export, not path closing."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Make SVG icon monochrome online in SVGEditor"
+      content="Make SVG icon monochrome"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,15 +103,14 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/make-svg-icon-monochrome-online#app",
-            "name": "Make SVG Icon Monochrome Online",
+            "name": "Make SVG Icon Monochrome",
             "alternateName": [
-              "Make SVG icon monochrome online",
-              "Single color SVG icon",
-              "Flatten SVG to one fill",
-              "Monochrome SVG converter"
+              "Single-ink SVG icon",
+              "Flatten icon colors to currentColor",
+              "Monochrome UI glyph SVG"
             ],
             "url": "https://getsvgeditor.com/make-svg-icon-monochrome-online",
-            "description": "Free online tool to make an SVG icon monochrome with one inheritable fill.",
+            "description": "Turns a multi-color SVG icon into a single currentColor ink so CSS or RN color can recolor it.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -123,9 +122,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "One currentColor fill",
-              "Keeps none / strokes optional",
-              "Icon-ready",
+              "Flattens brand fills to one ink",
+              "Keeps holes as fill none",
+              "Icon-oriented, not illustration PNG",
               "No upload"
             ],
             "publisher": {
@@ -170,34 +169,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "How do I make an SVG icon monochrome online?",
+                "name": "Is this the same as SVG to React Native currentColor?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Click Make monochrome. Distinct hex fills become currentColor so CSS color sets the ink."
+                  "text": "No. This flattens many colors to one ink in SVG. The RN page then maps that ink to a color prop for mobile."
                 }
               },
               {
                 "@type": "Question",
-                "name": "How is monochrome different from fill → currentColor on a few paths?",
+                "name": "Do compound holes stay open?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Monochrome is the icon intent: every solid fill (and typical stroke) becomes one ink. The currentColor style page is a fill-only rewrite."
+                  "text": "Yes. fill=none and punch-outs stay so the glyph does not become a blob."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Do holes and fill=none stay open?",
+                "name": "Should I close open paths before flattening?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. fill=\"none\" is kept so compound icons do not flood."
+                  "text": "If a subpath is open and you need a solid glyph, Close Open SVG Paths first."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Can I recolor the monochrome icon in CSS?",
+                "name": "Can CSS recolor the result?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Set color on the parent. The icon inherits through currentColor."
+                  "text": "Yes. color on a parent, or currentColor in fill, controls the ink."
                 }
               }
             ]
@@ -205,32 +204,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/make-svg-icon-monochrome-online#howto",
-            "name": "Make SVG icon monochrome online",
-            "description": "Collapse the palette to one ink.",
+            "name": "Flatten an SVG icon to one ink",
+            "description": "Replace multi-color fills with currentColor for a UI glyph.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Make SVG Icon Monochrome Online"
+              "name": "SVGEditor Monochrome Icon"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste or use the sample SVG",
-                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
+                "name": "Paste a colorful icon",
+                "text": "The sample is a multi-fill glyph."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Click Make monochrome",
-                "text": "Click Make monochrome. Colored fills become currentColor for a one-ink icon."
+                "name": "Make monochrome",
+                "text": "Fills collapse to currentColor; holes stay."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Download or export",
-                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
+                "name": "Recolor in CSS or RN",
+                "text": "Use the RN currentColor page if the next step is mobile."
               }
             ]
           }
@@ -342,8 +341,8 @@
           <span aria-current="page">Monochrome icon</span>
         </nav>
         <h1 class="tool-title">Make SVG Icon Monochrome Online</h1>
-        <p class="tool-sub">Flatten multi-color fills to a single <code>currentColor</code> ink</p>
-        <p class="tool-note"><span class="tool-note-pair">Strip inline styles? <a href="/strip-inline-styles-from-svg">Strip inline styles</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Fill color with CSS? <a href="/change-svg-fill-color-with-css">Fill color with CSS</a></span></p>
+        <p class="tool-sub">One <code>currentColor</code> ink for a <strong>UI icon</strong> — not an RN stripper and not a PNG exporter</p>
+        <p class="tool-note"><span class="tool-note-pair">Need styles stripped first? <a href="/strip-inline-styles-from-svg">Strip inline styles</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need CSS recolor after? <a href="/change-svg-fill-color-with-css">Fill color with CSS</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
@@ -352,26 +351,25 @@
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>How do I make an SVG icon monochrome online?</dt>
-                <dd>Click Make monochrome. Distinct hex fills become currentColor so CSS color sets the ink.</dd>
+                <dt>Is this the same as SVG to React Native currentColor?</dt>
+                <dd>No. This flattens many colors to one ink in SVG. The RN page then maps that ink to a color prop for mobile.</dd>
               </div>
               <div>
-                <dt>How is monochrome different from fill → currentColor on a few paths?</dt>
-                <dd>Monochrome is the icon intent: every solid fill (and typical stroke) becomes one ink. The currentColor style page is a fill-only rewrite.</dd>
+                <dt>Do compound holes stay open?</dt>
+                <dd>Yes. fill=none and punch-outs stay so the glyph does not become a blob.</dd>
               </div>
               <div>
-                <dt>Do holes and fill=none stay open?</dt>
-                <dd>Yes. fill=&quot;none&quot; is kept so compound icons do not flood.</dd>
+                <dt>Should I close open paths before flattening?</dt>
+                <dd>If a subpath is open and you need a solid glyph, Close Open SVG Paths first.</dd>
               </div>
               <div>
-                <dt>Can I recolor the monochrome icon in CSS?</dt>
-                <dd>Yes. Set color on the parent. The icon inherits through currentColor.</dd>
+                <dt>Can CSS recolor the result?</dt>
+                <dd>Yes. color on a parent, or currentColor in fill, controls the ink.</dd>
               </div>
             </dl>
+            <a class="tool-faq-guide" href="/svg-to-react-native-currentcolor">RN color prop next →</a>
             <a class="tool-faq-guide" href="/strip-inline-styles-from-svg">Strip inline styles →</a>
-            <a class="tool-faq-guide" href="/change-svg-fill-color-with-css">Fill color with CSS →</a>
-            <a class="tool-faq-guide" href="/convert-svg-colors-to-css-variables">Colors → CSS variables →</a>
-            <a class="tool-faq-guide" href="/change-svg-fill-color-on-hover">Fill on hover →</a>
+            <a class="tool-faq-guide" href="/change-svg-fill-color-with-css">Recolor with CSS →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -550,12 +548,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-title">One-ink icon</p>
                   <p class="preview-empty-body">
-                    Paste a multi-color icon. Click Make monochrome.
+                    Flattens icon fills. Not a sanitizer, not a 4× PNG, not a path closer.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/strip-inline-styles-from-svg">Strip inline styles</a>
+                    <a href="/close-open-svg-paths-online">Close paths first</a>
                   </p>
                 </div>
               </div>

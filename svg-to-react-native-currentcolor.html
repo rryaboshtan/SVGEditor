@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SVG to React Native currentColor Online — Free Tool | getsvgeditor.com</title>
+    <title>React Native SVG that Follows color / currentColor | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Convert SVG fills to currentColor for React Native online. Theme icons via parent color — free, no upload."
+      content="Rewrite SVG fills so a React Native icon inherits the color prop (currentColor-style). Does not strip unsupported nodes or emit an SVGR file."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="SVG to React Native currentColor Online — Free Tool | getsvgeditor.com" />
+    <meta property="og:title" content="React Native SVG that Follows color / currentColor | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Convert SVG fills to currentColor for React Native online. Theme icons via parent color — free, no upload."
+      content="Rewrite SVG fills so a React Native icon inherits the color prop (currentColor-style). Does not strip unsupported nodes or emit an SVGR file."
     />
     <meta property="og:url" content="https://getsvgeditor.com/svg-to-react-native-currentcolor" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="SVG to React Native currentColor in SVGEditor"
+      content="React Native SVG currentColor / color prop"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SVG to React Native currentColor Online — Free Tool | getsvgeditor.com" />
+    <meta name="twitter:title" content="React Native SVG that Follows color / currentColor | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Convert SVG fills to currentColor for React Native online. Theme icons via parent color — free, no upload."
+      content="Rewrite SVG fills so a React Native icon inherits the color prop (currentColor-style). Does not strip unsupported nodes or emit an SVGR file."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="SVG to React Native currentColor in SVGEditor"
+      content="React Native SVG currentColor / color prop"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,15 +103,14 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/svg-to-react-native-currentcolor#app",
-            "name": "SVG to React Native currentColor",
+            "name": "React Native SVG currentColor Mapper",
             "alternateName": [
-              "SVG to RN currentColor",
+              "RN icon color prop from SVG fill",
               "currentColor React Native SVG",
-              "Themeable RN SVG icons",
-              "Online RN currentColor SVG"
+              "Themeable RN SVG fills"
             ],
             "url": "https://getsvgeditor.com/svg-to-react-native-currentcolor",
-            "description": "Free online tool to prepare SVG for currentColor-style theming in React Native.",
+            "description": "Converts SVG fills so React Native icons follow a color prop, similar to currentColor on the web.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -123,9 +122,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "currentColor-oriented fills",
-              "Live preview",
-              "Editable source",
+              "Fill → color / currentColor mapping",
+              "Keeps geometry",
+              "Does not claim to strip filters",
               "No upload"
             ],
             "publisher": {
@@ -170,26 +169,26 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "How do I make React Native SVG icons use currentColor?",
+                "name": "What is the only job of this RN page?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Paste SVG and click Apply currentColor, then theme via color props in RN."
+                  "text": "Color inheritance. Fills become themeable via color/currentColor. It does not remove filters or write an SVGR module."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is currentColor exact on all RN versions?",
+                "name": "Does react-native-svg treat currentColor like CSS?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Behavior can vary — many apps map fill to a color prop instead."
+                  "text": "Often you pass color on Svg. This page prepares fills so that prop can win."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Prefer an explicit color prop from fill?",
+                "name": "Should I flatten the icon to one ink first?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Open Convert SVG Fill to Color Prop React Native."
+                  "text": "If the asset has many brand colors you want as one ink, use Make SVG Icon Monochrome, then come back here."
                 }
               },
               {
@@ -197,7 +196,7 @@
                 "name": "Is currentColor prep free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Free browser tool."
+                  "text": "Yes. Browser-only."
                 }
               }
             ]
@@ -205,32 +204,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/svg-to-react-native-currentcolor#howto",
-            "name": "Prepare SVG for RN currentColor theming",
-            "description": "Adjust fills so React Native icons can inherit color.",
+            "name": "Map SVG fills to React Native color",
+            "description": "Prepare an icon so RN theming controls fill.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor SVG to React Native currentColor"
+              "name": "SVGEditor React Native currentColor"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste or use the sample SVG",
-                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
+                "name": "Paste a multi-fill icon",
+                "text": "Hard-coded fills are what this page rewrites."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Click Apply currentColor",
-                "text": "Click Apply currentColor. Fills update for themeable RN icons."
+                "name": "Apply currentColor",
+                "text": "Fills point at the color prop / currentColor."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Download or export",
-                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
+                "name": "Use color={...} in RN",
+                "text": "Unsupported nodes still need the stripper page."
               }
             ]
           }
@@ -342,8 +341,8 @@
           <span aria-current="page">RN currentColor</span>
         </nav>
         <h1 class="tool-title">SVG to React Native currentColor</h1>
-        <p class="tool-sub">Prepare SVG so RN icons follow <strong>currentColor</strong> / parent color</p>
-        <p class="tool-note"><span class="tool-note-pair">Attrs to RN props? <a href="/convert-svg-attributes-to-react-native-props">Attrs to RN props</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">CamelCase attrs? <a href="/camelcase-svg-attributes-for-react-native">CamelCase attrs</a></span></p>
+        <p class="tool-sub">Map fills to the RN <strong>color</strong> prop / currentColor — not a stripper or SVGR emitter</p>
+        <p class="tool-note"><span class="tool-note-pair">Need attrs as RN props? <a href="/convert-svg-attributes-to-react-native-props">Attrs to RN props</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need camelCase attrs? <a href="/camelcase-svg-attributes-for-react-native">CamelCase attrs</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
@@ -352,26 +351,25 @@
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>How do I make React Native SVG icons use currentColor?</dt>
-                <dd>Paste SVG and click Apply currentColor, then theme via color props in RN.</dd>
+                <dt>What is the only job of this RN page?</dt>
+                <dd>Color inheritance. Fills become themeable via color/currentColor. It does not remove filters or write an SVGR module.</dd>
               </div>
               <div>
-                <dt>Is currentColor exact on all RN versions?</dt>
-                <dd>Behavior can vary — many apps map fill to a color prop instead.</dd>
+                <dt>Does react-native-svg treat currentColor like CSS?</dt>
+                <dd>Often you pass color on Svg. This page prepares fills so that prop can win.</dd>
               </div>
               <div>
-                <dt>Prefer an explicit color prop from fill?</dt>
-                <dd>Open Convert SVG Fill to Color Prop React Native.</dd>
+                <dt>Should I flatten the icon to one ink first?</dt>
+                <dd>If the asset has many brand colors you want as one ink, use Make SVG Icon Monochrome, then come back here.</dd>
               </div>
               <div>
                 <dt>Is currentColor prep free?</dt>
-                <dd>Yes. Free browser tool.</dd>
+                <dd>Yes. Browser-only.</dd>
               </div>
             </dl>
-            <a class="tool-faq-guide" href="/convert-svg-attributes-to-react-native-props">Attrs to RN props →</a>
-            <a class="tool-faq-guide" href="/camelcase-svg-attributes-for-react-native">CamelCase attrs →</a>
-            <a class="tool-faq-guide" href="/convert-svg-fill-to-color-prop-react-native">Fill to color prop →</a>
-            <a class="tool-faq-guide" href="/svg-icon-with-size-props-react-native">RN size props →</a>
+            <a class="tool-faq-guide" href="/remove-unsupported-svg-for-react-native">Strip unsupported nodes →</a>
+            <a class="tool-faq-guide" href="/convert-svg-fill-to-color-prop-react-native">Explicit color prop from fill →</a>
+            <a class="tool-faq-guide" href="/svgr-native-svg-to-react-native-online">SVGR-style component →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -550,12 +548,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Live SVG preview</p>
+                  <p class="preview-empty-title">RN color inheritance</p>
                   <p class="preview-empty-body">
-                    Paste an icon SVG. Click Apply currentColor.
+                    This page only remaps fills. Stripping and SVGR output are sibling tools.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/convert-svg-attributes-to-react-native-props">Attrs to RN props</a>
+                    <a href="/svgr-native-svg-to-react-native-online">Need an SVGR file</a>
                   </p>
                 </div>
               </div>
