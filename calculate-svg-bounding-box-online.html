@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Measure SVG Content Box (viewBox Unchanged) | getsvgeditor.com</title>
+    <title>Read Painted SVG getBBox Numbers Without Cropping viewBox | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Calculate the SVG content bounding box and write it to desc. Does not crop, change viewBox, close paths, or export PNG."
+      content="Report content x, y, width, height in <desc> plus an overlay. viewBox is not tightened, clipPath is not grown, PNG pixel size is not chosen here."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Measure SVG Content Box (viewBox Unchanged) | getsvgeditor.com" />
+    <meta property="og:title" content="Read Painted SVG getBBox Numbers Without Cropping viewBox | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Calculate the SVG content bounding box and write it to desc. Does not crop, change viewBox, close paths, or export PNG."
+      content="Report content x, y, width, height in <desc> plus an overlay. viewBox is not tightened, clipPath is not grown, PNG pixel size is not chosen here."
     />
     <meta property="og:url" content="https://getsvgeditor.com/calculate-svg-bounding-box-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Calculate SVG bounding box without cropping"
+      content="Read painted SVG getBBox without cropping viewBox"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Measure SVG Content Box (viewBox Unchanged) | getsvgeditor.com" />
+    <meta name="twitter:title" content="Read Painted SVG getBBox Numbers Without Cropping viewBox | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Calculate the SVG content bounding box and write it to desc. Does not crop, change viewBox, close paths, or export PNG."
+      content="Report content x, y, width, height in <desc> plus an overlay. viewBox is not tightened, clipPath is not grown, PNG pixel size is not chosen here."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Calculate SVG bounding box without cropping"
+      content="Read painted SVG getBBox without cropping viewBox"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,14 +103,15 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/calculate-svg-bounding-box-online#app",
-            "name": "Calculate SVG Bounding Box (No Crop)",
+            "name": "Read painted getBBox numbers",
             "alternateName": [
-              "Measure SVG content box",
-              "Write bbox to SVG desc",
-              "Bounding box without viewBox change"
+              "Read painted SVG getBBox",
+              "Content box numbers not crop",
+              "Not clipPath grow",
+              "Not 800px or @3x PNG"
             ],
             "url": "https://getsvgeditor.com/calculate-svg-bounding-box-online",
-            "description": "Measures the visual content box of an SVG and records it without altering viewBox or cropping.",
+            "description": "Measures visible paint and stores the box. Does not hug the canvas, does not unclip, does not pick 800px or @3x raster size.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -122,9 +123,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "viewBox left intact",
-              "Box written to desc",
-              "Not a crop tool",
+              "x y width height in desc",
+              "viewBox left as-is",
+              "Dashed overlay only",
               "No upload"
             ],
             "publisher": {
@@ -158,7 +159,7 @@
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Calculate SVG Bounding Box Online",
+                "name": "Read painted getBBox numbers",
                 "item": "https://getsvgeditor.com/calculate-svg-bounding-box-online"
               }
             ]
@@ -169,34 +170,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Does this change viewBox or crop the canvas?",
+                "name": "Does reading getBBox hug the canvas the way a crop tool would?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. It only measures and writes the box. Cropping is a different product and is not this URL."
+                  "text": "No. viewBox stays. You get numbers and an overlay only."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Where do I read the numbers?",
+                "name": "If paint is sliced by clipPath, are the numbers the unclipped art?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "In the <desc> the tool writes, and in the live markup. Copy from Source."
+                  "text": "Measurement sees what is still rendered. Widen clipPath on Fix SVG Clipping first if you need the full glyph box."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Are defs or hidden layers included?",
+                "name": "Is 800px logo PNG the same as these user units?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Measurement follows visible content. Hidden/defs geometry is not the content box."
+                  "text": "No. SVG Logo to PNG is an 800px-wide raster. These numbers are SVG user space."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Should I close open paths first?",
+                "name": "Does @3x retina PNG use this bbox as its pixel size?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "If a leaked fill changes the visual extent, Close Open SVG Paths, then measure."
+                  "text": "No. Retina PNG scales the viewBox by 3. Bbox text is documentation, not the raster contract."
                 }
               }
             ]
@@ -204,32 +205,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/calculate-svg-bounding-box-online#howto",
-            "name": "Calculate an SVG bounding box without cropping",
-            "description": "Measure content extent and keep the existing viewBox.",
+            "name": "Measure painted content box without rewriting viewBox",
+            "description": "Read numbers; do not apply a crop.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Calculate SVG Bounding Box"
+              "name": "SVGEditor Read painted getBBox numbers"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste scattered shapes",
-                "text": "The sample is intentionally not flush to the viewBox."
+                "name": "Paste or use the sample SVG",
+                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Calculate bounding box",
-                "text": "Numbers go to desc. viewBox stays."
+                "name": "Click Calculate bounding box",
+                "text": "Click Calculate bounding box. <desc> and overlay show the box; viewBox stays."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Use the numbers in your pipeline",
-                "text": "Export PNG on a PNG page if you need pixels."
+                "name": "Download or export",
+                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
               }
             ]
           }
@@ -338,38 +339,39 @@
         <nav class="tool-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="tool-breadcrumbs-sep" aria-hidden="true">/</span>
-          <span aria-current="page">Measure bounding box</span>
+          <span aria-current="page">Read getBBox</span>
         </nav>
-        <h1 class="tool-title">Calculate SVG Bounding Box Online</h1>
-        <p class="tool-sub">Write the content box into <code>&lt;desc&gt;</code> — <strong>viewBox does not change</strong>, nothing is cropped</p>
-        <p class="tool-note"><span class="tool-note-pair">Need the canvas cropped? <a href="/crop-svg-to-bounding-box">Crop to bounding box</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need a general crop? <a href="/crop-svg-online">Crop SVG</a></span></p>
+        <h1 class="tool-title">Read Painted getBBox (viewBox Unchanged)</h1>
+        <p class="tool-sub">Write painted <strong>x y width height</strong> into <code>&lt;desc&gt;</code> — the root <code>viewBox</code> string is not replaced</p>
+        <p class="tool-note"><span class="tool-note-pair">clipPath hide, not a measurement? <a href="/fix-svg-clipping-online">clipPath hide, not a measurement</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">PNG file save, not bbox text? <a href="/download-svg-as-png-online">PNG file save, not bbox text</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
           <summary class="tool-faq-toggle">FAQ</summary>
-                              <div class="tool-faq-panel" role="region" aria-label="Calculate SVG Bounding Box Online FAQ">
+                              <div class="tool-faq-panel" role="region" aria-label="Read Painted getBBox (viewBox Unchanged) FAQ">
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>Does this change viewBox or crop the canvas?</dt>
-                <dd>No. It only measures and writes the box. Cropping is a different product and is not this URL.</dd>
+                <dt>Does reading getBBox hug the canvas the way a crop tool would?</dt>
+                <dd>No. viewBox stays. You get numbers and an overlay only.</dd>
               </div>
               <div>
-                <dt>Where do I read the numbers?</dt>
-                <dd>In the &lt;desc&gt; the tool writes, and in the live markup. Copy from Source.</dd>
+                <dt>If paint is sliced by clipPath, are the numbers the unclipped art?</dt>
+                <dd>Measurement sees what is still rendered. Widen clipPath on Fix SVG Clipping first if you need the full glyph box.</dd>
               </div>
               <div>
-                <dt>Are defs or hidden layers included?</dt>
-                <dd>Measurement follows visible content. Hidden/defs geometry is not the content box.</dd>
+                <dt>Is 800px logo PNG the same as these user units?</dt>
+                <dd>No. SVG Logo to PNG is an 800px-wide raster. These numbers are SVG user space.</dd>
               </div>
               <div>
-                <dt>Should I close open paths first?</dt>
-                <dd>If a leaked fill changes the visual extent, Close Open SVG Paths, then measure.</dd>
+                <dt>Does @3x retina PNG use this bbox as its pixel size?</dt>
+                <dd>No. Retina PNG scales the viewBox by 3. Bbox text is documentation, not the raster contract.</dd>
               </div>
             </dl>
-            <a class="tool-faq-guide" href="/close-open-svg-paths-online">Close open paths →</a>
-            <a class="tool-faq-guide" href="/crop-svg-to-bounding-box">Crop to bounding box →</a>
-            <a class="tool-faq-guide" href="/crop-svg-online">Crop SVG →</a>
+            <a class="tool-faq-guide" href="/fix-svg-clipping-online">Unclip first if art is cut off →</a>
+            <a class="tool-faq-guide" href="/close-open-svg-paths-online">Open paths can shrink the box →</a>
+            <a class="tool-faq-guide" href="/svg-to-retina-png-online">@3x pixels ≠ bbox user units →</a>
+            <a class="tool-faq-guide" href="/svg-logo-to-png-online">800px lockup ≠ measured viewBox →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -444,7 +446,7 @@
               type="button"
               class="btn btn-accent"
               id="btn-craft-action"
-              title="Calculate this SVG’s bounding box"
+              title="Read painted getBBox numbers without cropping"
             >
               Calculate bounding box</button>
             <button type="button" class="btn btn-ghost" id="btn-download-svg" title="Download SVG file">
@@ -548,12 +550,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Measure, don’t crop</p>
+                  <p class="preview-empty-title">Live SVG preview</p>
                   <p class="preview-empty-body">
-                    Writes the content box. Does not crop, close, or rasterize.
+                    Paste SVG to read x/y/width/height. This page does not crop, unclip, or download PNG.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/close-open-svg-paths-online">Close paths first</a>
+                    <a href="/fix-svg-clipping-online">Unclip first if art is cut off</a>
                   </p>
                 </div>
               </div>

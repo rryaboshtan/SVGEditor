@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate SVG→PNG long-tail intent pages."""
+import os
 from pathlib import Path
 
 from tool_page_builder import build_page, note, guides
@@ -66,6 +67,51 @@ LABEL = {
     "/batch-convert-svg-to-png": "Batch SVG → PNG",
 }
 
+INDEX_REFRESH_SLUGS = {
+    "svg-logo-to-png-online",
+    "svg-to-retina-png-online",
+    "download-svg-as-png-online",
+}
+
+INDEX_PEERS = {
+    "svg-logo-to-png-online": {
+        "note": note(
+            "/download-svg-as-png-online", "Save 2× file, ignore 800px lockup",
+            "/svg-to-retina-png-online", "@3x density, not lockup width",
+        ),
+        "guides": guides([
+            ("/download-svg-as-png-online", "Disk save at 2× viewBox"),
+            ("/svg-to-retina-png-online", "Triple pixels, not 800 wide"),
+            ("/make-svg-icon-monochrome-online", "currentColor glyph, not a lockup raster"),
+            ("/calculate-svg-bounding-box-online", "User-unit box ≠ 800px PNG"),
+        ]),
+    },
+    "svg-to-retina-png-online": {
+        "note": note(
+            "/download-svg-as-png-online", "2× download filename, not @3x",
+            "/svg-logo-to-png-online", "800px lockup width, not 3× scale",
+        ),
+        "guides": guides([
+            ("/download-svg-as-png-online", "svgeditor-download.png at 2×"),
+            ("/svg-logo-to-png-online", "Brand lockup 800px wide"),
+            ("/fix-svg-clipping-online", "Unclip before baking @3x pixels"),
+            ("/calculate-svg-bounding-box-online", "getBBox units are not @3x pixels"),
+        ]),
+    },
+    "download-svg-as-png-online": {
+        "note": note(
+            "/svg-logo-to-png-online", "800px lockup, not this 2× save",
+            "/svg-to-retina-png-online", "@3x asset, not svgeditor-download",
+        ),
+        "guides": guides([
+            ("/svg-logo-to-png-online", "Wordmark at 800px width"),
+            ("/svg-to-retina-png-online", "Named @3x, 3× viewBox"),
+            ("/clean-sketch-svg-export-online", "Strip sketch: before raster"),
+            ("/fix-svg-clipping-online", "Do not bake a sliced clip"),
+        ]),
+    },
+}
+
 
 def cluster_guides(cluster, slug):
     hrefs = [h for h in CLUSTERS[cluster] if h != f"/{slug}"]
@@ -106,6 +152,10 @@ def page(cluster, slug, title, description, h1, crumb, sub, og_alt, app_name, ap
     }
     if extra_inputs:
         p["extra_inputs"] = extra_inputs
+    peer = INDEX_PEERS.get(slug)
+    if peer:
+        p["note_html"] = peer["note"]
+        p["guides"] = peer["guides"]
     return p
 
 
@@ -181,26 +231,26 @@ PAGES = [
     ),
     page(
         "png_asset", "svg-logo-to-png-online",
-        "SVG Logo to PNG Online — Free Tool | getsvgeditor.com",
-        "SVG logo to PNG online. Export an 800px-wide lockup PNG for decks and press kits — free in the browser.",
-        "SVG Logo to PNG Online", "Logo → PNG",
-        "Export a <strong>logo lockup</strong> at 800px wide — larger than the 256px icon converter",
-        "SVG logo to PNG online in SVGEditor",
-        "SVG Logo to PNG Online",
-        ["SVG logo to PNG online", "800px logo PNG", "Brand lockup raster", "SVG wordmark to PNG"],
-        "Free online tool to convert an SVG logo to an 800px-wide PNG.",
-        ["800px width", "Aspect preserved", "Transparent plate", "No upload"],
-        "SVG logo to PNG online",
-        "Rasterize the lockup at 800px wide.",
-        "Click Export logo PNG. An 800px-wide PNG downloads.",
-        "Export logo PNG", "Export this SVG logo as PNG",
+        "Rasterize a Brand Lockup at 800px Wide PNG | getsvgeditor.com",
+        "Export a wordmark/lockup 800 pixels wide. Not a 2× “save PNG” click, not an @3x retina scale, not a currentColor glyph flatten.",
+        "Rasterize Brand Lockup at 800px Wide", "800px lockup PNG",
+        "Fixed <strong>800px CSS-width lockup</strong> — density is 1× at that width, not viewBox×3 and not the generic download filename",
+        "Rasterize an SVG brand lockup at 800px wide",
+        "800px-wide brand lockup PNG",
+        ["800px SVG lockup PNG", "Wordmark raster width contract", "Not @3x, not 2× save-as", "Not one-ink glyph"],
+        "Picks an 800px-wide canvas for a logo lockup. Download SVG as PNG uses 2× viewBox and a generic filename; retina uses 3×.",
+        ["Width forced to 800px", "Height follows aspect", "Not @3x scale", "No account"],
+        "Export a brand lockup PNG 800 pixels wide",
+        "Choose lockup width, not screen density.",
+        "Click Export logo PNG. The file is 800px wide from vectors.",
+        "Export logo PNG", "Export this lockup at 800px wide",
         [
-            ("Why 800px for SVG logo to PNG online?", "Logos in slides and sites usually need more width than a 256px icon. 800px is a practical lockup size; use Custom Size for a exact pixel box."),
-            ("Will the wordmark stay sharp at 800px?", "Yes. It is rasterized from vectors, not upscaled from a small bitmap."),
-            ("Is logo PNG the same as illustration PNG?", "No. Illustration export targets 1024px for scenes. Logo is 800px for a mark."),
-            ("Can I keep a transparent plate behind the logo?", "Yes. No backdrop is painted unless your SVG includes one."),
+            ("Is 800px lockup the same as svgeditor-download.png at 2×?", "No. Download SVG as PNG scales the viewBox by 2 and names a generic file. This page forces 800px width for press/deck lockups."),
+            ("Does @3x retina ignore the 800px width on purpose?", "Yes. Retina PNG triples the viewBox. A 24-unit icon becomes 72px, not 800."),
+            ("Should a toolbar glyph be flattened to currentColor here?", "No. Make SVG Icon Monochrome stays vector. This page only rasterizes a lockup."),
+            ("If clipPath still slices the mark, will 800px PNG look cut?", "Yes. Fix SVG Clipping first. Pixels bake whatever is visible."),
         ],
-        "Paste an SVG logo. Click Export logo PNG.",
+        "Paste a wordmark/lockup SVG. This is 800px wide, not @3x and not a 2× save-as.",
     ),
     page(
         "png_use", "svg-to-png-custom-size",
@@ -231,26 +281,26 @@ PAGES = [
     ),
     page(
         "png_res", "svg-to-retina-png-online",
-        "SVG to Retina PNG Online — Free Tool | getsvgeditor.com",
-        "SVG to retina PNG online. Export a 3× (@3x) PNG for high-DPI screens — free, no upload.",
-        "SVG to Retina PNG Online", "Retina PNG",
-        "Download an <strong>@3x</strong> retina PNG — not 2× and not the 4× high-res pass",
-        "SVG to retina PNG online in SVGEditor",
-        "SVG to Retina PNG Online",
-        ["SVG to retina PNG online", "SVG @3x PNG", "Retina raster from SVG", "High-DPI SVG export"],
-        "Free online tool to convert SVG to a retina @3x PNG.",
-        ["3× scale", "Transparent canvas", "Named @3x file", "No upload"],
-        "SVG to retina PNG online",
-        "Rasterize at triple resolution for retina displays.",
-        "Click Export retina PNG. The download is 3× the viewBox, filename ends with @3x.",
-        "Export retina PNG", "Export this SVG as a retina PNG",
+        "Export SVG as @3x PNG (viewBox × 3, Not 800px) | getsvgeditor.com",
+        "Triple the viewBox into an @3x PNG. Not an 800px lockup width, not the 2× svgeditor-download save, not a getBBox text report.",
+        "Export @3x PNG (viewBox × 3)", "@3x PNG",
+        "Pixel size is <strong>3 × viewBox</strong> and the filename marks @3x — width is not forced to 800",
+        "Export SVG as @3x PNG from viewBox scale",
+        "@3x PNG from viewBox",
+        ["SVG @3x PNG from viewBox", "Triple user units to pixels", "Not 800px lockup", "Not 2× download filename"],
+        "Raster density contract for high-DPI catalogs. Logo-to-PNG is a width target; download-as-PNG is a 2× save with a generic name.",
+        ["Exactly 3× viewBox", "Filename includes @3x", "Not 800px width", "No upload"],
+        "Rasterize SVG at triple viewBox for @3x assets",
+        "Pick density, not lockup width.",
+        "Click Export retina PNG. The PNG is 3× the viewBox and named @3x.",
+        "Export retina PNG", "Export this SVG as an @3x PNG",
         [
-            ("What scale is SVG to retina PNG online?", "3× the viewBox — the common @3x asset. Use 2× Scale for @2x and High Resolution for 4×."),
-            ("Why not always export 4× for retina?", "4× files are heavier than phones need. @3x matches modern iPhone asset catalogs."),
-            ("Is the retina PNG transparent?", "Yes. The canvas is cleared first."),
-            ("Does retina export change the SVG source?", "It only strips root width/height. Geometry is unchanged."),
+            ("If viewBox is 24×24, how wide is the @3x file?", "72 pixels. An 800px lockup page would ignore that and force 800 wide."),
+            ("Why not use Download SVG as PNG for retina phones?", "That save is 2× and named svgeditor-download.png. This page is explicitly 3× / @3x."),
+            ("Do getBBox numbers in <desc> set the PNG pixel size?", "No. Calculate SVG Bounding Box is documentation. @3x multiplies the root viewBox."),
+            ("Should I unclip before @3x?", "Yes if clipPath still slices paint. Fix SVG Clipping, then export density."),
         ],
-        "Paste an SVG. Click Export retina PNG for a 3× file.",
+        "Paste SVG for an @3x raster. Not 800px lockup, not the generic 2× download.",
     ),
     page(
         "png_input", "svg-code-to-png-online",
@@ -392,26 +442,26 @@ PAGES = [
     ),
     page(
         "png_input", "download-svg-as-png-online",
-        "Download SVG as PNG Online — Free Tool | getsvgeditor.com",
-        "Download SVG as PNG online. One click saves the current graphic as a 2× PNG file — free, no account.",
-        "Download SVG as PNG Online", "Download as PNG",
-        "The <strong>download</strong> action: save the live SVG as a PNG file on disk",
-        "Download SVG as PNG online in SVGEditor",
-        "Download SVG as PNG Online",
-        ["Download SVG as PNG online", "Save SVG to PNG file", "SVG PNG download button", "Get PNG from SVG"],
-        "Free online tool to download the current SVG as a PNG file.",
-        ["One-click download", "2× PNG", "Transparent canvas", "No account"],
-        "Download SVG as PNG online",
-        "Save the live preview as a PNG file.",
-        "Click Download PNG. svgeditor-download.png is saved from the rasterized SVG.",
-        "Download PNG", "Download this SVG as a PNG file",
+        "Save the Live SVG as svgeditor-download.png (2×) | getsvgeditor.com",
+        "One-click file save: 2× the viewBox, generic filename. Not an 800px lockup, not an @3x catalog asset, not a clipPath or Sketch cleaner.",
+        "Save Live SVG as 2× PNG File", "2× file save",
+        "The <strong>disk save</strong>: <code>svgeditor-download.png</code> at <strong>2 × viewBox</strong> — width is not 800 and scale is not 3",
+        "Save the live SVG as a 2× PNG file",
+        "2× PNG file save (generic name)",
+        ["Save SVG as svgeditor-download.png", "2× viewBox file save", "Not 800px lockup", "Not @3x catalog"],
+        "Browser download of whatever is on the canvas at 2×. Logo page forces 800px; retina page forces 3× and @3x in the name.",
+        ["Filename svgeditor-download.png", "Scale exactly 2×", "Not 800px width", "No account"],
+        "Save the live SVG to a 2× PNG on disk",
+        "Generic save action, not a size or density product.",
+        "Click Download PNG. The browser stores svgeditor-download.png at 2×.",
+        "Download PNG", "Save this SVG as svgeditor-download.png",
         [
-            ("Where does download SVG as PNG online save the file?", "Your browser’s Downloads folder, named svgeditor-download.png."),
-            ("How is this different from paste SVG export as PNG?", "Download emphasizes saving the file already in the editor. Paste is the clipboard-to-export flow."),
-            ("Can I download without changing Source?", "Yes. The SVG is only stripped of root width/height."),
-            ("Is the downloaded PNG 1× or 2×?", "2× the viewBox so it stays sharp on typical screens."),
+            ("Is this save 800 pixels wide like a press lockup?", "Only if the 2× viewBox happens to equal 800. The contract is 2× viewBox, not 800px. Use SVG Logo to PNG for a lockup width."),
+            ("Does the file name include @3x?", "No. That is SVG to Retina PNG. This file is always svgeditor-download.png."),
+            ("Should Sketch sketch: metadata be stripped before this save?", "Yes if you care about clean vectors first. Clean Sketch SVG Export, then save pixels."),
+            ("Will a tight clipPath be visible in the PNG?", "Yes — pixels include the slice. Fix SVG Clipping before Download PNG."),
         ],
-        "Paste an SVG. Click Download PNG.",
+        "Paste SVG and save a 2× PNG file. Not 800px lockup, not @3x.",
     ),
     page(
         "png_input", "paste-svg-export-as-png",
@@ -582,14 +632,20 @@ def main():
     questions = [q for p in PAGES for q, _ in p["faqs"]]
     dups = sorted({q for q in questions if questions.count(q) > 1})
     assert len(questions) == len(set(questions)), f"duplicate FAQ questions: {dups}"
+    only = os.environ.get("ONLY_INDEX_REFRESH") == "1"
+    written = 0
     for p in PAGES:
         assert len(p["faqs"]) == 4, p["slug"]
         assert 2 <= len(p["guides"]) <= 4, (p["slug"], len(p["guides"]))
+        if only and p["slug"] not in INDEX_REFRESH_SLUGS:
+            continue
         build_page(p)
-    slugs_path = Path(__file__).resolve().parent / "_png_intent_slugs.txt"
-    slugs_path.write_text("\n".join(p["slug"] for p in PAGES) + "\n", encoding="utf-8")
-    print("wrote", slugs_path)
-    print("done", len(PAGES))
+        written += 1
+    if not only:
+        slugs_path = Path(__file__).resolve().parent / "_png_intent_slugs.txt"
+        slugs_path.write_text("\n".join(p["slug"] for p in PAGES) + "\n", encoding="utf-8")
+        print("wrote", slugs_path)
+    print("done", written)
 
 
 if __name__ == "__main__":

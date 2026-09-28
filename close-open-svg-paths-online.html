@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Close Open SVG Subpaths with Z | getsvgeditor.com</title>
+    <title>Append Z to Open SVG Subpaths (Seal d, Keep Nodes) | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Append Z to open SVG subpaths so fills can close. Does not round numbers, flatten colors, or measure a bounding box."
+      content="Add a close command to subpaths that lack Z. Does not concatenate several path elements, does not evenodd-cut, does not flatten icon ink."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Close Open SVG Subpaths with Z | getsvgeditor.com" />
+    <meta property="og:title" content="Append Z to Open SVG Subpaths (Seal d, Keep Nodes) | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Append Z to open SVG subpaths so fills can close. Does not round numbers, flatten colors, or measure a bounding box."
+      content="Add a close command to subpaths that lack Z. Does not concatenate several path elements, does not evenodd-cut, does not flatten icon ink."
     />
     <meta property="og:url" content="https://getsvgeditor.com/close-open-svg-paths-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Close open SVG paths with Z"
+      content="Append Z to open SVG subpaths without merging nodes"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Close Open SVG Subpaths with Z | getsvgeditor.com" />
+    <meta name="twitter:title" content="Append Z to Open SVG Subpaths (Seal d, Keep Nodes) | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Append Z to open SVG subpaths so fills can close. Does not round numbers, flatten colors, or measure a bounding box."
+      content="Add a close command to subpaths that lack Z. Does not concatenate several path elements, does not evenodd-cut, does not flatten icon ink."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Close open SVG paths with Z"
+      content="Append Z to open SVG subpaths without merging nodes"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,14 +103,15 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/close-open-svg-paths-online#app",
-            "name": "Close Open SVG Paths",
+            "name": "Append Z to open subpaths",
             "alternateName": [
-              "Append Z to open SVG d",
-              "Close SVG subpaths for fill",
-              "Seal open path silhouettes"
+              "Append Z to open SVG subpaths",
+              "Seal d without merging path nodes",
+              "Close command not boolean cut",
+              "Not clipPath, not PNG"
             ],
             "url": "https://getsvgeditor.com/close-open-svg-paths-online",
-            "description": "Closes open SVG path subpaths with Z so a fill can form a silhouette.",
+            "description": "Adds Z/z only where a subpath is still open. Separate <path> tags remain separate; subtract/merge are other jobs.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -122,9 +123,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Adds Z only where a subpath is open",
-              "Does not union or boolean shapes",
-              "Does not rewrite decimals",
+              "Z only on open subpaths",
+              "Already-closed d untouched",
+              "Does not join sibling paths",
               "No upload"
             ],
             "publisher": {
@@ -158,7 +159,7 @@
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Close Open SVG Paths Online",
+                "name": "Append Z to open subpaths",
                 "item": "https://getsvgeditor.com/close-open-svg-paths-online"
               }
             ]
@@ -169,34 +170,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Does this union two shapes?",
+                "name": "Does appending Z collapse two <path> tags into one?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. It only appends Z. Boolean union is a different job and is not this URL."
+                  "text": "No. That is Merge SVG Paths (concatenate d). Z only seals the current subpath’s start/end."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Will an already-closed path get a second Z?",
+                "name": "Why does evenodd subtract look solid until I add Z?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. Closed subpaths are left alone."
+                  "text": "Open cutters do not punch. Subtract SVG Paths needs closed loops; this page only writes the close command."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Why close before filling a glyph?",
+                "name": "Is a sliced clipPath fixed by adding Z?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "An open path can leak fill. Z seals the silhouette."
+                  "text": "No. Fix clipping grows the mask. Z does not enlarge clipPath."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Should I round decimals on this page?",
+                "name": "Should a colorful glyph be flattened before Z?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. Use Round SVG Path Decimals or Truncate SVG Path Numbers for numeric jobs."
+                  "text": "Seal geometry first if fill looks gapped, then Make SVG Icon Monochrome for currentColor."
                 }
               }
             ]
@@ -204,32 +205,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/close-open-svg-paths-online#howto",
-            "name": "Close open SVG paths with Z",
-            "description": "Seal open subpaths so fills work.",
+            "name": "Seal open subpaths with Z without merging elements",
+            "description": "Close the geometry of each open subpath in place.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Close Open SVG Paths"
+              "name": "SVGEditor Append Z to open subpaths"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste a path missing Z",
-                "text": "The sample is an open chevron-style d."
+                "name": "Paste or use the sample SVG",
+                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Close paths",
-                "text": "Each open subpath gets Z."
+                "name": "Click Close open paths",
+                "text": "Click Close open paths. Missing Z is appended; extra path elements are not collapsed."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Fill and preview",
-                "text": "The silhouette should no longer leak."
+                "name": "Download or export",
+                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
               }
             ]
           }
@@ -338,38 +339,39 @@
         <nav class="tool-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="tool-breadcrumbs-sep" aria-hidden="true">/</span>
-          <span aria-current="page">Close open paths</span>
+          <span aria-current="page">Append Z</span>
         </nav>
-        <h1 class="tool-title">Close Open SVG Paths Online</h1>
-        <p class="tool-sub">Append <code>Z</code> on <strong>open subpaths</strong> — no rounding, no bbox write, no color flatten</p>
-        <p class="tool-note"><span class="tool-note-pair">Need transforms baked first? <a href="/bake-svg-transforms-into-path">Bake transforms</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need stroke outlined first? <a href="/convert-svg-stroke-to-path">Stroke to path</a></span></p>
+        <h1 class="tool-title">Append Z to Open SVG Subpaths</h1>
+        <p class="tool-sub">Write <code>Z</code> on subpaths that never closed — <strong>path element count stays the same</strong></p>
+        <p class="tool-note"><span class="tool-note-pair">Concatenate d into one element? <a href="/merge-svg-paths-online">Concatenate d into one element</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Boolean hole, not a Z close? <a href="/subtract-svg-paths-online">Boolean hole, not a Z close</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
           <summary class="tool-faq-toggle">FAQ</summary>
-                              <div class="tool-faq-panel" role="region" aria-label="Close Open SVG Paths Online FAQ">
+                              <div class="tool-faq-panel" role="region" aria-label="Append Z to Open SVG Subpaths FAQ">
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>Does this union two shapes?</dt>
-                <dd>No. It only appends Z. Boolean union is a different job and is not this URL.</dd>
+                <dt>Does appending Z collapse two &lt;path&gt; tags into one?</dt>
+                <dd>No. That is Merge SVG Paths (concatenate d). Z only seals the current subpath’s start/end.</dd>
               </div>
               <div>
-                <dt>Will an already-closed path get a second Z?</dt>
-                <dd>No. Closed subpaths are left alone.</dd>
+                <dt>Why does evenodd subtract look solid until I add Z?</dt>
+                <dd>Open cutters do not punch. Subtract SVG Paths needs closed loops; this page only writes the close command.</dd>
               </div>
               <div>
-                <dt>Why close before filling a glyph?</dt>
-                <dd>An open path can leak fill. Z seals the silhouette.</dd>
+                <dt>Is a sliced clipPath fixed by adding Z?</dt>
+                <dd>No. Fix clipping grows the mask. Z does not enlarge clipPath.</dd>
               </div>
               <div>
-                <dt>Should I round decimals on this page?</dt>
-                <dd>No. Use Round SVG Path Decimals or Truncate SVG Path Numbers for numeric jobs.</dd>
+                <dt>Should a colorful glyph be flattened before Z?</dt>
+                <dd>Seal geometry first if fill looks gapped, then Make SVG Icon Monochrome for currentColor.</dd>
               </div>
             </dl>
-            <a class="tool-faq-guide" href="/round-svg-path-decimals-online">Round decimals →</a>
-            <a class="tool-faq-guide" href="/bake-svg-transforms-into-path">Bake transforms →</a>
-            <a class="tool-faq-guide" href="/convert-svg-stroke-to-path">Stroke to path →</a>
+            <a class="tool-faq-guide" href="/merge-svg-paths-online">Join several path nodes →</a>
+            <a class="tool-faq-guide" href="/subtract-svg-paths-online">Cut with evenodd after Z →</a>
+            <a class="tool-faq-guide" href="/fix-svg-clipping-online">clipPath crop is a different bug →</a>
+            <a class="tool-faq-guide" href="/make-svg-icon-monochrome-online">One-ink icon after the shape is closed →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -444,7 +446,7 @@
               type="button"
               class="btn btn-accent"
               id="btn-craft-action"
-              title="Close open SVG paths"
+              title="Append Z to every still-open subpath"
             >
               Close open paths</button>
             <button type="button" class="btn btn-ghost" id="btn-download-svg" title="Download SVG file">
@@ -548,12 +550,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Seal open subpaths</p>
+                  <p class="preview-empty-title">Live SVG preview</p>
                   <p class="preview-empty-body">
-                    Adds Z only. Rounding, bbox, and monochrome are other tools.
+                    Paste a path whose d never ends in Z. This page will not merge nodes or export PNG.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/round-svg-path-decimals-online">Round decimals</a>
+                    <a href="/merge-svg-paths-online">Join several path nodes</a>
                   </p>
                 </div>
               </div>

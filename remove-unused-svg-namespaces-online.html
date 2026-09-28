@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Drop Unused xmlns Prefixes from SVG | getsvgeditor.com</title>
+    <title>Drop xmlns:* Declarations Nobody on the Tree Uses | getsvgeditor.com</title>
     <meta
       name="description"
-      content="Delete xmlns:foo declarations that nothing in the file uses. Keeps the SVG xmlns. Not a Sketch cleaner and not a path truncator."
+      content="Usage-scan the tree and delete unused xmlns:foo. Does not strip sketch: attributes that are still referenced, does not measure bbox, does not merge paths."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="SVGEditor" />
@@ -19,10 +19,10 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SVGEditor" />
-    <meta property="og:title" content="Drop Unused xmlns Prefixes from SVG | getsvgeditor.com" />
+    <meta property="og:title" content="Drop xmlns:* Declarations Nobody on the Tree Uses | getsvgeditor.com" />
     <meta
       property="og:description"
-      content="Delete xmlns:foo declarations that nothing in the file uses. Keeps the SVG xmlns. Not a Sketch cleaner and not a path truncator."
+      content="Usage-scan the tree and delete unused xmlns:foo. Does not strip sketch: attributes that are still referenced, does not measure bbox, does not merge paths."
     />
     <meta property="og:url" content="https://getsvgeditor.com/remove-unused-svg-namespaces-online" />
     <meta property="og:locale" content="en_US" />
@@ -32,19 +32,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Remove unused SVG xmlns prefixes"
+      content="Drop unused xmlns prefix declarations from SVG"
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Drop Unused xmlns Prefixes from SVG | getsvgeditor.com" />
+    <meta name="twitter:title" content="Drop xmlns:* Declarations Nobody on the Tree Uses | getsvgeditor.com" />
     <meta
       name="twitter:description"
-      content="Delete xmlns:foo declarations that nothing in the file uses. Keeps the SVG xmlns. Not a Sketch cleaner and not a path truncator."
+      content="Usage-scan the tree and delete unused xmlns:foo. Does not strip sketch: attributes that are still referenced, does not measure bbox, does not merge paths."
     />
     <meta name="twitter:image" content="https://getsvgeditor.com/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Remove unused SVG xmlns prefixes"
+      content="Drop unused xmlns prefix declarations from SVG"
     />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -103,14 +103,15 @@
           {
             "@type": "WebApplication",
             "@id": "https://getsvgeditor.com/remove-unused-svg-namespaces-online#app",
-            "name": "Remove Unused SVG Namespaces",
+            "name": "Drop unused xmlns:* by usage scan",
             "alternateName": [
-              "Drop unused xmlns prefixes",
-              "SVG namespace sweeper",
-              "Delete unused xmlns:foo"
+              "Drop unused xmlns prefix declarations",
+              "Usage-scan SVG namespaces",
+              "Not Sketch sketch: stripper",
+              "Not bbox, not merge"
             ],
             "url": "https://getsvgeditor.com/remove-unused-svg-namespaces-online",
-            "description": "Removes unused XML namespace declarations from SVG while keeping the real SVG xmlns.",
+            "description": "Removes xmlns:* when the prefix never appears on an element or attribute. Sketch chrome that still uses sketch: must be cleaned on the Sketch page first.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
             "browserRequirements": "Requires a modern browser with JavaScript enabled",
@@ -122,9 +123,9 @@
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Keeps xmlns for SVG",
-              "Drops unused prefixes only",
-              "Preserves used xlink:href",
+              "Prefix-usage scan",
+              "SVG xmlns kept",
+              "xlink kept only if used",
               "No upload"
             ],
             "publisher": {
@@ -158,7 +159,7 @@
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Remove Unused SVG Namespaces Online",
+                "name": "Drop unused xmlns:* by usage scan",
                 "item": "https://getsvgeditor.com/remove-unused-svg-namespaces-online"
               }
             ]
@@ -169,34 +170,34 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "How does unused differ from Clean Sketch?",
+                "name": "If sketch:type is still on a group, will xmlns:sketch be deleted?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Sketch cleanup targets Bohemian prefixes. This page drops any xmlns that has no matching prefix usage."
+                  "text": "No. The prefix is in use. Strip those attributes on Clean Sketch SVG Export, then rescan."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Will a used xlink:href lose its xmlns:xlink?",
+                "name": "Does the usage scan rewrite viewBox or write <desc> bbox numbers?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. If the prefix is used, the declaration stays."
+                  "text": "No. Calculate SVG Bounding Box measures paint. This page only edits namespace attributes."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Does unused xmlns change pixels?",
+                "name": "Will merging path d remove a dead xmlns:i?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. It only shortens declarations."
+                  "text": "No. Merge SVG Paths ignores namespaces. Run this scan for declarations."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is this safer than deleting Inkscape namespaces by name?",
+                "name": "Does unused xmlns change the PNG pixel grid?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, because it only removes prefixes that nothing references."
+                  "text": "No. Download SVG as PNG rasterizes paint. Namespaces are markup-only."
                 }
               }
             ]
@@ -204,32 +205,32 @@
           {
             "@type": "HowTo",
             "@id": "https://getsvgeditor.com/remove-unused-svg-namespaces-online#howto",
-            "name": "Remove unused SVG namespace declarations",
-            "description": "Drop xmlns prefixes that the document never uses.",
+            "name": "Delete xmlns prefixes with zero remaining uses",
+            "description": "Shrink the root attribute list without touching geometry.",
             "inLanguage": "en",
             "totalTime": "PT1M",
             "tool": {
               "@type": "HowToTool",
-              "name": "SVGEditor Unused SVG Namespaces"
+              "name": "SVGEditor Drop unused xmlns:* by usage scan"
             },
             "step": [
               {
                 "@type": "HowToStep",
                 "position": 1,
-                "name": "Paste SVG with extra xmlns",
-                "text": "The sample has unused prefixes."
+                "name": "Paste or use the sample SVG",
+                "text": "Open the tool with the sample graphic (viewBox only, no root width or height), or paste your own markup into Source."
               },
               {
                 "@type": "HowToStep",
                 "position": 2,
-                "name": "Remove unused namespaces",
-                "text": "Only unused declarations disappear."
+                "name": "Click Remove unused NS",
+                "text": "Click Remove unused NS. Dead xmlns:* disappear; live prefixes stay."
               },
               {
                 "@type": "HowToStep",
                 "position": 3,
-                "name": "Keep cleaning if the file is a Sketch export",
-                "text": "Use the Sketch page for sketch:* attributes."
+                "name": "Download or export",
+                "text": "Download the updated SVG, or export to PNG / React. Conversion stays in the browser."
               }
             ]
           }
@@ -338,38 +339,39 @@
         <nav class="tool-breadcrumbs" aria-label="Breadcrumb">
           <a href="/">Home</a>
           <span class="tool-breadcrumbs-sep" aria-hidden="true">/</span>
-          <span aria-current="page">Unused xmlns</span>
+          <span aria-current="page">Unused xmlns scan</span>
         </nav>
-        <h1 class="tool-title">Remove Unused SVG Namespaces Online</h1>
-        <p class="tool-sub">Keep the SVG <code>xmlns</code>; drop <strong>unused prefixes</strong> — not Sketch-specific cleanup</p>
-        <p class="tool-note"><span class="tool-note-pair">Need Sketch leftovers gone? <a href="/clean-sketch-svg-export-online">Clean Sketch export</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">Need Inkscape NS gone? <a href="/remove-inkscape-namespaces-from-svg">Remove Inkscape NS</a></span></p>
+        <h1 class="tool-title">Drop Unused xmlns:* (Keep SVG xmlns)</h1>
+        <p class="tool-sub">Keep the SVG default <code>xmlns</code>; delete <strong>prefix declarations with zero matching nodes/attrs</strong></p>
+        <p class="tool-note"><span class="tool-note-pair">sketch: attrs, not generic xmlns? <a href="/clean-sketch-svg-export-online">sketch: attrs, not generic xmlns</a></span><span class="tool-note-sep" aria-hidden="true"> · </span><span class="tool-note-pair">BBox numbers, not namespaces? <a href="/calculate-svg-bounding-box-online">BBox numbers, not namespaces</a></span></p>
       </div>
       <div class="tool-banner-actions">
         <details class="tool-faq">
           <summary class="tool-faq-toggle">FAQ</summary>
-                              <div class="tool-faq-panel" role="region" aria-label="Remove Unused SVG Namespaces Online FAQ">
+                              <div class="tool-faq-panel" role="region" aria-label="Drop Unused xmlns:* (Keep SVG xmlns) FAQ">
             <p class="tool-faq-heading">Quick answers</p>
             <dl class="tool-faq-list">
               <div>
-                <dt>How does unused differ from Clean Sketch?</dt>
-                <dd>Sketch cleanup targets Bohemian prefixes. This page drops any xmlns that has no matching prefix usage.</dd>
+                <dt>If sketch:type is still on a group, will xmlns:sketch be deleted?</dt>
+                <dd>No. The prefix is in use. Strip those attributes on Clean Sketch SVG Export, then rescan.</dd>
               </div>
               <div>
-                <dt>Will a used xlink:href lose its xmlns:xlink?</dt>
-                <dd>No. If the prefix is used, the declaration stays.</dd>
+                <dt>Does the usage scan rewrite viewBox or write &lt;desc&gt; bbox numbers?</dt>
+                <dd>No. Calculate SVG Bounding Box measures paint. This page only edits namespace attributes.</dd>
               </div>
               <div>
-                <dt>Does unused xmlns change pixels?</dt>
-                <dd>No. It only shortens declarations.</dd>
+                <dt>Will merging path d remove a dead xmlns:i?</dt>
+                <dd>No. Merge SVG Paths ignores namespaces. Run this scan for declarations.</dd>
               </div>
               <div>
-                <dt>Is this safer than deleting Inkscape namespaces by name?</dt>
-                <dd>Yes, because it only removes prefixes that nothing references.</dd>
+                <dt>Does unused xmlns change the PNG pixel grid?</dt>
+                <dd>No. Download SVG as PNG rasterizes paint. Namespaces are markup-only.</dd>
               </div>
             </dl>
-            <a class="tool-faq-guide" href="/clean-sketch-svg-export-online">Clean Sketch leftovers →</a>
-            <a class="tool-faq-guide" href="/remove-inkscape-namespaces-from-svg">Remove Inkscape NS →</a>
-            <a class="tool-faq-guide" href="/remove-sodipodi-attributes-from-svg">Remove sodipodi attrs →</a>
+            <a class="tool-faq-guide" href="/clean-sketch-svg-export-online">Sketch prefix first, then unused xmlns →</a>
+            <a class="tool-faq-guide" href="/calculate-svg-bounding-box-online">Read getBBox, xmlns stays →</a>
+            <a class="tool-faq-guide" href="/merge-svg-paths-online">Path join does not touch xmlns →</a>
+            <a class="tool-faq-guide" href="/download-svg-as-png-online">PNG download ignores unused xmlns →</a>
             <p class="tool-faq-legal">
               <a href="/privacy">Privacy</a>
               <span aria-hidden="true">·</span>
@@ -444,7 +446,7 @@
               type="button"
               class="btn btn-accent"
               id="btn-craft-action"
-              title="Remove unused SVG namespace declarations"
+              title="Delete xmlns prefixes that the tree never uses"
             >
               Remove unused NS</button>
             <button type="button" class="btn btn-ghost" id="btn-download-svg" title="Download SVG file">
@@ -548,12 +550,12 @@
               <div class="preview-canvas" id="preview-canvas" role="img" aria-label="Rendered SVG preview"></div>
               <div class="preview-empty" id="preview-empty" hidden>
                 <div class="preview-empty-inner">
-                  <p class="preview-empty-title">Unused xmlns</p>
+                  <p class="preview-empty-title">Live SVG preview</p>
                   <p class="preview-empty-body">
-                    Prefix sweeper only. Sketch attributes and path chops are other tools.
+                    Paste SVG with extra xmlns:foo and no foo: usage. This is not the Sketch: stripper.
                   </p>
                   <p class="preview-empty-links">
-                    <a href="/clean-sketch-svg-export-online">Sketch leftovers</a>
+                    <a href="/clean-sketch-svg-export-online">Sketch prefix first, then unused xmlns</a>
                   </p>
                 </div>
               </div>
