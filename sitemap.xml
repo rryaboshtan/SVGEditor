@@ -697,20 +697,14 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/fix-svg-clipping-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/make-svg-scale-with-container</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/make-svg-responsive-online</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -740,31 +734,25 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/strip-inline-styles-from-svg</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/change-svg-fill-color-with-css</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/convert-svg-colors-to-css-variables</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/change-svg-fill-color-on-hover</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/make-svg-icon-monochrome-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -800,85 +788,67 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/bake-svg-transforms-into-path</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/convert-svg-stroke-to-path</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/skew-svg-path-online</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/close-open-svg-paths-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/merge-svg-paths-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/offset-svg-path-online</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/convert-svg-text-to-path</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/split-compound-svg-paths</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/ungroup-svg-paths-online</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/unite-svg-paths-online</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/subtract-svg-paths-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/intersect-svg-paths-online</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/create-compound-svg-path</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/convert-svg-arcs-to-cubic-curves</loc>
-    <lastmod>2026-09-10T01:41:57+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -890,19 +860,13 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-to-png-high-resolution</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-icon-to-png-converter</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-logo-to-png-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -913,20 +877,14 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/svg-to-retina-png-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/svg-code-to-png-online</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/inline-svg-to-png-converter</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -944,37 +902,31 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-favicon-to-png-converter</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-illustration-to-png-online</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/download-svg-as-png-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/paste-svg-export-as-png</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-to-png-512-pixels</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/convert-svg-path-to-png</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -986,19 +938,19 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-to-apple-touch-icon</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-to-png-2x-scale</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/batch-convert-svg-to-png</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1016,37 +968,19 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/remove-inkscape-namespaces-from-svg</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/remove-sodipodi-attributes-from-svg</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/clean-sketch-svg-export-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/remove-unused-svg-namespaces-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/crop-svg-to-bounding-box</loc>
-    <lastmod>2026-09-10T02:10:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/calculate-svg-bounding-box-online</loc>
-    <lastmod>2026-09-28T16:26:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1808,13 +1742,13 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/round-svg-path-decimals-online</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/truncate-svg-path-numbers-online</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
+    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>

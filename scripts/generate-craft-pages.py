@@ -7,6 +7,18 @@ from tool_page_builder import build_page, note, guides
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# Keep deleted URLs in cluster order; rewrite only those slots at build time.
+HREF_REWRITE = {
+    "/fix-svg-clipping-online": "/remove-width-and-height-from-svg",
+    "/make-svg-icon-monochrome-online": "/convert-svg-colors-to-currentcolor",
+    "/close-open-svg-paths-online": "/create-compound-svg-path",
+    "/merge-svg-paths-online": "/unite-svg-paths-online",
+    "/subtract-svg-paths-online": "/intersect-svg-paths-online",
+    "/clean-sketch-svg-export-online": "/clean-figma-svg-online",
+    "/remove-unused-svg-namespaces-online": "/remove-inkscape-namespaces-from-svg",
+    "/calculate-svg-bounding-box-online": "/calculate-svg-viewbox",
+}
+
 CLUSTERS = {
     "layout": [
         "/fix-svg-clipping-online",
@@ -77,7 +89,6 @@ CLUSTERS = {
 }
 
 LABEL = {
-    "/fix-svg-clipping-online": "Fix clipping",
     "/make-svg-scale-with-container": "Scale with container",
     "/make-svg-responsive-online": "Make responsive",
     "/remove-xml-declaration-from-svg": "Remove XML declaration",
@@ -90,21 +101,17 @@ LABEL = {
     "/change-svg-fill-color-with-css": "Fill color with CSS",
     "/convert-svg-colors-to-css-variables": "Colors → CSS variables",
     "/change-svg-fill-color-on-hover": "Fill on hover",
-    "/make-svg-icon-monochrome-online": "Monochrome icon",
     "/convert-svg-presentation-attributes-to-css": "Attrs → CSS",
     "/convert-svg-attributes-to-css-classes": "Attrs → classes",
     "/remove-svg-presentation-attributes": "Remove presentation attrs",
     "/bake-svg-transforms-into-path": "Bake transforms",
     "/convert-svg-stroke-to-path": "Stroke to path",
     "/skew-svg-path-online": "Skew path",
-    "/close-open-svg-paths-online": "Close open paths",
-    "/merge-svg-paths-online": "Merge paths",
     "/offset-svg-path-online": "Offset path",
     "/convert-svg-text-to-path": "Text to path",
     "/split-compound-svg-paths": "Split compound paths",
     "/ungroup-svg-paths-online": "Ungroup paths",
     "/unite-svg-paths-online": "Unite paths",
-    "/subtract-svg-paths-online": "Subtract paths",
     "/intersect-svg-paths-online": "Intersect paths",
     "/create-compound-svg-path": "Create compound path",
     "/convert-svg-arcs-to-cubic-curves": "Arcs → cubics",
@@ -114,10 +121,7 @@ LABEL = {
     "/prevent-svg-distortion-in-css-grid": "Prevent grid distortion",
     "/remove-inkscape-namespaces-from-svg": "Remove Inkscape NS",
     "/remove-sodipodi-attributes-from-svg": "Remove sodipodi attrs",
-    "/clean-sketch-svg-export-online": "Clean Sketch SVG",
-    "/remove-unused-svg-namespaces-online": "Unused namespaces",
     "/crop-svg-to-bounding-box": "Crop to bounding box",
-    "/calculate-svg-bounding-box-online": "Calculate bounding box",
     "/crop-svg-online": "Crop SVG",
     "/calculate-svg-viewbox": "Calculate viewBox",
     "/convert-svg-colors-to-currentcolor": "Colors → currentColor",
@@ -131,131 +135,38 @@ FALLBACK = {
     "layout": ["/remove-width-and-height-from-svg", "/set-svg-preserveaspectratio-online"],
 }
 
-# Peer links only among the 11 indexing-refresh URLs (do not point at other site tools).
-INDEX_REFRESH_SLUGS = {
-    "fix-svg-clipping-online",
-    "make-svg-icon-monochrome-online",
-    "close-open-svg-paths-online",
-    "merge-svg-paths-online",
-    "subtract-svg-paths-online",
-    "clean-sketch-svg-export-online",
-    "remove-unused-svg-namespaces-online",
-    "calculate-svg-bounding-box-online",
-}
+INDEX_REFRESH_SLUGS = set()
 
-INDEX_PEERS = {
-    "fix-svg-clipping-online": {
-        "note": note(
-            "/calculate-svg-bounding-box-online", "Read painted bbox numbers",
-            "/close-open-svg-paths-online", "Close open subpaths with Z",
-        ),
-        "guides": guides([
-            ("/calculate-svg-bounding-box-online", "Measure bbox — viewBox unchanged"),
-            ("/close-open-svg-paths-online", "Seal open d before clip repair"),
-            ("/merge-svg-paths-online", "Join path markup, not clipPath"),
-            ("/download-svg-as-png-online", "Save PNG after clipping is fixed"),
-        ]),
-    },
-    "make-svg-icon-monochrome-online": {
-        "note": note(
-            "/close-open-svg-paths-online", "Close open glyph subpaths first",
-            "/subtract-svg-paths-online", "Punch a hole, do not flatten ink",
-        ),
-        "guides": guides([
-            ("/close-open-svg-paths-online", "Z-close before one-ink fill"),
-            ("/subtract-svg-paths-online", "evenodd hole, not currentColor"),
-            ("/calculate-svg-bounding-box-online", "Measure the glyph box"),
-            ("/svg-logo-to-png-online", "800px lockup PNG is a different job"),
-        ]),
-    },
-    "close-open-svg-paths-online": {
-        "note": note(
-            "/merge-svg-paths-online", "Concatenate d into one element",
-            "/subtract-svg-paths-online", "Boolean hole, not a Z close",
-        ),
-        "guides": guides([
-            ("/merge-svg-paths-online", "Join several path nodes"),
-            ("/subtract-svg-paths-online", "Cut with evenodd after Z"),
-            ("/fix-svg-clipping-online", "clipPath crop is a different bug"),
-            ("/make-svg-icon-monochrome-online", "One-ink icon after the shape is closed"),
-        ]),
-    },
-    "merge-svg-paths-online": {
-        "note": note(
-            "/close-open-svg-paths-online", "Append Z, do not join nodes",
-            "/subtract-svg-paths-online", "Difference, not concatenation",
-        ),
-        "guides": guides([
-            ("/close-open-svg-paths-online", "Close subpaths — still separate nodes"),
-            ("/subtract-svg-paths-online", "Second path becomes a hole"),
-            ("/make-svg-icon-monochrome-online", "Flatten fills after merge"),
-            ("/fix-svg-clipping-online", "Repair clipPath overflow"),
-        ]),
-    },
-    "subtract-svg-paths-online": {
-        "note": note(
-            "/merge-svg-paths-online", "Markup join, not a cut",
-            "/close-open-svg-paths-online", "Open cutters fail evenodd",
-        ),
-        "guides": guides([
-            ("/close-open-svg-paths-online", "Z on base and cutter first"),
-            ("/merge-svg-paths-online", "Concat d without punching"),
-            ("/make-svg-icon-monochrome-online", "currentColor ink, not boolean"),
-            ("/calculate-svg-bounding-box-online", "Measure after the hole exists"),
-        ]),
-    },
-    "clean-sketch-svg-export-online": {
-        "note": note(
-            "/remove-unused-svg-namespaces-online", "Drop unused xmlns:* by usage",
-            "/fix-svg-clipping-online", "Sketch clipPath still cutting art",
-        ),
-        "guides": guides([
-            ("/remove-unused-svg-namespaces-online", "Dead xmlns after Sketch: is gone"),
-            ("/fix-svg-clipping-online", "Enlarge clipPath, keep Sketch geometry"),
-            ("/calculate-svg-bounding-box-online", "Measure leftover artboard padding"),
-            ("/download-svg-as-png-online", "Raster only after Sketch chrome is gone"),
-        ]),
-    },
-    "remove-unused-svg-namespaces-online": {
-        "note": note(
-            "/clean-sketch-svg-export-online", "sketch: attrs, not generic xmlns",
-            "/calculate-svg-bounding-box-online", "BBox numbers, not namespaces",
-        ),
-        "guides": guides([
-            ("/clean-sketch-svg-export-online", "Sketch prefix first, then unused xmlns"),
-            ("/calculate-svg-bounding-box-online", "Read getBBox, xmlns stays"),
-            ("/merge-svg-paths-online", "Path join does not touch xmlns"),
-            ("/download-svg-as-png-online", "PNG download ignores unused xmlns"),
-        ]),
-    },
-    "calculate-svg-bounding-box-online": {
-        "note": note(
-            "/fix-svg-clipping-online", "clipPath hide, not a measurement",
-            "/download-svg-as-png-online", "PNG file save, not bbox text",
-        ),
-        "guides": guides([
-            ("/fix-svg-clipping-online", "Unclip first if art is cut off"),
-            ("/close-open-svg-paths-online", "Open paths can shrink the box"),
-            ("/svg-to-retina-png-online", "@3x pixels ≠ bbox user units"),
-            ("/svg-logo-to-png-online", "800px lockup ≠ measured viewBox"),
-        ]),
-    },
-}
+INDEX_PEERS = {}
+
+
+def resolve_href(h, slug):
+    h = HREF_REWRITE.get(h, h)
+    if h == f"/{slug}":
+        return None
+    return h
+
+
+def cluster_hrefs(cluster, slug):
+    hrefs = []
+    for h in CLUSTERS[cluster]:
+        r = resolve_href(h, slug)
+        if r and r not in hrefs:
+            hrefs.append(r)
+    for h in FALLBACK.get(cluster, []):
+        r = resolve_href(h, slug)
+        if r and r not in hrefs:
+            hrefs.append(r)
+    return hrefs
 
 
 def cluster_guides(cluster, slug):
-    hrefs = [h for h in CLUSTERS[cluster] if h != f"/{slug}"]
-    for h in FALLBACK.get(cluster, []):
-        if h != f"/{slug}" and h not in hrefs:
-            hrefs.append(h)
+    hrefs = cluster_hrefs(cluster, slug)
     return guides([(h, LABEL.get(h, h.strip("/"))) for h in hrefs[:4]])
 
 
 def cluster_note(cluster, slug):
-    hrefs = [h for h in CLUSTERS[cluster] if h != f"/{slug}"]
-    for h in FALLBACK.get(cluster, []):
-        if h != f"/{slug}" and h not in hrefs:
-            hrefs.append(h)
+    hrefs = cluster_hrefs(cluster, slug)
     a, b = hrefs[0], hrefs[1]
     return note(a, LABEL.get(a, a), b, LABEL.get(b, b))
 
@@ -294,29 +205,6 @@ def page(cluster, slug, title, description, h1, crumb, sub, og_alt, app_name, ap
 
 
 PAGES = [
-    page(
-        "layout", "fix-svg-clipping-online",
-        "Widen a Tight SVG clipPath (Artwork Cut Off) | getsvgeditor.com",
-        "Repair clipPath overflow that hides painted shapes. viewBox is left alone; this is not a bounding-box crop, not a path merge, not a PNG export.",
-        "Widen Tight SVG clipPath (Cut-Off Artwork)", "Widen clipPath",
-        "Enlarge a <strong>too-small clipPath</strong> so paint is no longer sliced — <code>viewBox</code> is not rewritten",
-        "Widen a tight SVG clipPath that cuts off artwork",
-        "Widen Tight SVG clipPath",
-        ["Widen tight SVG clipPath", "clipPath overflow repair", "Unslice clipped SVG artwork", "clip-path box vs viewBox"],
-        "Expands a clipPath (or CSS clip-path) that crops visible geometry. Does not measure getBBox, does not concatenate path d, does not rasterize PNG.",
-        ["Grows clip box toward viewBox", "Leaves viewBox string intact", "Not a content-bbox crop", "Runs locally, no upload"],
-        "Repair clipPath overflow without changing viewBox",
-        "Grow the clipping region so previously sliced pixels reappear.",
-        "Click Fix clipping. The clip region expands to the canvas so the sample badge is no longer truncated.",
-        "Fix clipping", "Enlarge the clipPath so artwork is not cut off",
-        [
-            ("Does widening clipPath rewrite the root viewBox?", "No. Only clipPath / clip-path geometry is enlarged (or dropped if unusable). Canvas crop tools are a different intent."),
-            ("Is a sliced badge the same problem as a loose artboard?", "No. Loose artboard is extra empty canvas. Sliced badge is a mask smaller than the paint. Measure numbers without cropping on Calculate SVG Bounding Box."),
-            ("Will this concatenate two path elements?", "No. Path join lives on Merge SVG Paths. Clipping is a mask, not d concatenation."),
-            ("Should I download PNG before unclipping?", "No. Rasterizing a clipped preview bakes the cut. Fix clipping first, then Download SVG as PNG if you need a file."),
-        ],
-        "Paste SVG whose clipPath slices the graphic. This page does not crop viewBox and does not export PNG.",
-    ),
     page(
         "layout", "make-svg-scale-with-container",
         "Make SVG Scale With Container — Free Tool | getsvgeditor.com",
@@ -451,7 +339,7 @@ PAGES = [
             ("How do I remove hidden layers from an SVG export?", "Click Remove hidden layers. Elements with display:none, visibility:hidden, hidden, or opacity 0 are deleted."),
             ("Are opacity-0 decorative fades treated as hidden layers?", "This pass treats opacity=\"0\" as hidden. Soft fades with opacity above 0 stay."),
             ("Is a hidden layer the same as an empty group?", "No. Empty groups have no children. Hidden layers have artwork that is turned off — use Remove Empty Groups for hollow wrappers."),
-            ("Will clipPath leftovers remain after removing hidden layers?", "Sometimes. Fix SVG Clipping Online if a leftover clip still crops the art."),
+            ("Will clipPath leftovers remain after removing hidden layers?", "Sometimes. Make the SVG responsive or widen viewBox if a leftover clip still crops the art."),
         ],
         "Paste SVG with a hidden layer. Click Remove hidden layers.",
     ),
@@ -546,29 +434,6 @@ PAGES = [
             ("Can I pick the hover color in Source?", "Yes. Edit the :hover fill in the generated <style> block."),
         ],
         "Paste an icon. Click Apply hover fill, then hover the preview.",
-    ),
-    page(
-        "style_css", "make-svg-icon-monochrome-online",
-        "Collapse UI Glyph Fills to One currentColor Ink | getsvgeditor.com",
-        "Turn a multi-hex UI glyph into a single currentColor fill. Not a brand lockup PNG, not a clipPath fix, not boolean path subtract.",
-        "Collapse UI Glyph to One currentColor Ink", "One-ink glyph",
-        "Force a <strong>toolbar/icon glyph</strong> onto one inheritable ink — not an 800px logo raster and not a namespace cleaner",
-        "Collapse a multi-color UI glyph to currentColor",
-        "One-ink UI glyph (currentColor)",
-        ["UI glyph currentColor flatten", "Multi-hex icon to one ink", "Toolbar glyph recolor contract", "Not logo PNG, not clipPath"],
-        "Rewrites solid paints on a UI glyph to currentColor so CSS color can restyle it. Leaves clipPath, xmlns, and PNG export to other pages.",
-        ["Solid fills → currentColor", "Keeps fill none punch-outs", "Icon contract, not lockup size", "No upload"],
-        "Flatten a UI glyph palette to currentColor",
-        "Collapse distinct hex fills on an icon, not a marketing lockup.",
-        "Click Make monochrome. Palette fills become currentColor; holes stay none.",
-        "Make monochrome", "Flatten this UI glyph to one inheritable ink",
-        [
-            ("Does one-ink flatten also export an 800px PNG lockup?", "No. That is SVG Logo to PNG. This page only rewrites SVG paints so CSS color can restyle a glyph."),
-            ("If the glyph has an open subpath, should I flatten first?", "Close Open SVG Paths first when you need a sealed fill. currentColor on an open stroke-looking path still looks broken."),
-            ("Is punching a moon hole the same as making the icon grey?", "No. Subtract SVG Paths uses evenodd to cut geometry. Monochrome only changes paint tokens."),
-            ("Will unused xmlns:sketch vanish on this button?", "No. Clean Sketch SVG Export strips exporter chrome. This button never touches namespaces."),
-        ],
-        "Paste a multi-hex toolbar icon. This is not logo PNG, not clip repair, not xmlns cleanup.",
     ),
     page(
         "style_css", "convert-svg-presentation-attributes-to-css",
@@ -749,56 +614,10 @@ PAGES = [
         [
             ("How do I skew an SVG path online?", "Click Skew path. A horizontal shear (skewX) is applied and baked into d so no transform remains."),
             ("Can I bake a transform I already wrote?", "Yes — use Bake SVG Transforms Into Path for an existing transform= attribute."),
-            ("Does skew change the viewBox?", "No. Only path points move. If the shear clips, Fix SVG Clipping or widen viewBox."),
+            ("Does skew change the viewBox?", "No. Only path points move. If the shear clips, widen viewBox or use Make SVG Responsive Online."),
             ("Is skew the same as rotate?", "No. Skew shears axes; rotate turns around a point. Use the rotate tools for angles."),
         ],
         "Paste a path. Click Skew path to shear it.",
-    ),
-    page(
-        "path_ops", "close-open-svg-paths-online",
-        "Append Z to Open SVG Subpaths (Seal d, Keep Nodes) | getsvgeditor.com",
-        "Add a close command to subpaths that lack Z. Does not concatenate several path elements, does not evenodd-cut, does not flatten icon ink.",
-        "Append Z to Open SVG Subpaths", "Append Z",
-        "Write <code>Z</code> on subpaths that never closed — <strong>path element count stays the same</strong>",
-        "Append Z to open SVG subpaths without merging nodes",
-        "Append Z to open subpaths",
-        ["Append Z to open SVG subpaths", "Seal d without merging path nodes", "Close command not boolean cut", "Not clipPath, not PNG"],
-        "Adds Z/z only where a subpath is still open. Separate <path> tags remain separate; subtract/merge are other jobs.",
-        ["Z only on open subpaths", "Already-closed d untouched", "Does not join sibling paths", "No upload"],
-        "Seal open subpaths with Z without merging elements",
-        "Close the geometry of each open subpath in place.",
-        "Click Close open paths. Missing Z is appended; extra path elements are not collapsed.",
-        "Close open paths", "Append Z to every still-open subpath",
-        [
-            ("Does appending Z collapse two <path> tags into one?", "No. That is Merge SVG Paths (concatenate d). Z only seals the current subpath’s start/end."),
-            ("Why does evenodd subtract look solid until I add Z?", "Open cutters do not punch. Subtract SVG Paths needs closed loops; this page only writes the close command."),
-            ("Is a sliced clipPath fixed by adding Z?", "No. Fix clipping grows the mask. Z does not enlarge clipPath."),
-            ("Should a colorful glyph be flattened before Z?", "Seal geometry first if fill looks gapped, then Make SVG Icon Monochrome for currentColor."),
-        ],
-        "Paste a path whose d never ends in Z. This page will not merge nodes or export PNG.",
-    ),
-    page(
-        "path_ops", "merge-svg-paths-online",
-        "Concatenate Several SVG d Strings Into One path Tag | getsvgeditor.com",
-        "Join sibling path markup into a single element. Not evenodd subtract, not Z-close of one subpath, not unused-namespace cleanup.",
-        "Concatenate SVG d Into One path Element", "Concatenate d",
-        "Glue multiple <code>d</code> attributes onto <strong>one remaining path node</strong> — fill-rule is not rewritten to evenodd",
-        "Concatenate SVG path d into one element",
-        "Concatenate path d (one element)",
-        ["Concatenate SVG path d", "One path node from siblings", "Markup join not evenodd cut", "Not Z-close, not xmlns"],
-        "Concatenates every path d into one <path> and drops the extras. Does not punch holes and does not invent Z on open leftovers.",
-        ["Sibling d glued together", "Extra path tags removed", "Not fill-rule evenodd", "No upload"],
-        "Concatenate sibling path markup into one element",
-        "Reduce several path nodes to one d string.",
-        "Click Merge paths. All d values are joined; this is not a boolean difference.",
-        "Merge paths", "Concatenate every path d into one element",
-        [
-            ("Does concatenate-d punch the second silhouette out of the first?", "No. Subtract SVG Paths sets evenodd and treats extra subpaths as cutters. Merge only glues strings."),
-            ("If a subpath is still open, does merge write Z?", "No. Append Z on Close Open SVG Paths, then concatenate if you still want one node."),
-            ("Will this drop xmlns:sketch leftovers?", "No. Clean Sketch SVG Export is the Sketch: prefix pass."),
-            ("Is clipPath overflow a merge problem?", "No. Widen clipPath on Fix SVG Clipping. Merge never touches clipPath."),
-        ],
-        "Paste two sibling path elements. This concatenates markup; it does not subtract or rasterize.",
     ),
     page(
         "path_ops", "offset-svg-path-online",
@@ -914,29 +733,6 @@ PAGES = [
             ("When should I subtract instead of unite?", "Use Subtract when the second shape should cut a hole, not add area."),
         ],
         "Paste overlapping paths. Click Unite paths.",
-    ),
-    page(
-        "path_ops", "subtract-svg-paths-online",
-        "Punch the Second SVG Path Out of the First (evenodd) | getsvgeditor.com",
-        "Boolean-style difference: extra subpaths become holes via fill-rule evenodd. Not d-concatenation, not currentColor flatten, not clipPath grow.",
-        "Punch Second Path Out (evenodd Hole)", "evenodd punch",
-        "Treat the <strong>second (and later) path</strong> as a cutter with <code>fill-rule:evenodd</code> — the first path is the plate",
-        "Punch the second SVG path out with evenodd",
-        "evenodd path difference",
-        ["evenodd SVG path difference", "Second path as cutter", "Hole not markup concatenate", "Not currentColor, not clipPath"],
-        "Builds one compound path where later silhouettes cut the first. Merge would only glue d; clipPath grow would unmask, not punch.",
-        ["Later paths become holes", "fill-rule evenodd", "Needs closed loops", "No upload"],
-        "Cut later path silhouettes out of the first with evenodd",
-        "Keep the first fill, punch subsequent shapes.",
-        "Click Subtract paths. Remaining path nodes become evenodd cutters on the first.",
-        "Subtract paths", "Punch later paths out of the first silhouette",
-        [
-            ("Is evenodd punch the same as concatenating d?", "No. Concatenate keeps every loop filled with the first paint. Subtract is a hole. Use Merge SVG Paths for glue-only."),
-            ("The cutter looks like a stroke until I close it — what now?", "Append Z on Close Open SVG Paths. evenodd needs closed rings."),
-            ("Does subtract collapse a multi-hex glyph to currentColor?", "No. Make SVG Icon Monochrome rewrites paints. Subtract only changes topology."),
-            ("If art is sliced by clipPath, is subtract the fix?", "No. Fix SVG Clipping enlarges the mask. Holes and clips are different."),
-        ],
-        "Paste a plate path plus a cutter path. This punches geometry; it does not flatten ink or save PNG.",
     ),
     page(
         "path_ops", "intersect-svg-paths-online",
@@ -1095,55 +891,9 @@ PAGES = [
             ("What are sodipodi attributes on an SVG?", "Leftovers from Inkscape’s older Sodipodi core — sodipodi:namedview, sodipodi:absref, and the xmlns:sodipodi declaration."),
             ("Does remove-sodipodi also delete inkscape:label?", "No. That prefix is Inkscape. Run Remove Inkscape Namespaces if those remain."),
             ("Will removing sodipodi change how the graphic looks?", "No. Those attributes are editor chrome, not paint."),
-            ("Should I remove unused namespaces after sodipodi?", "Yes if other empty xmlns:* remain. Use Remove Unused SVG Namespaces."),
+            ("Should I remove unused namespaces after sodipodi?", "Yes if other empty xmlns:* remain. Use Remove Inkscape Namespaces From SVG."),
         ],
         "Paste SVG with sodipodi: attrs. Click Remove sodipodi attrs.",
-    ),
-    page(
-        "exporter_ns", "clean-sketch-svg-export-online",
-        "Strip sketch: Prefix Metadata From a Sketch SVG Export | getsvgeditor.com",
-        "Delete xmlns:sketch, sketch:type, and Sketch slice chrome. Not a generic unused-xmlns scanner, not clipPath repair, not PNG download.",
-        "Strip sketch: Prefix Metadata From SVG", "sketch: chrome",
-        "Target the <strong>Sketch.app exporter prefix</strong> only — unused xmlns:foo with no sketch: usage is a later pass",
-        "Strip Sketch.app sketch: metadata from SVG",
-        "Strip Sketch sketch: metadata",
-        ["Strip Sketch sketch: attributes", "xmlns:sketch exporter chrome", "Not unused-xmlns scanner", "Not clipPath, not PNG"],
-        "Removes Sketch-specific attributes and the Sketch namespace. A leftover xmlns:foo with zero sketch: hits belongs on Remove Unused SVG Namespaces.",
-        ["Drops xmlns:sketch", "Removes sketch:* attributes", "Leaves path geometry", "No upload"],
-        "Remove Sketch.app exporter attributes from SVG",
-        "Delete sketch: chrome while keeping vectors.",
-        "Click Clean Sketch SVG. sketch:type, slice metadata, and xmlns:sketch go away.",
-        "Clean Sketch SVG", "Strip sketch: exporter attributes from this SVG",
-        [
-            ("Does this scanner delete every unused xmlns: on the root?", "No. It only knows Sketch’s prefix. Dead xmlns:foo after that is Remove Unused SVG Namespaces."),
-            ("My Sketch file still looks sliced after sketch: is gone — why?", "clipPath can remain. Widen it on Fix SVG Clipping; this cleaner never grows masks."),
-            ("Will concatenating paths remove sketch:type?", "No. Merge SVG Paths only glues d. Run this Sketch pass for exporter attrs."),
-            ("Should I rasterize PNG while sketch: ids are still there?", "Strip chrome first, then Download SVG as PNG so the file is not carrying editor leftovers into pixels."),
-        ],
-        "Paste a Sketch SVG export. This is not unused-xmlns-by-scan and not a PNG exporter.",
-    ),
-    page(
-        "exporter_ns", "remove-unused-svg-namespaces-online",
-        "Drop xmlns:* Declarations Nobody on the Tree Uses | getsvgeditor.com",
-        "Usage-scan the tree and delete unused xmlns:foo. Does not strip sketch: attributes that are still referenced, does not measure bbox, does not merge paths.",
-        "Drop Unused xmlns:* (Keep SVG xmlns)", "Unused xmlns scan",
-        "Keep the SVG default <code>xmlns</code>; delete <strong>prefix declarations with zero matching nodes/attrs</strong>",
-        "Drop unused xmlns prefix declarations from SVG",
-        "Drop unused xmlns:* by usage scan",
-        ["Drop unused xmlns prefix declarations", "Usage-scan SVG namespaces", "Not Sketch sketch: stripper", "Not bbox, not merge"],
-        "Removes xmlns:* when the prefix never appears on an element or attribute. Sketch chrome that still uses sketch: must be cleaned on the Sketch page first.",
-        ["Prefix-usage scan", "SVG xmlns kept", "xlink kept only if used", "No upload"],
-        "Delete xmlns prefixes with zero remaining uses",
-        "Shrink the root attribute list without touching geometry.",
-        "Click Remove unused NS. Dead xmlns:* disappear; live prefixes stay.",
-        "Remove unused NS", "Delete xmlns prefixes that the tree never uses",
-        [
-            ("If sketch:type is still on a group, will xmlns:sketch be deleted?", "No. The prefix is in use. Strip those attributes on Clean Sketch SVG Export, then rescan."),
-            ("Does the usage scan rewrite viewBox or write <desc> bbox numbers?", "No. Calculate SVG Bounding Box measures paint. This page only edits namespace attributes."),
-            ("Will merging path d remove a dead xmlns:i?", "No. Merge SVG Paths ignores namespaces. Run this scan for declarations."),
-            ("Does unused xmlns change the PNG pixel grid?", "No. Download SVG as PNG rasterizes paint. Namespaces are markup-only."),
-        ],
-        "Paste SVG with extra xmlns:foo and no foo: usage. This is not the Sketch: stripper.",
     ),
     page(
         "bbox", "crop-svg-to-bounding-box",
@@ -1163,33 +913,10 @@ PAGES = [
         [
             ("How is crop SVG to bounding box different from Crop SVG Online?", "Crop SVG Online adds a small pad. This page uses a tight bounding box with no pad ratio so the canvas hugs the paint."),
             ("Does crop-to-bbox change path coordinates?", "No. Only viewBox (and root size attrs). Points stay in the same user space."),
-            ("What if I only want the numbers, not a crop?", "Use Calculate SVG Bounding Box Online — it reports x/y/width/height without rewriting viewBox."),
+            ("What if I only want the numbers, not a crop?", "Use Calculate SVG viewBox — it reports the canvas box without a tight content crop."),
             ("Will stroke width be included in the bounding box?", "Yes. Measurement includes stroke outset so outlines are not clipped."),
         ],
         "Paste a loose-canvas SVG. Click Crop to bounding box.",
-    ),
-    page(
-        "bbox", "calculate-svg-bounding-box-online",
-        "Read Painted SVG getBBox Numbers Without Cropping viewBox | getsvgeditor.com",
-        "Report content x, y, width, height in <desc> plus an overlay. viewBox is not tightened, clipPath is not grown, PNG pixel size is not chosen here.",
-        "Read Painted getBBox (viewBox Unchanged)", "Read getBBox",
-        "Write painted <strong>x y width height</strong> into <code>&lt;desc&gt;</code> — the root <code>viewBox</code> string is not replaced",
-        "Read painted SVG getBBox without cropping viewBox",
-        "Read painted getBBox numbers",
-        ["Read painted SVG getBBox", "Content box numbers not crop", "Not clipPath grow", "Not 800px or @3x PNG"],
-        "Measures visible paint and stores the box. Does not hug the canvas, does not unclip, does not pick 800px or @3x raster size.",
-        ["x y width height in desc", "viewBox left as-is", "Dashed overlay only", "No upload"],
-        "Measure painted content box without rewriting viewBox",
-        "Read numbers; do not apply a crop.",
-        "Click Calculate bounding box. <desc> and overlay show the box; viewBox stays.",
-        "Calculate bounding box", "Read painted getBBox numbers without cropping",
-        [
-            ("Does reading getBBox hug the canvas the way a crop tool would?", "No. viewBox stays. You get numbers and an overlay only."),
-            ("If paint is sliced by clipPath, are the numbers the unclipped art?", "Measurement sees what is still rendered. Widen clipPath on Fix SVG Clipping first if you need the full glyph box."),
-            ("Is 800px logo PNG the same as these user units?", "No. SVG Logo to PNG is an 800px-wide raster. These numbers are SVG user space."),
-            ("Does @3x retina PNG use this bbox as its pixel size?", "No. Retina PNG scales the viewBox by 3. Bbox text is documentation, not the raster contract."),
-        ],
-        "Paste SVG to read x/y/width/height. This page does not crop, unclip, or download PNG.",
     ),
     page(
         "paint_inherit", "convert-svg-colors-to-currentcolor",
@@ -1264,7 +991,7 @@ PAGES = [
 
 
 def main():
-    assert len(PAGES) == 42, f"expected 42 pages, got {len(PAGES)}"
+    assert len(PAGES) == 34, f"expected 42 pages, got {len(PAGES)}"
     questions = [q for p in PAGES for q, _ in p["faqs"]]
     dups = sorted({q for q in questions if questions.count(q) > 1})
     assert len(questions) == len(set(questions)), f"duplicate FAQ questions: {dups}"

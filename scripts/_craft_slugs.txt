@@ -1,4 +1,3 @@
-fix-svg-clipping-online
 make-svg-scale-with-container
 make-svg-responsive-online
 remove-xml-declaration-from-svg
@@ -9,7 +8,6 @@ strip-inline-styles-from-svg
 change-svg-fill-color-with-css
 convert-svg-colors-to-css-variables
 change-svg-fill-color-on-hover
-make-svg-icon-monochrome-online
 convert-svg-presentation-attributes-to-css
 convert-svg-attributes-to-css-classes
 remove-svg-presentation-attributes
@@ -18,14 +16,11 @@ remove-data-attributes-from-svg
 bake-svg-transforms-into-path
 convert-svg-stroke-to-path
 skew-svg-path-online
-close-open-svg-paths-online
-merge-svg-paths-online
 offset-svg-path-online
 convert-svg-text-to-path
 split-compound-svg-paths
 ungroup-svg-paths-online
 unite-svg-paths-online
-subtract-svg-paths-online
 intersect-svg-paths-online
 create-compound-svg-path
 convert-svg-arcs-to-cubic-curves
@@ -33,10 +28,7 @@ fix-svg-stretching-in-flexbox
 prevent-svg-distortion-in-css-grid
 remove-inkscape-namespaces-from-svg
 remove-sodipodi-attributes-from-svg
-clean-sketch-svg-export-online
-remove-unused-svg-namespaces-online
 crop-svg-to-bounding-box
-calculate-svg-bounding-box-online
 convert-svg-colors-to-currentcolor
 remove-hardcoded-stroke-from-svg
 change-svg-fill-and-stroke-on-hover
