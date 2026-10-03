@@ -3230,8 +3230,131 @@ function pathCommandsToRelative(cmds) {
   });
 }
 
-function reverseAbsolutePathCommands(cmds) {
+/** Split implicit repeats and expand S/T to C/Q so reverse can walk one segment at a time. */
+function expandAbsolutePathCommands(cmds) {
   const abs = pathCommandsToAbsolute(cmds);
+  const out = [];
+  let x = 0;
+  let y = 0;
+  let sx = 0;
+  let sy = 0;
+  let lastCubic = null;
+  let lastQuad = null;
+
+  abs.forEach(function (c) {
+    const n = c.nums;
+    if (c.cmd === "Z") {
+      x = sx;
+      y = sy;
+      lastCubic = lastQuad = null;
+      out.push({ cmd: "Z", nums: [] });
+      return;
+    }
+    if (c.cmd === "M") {
+      for (let i = 0; i + 1 < n.length; i += 2) {
+        if (i === 0) {
+          out.push({ cmd: "M", nums: [n[i], n[i + 1]] });
+          sx = n[i];
+          sy = n[i + 1];
+        } else {
+          out.push({ cmd: "L", nums: [n[i], n[i + 1]] });
+        }
+        x = n[i];
+        y = n[i + 1];
+      }
+      lastCubic = lastQuad = null;
+      return;
+    }
+    if (c.cmd === "L") {
+      for (let i = 0; i + 1 < n.length; i += 2) {
+        out.push({ cmd: "L", nums: [n[i], n[i + 1]] });
+        x = n[i];
+        y = n[i + 1];
+      }
+      lastCubic = lastQuad = null;
+      return;
+    }
+    if (c.cmd === "H") {
+      n.forEach(function (nx) {
+        out.push({ cmd: "L", nums: [nx, y] });
+        x = nx;
+      });
+      lastCubic = lastQuad = null;
+      return;
+    }
+    if (c.cmd === "V") {
+      n.forEach(function (ny) {
+        out.push({ cmd: "L", nums: [x, ny] });
+        y = ny;
+      });
+      lastCubic = lastQuad = null;
+      return;
+    }
+    if (c.cmd === "C") {
+      for (let i = 0; i + 5 < n.length; i += 6) {
+        const seg = n.slice(i, i + 6);
+        out.push({ cmd: "C", nums: seg });
+        lastCubic = { x: seg[2], y: seg[3] };
+        lastQuad = null;
+        x = seg[4];
+        y = seg[5];
+      }
+      return;
+    }
+    if (c.cmd === "S") {
+      for (let i = 0; i + 3 < n.length; i += 4) {
+        const c1x = lastCubic ? 2 * x - lastCubic.x : x;
+        const c1y = lastCubic ? 2 * y - lastCubic.y : y;
+        const c2x = n[i];
+        const c2y = n[i + 1];
+        const nx = n[i + 2];
+        const ny = n[i + 3];
+        out.push({ cmd: "C", nums: [c1x, c1y, c2x, c2y, nx, ny] });
+        lastCubic = { x: c2x, y: c2y };
+        lastQuad = null;
+        x = nx;
+        y = ny;
+      }
+      return;
+    }
+    if (c.cmd === "Q") {
+      for (let i = 0; i + 3 < n.length; i += 4) {
+        const seg = n.slice(i, i + 4);
+        out.push({ cmd: "Q", nums: seg });
+        lastQuad = { x: seg[0], y: seg[1] };
+        lastCubic = null;
+        x = seg[2];
+        y = seg[3];
+      }
+      return;
+    }
+    if (c.cmd === "T") {
+      for (let i = 0; i + 1 < n.length; i += 2) {
+        const cpx = lastQuad ? 2 * x - lastQuad.x : x;
+        const cpy = lastQuad ? 2 * y - lastQuad.y : y;
+        out.push({ cmd: "Q", nums: [cpx, cpy, n[i], n[i + 1]] });
+        lastQuad = { x: cpx, y: cpy };
+        lastCubic = null;
+        x = n[i];
+        y = n[i + 1];
+      }
+      return;
+    }
+    if (c.cmd === "A") {
+      for (let i = 0; i + 6 < n.length; i += 7) {
+        const seg = n.slice(i, i + 7);
+        out.push({ cmd: "A", nums: seg });
+        lastCubic = lastQuad = null;
+        x = seg[5];
+        y = seg[6];
+      }
+    }
+  });
+  return out;
+}
+
+function reverseAbsolutePathCommands(cmds) {
+  const abs = expandAbsolutePathCommands(cmds);
   const subpaths = [];
   let cur = [];
   abs.forEach(function (c) {
@@ -3242,12 +3365,9 @@ function reverseAbsolutePathCommands(cmds) {
   });
   if (cur.length) subpaths.push(cur);
 
-  function lastPoint(seg) {
+  function endPoint(seg) {
     const n = seg.nums;
-    if (seg.cmd === "H") return { x: n[n.length - 1], y: null };
-    if (seg.cmd === "V") return { x: null, y: n[n.length - 1] };
     if (!n.length) return { x: null, y: null };
-    if (seg.cmd === "A") return { x: n[n.length - 2], y: n[n.length - 1] };
     return { x: n[n.length - 2], y: n[n.length - 1] };
   }
 
@@ -3263,26 +3383,24 @@ function reverseAbsolutePathCommands(cmds) {
     const pts = [];
     let cx = segs[0].nums[0];
     let cy = segs[0].nums[1];
-    pts.push({ x: cx, y: cy, cmd: segs[0] });
+    pts.push({ x: cx, y: cy });
     for (let i = 1; i < segs.length; i++) {
-      const lp = lastPoint(segs[i]);
+      const lp = endPoint(segs[i]);
       if (lp.x != null) cx = lp.x;
       if (lp.y != null) cy = lp.y;
-      pts.push({ x: cx, y: cy, cmd: segs[i] });
+      pts.push({ x: cx, y: cy });
     }
     const end = pts[pts.length - 1];
     out.push({ cmd: "M", nums: [end.x, end.y] });
     for (let i = segs.length - 1; i >= 1; i--) {
       const prev = pts[i - 1];
       const seg = segs[i];
-      if (seg.cmd === "L" || seg.cmd === "H" || seg.cmd === "V" || seg.cmd === "T") {
-        out.push({ cmd: "L", nums: [prev.x, prev.y] });
-      } else if (seg.cmd === "C") {
+      if (seg.cmd === "C") {
         const n = seg.nums;
         out.push({ cmd: "C", nums: [n[2], n[3], n[0], n[1], prev.x, prev.y] });
-      } else if (seg.cmd === "Q" || seg.cmd === "S") {
+      } else if (seg.cmd === "Q") {
         const n = seg.nums;
-        out.push({ cmd: seg.cmd, nums: [n[0], n[1], prev.x, prev.y] });
+        out.push({ cmd: "Q", nums: [n[0], n[1], prev.x, prev.y] });
       } else if (seg.cmd === "A") {
         const n = seg.nums.slice();
         n[4] = n[4] ? 0 : 1;
@@ -3429,6 +3547,7 @@ function applyPathEditMarkup(markup, intent, factorOverride) {
     }
   } else if (reverseIntents[intent]) {
     forEachPathElement(svg, function (path, d) {
+      if (path.closest && path.closest("defs, marker, clipPath, mask, symbol, pattern")) return;
       path.setAttribute("d", serializePathCommands(reverseAbsolutePathCommands(splitPathCommands(d))));
     });
     status = "Path direction reversed";
@@ -3479,7 +3598,12 @@ const PATH_EDIT_DEFAULT_SVGS = {
   <path d="M28 88 L28 88 L60 36 L60.05 36.02 L100 36 L132 88 L132 88" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`,
   "reverse-svg-path-direction": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Chevron — click to reverse direction">
-  <path d="M40 28 L116 60 L40 92" fill="none" stroke="#22d3ee" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <marker id="rev-dir-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto">
+      <path d="M0 1.2 L10 5 L0 8.8 Z" fill="#22d3ee"/>
+    </marker>
+  </defs>
+  <path d="M40 28 L116 60 L40 92" fill="none" stroke="#22d3ee" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#rev-dir-arrow)"/>
 </svg>`,
   "change-svg-path-winding-order": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Closed diamond — click to change winding">
   <path d="M70 18 L122 70 L70 122 L18 70 Z" fill="#38bdf8" fill-rule="evenodd"/>
