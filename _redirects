@@ -144,3 +144,11 @@
 /svg-to-svgxml-react-native.html /svg-to-react-native 301
 /optimize-svg-for-react-native /svg-to-react-native 301
 /optimize-svg-for-react-native.html /svg-to-react-native 301
+
+# D dead synonym clones
+/inline-svg-to-png-converter /svg-to-png 301
+/inline-svg-to-png-converter.html /svg-to-png 301
+/simplify-svg-path-data-online /reduce-svg-path-nodes-online 301
+/simplify-svg-path-data-online.html /reduce-svg-path-nodes-online 301
+/svg-gradient-color-picker-from-code /extract-colors-from-svg-gradient 301
+/svg-gradient-color-picker-from-code.html /extract-colors-from-svg-gradient 301

@@ -860,3 +860,39 @@
   to = "/svg-to-react-native"
   status = 301
   force = true
+
+[[redirects]]
+  from = "/inline-svg-to-png-converter"
+  to = "/svg-to-png"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/inline-svg-to-png-converter.html"
+  to = "/svg-to-png"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/simplify-svg-path-data-online"
+  to = "/reduce-svg-path-nodes-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/simplify-svg-path-data-online.html"
+  to = "/reduce-svg-path-nodes-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-color-picker-from-code"
+  to = "/extract-colors-from-svg-gradient"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-color-picker-from-code.html"
+  to = "/extract-colors-from-svg-gradient"
+  status = 301
+  force = true
