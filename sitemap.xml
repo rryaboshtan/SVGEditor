@@ -152,19 +152,7 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/crop-svg-online</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/crop-svg-to-custom-dimensions</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/crop-svg-to-selected-area</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
+    <lastmod>2026-10-11T20:45:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -182,18 +170,6 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/crop-svg-to-specific-aspect-ratio</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/crop-svg-without-changing-viewbox</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/crop-svg-canvas-online</loc>
     <lastmod>2026-09-05T12:00:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -979,12 +955,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/crop-svg-to-bounding-box</loc>
-    <lastmod>2026-09-30T17:43:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/convert-svg-colors-to-currentcolor</loc>
     <lastmod>2026-09-10T02:10:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -1274,27 +1244,9 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/remove-background-from-svg</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
+    <lastmod>2026-10-11T20:45:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/remove-white-background-from-svg</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/remove-transparent-background-from-svg</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/make-svg-background-transparent</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/remove-white-space-from-svg</loc>
@@ -1303,86 +1255,8 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/remove-background-color-from-svg</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/remove-solid-background-from-svg</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/remove-colored-background-from-svg</loc>
-    <lastmod>2026-09-04T09:15:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/change-svg-stroke-color</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-css</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-javascript</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-inline-svg-stroke-color</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-hover</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-currentcolor</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-react</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-tailwind</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-path-stroke-color</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-icon-stroke-color</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/change-svg-stroke-color-without-editing-svg</loc>
-    <lastmod>2026-09-04T09:40:00+03:00</lastmod>
+    <lastmod>2026-10-11T20:45:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1681,26 +1555,8 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/convert-css-linear-gradient-to-svg</loc>
-    <lastmod>2026-09-05T02:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/transform-css-gradient-to-svg-code</loc>
-    <lastmod>2026-09-05T02:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/css-to-svg-gradient-generator</loc>
-    <lastmod>2026-09-05T02:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/export-css-gradient-as-svg</loc>
-    <lastmod>2026-09-05T02:20:00+03:00</lastmod>
+    <lastmod>2026-10-11T20:45:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>

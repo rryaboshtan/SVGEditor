@@ -41,7 +41,6 @@
   [headers.values]
     Cache-Control = "public, max-age=300"
 
-# Base64 convert-* → hub 301s (indexed cannibals)
 [[redirects]]
   from = "/convert-svg-to-base64-string"
   to = "/svg-to-base64-string"
@@ -82,3 +81,290 @@
   to = "/svg-to-base64-html"
   status = 301
 
+[[redirects]]
+  from = "/remove-white-background-from-svg"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-white-background-from-svg.html"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-transparent-background-from-svg"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-transparent-background-from-svg.html"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-background-color-from-svg"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-background-color-from-svg.html"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-solid-background-from-svg"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-solid-background-from-svg.html"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-colored-background-from-svg"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/remove-colored-background-from-svg.html"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/make-svg-background-transparent"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/make-svg-background-transparent.html"
+  to = "/remove-background-from-svg"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-canvas-online"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-canvas-online.html"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-to-selected-area"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-to-selected-area.html"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-to-bounding-box"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-to-bounding-box.html"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-to-custom-dimensions"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-to-custom-dimensions.html"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-without-changing-viewbox"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crop-svg-without-changing-viewbox.html"
+  to = "/crop-svg-online"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/transform-css-gradient-to-svg-code"
+  to = "/css-to-svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/transform-css-gradient-to-svg-code.html"
+  to = "/css-to-svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-css-linear-gradient-to-svg"
+  to = "/css-to-svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-css-linear-gradient-to-svg.html"
+  to = "/css-to-svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/export-css-gradient-as-svg"
+  to = "/css-to-svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/export-css-gradient-as-svg.html"
+  to = "/css-to-svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-css"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-css.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-javascript"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-javascript.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-hover"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-hover.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-currentcolor"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-currentcolor.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-react"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-react.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-tailwind"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-tailwind.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-without-editing-svg"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-stroke-color-without-editing-svg.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-path-stroke-color"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-path-stroke-color.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-icon-stroke-color"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-svg-icon-stroke-color.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-inline-svg-stroke-color"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/change-inline-svg-stroke-color.html"
+  to = "/change-svg-stroke-color"
+  status = 301
+  force = true
