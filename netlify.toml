@@ -368,3 +368,495 @@
   to = "/change-svg-stroke-color"
   status = 301
   force = true
+
+[[redirects]]
+  from = "/multi-color-svg-gradient-generator"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-gradient-generator.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-linear-gradient-generator"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-linear-gradient-generator.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-radial-gradient-generator"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-radial-gradient-generator.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/custom-multi-color-svg-gradient-generator"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/custom-multi-color-svg-gradient-generator.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-background-gradient-generator"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/multi-color-svg-background-gradient-generator.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/responsive-svg-background-gradient-generator"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/responsive-svg-background-gradient-generator.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-generator-from-colors"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-generator-from-colors.html"
+  to = "/svg-gradient-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-linear-gradient-stroke-code-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-linear-gradient-stroke-code-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-circle-gradient-stroke-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-circle-gradient-stroke-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-path-gradient-stroke-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-path-gradient-stroke-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-multicolor-stroke-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-multicolor-stroke-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-border-css-code-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-border-css-code-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-border-generator-with-transparent-fill"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-border-generator-with-transparent-fill.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-border-generator-for-text"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-gradient-border-generator-for-text.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-rounded-rectangle-gradient-border-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-rounded-rectangle-gradient-border-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-linear-gradient-stroke-generator"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-linear-gradient-stroke-generator.html"
+  to = "/svg-gradient-stroke-code-generator"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-jsx"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-jsx.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-svg-component"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-svg-component.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-functional-component"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-functional-component.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-forwardref-component"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-forwardref-component.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-typescript"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-typescript.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-with-viewbox"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-with-viewbox.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-android"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-android.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-ios"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-react-native-ios.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/paste-svg-to-react-native-online"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/paste-svg-to-react-native-online.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/inline-svg-to-react-native-svg"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/inline-svg-to-react-native-svg.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-react-native-component-generator"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-react-native-component-generator.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-icon-to-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-icon-to-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/responsive-svg-icon-react-native-component"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/responsive-svg-icon-react-native-component.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-svg-icon-to-react-native-svg"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-svg-icon-to-react-native-svg.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-illustration-to-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-illustration-to-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-logo-to-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-logo-to-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-expo-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-expo-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-svg-to-expo-svg-component"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-svg-to-expo-svg-component.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/figma-svg-to-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/figma-svg-to-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svgr-native-svg-to-react-native-online"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svgr-native-svg-to-react-native-online.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/camelcase-svg-attributes-for-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/camelcase-svg-attributes-for-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-svg-attributes-to-react-native-props"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/convert-svg-attributes-to-react-native-props.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-rect-to-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-rect-to-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-svgxml-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/svg-to-svgxml-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/optimize-svg-for-react-native"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/optimize-svg-for-react-native.html"
+  to = "/svg-to-react-native"
+  status = 301
+  force = true

@@ -32,42 +32,12 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-gradient-stroke-code-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-gradient-border-css-code-generator</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-linear-gradient-stroke-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
+    <lastmod>2026-10-11T21:30:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-radial-gradient-stroke-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-linear-gradient-stroke-code-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-circle-gradient-stroke-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-path-gradient-stroke-generator</loc>
     <lastmod>2026-09-05T12:00:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -79,37 +49,7 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/svg-rounded-rectangle-gradient-border-generator</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/svg-rainbow-gradient-stroke-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-multicolor-stroke-generator</loc>
-    <lastmod>2026-09-05T12:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-gradient-border-generator-with-transparent-fill</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-gradient-border-generator-for-text</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/responsive-svg-background-gradient-generator</loc>
     <lastmod>2026-09-05T12:00:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -458,55 +398,7 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-<url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-svg-component</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-<url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-jsx</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/paste-svg-to-react-native-online</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-react-native-component-generator</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-typescript</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-<url>
-    <loc>https://getsvgeditor.com/svg-icon-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/convert-svg-icon-to-react-native-svg</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/figma-svg-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
+    <lastmod>2026-10-11T21:30:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -516,56 +408,8 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-logo-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-illustration-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-expo-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/convert-svg-to-expo-svg-component</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-android</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-ios</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-svgxml-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
 <url>
     <loc>https://getsvgeditor.com/svg-string-to-react-native-component</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/inline-svg-to-react-native-svg</loc>
     <lastmod>2026-09-08T01:44:26+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -589,25 +433,7 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/svg-rect-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/convert-svg-lineargradient-to-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/convert-svg-attributes-to-react-native-props</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/camelcase-svg-attributes-for-react-native</loc>
     <lastmod>2026-09-08T01:44:26+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -630,45 +456,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
-  <url>
-    <loc>https://getsvgeditor.com/responsive-svg-icon-react-native-component</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-with-viewbox</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/optimize-svg-for-react-native</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
 <url>
     <loc>https://getsvgeditor.com/remove-unsupported-svg-for-react-native</loc>
     <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svgr-native-svg-to-react-native-online</loc>
-    <lastmod>2026-09-25T17:30:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-<url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-functional-component</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/svg-to-react-native-forwardref-component</loc>
-    <lastmod>2026-09-08T01:44:26+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1358,7 +1148,7 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-gradient-generator</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
+    <lastmod>2026-10-11T21:30:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1375,12 +1165,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://getsvgeditor.com/svg-gradient-generator-from-colors</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://getsvgeditor.com/svg-gradient-angle-generator</loc>
     <lastmod>2026-09-04T15:20:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -1388,36 +1172,6 @@
   </url>
   <url>
     <loc>https://getsvgeditor.com/svg-gradient-with-opacity</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/multi-color-svg-gradient-generator</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/multi-color-svg-linear-gradient-generator</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/multi-color-svg-radial-gradient-generator</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/custom-multi-color-svg-gradient-generator</loc>
-    <lastmod>2026-09-04T15:20:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://getsvgeditor.com/multi-color-svg-background-gradient-generator</loc>
     <lastmod>2026-09-04T15:20:00+03:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
