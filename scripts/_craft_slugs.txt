@@ -32,3 +32,8 @@ crop-svg-to-bounding-box
 convert-svg-colors-to-currentcolor
 remove-hardcoded-stroke-from-svg
 change-svg-fill-and-stroke-on-hover
+convert-smooth-curves-to-lines
+swap-svg-fill-and-stroke
+convert-svg-fill-to-stroke
+change-svg-stroke-width
+set-svg-stroke-linecap

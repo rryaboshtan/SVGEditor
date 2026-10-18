@@ -86,6 +86,18 @@ CLUSTERS = {
         "/create-compound-svg-path",
         "/convert-svg-arcs-to-cubic-curves",
     ],
+    "flatten_curves": [
+        "/convert-smooth-curves-to-lines",
+    ],
+    "paint_stroke": [
+        "/swap-svg-fill-and-stroke",
+        "/convert-svg-fill-to-stroke",
+        "/change-svg-stroke-width",
+        "/set-svg-stroke-linecap",
+        "/change-svg-stroke-color",
+        "/convert-svg-stroke-to-path",
+        "/convert-svg-fill-to-currentcolor",
+    ],
 }
 
 LABEL = {
@@ -129,10 +141,24 @@ LABEL = {
     "/change-svg-fill-and-stroke-on-hover": "Fill + stroke hover",
     "/convert-svg-fill-to-currentcolor": "Fill → currentColor",
     "/change-svg-fill-color-on-hover": "Fill on hover",
+    "/convert-smooth-curves-to-lines": "Curves → lines",
+    "/swap-svg-fill-and-stroke": "Swap fill & stroke",
+    "/convert-svg-fill-to-stroke": "Fill → stroke",
+    "/change-svg-stroke-width": "Stroke width",
+    "/set-svg-stroke-linecap": "Stroke linecap",
+    "/change-svg-stroke-color": "Stroke color",
+    "/reduce-svg-path-nodes-online": "Reduce path nodes",
+    "/round-svg-path-decimals-online": "Round path decimals",
 }
 
 FALLBACK = {
     "layout": ["/remove-width-and-height-from-svg", "/set-svg-preserveaspectratio-online"],
+    "flatten_curves": [
+        "/convert-svg-arcs-to-cubic-curves",
+        "/reduce-svg-path-nodes-online",
+        "/round-svg-path-decimals-online",
+        "/bake-svg-transforms-into-path",
+    ],
 }
 
 INDEX_REFRESH_SLUGS = set()
@@ -171,7 +197,7 @@ def cluster_note(cluster, slug):
     return note(a, LABEL.get(a, a), b, LABEL.get(b, b))
 
 
-def page(cluster, slug, title, description, h1, crumb, sub, og_alt, app_name, app_alts, app_desc, features, howto_name, howto_desc, howto_click, btn, btn_title, faqs, empty):
+def page(cluster, slug, title, description, h1, crumb, sub, og_alt, app_name, app_alts, app_desc, features, howto_name, howto_desc, howto_click, btn, btn_title, faqs, empty, extra_inputs=None, extra_selects=None):
     p = {
         "family": "craft",
         "cluster": cluster,
@@ -197,6 +223,10 @@ def page(cluster, slug, title, description, h1, crumb, sub, og_alt, app_name, ap
         "guides": cluster_guides(cluster, slug),
         "empty": empty,
     }
+    if extra_inputs:
+        p["extra_inputs"] = extra_inputs
+    if extra_selects:
+        p["extra_selects"] = extra_selects
     peer = INDEX_PEERS.get(slug)
     if peer:
         p["note_html"] = peer["note"]
@@ -987,11 +1017,153 @@ PAGES = [
         ],
         "Paste a filled+stroked icon. Click Apply fill+stroke hover, then hover the preview.",
     ),
+    page(
+        "flatten_curves", "convert-smooth-curves-to-lines",
+        "Convert Smooth Curves to Lines — Free Tool | getsvgeditor.com",
+        "Convert smooth SVG curves to lines. Tessellate C, S, Q, T, and A commands into L segments for plotters and CNC — free, no upload.",
+        "Convert Smooth Curves to Lines", "Curves → lines",
+        "Rewrite cubic, quadratic, smooth, and arc commands as straight <code>L</code> segments — the curve is sampled, not simplified",
+        "Convert smooth SVG curves to lines in SVGEditor",
+        "Convert Smooth Curves to Lines",
+        ["Convert smooth curves to lines", "Flatten SVG Bézier to polyline", "SVG curves to line segments", "Tessellate SVG path curves"],
+        "Free online tool to convert smooth SVG curves to line segments. C, S, Q, T, and A become L; circles and ellipses become faceted paths.",
+        ["C/S/Q/T/A → L", "Circles become polylines", "Steps control facet count", "No upload"],
+        "Convert smooth curves to lines",
+        "Sample every smooth command into straight line segments.",
+        "Click Flatten to lines. Each curve is replaced with L segments using the Steps value.",
+        "Flatten to lines", "Convert smooth curves to line segments",
+        [
+            ("How do I convert smooth SVG curves to lines?", "Paste a path with C, S, Q, T, or A commands, set Steps, and click Flatten to lines. Each curve is sampled into straight L segments. Circles and ellipses become closed polylines."),
+            ("How is this different from Convert SVG Arcs to Cubic Curves?", "Arcs → cubics keeps a smooth Bézier. This page removes smoothness: the result is only M, L, and Z, which plotters, vinyl cutters, and some CNC pipelines require."),
+            ("Does Flatten to lines simplify or reduce nodes?", "No. Reduce SVG Path Nodes drops redundant points on an existing polyline. This tool adds points by tessellating curves. Round Path Decimals only trims numeric precision."),
+            ("What does the Steps value change?", "Steps is how many line segments replace one curve. 4 is a coarse polygon; 16–24 follows the original shape more closely and grows the path data."),
+        ],
+        "Paste a cubic or circle. Set Steps, then click Flatten to lines.",
+        extra_inputs=[{
+            "id": "curve-steps-input",
+            "label": "Steps",
+            "default": 8,
+            "min": 2,
+            "max": 48,
+            "step": 1,
+            "aria": "Line segments per curve",
+            "unit": "",
+        }],
+    ),
+    page(
+        "paint_stroke", "swap-svg-fill-and-stroke",
+        "Swap SVG Fill and Stroke — Free Tool | getsvgeditor.com",
+        "Swap SVG fill and stroke. Exchange the two paints on each shape and keep stroke-width — free live preview, no upload.",
+        "Swap SVG Fill and Stroke", "Swap fill & stroke",
+        "Exchange <code>fill</code> and <code>stroke</code> on every shape — width, linecap, and geometry stay put",
+        "Swap SVG fill and stroke in SVGEditor",
+        "Swap SVG Fill and Stroke",
+        ["Swap SVG fill and stroke", "Exchange SVG fill stroke colors", "Invert SVG fill and stroke", "Switch SVG paint attributes"],
+        "Free online tool to swap SVG fill and stroke paints. The fill color becomes the stroke and the stroke color becomes the fill.",
+        ["Swaps fill ↔ stroke", "Keeps stroke-width", "Works in style= too", "No upload"],
+        "Swap SVG fill and stroke",
+        "Exchange fill and stroke paints without outlining geometry.",
+        "Click Swap fill & stroke. Each shape’s fill and stroke values trade places.",
+        "Swap fill & stroke", "Swap fill and stroke paints",
+        [
+            ("How do I swap SVG fill and stroke?", "Click Swap fill & stroke. On each shape that already has both paints set, fill becomes the old stroke and stroke becomes the old fill. stroke-width does not change."),
+            ("How is swap different from Convert SVG Fill to Stroke?", "Fill → stroke is one-way: fill is cleared and the old fill is used as a stroke. Swap needs both paints and exchanges them, so a dark outline can become the fill."),
+            ("Does swap outline the stroke into a filled path?", "No. Geometry stays a single path or shape. Convert SVG Stroke to Path builds a filled outline from stroke-width."),
+            ("What if fill or stroke lives in a style attribute?", "The tool reads style=\"fill:…;stroke:…\" as well as presentation attributes and writes the swapped pair back to the same place."),
+        ],
+        "Paste a filled shape with a contrasting stroke. Click Swap fill & stroke.",
+    ),
+    page(
+        "paint_stroke", "convert-svg-fill-to-stroke",
+        "Convert SVG Fill to Stroke — Free Tool | getsvgeditor.com",
+        "Convert SVG fill to stroke. Keep the same path, set fill to none, and use the old fill as the outline — free, no upload.",
+        "Convert SVG Fill to Stroke", "Fill → stroke",
+        "Turn a filled shape into an outline: <code>fill=\"none\"</code> and <code>stroke</code> takes the old fill color",
+        "Convert SVG fill to stroke in SVGEditor",
+        "Convert SVG Fill to Stroke",
+        ["Convert SVG fill to stroke", "SVG filled shape to outline", "Change SVG fill into stroke", "Make SVG icon outlined"],
+        "Free online tool to convert SVG fill to stroke. The path is unchanged; fill is removed and the old fill color becomes the stroke.",
+        ["fill → stroke, fill none", "Geometry unchanged", "Adds stroke-width if missing", "No upload"],
+        "Convert SVG fill to stroke",
+        "Rewrite fill paint as a stroke without outlining the path.",
+        "Click Fill to stroke. fill becomes none and stroke uses the previous fill color.",
+        "Fill to stroke", "Convert fill paint to a stroke",
+        [
+            ("How do I convert SVG fill to stroke?", "Click Fill to stroke. Each filled shape gets fill=\"none\" and stroke set to the old fill. If stroke-width is missing, it is set to 2 so the outline is visible."),
+            ("Is this the same as Convert SVG Stroke to Path?", "No. Stroke to path expands the outline into a filled evenodd path (two contours). Fill to stroke only changes paint: one path, no new geometry."),
+            ("How is Fill → stroke different from swapping fill and stroke?", "Swap exchanges two existing paints. Fill to stroke is one-way and does not keep a fill, even if a stroke color was already there."),
+            ("Will a gradient fill become a gradient stroke?", "Yes. url(#…) fills are copied onto stroke. Convert Fill to currentColor if you need inheritance instead of an outline."),
+        ],
+        "Paste a filled icon with no stroke. Click Fill to stroke.",
+    ),
+    page(
+        "paint_stroke", "change-svg-stroke-width",
+        "Change SVG Stroke Width — Free Tool | getsvgeditor.com",
+        "Change SVG stroke width. Set stroke-width on every stroked shape without changing color or linecap — free live preview.",
+        "Change SVG Stroke Width", "Stroke width",
+        "Rewrite <code>stroke-width</code> only — color, fill, and linecap stay as they are",
+        "Change SVG stroke width in SVGEditor",
+        "Change SVG Stroke Width",
+        ["Change SVG stroke width", "Set SVG stroke-width", "Thicken SVG outline", "SVG stroke weight tool"],
+        "Free online tool to change SVG stroke width. Enter a width in user units and apply it to every shape that already has a stroke.",
+        ["Sets stroke-width", "Does not recolor stroke", "Skips fill-only shapes", "No upload"],
+        "Change SVG stroke width",
+        "Apply one stroke-width value across stroked shapes.",
+        "Click Set stroke width. Existing strokes get the Width value; fill-only shapes are skipped.",
+        "Set stroke width", "Change the SVG stroke width",
+        [
+            ("How do I change SVG stroke width?", "Enter a Width in user units (the same units as the viewBox) and click Set stroke width. Every element that already has a stroke is updated. Fill-only shapes are left alone."),
+            ("Does this change stroke color?", "No. Use Change SVG Stroke Color to pick a hue. This page only writes stroke-width, including inside style attributes."),
+            ("Why didn’t a filled icon get an outline?", "There was no stroke to resize. Convert SVG Fill to Stroke first if you need an outline, then set the width here."),
+            ("Is stroke-width the same as converting stroke to a path?", "No. Width stays a stroke attribute. Stroke to path bakes the thickness into filled geometry so the outline survives as fill."),
+        ],
+        "Paste a thin outlined icon. Set Width, then click Set stroke width.",
+        extra_inputs=[{
+            "id": "stroke-width-input",
+            "label": "Width",
+            "default": 8,
+            "min": 0.25,
+            "max": 64,
+            "step": 0.25,
+            "aria": "Stroke width in user units",
+            "unit": "px",
+        }],
+    ),
+    page(
+        "paint_stroke", "set-svg-stroke-linecap",
+        "Set SVG Stroke Linecap — Free Tool | getsvgeditor.com",
+        "Set SVG stroke-linecap to butt, round, or square. Caps only change on open paths — width and color stay put. Free, no upload.",
+        "Set SVG Stroke Linecap", "Stroke linecap",
+        "Set <code>stroke-linecap</code> to <strong>butt</strong>, <strong>round</strong>, or <strong>square</strong> on open strokes",
+        "Set SVG stroke-linecap in SVGEditor",
+        "Set SVG Stroke Linecap",
+        ["Set SVG stroke-linecap", "SVG round line caps", "SVG butt vs square cap", "Change SVG stroke linecap"],
+        "Free online tool to set SVG stroke-linecap. Choose butt, round, or square without changing stroke width or color.",
+        ["butt / round / square", "Open paths only show caps", "Width unchanged", "No upload"],
+        "Set SVG stroke-linecap",
+        "Apply one linecap value to every stroked shape.",
+        "Pick butt, round, or square, then click Set linecap. Open strokes update in the preview.",
+        "Set linecap", "Set SVG stroke-linecap",
+        [
+            ("How do I set SVG stroke-linecap?", "Choose butt, round, or square and click Set linecap. The value is written on every element that already has a stroke, including style attributes."),
+            ("Why don’t caps show on a closed rectangle or circle?", "Linecap only draws at open path ends. Closed shapes need stroke-linejoin for corners. Use an open path or polyline to see the cap."),
+            ("What is the difference between round and square caps?", "Round adds a semicircle of radius stroke-width/2. Square adds a rectangle of length stroke-width/2. Butt stops exactly at the end point."),
+            ("Does this change stroke width or color?", "No. Use Change SVG Stroke Width or Change SVG Stroke Color for those. This page writes only stroke-linecap."),
+        ],
+        "Paste an open path. Pick round or square, then click Set linecap.",
+        extra_selects=[{
+            "id": "stroke-linecap-input",
+            "label": "Cap",
+            "aria": "Stroke linecap",
+            "default": "round",
+            "options": [("butt", "butt"), ("round", "round"), ("square", "square")],
+        }],
+    ),
 ]
 
 
 def main():
-    assert len(PAGES) == 34, f"expected 42 pages, got {len(PAGES)}"
+    assert len(PAGES) == 39, f"expected 39 pages, got {len(PAGES)}"
     questions = [q for p in PAGES for q, _ in p["faqs"]]
     dups = sorted({q for q in questions if questions.count(q) > 1})
     assert len(questions) == len(set(questions)), f"duplicate FAQ questions: {dups}"

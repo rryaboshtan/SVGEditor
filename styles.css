@@ -4719,12 +4719,24 @@ body.animation-editor-page {
 
 .scale-path-factor-group #btn-scale-path-action,
 .scale-path-factor-group #btn-path-edit-action,
-.scale-path-factor-group #btn-png-action {
+.scale-path-factor-group #btn-png-action,
+.scale-path-factor-group #btn-craft-action {
   flex: 0 0 auto;
   min-width: 8.5rem;
   justify-content: center;
   padding-inline: .55rem;
   white-space: nowrap;
+}
+
+.scale-path-factor-select {
+  width: 5.6rem;
+  min-width: 5.6rem;
+  max-width: 5.6rem;
+  padding-inline: .15rem;
+  cursor: pointer;
+  appearance: auto;
+  -moz-appearance: auto;
+  -webkit-appearance: auto;
 }
 
 @media (max-width: 900px) {
@@ -4747,7 +4759,8 @@ body.animation-editor-page {
   .translate-path-tool-page .scale-path-factor-group,
   .translate-path-tool-page .translate-path-offset-group,
   .gradient-tool-page .scale-path-factor-group,
-  .png-tool-page .scale-path-factor-group {
+  .png-tool-page .scale-path-factor-group,
+  .craft-tool-page .scale-path-factor-group {
     grid-column: 1 / -1;
     width: 100%;
     max-width: 100%;
@@ -4763,7 +4776,8 @@ body.animation-editor-page {
   .translate-path-tool-page .translate-path-offset-group #btn-translate-path-action,
   .translate-path-tool-page .scale-path-factor-group #btn-translate-path-action,
   .gradient-tool-page .scale-path-factor-group #btn-gradient-action,
-  .png-tool-page .scale-path-factor-group #btn-png-action {
+  .png-tool-page .scale-path-factor-group #btn-png-action,
+  .craft-tool-page .scale-path-factor-group #btn-craft-action {
     flex: 1 1 6.5rem;
     width: auto;
     min-width: 0;

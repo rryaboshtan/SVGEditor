@@ -1381,6 +1381,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/convert-smooth-curves-to-lines</loc>
+    <lastmod>2026-10-18T19:41:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/swap-svg-fill-and-stroke</loc>
+    <lastmod>2026-10-18T19:41:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/convert-svg-fill-to-stroke</loc>
+    <lastmod>2026-10-18T19:41:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/change-svg-stroke-width</loc>
+    <lastmod>2026-10-18T19:41:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/set-svg-stroke-linecap</loc>
+    <lastmod>2026-10-18T19:41:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/privacy</loc>
     <lastmod>2026-08-25T21:03:26+03:00</lastmod>
     <changefreq>yearly</changefreq>

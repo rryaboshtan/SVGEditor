@@ -141,13 +141,33 @@ def action_button_html(p):
     cfg = FAMILY[p["family"]]
     btn_id = cfg["btn_id"]
     extras = p.get("extra_inputs") or []
-    if extras:
+    selects = p.get("extra_selects") or []
+    if extras or selects:
         fields = []
         for inp in extras:
+            min_v = esc(str(inp.get("min", "1")))
+            step_v = esc(str(inp.get("step", "1")))
+            max_attr = f' max="{esc(str(inp["max"]))}"' if inp.get("max") is not None else ""
+            unit = inp.get("unit", "px")
+            unit_html = (
+                f'\n              <span class="scale-path-factor-unit" aria-hidden="true">{esc(unit)}</span>'
+                if unit
+                else ""
+            )
             fields.append(
                 f'''<label class="scale-path-factor-label" for="{esc(inp["id"])}">{esc(inp["label"])}</label>
-              <input type="number" id="{esc(inp["id"])}" class="scale-path-factor-input" value="{esc(str(inp["default"]))}" min="1" step="1" inputmode="numeric" aria-label="{esc(inp["aria"])}" />
-              <span class="scale-path-factor-unit" aria-hidden="true">{esc(inp.get("unit", "px"))}</span>'''
+              <input type="number" id="{esc(inp["id"])}" class="scale-path-factor-input" value="{esc(str(inp["default"]))}" min="{min_v}"{max_attr} step="{step_v}" inputmode="decimal" aria-label="{esc(inp["aria"])}" />{unit_html}'''
+            )
+        for sel in selects:
+            opts = []
+            for val, lab in sel["options"]:
+                selected = " selected" if str(val) == str(sel.get("default", "")) else ""
+                opts.append(f'<option value="{esc(val)}"{selected}>{esc(lab)}</option>')
+            fields.append(
+                f'''<label class="scale-path-factor-label" for="{esc(sel["id"])}">{esc(sel["label"])}</label>
+              <select id="{esc(sel["id"])}" class="scale-path-factor-input scale-path-factor-select" aria-label="{esc(sel["aria"])}">
+                {" ".join(opts)}
+              </select>'''
             )
         return (
             '<div class="scale-path-factor-group">\n              '

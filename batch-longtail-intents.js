@@ -488,6 +488,28 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Pie wedge with arcs">\n' +
     '  <path fill="#f59e0b" d="M80 60 L80 18 A42 42 0 0 1 118 84 Z"/>\n' +
     "</svg>",
+  "convert-smooth-curves-to-lines":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Cubic wave and circle">\n' +
+    '  <path fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" d="M12 88 C40 16 72 16 100 88 S148 16 148 88"/>\n' +
+    '  <circle cx="36" cy="36" r="16" fill="#38bdf8"/>\n' +
+    "</svg>",
+  "swap-svg-fill-and-stroke":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Filled pill with dark stroke">\n' +
+    '  <rect x="24" y="28" width="112" height="54" rx="18" fill="#0ea5e9" stroke="#0f172a" stroke-width="8"/>\n' +
+    "</svg>",
+  "convert-svg-fill-to-stroke":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 130" role="img" aria-label="Filled triangle">\n' +
+    '  <path fill="#f59e0b" d="M70 18 L122 114 H18 Z"/>\n' +
+    "</svg>",
+  "change-svg-stroke-width":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 120" role="img" aria-label="Thin outlined chevron">\n' +
+    '  <path fill="none" stroke="#22c55e" stroke-width="2" stroke-linejoin="round" d="M28 86 L70 28 L112 86"/>\n' +
+    "</svg>",
+  "set-svg-stroke-linecap":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Open strokes with butt caps">\n' +
+    '  <path fill="none" stroke="#e11d48" stroke-width="14" stroke-linecap="butt" d="M24 40 H136"/>\n' +
+    '  <polyline points="24,78 80,50 136,78" fill="none" stroke="#0ea5e9" stroke-width="10" stroke-linecap="butt"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -2470,6 +2492,87 @@ function craftSerializePath(tokens) {
     .join(" ");
 }
 
+function craftRoundPt(n) {
+  return Math.round(n * 1000) / 1000;
+}
+
+function craftCubicPoint(x0, y0, x1, y1, x2, y2, x3, y3, t) {
+  var u = 1 - t;
+  return {
+    x: u * u * u * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3,
+    y: u * u * u * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3,
+  };
+}
+
+function craftFlattenPathToLines(d, steps) {
+  var segs = craftPathToAbsoluteCubics(d);
+  var out = [];
+  var cx = 0;
+  var cy = 0;
+  var nsteps = Math.max(2, Math.min(48, Math.round(steps) || 8));
+  segs.forEach(function (seg) {
+    if (seg.cmd === "C") {
+      var n = seg.nums;
+      for (var s = 1; s <= nsteps; s++) {
+        var p = craftCubicPoint(cx, cy, n[0], n[1], n[2], n[3], n[4], n[5], s / nsteps);
+        out.push({ cmd: "L", nums: [craftRoundPt(p.x), craftRoundPt(p.y)] });
+      }
+      cx = n[4];
+      cy = n[5];
+      return;
+    }
+    out.push(seg);
+    if (seg.cmd === "M" || seg.cmd === "L") {
+      cx = seg.nums[0];
+      cy = seg.nums[1];
+    }
+  });
+  return craftSerializePath(out);
+}
+
+function craftNumInput(id, fallback, min, max) {
+  var el = document.getElementById(id);
+  var n = el ? parseFloat(el.value) : fallback;
+  if (!Number.isFinite(n)) n = fallback;
+  if (min != null) n = Math.max(min, n);
+  if (max != null) n = Math.min(max, n);
+  return n;
+}
+
+function craftSelectInput(id, fallback) {
+  var el = document.getElementById(id);
+  var v = el && el.value ? String(el.value).trim() : fallback;
+  return v || fallback;
+}
+
+function craftPaintables(svg) {
+  return Array.from(svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line,text"));
+}
+
+function craftReadPaint(el, prop) {
+  var sm = batchParseStyleDecl(el.getAttribute("style") || "");
+  if (Object.prototype.hasOwnProperty.call(sm, prop) && String(sm[prop] || "") !== "") {
+    return String(sm[prop]);
+  }
+  if (el.hasAttribute(prop)) return el.getAttribute(prop);
+  return null;
+}
+
+function craftWritePaint(el, prop, value) {
+  var sm = batchParseStyleDecl(el.getAttribute("style") || "");
+  if (Object.prototype.hasOwnProperty.call(sm, prop)) {
+    if (value == null) delete sm[prop];
+    else sm[prop] = value;
+    var next = batchStyleToString(sm);
+    if (next) el.setAttribute("style", next);
+    else el.removeAttribute("style");
+    el.removeAttribute(prop);
+    return;
+  }
+  if (value == null) el.removeAttribute(prop);
+  else el.setAttribute(prop, value);
+}
+
 function craftArcToCubics(x1, y1, rx, ry, phi, fa, fs, x2, y2) {
   rx = Math.abs(rx);
   ry = Math.abs(ry);
@@ -2540,7 +2643,17 @@ function craftPathToAbsoluteCubics(d) {
   var y = 0;
   var sx = 0;
   var sy = 0;
+  var ocx = null;
+  var ocy = null;
+  var oqx = null;
+  var oqy = null;
   var out = [];
+  var clearSmooth = function () {
+    ocx = null;
+    ocy = null;
+    oqx = null;
+    oqy = null;
+  };
   tokens.forEach(function (t) {
     var c = t.cmd;
     var n = t.nums;
@@ -2551,6 +2664,7 @@ function craftPathToAbsoluteCubics(d) {
       out.push({ cmd: "Z", nums: [] });
       x = sx;
       y = sy;
+      clearSmooth();
       return;
     }
     if (C === "M") {
@@ -2569,6 +2683,7 @@ function craftPathToAbsoluteCubics(d) {
         y = my;
         rel = true;
       }
+      clearSmooth();
       return;
     }
     if (C === "L") {
@@ -2578,6 +2693,7 @@ function craftPathToAbsoluteCubics(d) {
         i += 2;
         out.push({ cmd: "L", nums: [x, y] });
       }
+      clearSmooth();
       return;
     }
     if (C === "H") {
@@ -2585,6 +2701,7 @@ function craftPathToAbsoluteCubics(d) {
         x = v + (rel ? x : 0);
         out.push({ cmd: "L", nums: [x, y] });
       });
+      clearSmooth();
       return;
     }
     if (C === "V") {
@@ -2592,6 +2709,7 @@ function craftPathToAbsoluteCubics(d) {
         y = v + (rel ? y : 0);
         out.push({ cmd: "L", nums: [x, y] });
       });
+      clearSmooth();
       return;
     }
     if (C === "C") {
@@ -2604,6 +2722,27 @@ function craftPathToAbsoluteCubics(d) {
         y = n[i + 5] + (rel ? y : 0);
         i += 6;
         out.push({ cmd: "C", nums: [c1x, c1y, c2x, c2y, x, y] });
+        ocx = c2x;
+        ocy = c2y;
+        oqx = null;
+        oqy = null;
+      }
+      return;
+    }
+    if (C === "S") {
+      while (i + 3 < n.length) {
+        var s1x = ocx == null ? x : 2 * x - ocx;
+        var s1y = ocy == null ? y : 2 * y - ocy;
+        var s2x = n[i] + (rel ? x : 0);
+        var s2y = n[i + 1] + (rel ? y : 0);
+        x = n[i + 2] + (rel ? x : 0);
+        y = n[i + 3] + (rel ? y : 0);
+        i += 4;
+        out.push({ cmd: "C", nums: [s1x, s1y, s2x, s2y, x, y] });
+        ocx = s2x;
+        ocy = s2y;
+        oqx = null;
+        oqy = null;
       }
       return;
     }
@@ -2618,8 +2757,39 @@ function craftPathToAbsoluteCubics(d) {
           cmd: "C",
           nums: [x + (2 / 3) * (qx - x), y + (2 / 3) * (qy - y), x2 + (2 / 3) * (qx - x2), y2 + (2 / 3) * (qy - y2), x2, y2],
         });
+        oqx = qx;
+        oqy = qy;
+        ocx = null;
+        ocy = null;
         x = x2;
         y = y2;
+      }
+      return;
+    }
+    if (C === "T") {
+      while (i + 1 < n.length) {
+        var tx = oqx == null ? x : 2 * x - oqx;
+        var ty = oqy == null ? y : 2 * y - oqy;
+        var x2t = n[i] + (rel ? x : 0);
+        var y2t = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        out.push({
+          cmd: "C",
+          nums: [
+            x + (2 / 3) * (tx - x),
+            y + (2 / 3) * (ty - y),
+            x2t + (2 / 3) * (tx - x2t),
+            y2t + (2 / 3) * (ty - y2t),
+            x2t,
+            y2t,
+          ],
+        });
+        oqx = tx;
+        oqy = ty;
+        ocx = null;
+        ocy = null;
+        x = x2t;
+        y = y2t;
       }
       return;
     }
@@ -2635,6 +2805,7 @@ function craftPathToAbsoluteCubics(d) {
         y = ny;
         i += 7;
       }
+      clearSmooth();
     }
   });
   return out;
@@ -3407,6 +3578,100 @@ function applyBatchCraftMarkup(markup, intent) {
       if (craftIsPaint(el.getAttribute("stroke"))) el.removeAttribute("stroke");
     });
     status = "Hover fill and stroke CSS applied — hover the preview";
+  } else if (intent === "convert-smooth-curves-to-lines") {
+    var curveSteps = craftNumInput("curve-steps-input", 8, 2, 48);
+    Array.from(svg.querySelectorAll("path,circle,ellipse")).forEach(function (el) {
+      var tag = String(el.localName || "").toLowerCase();
+      var d = "";
+      if (tag === "ellipse") {
+        var ecx = parseFloat(el.getAttribute("cx") || 0);
+        var ecy = parseFloat(el.getAttribute("cy") || 0);
+        var erx = parseFloat(el.getAttribute("rx") || 0);
+        var ery = parseFloat(el.getAttribute("ry") || 0);
+        d =
+          "M " +
+          (ecx - erx) +
+          " " +
+          ecy +
+          " A " +
+          erx +
+          " " +
+          ery +
+          " 0 1 1 " +
+          (ecx + erx) +
+          " " +
+          ecy +
+          " A " +
+          erx +
+          " " +
+          ery +
+          " 0 1 1 " +
+          (ecx - erx) +
+          " " +
+          ecy +
+          " Z";
+      } else {
+        d = craftShapeToPath(el);
+      }
+      if (!d || (tag === "path" && !/[CcSsQqTtAa]/.test(d))) return;
+      var pathEl = tag === "path" ? el : craftReplaceWithPath(el, d);
+      pathEl.setAttribute("d", craftFlattenPathToLines(pathEl.getAttribute("d") || d, curveSteps));
+    });
+    status = "Smooth curves converted to line segments (" + curveSteps + " per curve)";
+  } else if (intent === "swap-svg-fill-and-stroke") {
+    craftPaintables(svg).forEach(function (el) {
+      var fill = craftReadPaint(el, "fill");
+      var stroke = craftReadPaint(el, "stroke");
+      if (fill == null || stroke == null) return;
+      craftWritePaint(el, "fill", stroke);
+      craftWritePaint(el, "stroke", fill);
+      var fo = craftReadPaint(el, "fill-opacity");
+      var so = craftReadPaint(el, "stroke-opacity");
+      if (fo != null || so != null) {
+        craftWritePaint(el, "fill-opacity", so);
+        craftWritePaint(el, "stroke-opacity", fo);
+      }
+    });
+    status = "Fill and stroke paints swapped";
+  } else if (intent === "convert-svg-fill-to-stroke") {
+    craftPaintables(svg).forEach(function (el) {
+      var fill = craftReadPaint(el, "fill");
+      if (fill == null) fill = "black";
+      if (!fill || fill === "none") return;
+      var width = craftReadPaint(el, "stroke-width");
+      craftWritePaint(el, "stroke", fill);
+      craftWritePaint(el, "fill", "none");
+      if (!width) craftWritePaint(el, "stroke-width", "2");
+    });
+    status = "Fill converted to stroke — geometry unchanged";
+  } else if (intent === "change-svg-stroke-width") {
+    var strokeWidth = craftNumInput("stroke-width-input", 8, 0.25, 64);
+    var widthStr = String(strokeWidth);
+    var widthCount = 0;
+    craftPaintables(svg).forEach(function (el) {
+      var stroke = craftReadPaint(el, "stroke");
+      if (!stroke || stroke === "none") return;
+      craftWritePaint(el, "stroke-width", widthStr);
+      widthCount += 1;
+    });
+    status =
+      widthCount > 0
+        ? "Stroke width set to " + widthStr
+        : "No stroked shapes — add a stroke first";
+  } else if (intent === "set-svg-stroke-linecap") {
+    var linecap = craftSelectInput("stroke-linecap-input", "round");
+    if (linecap !== "butt" && linecap !== "round" && linecap !== "square") linecap = "round";
+    var capCount = 0;
+    craftPaintables(svg).forEach(function (el) {
+      var stroke = craftReadPaint(el, "stroke");
+      if (!stroke || stroke === "none") return;
+      craftWritePaint(el, "stroke-linecap", linecap);
+      capCount += 1;
+    });
+    status =
+      capCount > 0
+        ? "stroke-linecap set to " + linecap
+        : "No stroked shapes — add a stroke first";
   } else {
     throw new Error("Unknown craft intent");
   }
