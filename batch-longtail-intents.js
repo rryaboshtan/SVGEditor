@@ -510,6 +510,30 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <path fill="none" stroke="#e11d48" stroke-width="14" stroke-linecap="butt" d="M24 40 H136"/>\n' +
     '  <polyline points="24,78 80,50 136,78" fill="none" stroke="#0ea5e9" stroke-width="10" stroke-linecap="butt"/>\n' +
     "</svg>",
+  "set-svg-stroke-linejoin":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Sharp chevron with miter joins">\n' +
+    '  <path fill="none" stroke="#f97316" stroke-width="16" stroke-linejoin="miter" d="M24 92 L80 28 L136 92"/>\n' +
+    "</svg>",
+  "outline-svg-with-stroke":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Filled shapes without stroke">\n' +
+    '  <rect x="18" y="22" width="56" height="66" rx="10" fill="#38bdf8"/>\n' +
+    '  <circle cx="118" cy="55" r="30" fill="#f59e0b"/>\n' +
+    "</svg>",
+  "convert-dashed-stroke-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Dashed line and polyline">\n' +
+    '  <path fill="none" stroke="#0ea5e9" stroke-width="8" stroke-dasharray="16 10" d="M16 40 H144"/>\n' +
+    '  <polyline points="20,86 80,48 140,86" fill="none" stroke="#e11d48" stroke-width="6" stroke-dasharray="12 8"/>\n' +
+    "</svg>",
+  "scale-svg-stroke-with-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Stroked chevron to scale">\n' +
+    '  <path fill="none" stroke="#22c55e" stroke-width="8" stroke-linejoin="round" d="M40 88 L80 36 L120 88"/>\n' +
+    "</svg>",
+  "convert-svg-colors-to-hex":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="rgb, named, and hsl fills">\n' +
+    '  <rect x="14" y="22" width="42" height="66" fill="rgb(14, 165, 233)"/>\n' +
+    '  <circle cx="86" cy="55" r="28" fill="tomato" stroke="rgb(15, 23, 42)" stroke-width="6"/>\n' +
+    '  <path fill="hsl(142, 71%, 45%)" d="M118 88 L148 28 L154 88 Z"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -2573,6 +2597,386 @@ function craftWritePaint(el, prop, value) {
   else el.setAttribute(prop, value);
 }
 
+var CRAFT_NAMED_COLORS = {
+  black: "#000000",
+  silver: "#c0c0c0",
+  gray: "#808080",
+  grey: "#808080",
+  white: "#ffffff",
+  maroon: "#800000",
+  red: "#ff0000",
+  purple: "#800080",
+  fuchsia: "#ff00ff",
+  magenta: "#ff00ff",
+  green: "#008000",
+  lime: "#00ff00",
+  olive: "#808000",
+  yellow: "#ffff00",
+  navy: "#000080",
+  blue: "#0000ff",
+  teal: "#008080",
+  aqua: "#00ffff",
+  cyan: "#00ffff",
+  orange: "#ffa500",
+  aliceblue: "#f0f8ff",
+  antiquewhite: "#faebd7",
+  aquamarine: "#7fffd4",
+  azure: "#f0ffff",
+  beige: "#f5f5dc",
+  bisque: "#ffe4c4",
+  blanchedalmond: "#ffebcd",
+  blueviolet: "#8a2be2",
+  brown: "#a52a2a",
+  burlywood: "#deb887",
+  cadetblue: "#5f9ea0",
+  chartreuse: "#7fff00",
+  chocolate: "#d2691e",
+  coral: "#ff7f50",
+  cornflowerblue: "#6495ed",
+  cornsilk: "#fff8dc",
+  crimson: "#dc143c",
+  darkblue: "#00008b",
+  darkcyan: "#008b8b",
+  darkgoldenrod: "#b8860b",
+  darkgray: "#a9a9a9",
+  darkgrey: "#a9a9a9",
+  darkgreen: "#006400",
+  darkkhaki: "#bdb76b",
+  darkmagenta: "#8b008b",
+  darkolivegreen: "#556b2f",
+  darkorange: "#ff8c00",
+  darkorchid: "#9932cc",
+  darkred: "#8b0000",
+  darksalmon: "#e9967a",
+  darkseagreen: "#8fbc8f",
+  darkslateblue: "#483d8b",
+  darkslategray: "#2f4f4f",
+  darkslategrey: "#2f4f4f",
+  darkturquoise: "#00ced1",
+  darkviolet: "#9400d3",
+  deeppink: "#ff1493",
+  deepskyblue: "#00bfff",
+  dimgray: "#696969",
+  dimgrey: "#696969",
+  dodgerblue: "#1e90ff",
+  firebrick: "#b22222",
+  floralwhite: "#fffaf0",
+  forestgreen: "#228b22",
+  gainsboro: "#dcdcdc",
+  ghostwhite: "#f8f8ff",
+  gold: "#ffd700",
+  goldenrod: "#daa520",
+  greenyellow: "#adff2f",
+  honeydew: "#f0fff0",
+  hotpink: "#ff69b4",
+  indianred: "#cd5c5c",
+  indigo: "#4b0082",
+  ivory: "#fffff0",
+  khaki: "#f0e68c",
+  lavender: "#e6e6fa",
+  lavenderblush: "#fff0f5",
+  lawngreen: "#7cfc00",
+  lemonchiffon: "#fffacd",
+  lightblue: "#add8e6",
+  lightcoral: "#f08080",
+  lightcyan: "#e0ffff",
+  lightgoldenrodyellow: "#fafad2",
+  lightgray: "#d3d3d3",
+  lightgrey: "#d3d3d3",
+  lightgreen: "#90ee90",
+  lightpink: "#ffb6c1",
+  lightsalmon: "#ffa07a",
+  lightseagreen: "#20b2aa",
+  lightskyblue: "#87cefa",
+  lightslategray: "#778899",
+  lightslategrey: "#778899",
+  lightsteelblue: "#b0c4de",
+  lightyellow: "#ffffe0",
+  limegreen: "#32cd32",
+  linen: "#faf0e6",
+  mediumaquamarine: "#66cdaa",
+  mediumblue: "#0000cd",
+  mediumorchid: "#ba55d3",
+  mediumpurple: "#9370db",
+  mediumseagreen: "#3cb371",
+  mediumslateblue: "#7b68ee",
+  mediumspringgreen: "#00fa9a",
+  mediumturquoise: "#48d1cc",
+  mediumvioletred: "#c71585",
+  midnightblue: "#191970",
+  mintcream: "#f5fffa",
+  mistyrose: "#ffe4e1",
+  moccasin: "#ffe4b5",
+  navajowhite: "#ffdead",
+  oldlace: "#fdf5e6",
+  olivedrab: "#6b8e23",
+  orangered: "#ff4500",
+  orchid: "#da70d6",
+  palegoldenrod: "#eee8aa",
+  palegreen: "#98fb98",
+  paleturquoise: "#afeeee",
+  palevioletred: "#db7093",
+  papayawhip: "#ffefd5",
+  peachpuff: "#ffdab9",
+  peru: "#cd853f",
+  pink: "#ffc0cb",
+  plum: "#dda0dd",
+  powderblue: "#b0e0e6",
+  rebeccapurple: "#663399",
+  rosybrown: "#bc8f8f",
+  royalblue: "#4169e1",
+  saddlebrown: "#8b4513",
+  salmon: "#fa8072",
+  sandybrown: "#f4a460",
+  seagreen: "#2e8b57",
+  seashell: "#fff5ee",
+  sienna: "#a0522d",
+  skyblue: "#87ceeb",
+  slateblue: "#6a5acd",
+  slategray: "#708090",
+  slategrey: "#708090",
+  snow: "#fffafa",
+  springgreen: "#00ff7f",
+  steelblue: "#4682b4",
+  tan: "#d2b48c",
+  thistle: "#d8bfd8",
+  tomato: "#ff6347",
+  turquoise: "#40e0d0",
+  violet: "#ee82ee",
+  wheat: "#f5deb3",
+  whitesmoke: "#f5f5f5",
+  yellowgreen: "#9acd32",
+};
+
+function craftHexByte(n) {
+  var h = Math.max(0, Math.min(255, Math.round(n))).toString(16);
+  return h.length === 1 ? "0" + h : h;
+}
+
+function craftChannelsToHex(r, g, b, a) {
+  var out = "#" + craftHexByte(r) + craftHexByte(g) + craftHexByte(b);
+  if (a != null && a < 0.999) out += craftHexByte(a * 255);
+  return out;
+}
+
+function craftParseChannel(raw, isAlpha) {
+  var s = String(raw || "").trim();
+  if (!s) return null;
+  if (s.slice(-1) === "%") {
+    var p = parseFloat(s);
+    if (!Number.isFinite(p)) return null;
+    return isAlpha ? p / 100 : (p / 100) * 255;
+  }
+  var n = parseFloat(s);
+  if (!Number.isFinite(n)) return null;
+  return n;
+}
+
+function craftHslToRgb(h, s, l) {
+  h = ((h % 360) + 360) % 360;
+  s = Math.max(0, Math.min(1, s));
+  l = Math.max(0, Math.min(1, l));
+  var c = (1 - Math.abs(2 * l - 1)) * s;
+  var hp = h / 60;
+  var x = c * (1 - Math.abs((hp % 2) - 1));
+  var m = l - c / 2;
+  var r = 0;
+  var g = 0;
+  var b = 0;
+  if (hp < 1) {
+    r = c;
+    g = x;
+  } else if (hp < 2) {
+    r = x;
+    g = c;
+  } else if (hp < 3) {
+    g = c;
+    b = x;
+  } else if (hp < 4) {
+    g = x;
+    b = c;
+  } else if (hp < 5) {
+    r = x;
+    b = c;
+  } else {
+    r = c;
+    b = x;
+  }
+  return [(r + m) * 255, (g + m) * 255, (b + m) * 255];
+}
+
+function craftColorToHex(value) {
+  var v = String(value || "").trim();
+  if (!v) return null;
+  var lower = v.toLowerCase();
+  if (lower === "none" || lower === "currentcolor" || lower.indexOf("url(") === 0 || lower.indexOf("var(") === 0) {
+    return null;
+  }
+  if (v.charAt(0) === "#") {
+    var h = v.slice(1);
+    if (h.length === 3) return "#" + h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    if (h.length === 4) return "#" + h[0] + h[0] + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+    if (h.length === 6 || h.length === 8) return "#" + h.toLowerCase();
+    return null;
+  }
+  if (CRAFT_NAMED_COLORS[lower]) return CRAFT_NAMED_COLORS[lower];
+  var rgb = v.match(
+    /^rgba?\(\s*([^\s,/]+)[\s,]+([^\s,/]+)[\s,]+([^\s,/]+)(?:\s*[,/]\s*([^\s)]+))?\s*\)$/i
+  );
+  if (rgb) {
+    var r = craftParseChannel(rgb[1], false);
+    var g = craftParseChannel(rgb[2], false);
+    var b = craftParseChannel(rgb[3], false);
+    var a = rgb[4] != null ? craftParseChannel(rgb[4], true) : null;
+    if (r == null || g == null || b == null) return null;
+    return craftChannelsToHex(r, g, b, a);
+  }
+  var hsl = v.match(
+    /^hsla?\(\s*([^\s,/]+)[\s,]+([^\s,/]+)[\s,]+([^\s,/]+)(?:\s*[,/]\s*([^\s)]+))?\s*\)$/i
+  );
+  if (hsl) {
+    var hh = parseFloat(hsl[1]);
+    var ss = craftParseChannel(hsl[2], true);
+    var ll = craftParseChannel(hsl[3], true);
+    var aa = hsl[4] != null ? craftParseChannel(hsl[4], true) : null;
+    if (!Number.isFinite(hh) || ss == null || ll == null) return null;
+    if (String(hsl[2]).slice(-1) !== "%") ss = ss > 1 ? ss / 100 : ss;
+    if (String(hsl[3]).slice(-1) !== "%") ll = ll > 1 ? ll / 100 : ll;
+    var rgb2 = craftHslToRgb(hh, ss, ll);
+    return craftChannelsToHex(rgb2[0], rgb2[1], rgb2[2], aa);
+  }
+  return null;
+}
+
+function craftHexifyPaintValue(v) {
+  var hex = craftColorToHex(v);
+  return hex || v;
+}
+
+function craftDist(a, b) {
+  var dx = b.x - a.x;
+  var dy = b.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function craftPathToPolylines(d, steps) {
+  var flat = craftFlattenPathToLines(d, steps);
+  var segs = craftTokenizePath(flat);
+  var loops = [];
+  var cur = [];
+  var start = null;
+  segs.forEach(function (t) {
+    var C = t.cmd.toUpperCase();
+    if (C === "M") {
+      if (cur.length > 1) loops.push(cur);
+      cur = [{ x: t.nums[0], y: t.nums[1] }];
+      start = cur[0];
+    } else if (C === "L") {
+      cur.push({ x: t.nums[0], y: t.nums[1] });
+    } else if (C === "Z" && start) {
+      cur.push({ x: start.x, y: start.y });
+      if (cur.length > 1) loops.push(cur);
+      cur = [];
+      start = null;
+    }
+  });
+  if (cur.length > 1) loops.push(cur);
+  return loops;
+}
+
+function craftParseDashList(v) {
+  var nums = String(v || "")
+    .trim()
+    .split(/[\s,]+/)
+    .map(parseFloat)
+    .filter(function (n) {
+      return Number.isFinite(n) && n >= 0;
+    });
+  if (!nums.length) return [];
+  if (nums.length % 2 === 1) nums = nums.concat(nums);
+  return nums;
+}
+
+function craftDashPolylines(pts, dashes, offset) {
+  if (!pts || pts.length < 2 || !dashes.length) return pts && pts.length >= 2 ? [pts] : [];
+  var period = dashes.reduce(function (s, n) {
+    return s + n;
+  }, 0);
+  if (period <= 0) return [pts];
+  var dashPos = ((offset % period) + period) % period;
+  var idx = 0;
+  var acc = 0;
+  while (idx < dashes.length && acc + dashes[idx] <= dashPos) {
+    acc += dashes[idx];
+    idx += 1;
+  }
+  var remain = dashes[idx] - (dashPos - acc);
+  var inDash = idx % 2 === 0;
+  var out = [];
+  var cur = [];
+  for (var i = 1; i < pts.length; i++) {
+    var a = pts[i - 1];
+    var b = pts[i];
+    var segLen = craftDist(a, b);
+    if (segLen < 1e-9) continue;
+    var consumed = 0;
+    while (consumed < segLen - 1e-9) {
+      var take = Math.min(remain, segLen - consumed);
+      var t0 = consumed / segLen;
+      var t1 = (consumed + take) / segLen;
+      var p0 = { x: a.x + (b.x - a.x) * t0, y: a.y + (b.y - a.y) * t0 };
+      var p1 = { x: a.x + (b.x - a.x) * t1, y: a.y + (b.y - a.y) * t1 };
+      if (inDash) {
+        if (!cur.length) cur.push(p0);
+        cur.push(p1);
+      } else if (cur.length >= 2) {
+        out.push(cur);
+        cur = [];
+      }
+      consumed += take;
+      remain -= take;
+      if (remain <= 1e-9) {
+        idx = (idx + 1) % dashes.length;
+        remain = dashes[idx];
+        inDash = idx % 2 === 0;
+        if (!inDash && cur.length >= 2) {
+          out.push(cur);
+          cur = [];
+        }
+      }
+    }
+  }
+  if (cur.length >= 2) out.push(cur);
+  return out;
+}
+
+function craftPolylinesToD(lines) {
+  return lines
+    .map(function (pts) {
+      return pts
+        .map(function (p, i) {
+          return (i === 0 ? "M " : "L ") + craftRoundPt(p.x) + " " + craftRoundPt(p.y);
+        })
+        .join(" ");
+    })
+    .join(" ");
+}
+
+function craftScalePt(x, y, ox, oy, f) {
+  return [craftRoundPt(ox + f * (x - ox)), craftRoundPt(oy + f * (y - oy))];
+}
+
+function craftScaleNumList(v, f) {
+  return String(v || "")
+    .trim()
+    .split(/[\s,]+/)
+    .map(function (n) {
+      var x = parseFloat(n);
+      return Number.isFinite(x) ? String(craftRoundPt(x * f)) : n;
+    })
+    .join(" ");
+}
+
 function craftArcToCubics(x1, y1, rx, ry, phi, fa, fs, x2, y2) {
   rx = Math.abs(rx);
   ry = Math.abs(ry);
@@ -3672,6 +4076,220 @@ function applyBatchCraftMarkup(markup, intent) {
       capCount > 0
         ? "stroke-linecap set to " + linecap
         : "No stroked shapes — add a stroke first";
+  } else if (intent === "set-svg-stroke-linejoin") {
+    var linejoin = craftSelectInput("stroke-linejoin-input", "round");
+    if (linejoin !== "miter" && linejoin !== "round" && linejoin !== "bevel") linejoin = "round";
+    var joinCount = 0;
+    craftPaintables(svg).forEach(function (el) {
+      var stroke = craftReadPaint(el, "stroke");
+      if (!stroke || stroke === "none") return;
+      craftWritePaint(el, "stroke-linejoin", linejoin);
+      joinCount += 1;
+    });
+    status =
+      joinCount > 0
+        ? "stroke-linejoin set to " + linejoin
+        : "No stroked shapes — add a stroke first";
+  } else if (intent === "outline-svg-with-stroke") {
+    var outlineWidth = craftNumInput("outline-width-input", 4, 0.25, 64);
+    var outlineCount = 0;
+    craftPaintables(svg).forEach(function (el) {
+      var fill = craftReadPaint(el, "fill");
+      if (fill == null) fill = "black";
+      if (!fill || fill === "none") return;
+      var stroke = craftReadPaint(el, "stroke");
+      if (!stroke || stroke === "none") craftWritePaint(el, "stroke", "#0f172a");
+      craftWritePaint(el, "stroke-width", String(outlineWidth));
+      outlineCount += 1;
+    });
+    status =
+      outlineCount > 0
+        ? "Outline stroke added — fill kept, width " + outlineWidth
+        : "No filled shapes to outline";
+  } else if (intent === "convert-dashed-stroke-to-path") {
+    var dashCount = 0;
+    Array.from(svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line")).forEach(
+      function (el) {
+        var dashRaw = craftReadPaint(el, "stroke-dasharray");
+        if (!dashRaw || dashRaw === "none") return;
+        var dashes = craftParseDashList(dashRaw);
+        if (!dashes.length) return;
+        var tag = String(el.localName || "").toLowerCase();
+        var d = "";
+        if (tag === "line") {
+          d =
+            "M " +
+            (el.getAttribute("x1") || "0") +
+            " " +
+            (el.getAttribute("y1") || "0") +
+            " L " +
+            (el.getAttribute("x2") || "0") +
+            " " +
+            (el.getAttribute("y2") || "0");
+        } else if (tag === "ellipse") {
+          var ecx = parseFloat(el.getAttribute("cx") || 0);
+          var ecy = parseFloat(el.getAttribute("cy") || 0);
+          var erx = parseFloat(el.getAttribute("rx") || 0);
+          var ery = parseFloat(el.getAttribute("ry") || 0);
+          d =
+            "M " +
+            (ecx - erx) +
+            " " +
+            ecy +
+            " A " +
+            erx +
+            " " +
+            ery +
+            " 0 1 1 " +
+            (ecx + erx) +
+            " " +
+            ecy +
+            " A " +
+            erx +
+            " " +
+            ery +
+            " 0 1 1 " +
+            (ecx - erx) +
+            " " +
+            ecy +
+            " Z";
+        } else {
+          d = craftShapeToPath(el);
+        }
+        if (!d) return;
+        var offset = parseFloat(craftReadPaint(el, "stroke-dashoffset") || 0) || 0;
+        var loops = craftPathToPolylines(d, 16);
+        var baked = [];
+        loops.forEach(function (pts) {
+          craftDashPolylines(pts, dashes, offset).forEach(function (line) {
+            baked.push(line);
+          });
+        });
+        if (!baked.length) return;
+        var pathEl = tag === "path" ? el : craftReplaceWithPath(el, d);
+        pathEl.setAttribute("d", craftPolylinesToD(baked));
+        craftWritePaint(pathEl, "stroke-dasharray", null);
+        craftWritePaint(pathEl, "stroke-dashoffset", null);
+        dashCount += 1;
+      }
+    );
+    status =
+      dashCount > 0
+        ? "Dashed strokes baked into path subpaths"
+        : "No stroke-dasharray found";
+  } else if (intent === "scale-svg-stroke-with-path") {
+    var factor = craftNumInput("scale-stroke-factor-input", 1.5, 0.25, 8);
+    var vb = (svg.getAttribute("viewBox") || "0 0 120 120").trim().split(/[\s,]+/).map(parseFloat);
+    var vx = Number.isFinite(vb[0]) ? vb[0] : 0;
+    var vy = Number.isFinite(vb[1]) ? vb[1] : 0;
+    var vw = Number.isFinite(vb[2]) ? vb[2] : 120;
+    var vh = Number.isFinite(vb[3]) ? vb[3] : 120;
+    var ox = vx + vw / 2;
+    var oy = vy + vh / 2;
+    var mat = { a: factor, b: 0, c: 0, d: factor, e: ox - factor * ox, f: oy - factor * oy };
+    Array.from(svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line")).forEach(
+      function (el) {
+        var tag = String(el.localName || "").toLowerCase();
+        if (tag === "path") {
+          var pd = el.getAttribute("d");
+          if (pd) el.setAttribute("d", craftApplyMatrixToPath(pd, mat));
+        } else if (tag === "circle" || tag === "ellipse") {
+          var cxy = craftScalePt(
+            parseFloat(el.getAttribute("cx") || 0),
+            parseFloat(el.getAttribute("cy") || 0),
+            ox,
+            oy,
+            factor
+          );
+          el.setAttribute("cx", cxy[0]);
+          el.setAttribute("cy", cxy[1]);
+          if (tag === "circle") {
+            el.setAttribute("r", String(craftRoundPt(parseFloat(el.getAttribute("r") || 0) * factor)));
+          } else {
+            el.setAttribute("rx", String(craftRoundPt(parseFloat(el.getAttribute("rx") || 0) * factor)));
+            el.setAttribute("ry", String(craftRoundPt(parseFloat(el.getAttribute("ry") || 0) * factor)));
+          }
+        } else if (tag === "rect") {
+          var rxy = craftScalePt(
+            parseFloat(el.getAttribute("x") || 0),
+            parseFloat(el.getAttribute("y") || 0),
+            ox,
+            oy,
+            factor
+          );
+          el.setAttribute("x", rxy[0]);
+          el.setAttribute("y", rxy[1]);
+          el.setAttribute("width", String(craftRoundPt(parseFloat(el.getAttribute("width") || 0) * factor)));
+          el.setAttribute("height", String(craftRoundPt(parseFloat(el.getAttribute("height") || 0) * factor)));
+          if (el.hasAttribute("rx")) {
+            el.setAttribute("rx", String(craftRoundPt(parseFloat(el.getAttribute("rx") || 0) * factor)));
+          }
+          if (el.hasAttribute("ry")) {
+            el.setAttribute("ry", String(craftRoundPt(parseFloat(el.getAttribute("ry") || 0) * factor)));
+          }
+        } else if (tag === "line") {
+          var p1 = craftScalePt(
+            parseFloat(el.getAttribute("x1") || 0),
+            parseFloat(el.getAttribute("y1") || 0),
+            ox,
+            oy,
+            factor
+          );
+          var p2 = craftScalePt(
+            parseFloat(el.getAttribute("x2") || 0),
+            parseFloat(el.getAttribute("y2") || 0),
+            ox,
+            oy,
+            factor
+          );
+          el.setAttribute("x1", p1[0]);
+          el.setAttribute("y1", p1[1]);
+          el.setAttribute("x2", p2[0]);
+          el.setAttribute("y2", p2[1]);
+        } else if (tag === "polygon" || tag === "polyline") {
+          var pts = String(el.getAttribute("points") || "")
+            .trim()
+            .split(/[\s,]+/)
+            .map(parseFloat);
+          var nextPts = [];
+          for (var i = 0; i + 1 < pts.length; i += 2) {
+            var sp = craftScalePt(pts[i], pts[i + 1], ox, oy, factor);
+            nextPts.push(sp[0] + "," + sp[1]);
+          }
+          el.setAttribute("points", nextPts.join(" "));
+        }
+        var sw = craftReadPaint(el, "stroke-width");
+        if (sw && parseFloat(sw)) {
+          craftWritePaint(el, "stroke-width", String(craftRoundPt(parseFloat(sw) * factor)));
+        }
+        var da = craftReadPaint(el, "stroke-dasharray");
+        if (da && da !== "none") craftWritePaint(el, "stroke-dasharray", craftScaleNumList(da, factor));
+        var dsh = craftReadPaint(el, "stroke-dashoffset");
+        if (dsh && parseFloat(dsh)) {
+          craftWritePaint(el, "stroke-dashoffset", String(craftRoundPt(parseFloat(dsh) * factor)));
+        }
+      }
+    );
+    svg.setAttribute(
+      "viewBox",
+      [craftRoundPt(ox - (vw * factor) / 2), craftRoundPt(oy - (vh * factor) / 2), craftRoundPt(vw * factor), craftRoundPt(vh * factor)].join(" ")
+    );
+    status = "Path and stroke-width scaled ×" + factor;
+  } else if (intent === "convert-svg-colors-to-hex") {
+    var hexCount = 0;
+    var hexProps = ["fill", "stroke", "stop-color", "flood-color", "lighting-color", "color"];
+    Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+      hexProps.forEach(function (prop) {
+        var v = craftReadPaint(el, prop);
+        if (!v) return;
+        var hex = craftColorToHex(v);
+        if (!hex || hex.toLowerCase() === String(v).trim().toLowerCase()) return;
+        craftWritePaint(el, prop, hex);
+        hexCount += 1;
+      });
+    });
+    status =
+      hexCount > 0 ? "Converted " + hexCount + " colors to hex" : "No rgb/hsl/named colors to convert";
   } else {
     throw new Error("Unknown craft intent");
   }

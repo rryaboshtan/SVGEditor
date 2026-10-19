@@ -37,3 +37,8 @@ swap-svg-fill-and-stroke
 convert-svg-fill-to-stroke
 change-svg-stroke-width
 set-svg-stroke-linecap
+set-svg-stroke-linejoin
+outline-svg-with-stroke
+convert-dashed-stroke-to-path
+scale-svg-stroke-with-path
+convert-svg-colors-to-hex
