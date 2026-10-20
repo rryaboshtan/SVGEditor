@@ -4728,6 +4728,15 @@ body.animation-editor-page {
   white-space: nowrap;
 }
 
+.scale-path-factor-text {
+  width: 6.4rem;
+  min-width: 6.4rem;
+  max-width: 8rem;
+  text-align: left;
+  padding-inline: .4rem;
+  font-variant-numeric: normal;
+}
+
 .scale-path-factor-select {
   width: 5.6rem;
   min-width: 5.6rem;

@@ -1441,6 +1441,36 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/inline-svg-use-elements</loc>
+    <lastmod>2026-10-20T13:40:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/convert-svg-to-symbol</loc>
+    <lastmod>2026-10-20T13:40:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/extract-svg-element-by-id</loc>
+    <lastmod>2026-10-20T13:40:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/flatten-svg-nested-groups</loc>
+    <lastmod>2026-10-20T13:40:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/rename-svg-ids-sequentially</loc>
+    <lastmod>2026-10-20T13:40:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/privacy</loc>
     <lastmod>2026-08-25T21:03:26+03:00</lastmod>
     <changefreq>yearly</changefreq>

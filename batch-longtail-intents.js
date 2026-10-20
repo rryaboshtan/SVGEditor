@@ -534,6 +534,46 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <circle cx="86" cy="55" r="28" fill="tomato" stroke="rgb(15, 23, 42)" stroke-width="6"/>\n' +
     '  <path fill="hsl(142, 71%, 45%)" d="M118 88 L148 28 L154 88 Z"/>\n' +
     "</svg>",
+  "inline-svg-use-elements":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Symbol tile painted twice with use">\n' +
+    "  <defs>\n" +
+    '    <symbol id="tile" viewBox="0 0 40 40">\n' +
+    '      <rect x="4" y="4" width="32" height="32" rx="8" fill="#38bdf8"/>\n' +
+    '      <circle cx="20" cy="20" r="8" fill="#082f49"/>\n' +
+    "    </symbol>\n" +
+    "  </defs>\n" +
+    '  <use href="#tile" x="18" y="35" width="40" height="40"/>\n' +
+    '  <use href="#tile" x="102" y="35" width="40" height="40"/>\n' +
+    "</svg>",
+  "convert-svg-to-symbol":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Plain house icon">\n' +
+    '  <path fill="#f97316" d="M20 58 L60 22 L100 58 V104 H72 V76 H48 V104 H20 Z"/>\n' +
+    "</svg>",
+  "extract-svg-element-by-id":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Background and marked shape">\n' +
+    '  <rect id="bg" x="8" y="14" width="144" height="82" rx="12" fill="#1e293b"/>\n' +
+    '  <path id="mark" fill="#38bdf8" d="M48 78 L80 28 L112 78 Z"/>\n' +
+    "</svg>",
+  "flatten-svg-nested-groups":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Nested transformed groups">\n' +
+    '  <g transform="translate(16 8)">\n' +
+    '    <g transform="rotate(12 64 52)">\n' +
+    '      <rect x="24" y="26" width="80" height="52" rx="10" fill="#38bdf8"/>\n' +
+    '      <circle cx="118" cy="52" r="16" fill="#f59e0b"/>\n' +
+    "    </g>\n" +
+    "  </g>\n" +
+    "</svg>",
+  "rename-svg-ids-sequentially":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Exporter ids and a gradient ref">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="gradFill" x1="0" y1="0" x2="1" y2="1">\n' +
+    '      <stop offset="0" stop-color="#38bdf8"/>\n' +
+    '      <stop offset="1" stop-color="#0284c7"/>\n' +
+    "    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect id="Layer_1_copy" x="16" y="20" width="72" height="70" rx="12" fill="url(#gradFill)"/>\n' +
+    '  <circle id="path1234" cx="122" cy="55" r="28" fill="#f97316"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -2569,6 +2609,154 @@ function craftSelectInput(id, fallback) {
   return v || fallback;
 }
 
+function craftTextInput(id, fallback) {
+  var el = document.getElementById(id);
+  var v = el && el.value != null ? String(el.value).trim() : "";
+  return v || fallback;
+}
+
+function craftSanitizeId(raw, fallback) {
+  var id = String(raw || "").trim();
+  id = id.replace(/^[^\w]+/, "").replace(/[^\w:.-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  if (!id || !/^[A-Za-z_]/.test(id)) id = fallback;
+  return id;
+}
+
+function craftFindById(svg, id) {
+  if (!id || !svg) return null;
+  if (svg.getElementById) {
+    var found = svg.getElementById(id);
+    if (found) return found;
+  }
+  try {
+    return svg.querySelector('[id="' + String(id).replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"]');
+  } catch (err) {
+    return null;
+  }
+}
+
+function craftUseHref(el) {
+  var h =
+    el.getAttribute("href") ||
+    el.getAttributeNS("http://www.w3.org/1999/xlink", "href") ||
+    el.getAttribute("xlink:href") ||
+    "";
+  h = String(h).trim();
+  var hash = h.lastIndexOf("#");
+  if (hash < 0) return "";
+  try {
+    return decodeURIComponent(h.slice(hash + 1));
+  } catch (err) {
+    return h.slice(hash + 1);
+  }
+}
+
+function craftMulMat(m, n) {
+  return {
+    a: m.a * n.a + m.c * n.b,
+    b: m.b * n.a + m.d * n.b,
+    c: m.a * n.c + m.c * n.d,
+    d: m.b * n.c + m.d * n.d,
+    e: m.a * n.e + m.c * n.f + m.e,
+    f: m.b * n.e + m.d * n.f + m.f,
+  };
+}
+
+function craftElDepth(el) {
+  var d = 0;
+  while (el && el.parentNode) {
+    d += 1;
+    el = el.parentNode;
+  }
+  return d;
+}
+
+function craftClosestProtected(el) {
+  var n = el;
+  while (n && n.nodeType === 1) {
+    var t = String(n.localName || "").toLowerCase();
+    if (t === "defs" || t === "symbol" || t === "clippath" || t === "mask" || t === "pattern" || t === "marker") {
+      return true;
+    }
+    n = n.parentNode;
+  }
+  return false;
+}
+
+function craftBakeMatrixOntoEl(el, mat) {
+  if (!el || el.nodeType !== 1) return el;
+  var tag = String(el.localName || "").toLowerCase();
+  var d = craftShapeToPath(el);
+  if (d && (tag === "path" || tag === "circle" || tag === "rect" || tag === "polygon" || tag === "polyline")) {
+    var p = tag === "path" ? el : craftReplaceWithPath(el, d);
+    var combined = craftMulMat(mat, craftParseTransform(p.getAttribute("transform")));
+    p.setAttribute("d", craftApplyMatrixToPath(p.getAttribute("d") || d, combined));
+    p.removeAttribute("transform");
+    return p;
+  }
+  var combined2 = craftMulMat(mat, craftParseTransform(el.getAttribute("transform")));
+  if (
+    combined2.a === 1 &&
+    combined2.b === 0 &&
+    combined2.c === 0 &&
+    combined2.d === 1 &&
+    combined2.e === 0 &&
+    combined2.f === 0
+  ) {
+    el.removeAttribute("transform");
+    return el;
+  }
+  el.setAttribute(
+    "transform",
+    "matrix(" +
+      [combined2.a, combined2.b, combined2.c, combined2.d, combined2.e, combined2.f]
+        .map(function (n) {
+          return Math.round(n * 1000) / 1000;
+        })
+        .join(" ") +
+      ")"
+  );
+  return el;
+}
+
+function craftCopyUsePaint(from, to) {
+  ["fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "opacity", "class"].forEach(function (a) {
+    if (from.hasAttribute(a)) to.setAttribute(a, from.getAttribute(a));
+  });
+}
+
+function craftRewriteIdRefs(svg, map) {
+  craftWalk(svg, function (el) {
+    Array.from(el.attributes || []).forEach(function (attr) {
+      var name = attr.name;
+      if (name === "id") return;
+      var val = attr.value;
+      if (!val) return;
+      var next = val;
+      if (name === "aria-labelledby" || name === "aria-describedby") {
+        next = val
+          .split(/\s+/)
+          .map(function (id) {
+            return map[id] || id;
+          })
+          .join(" ");
+      } else {
+        if (val.indexOf("url(") >= 0) {
+          next = next.replace(/url\(\s*#([^)\s]+)\s*\)/g, function (_, id) {
+            return map[id] ? "url(#" + map[id] + ")" : "url(#" + id + ")";
+          });
+        }
+        if (next.indexOf("#") >= 0) {
+          next = next.replace(/(^|[,\s])#([A-Za-z_][\w:.-]*)/g, function (m, pre, id) {
+            return map[id] ? pre + "#" + map[id] : m;
+          });
+        }
+      }
+      if (next !== val) el.setAttribute(name, next);
+    });
+  });
+}
+
 function craftPaintables(svg) {
   return Array.from(svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line,text"));
 }
@@ -4290,6 +4478,181 @@ function applyBatchCraftMarkup(markup, intent) {
     });
     status =
       hexCount > 0 ? "Converted " + hexCount + " colors to hex" : "No rgb/hsl/named colors to convert";
+  } else if (intent === "inline-svg-use-elements") {
+    var ns = "http://www.w3.org/2000/svg";
+    var inlined = 0;
+    var guard = 0;
+    while (guard++ < 24) {
+      var uses = Array.from(svg.querySelectorAll("use"));
+      var changed = 0;
+      uses.forEach(function (useEl) {
+        var targetId = craftUseHref(useEl);
+        if (!targetId) return;
+        var target = craftFindById(svg, targetId);
+        if (!target || target === useEl) return;
+        if (target.contains && target.contains(useEl)) return;
+        var x = parseFloat(useEl.getAttribute("x") || 0) || 0;
+        var y = parseFloat(useEl.getAttribute("y") || 0) || 0;
+        var t = useEl.getAttribute("transform") || "";
+        if (x || y) t = ("translate(" + x + " " + y + ")" + (t ? " " + t : "")).trim();
+        var wrap = document.createElementNS(ns, "g");
+        if (t) wrap.setAttribute("transform", t);
+        craftCopyUsePaint(useEl, wrap);
+        var tag = String(target.localName || "").toLowerCase();
+        var sources = tag === "symbol" || tag === "marker" ? Array.from(target.childNodes) : [target];
+        sources.forEach(function (n) {
+          if (n.nodeType !== 1) return;
+          var clone = n.cloneNode(true);
+          clone.removeAttribute("id");
+          Array.from(clone.querySelectorAll("[id]") || []).forEach(function (inner) {
+            inner.removeAttribute("id");
+          });
+          wrap.appendChild(clone);
+        });
+        if (!wrap.childNodes.length) return;
+        if (useEl.parentNode) useEl.parentNode.replaceChild(wrap, useEl);
+        changed += 1;
+        inlined += 1;
+      });
+      if (!changed) break;
+    }
+    status = inlined > 0 ? "Inlined " + inlined + " <use> element" + (inlined === 1 ? "" : "s") : "No local <use href=\"#…\"> to inline";
+  } else if (intent === "convert-svg-to-symbol") {
+    var nsSym = "http://www.w3.org/2000/svg";
+    var skipRoot = { defs: 1, style: 1, title: 1, desc: 1, metadata: 1, script: 1 };
+    var move = [];
+    Array.from(svg.childNodes).forEach(function (n) {
+      if (n.nodeType !== 1) return;
+      var t = String(n.localName || "").toLowerCase();
+      if (skipRoot[t]) return;
+      move.push(n);
+    });
+    var wantedId = craftSanitizeId(craftTextInput("symbol-id-input", "icon"), "icon");
+    var usesOnly =
+      move.length > 0 &&
+      move.every(function (n) {
+        return String(n.localName || "").toLowerCase() === "use";
+      });
+    if (!move.length) {
+      status = "No drawable markup to wrap in a symbol";
+    } else if (usesOnly) {
+      var rootUse = move[0];
+      var oldSymId = craftUseHref(rootUse);
+      var oldSym = oldSymId ? craftFindById(svg, oldSymId) : null;
+      var oldTag = oldSym ? String(oldSym.localName || "").toLowerCase() : "";
+      if (oldTag === "symbol" && oldSymId === wantedId) {
+        status = "Already a <symbol id=\"" + wantedId + "\"> sprite";
+      } else if (oldTag === "symbol" && wantedId && wantedId !== oldSymId) {
+        if (craftFindById(svg, wantedId)) {
+          status = "Already a symbol sprite; id \"" + wantedId + "\" is taken";
+        } else {
+          var renameMap = {};
+          renameMap[oldSymId] = wantedId;
+          craftRewriteIdRefs(svg, renameMap);
+          oldSym.setAttribute("id", wantedId);
+          status = "Renamed symbol id to \"" + wantedId + "\"";
+        }
+      } else {
+        status = "Already referenced via <use>; nothing to wrap";
+      }
+    } else {
+      var symId = wantedId;
+      if (craftFindById(svg, symId)) {
+        var suffix = 2;
+        while (craftFindById(svg, symId + "-" + suffix)) suffix += 1;
+        symId = symId + "-" + suffix;
+      }
+      var defsEl = svg.querySelector("defs");
+      if (!defsEl) {
+        defsEl = document.createElementNS(nsSym, "defs");
+        svg.insertBefore(defsEl, svg.firstChild);
+      }
+      var symbol = document.createElementNS(nsSym, "symbol");
+      symbol.setAttribute("id", symId);
+      var vb = svg.getAttribute("viewBox");
+      if (vb) symbol.setAttribute("viewBox", vb);
+      move.forEach(function (n) {
+        symbol.appendChild(n);
+      });
+      defsEl.appendChild(symbol);
+      var useInst = document.createElementNS(nsSym, "use");
+      useInst.setAttribute("href", "#" + symId);
+      svg.appendChild(useInst);
+      status = "Wrapped drawable markup in <symbol id=\"" + symId + "\">";
+    }
+  } else if (intent === "extract-svg-element-by-id") {
+    var extractId = craftSanitizeId(craftTextInput("extract-id-input", "mark"), "mark");
+    var extracted = craftFindById(svg, extractId);
+    if (!extracted || extracted === svg) {
+      throw new Error("No element with id \"" + extractId + "\"");
+    }
+    var cloneEx = extracted.cloneNode(true);
+    var defsOrig = svg.querySelector("defs");
+    var defsClone = defsOrig ? defsOrig.cloneNode(true) : null;
+    var inDefs = false;
+    var walk = extracted.parentNode;
+    while (walk && walk !== svg) {
+      if (String(walk.localName || "").toLowerCase() === "defs") {
+        inDefs = true;
+        break;
+      }
+      walk = walk.parentNode;
+    }
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    if (defsClone) svg.appendChild(defsClone);
+    var exTag = String(cloneEx.localName || "").toLowerCase();
+    if (exTag === "symbol" || exTag === "marker" || exTag === "clippath" || exTag === "mask" || exTag === "pattern") {
+      Array.from(cloneEx.childNodes).forEach(function (n) {
+        svg.appendChild(n);
+      });
+    } else if (!inDefs) {
+      svg.appendChild(cloneEx);
+    }
+    status = "Extracted #" + extractId;
+  } else if (intent === "flatten-svg-nested-groups") {
+    var groups = Array.from(svg.querySelectorAll("g"))
+      .filter(function (g) {
+        return !craftClosestProtected(g);
+      })
+      .sort(function (a, b) {
+        return craftElDepth(b) - craftElDepth(a);
+      });
+    var flatCount = 0;
+    groups.forEach(function (g) {
+      var parent = g.parentNode;
+      if (!parent) return;
+      var mat = craftParseTransform(g.getAttribute("transform"));
+      Array.from(g.childNodes).forEach(function (child) {
+        var node = child.nodeType === 1 ? craftBakeMatrixOntoEl(child, mat) : child;
+        parent.insertBefore(node, g);
+      });
+      parent.removeChild(g);
+      flatCount += 1;
+    });
+    status =
+      flatCount > 0
+        ? "Flattened " + flatCount + " nested group" + (flatCount === 1 ? "" : "s") + " (transforms baked into geometry)"
+        : "No nested <g> in the document body to flatten";
+  } else if (intent === "rename-svg-ids-sequentially") {
+    var prefix = craftSanitizeId(craftTextInput("id-prefix-input", "el"), "el");
+    var idNodes = Array.from(svg.querySelectorAll("[id]"));
+    var idMap = {};
+    var pairs = [];
+    idNodes.forEach(function (el, i) {
+      var oldId = el.getAttribute("id");
+      if (!oldId) return;
+      var neu = prefix + "-" + (i + 1);
+      idMap[oldId] = neu;
+      pairs.push({ el: el, neu: neu });
+    });
+    craftRewriteIdRefs(svg, idMap);
+    pairs.forEach(function (pair) {
+      pair.el.setAttribute("id", pair.neu);
+    });
+    status =
+      pairs.length > 0
+        ? "Renamed " + pairs.length + " id" + (pairs.length === 1 ? "" : "s") + " to " + prefix + "-1…" + prefix + "-" + pairs.length
+        : "No id attributes to rename";
   } else {
     throw new Error("Unknown craft intent");
   }

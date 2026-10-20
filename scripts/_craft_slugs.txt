@@ -42,3 +42,8 @@ outline-svg-with-stroke
 convert-dashed-stroke-to-path
 scale-svg-stroke-with-path
 convert-svg-colors-to-hex
+inline-svg-use-elements
+convert-svg-to-symbol
+extract-svg-element-by-id
+flatten-svg-nested-groups
+rename-svg-ids-sequentially

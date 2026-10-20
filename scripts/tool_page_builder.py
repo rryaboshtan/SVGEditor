@@ -145,6 +145,13 @@ def action_button_html(p):
     if extras or selects:
         fields = []
         for inp in extras:
+            if inp.get("type") == "text":
+                maxlen = esc(str(inp.get("maxlength", "40")))
+                fields.append(
+                    f'''<label class="scale-path-factor-label" for="{esc(inp["id"])}">{esc(inp["label"])}</label>
+              <input type="text" id="{esc(inp["id"])}" class="scale-path-factor-input scale-path-factor-text" value="{esc(str(inp["default"]))}" maxlength="{maxlen}" autocomplete="off" spellcheck="false" aria-label="{esc(inp["aria"])}" />'''
+                )
+                continue
             min_v = esc(str(inp.get("min", "1")))
             step_v = esc(str(inp.get("step", "1")))
             max_attr = f' max="{esc(str(inp["max"]))}"' if inp.get("max") is not None else ""

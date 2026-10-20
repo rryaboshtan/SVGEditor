@@ -119,6 +119,20 @@ CLUSTERS = {
     "color_hex": [
         "/convert-svg-colors-to-hex",
     ],
+    "structure_sprite": [
+        "/inline-svg-use-elements",
+        "/convert-svg-to-symbol",
+        "/extract-svg-element-by-id",
+        "/rename-svg-ids-sequentially",
+        "/flatten-svg-nested-groups",
+    ],
+    "structure_groups": [
+        "/flatten-svg-nested-groups",
+        "/ungroup-svg-paths-online",
+        "/bake-svg-transforms-into-path",
+        "/remove-unused-ids-from-svg",
+        "/rename-svg-ids-sequentially",
+    ],
 }
 
 LABEL = {
@@ -177,6 +191,12 @@ LABEL = {
     "/convert-svg-colors-to-hex": "Colors → hex",
     "/scale-svg-path-by-factor": "Scale path by factor",
     "/scale-svg-path-without-transform": "Scale path, no transform",
+    "/inline-svg-use-elements": "Inline use elements",
+    "/convert-svg-to-symbol": "Convert to symbol",
+    "/extract-svg-element-by-id": "Extract by id",
+    "/flatten-svg-nested-groups": "Flatten nested groups",
+    "/rename-svg-ids-sequentially": "Rename ids",
+    "/remove-unused-ids-from-svg": "Remove unused ids",
 }
 
 FALLBACK = {
@@ -203,7 +223,32 @@ FALLBACK = {
 
 INDEX_REFRESH_SLUGS = set()
 
-INDEX_PEERS = {}
+INDEX_PEERS = {
+    "extract-svg-element-by-id": {
+        "note": note(
+            "/remove-unused-ids-from-svg", "Remove unused ids",
+            "/crop-svg-to-bounding-box", "Crop to bounding box",
+        ),
+        "guides": guides([
+            ("/remove-unused-ids-from-svg", "Remove unused ids"),
+            ("/crop-svg-to-bounding-box", "Crop to bounding box"),
+            ("/inline-svg-use-elements", "Inline use elements"),
+            ("/convert-svg-to-symbol", "Convert to symbol"),
+        ]),
+    },
+    "rename-svg-ids-sequentially": {
+        "note": note(
+            "/remove-unused-ids-from-svg", "Remove unused ids",
+            "/inline-svg-use-elements", "Inline use elements",
+        ),
+        "guides": guides([
+            ("/remove-unused-ids-from-svg", "Remove unused ids"),
+            ("/inline-svg-use-elements", "Inline use elements"),
+            ("/extract-svg-element-by-id", "Extract by id"),
+            ("/convert-svg-to-symbol", "Convert to symbol"),
+        ]),
+    },
+}
 
 
 def resolve_href(h, slug):
@@ -766,7 +811,7 @@ PAGES = [
         "Lift paths out of <code>&lt;g&gt;</code> wrappers (flatten one group level)",
         "Ungroup SVG paths online in SVGEditor",
         "Ungroup SVG Paths Online",
-        ["Ungroup SVG paths online", "Flatten SVG groups", "Remove g around paths", "Ungroup SVG layers"],
+        ["Ungroup SVG paths online", "Release SVG groups", "Remove g around paths", "Ungroup SVG layers"],
         "Free online tool to ungroup SVG paths from g wrappers.",
         ["Flattens g children", "Keeps path nodes", "One level per click", "No upload"],
         "Ungroup SVG paths online",
@@ -1341,11 +1386,150 @@ PAGES = [
         ],
         "Paste SVG with rgb() or named fills. Click Convert to hex.",
     ),
+    page(
+        "structure_sprite", "inline-svg-use-elements",
+        "Inline SVG Use Elements — Free Tool | getsvgeditor.com",
+        "Inline SVG use elements. Expand each <use href=\"#id\"> into a real clone with x/y applied — the symbol stays in defs. Free, no upload.",
+        "Inline SVG Use Elements", "Inline use elements",
+        "Expand every <code>&lt;use href=\"#id\"&gt;</code> into a real clone — symbols stay in <code>defs</code>, instances become geometry",
+        "Inline SVG use elements in SVGEditor",
+        "Inline SVG Use Elements",
+        ["Inline SVG use elements", "Expand SVG use href", "Dereference SVG use", "SVG use to real elements"],
+        "Free online tool to inline SVG use elements. Local href=\"#id\" and xlink:href instances are cloned in place; the original symbol is not deleted.",
+        ["Expands local href=#id", "Applies use x/y", "Leaves symbol in defs", "No upload"],
+        "Inline SVG use elements",
+        "Replace each use instance with a cloned copy of its target.",
+        "Click Inline uses. Each local <use> is replaced with cloned geometry; defs keep the original symbol.",
+        "Inline uses", "Inline SVG use elements into real clones",
+        [
+            ("How do I inline SVG use elements?", "Click Inline uses. Every <use href=\"#id\"> or xlink:href that points at a local id is replaced with a clone of that target. x and y on the use become a translate on the clone."),
+            ("Does inlining delete the original symbol?", "No. The <symbol> or source element stays in defs so you can keep using it as a sprite. Only the painted instances become real elements. Convert SVG to Symbol is the opposite wrap."),
+            ("Are xlink:href and href both expanded?", "Yes. href=\"#id\" and xlink:href=\"#id\" are treated the same. External URLs (a file path before the hash) are left alone."),
+            ("Will cloned copies keep duplicate ids?", "No. Ids are stripped from clones so the document does not contain two elements with the same id. Rename SVG Ids Sequentially if you need unique names on the copies."),
+        ],
+        "Paste SVG with <use href=\"#…\">. Click Inline uses.",
+    ),
+    page(
+        "structure_sprite", "convert-svg-to-symbol",
+        "Convert SVG to Symbol — Free Tool | getsvgeditor.com",
+        "Convert SVG to symbol. Wrap drawable markup in <symbol> inside defs and keep a <use> so the icon still previews. Free, no upload.",
+        "Convert SVG to Symbol", "Convert to symbol",
+        "Wrap drawable markup in <code>&lt;symbol id&gt;</code> inside <code>defs</code> and keep a <code>&lt;use&gt;</code> so the preview still paints",
+        "Convert SVG to symbol in SVGEditor",
+        "Convert SVG to Symbol",
+        ["Convert SVG to symbol", "Wrap SVG in symbol", "SVG icon to symbol sprite", "Make SVG symbol from markup"],
+        "Free online tool to convert an SVG into a <symbol> sprite. Body shapes move into defs; a <use href=\"#id\"> keeps the preview visible.",
+        ["Wraps body in <symbol>", "Adds <use href=\"#id\">", "Copies viewBox onto symbol", "No upload"],
+        "Convert SVG to symbol",
+        "Move drawable children into a named symbol and reference it with use.",
+        "Click Convert to symbol. Drawable markup moves into <symbol>; a <use> is appended so the preview still shows.",
+        "Convert to symbol", "Convert this SVG into a symbol",
+        [
+            ("How do I convert an SVG to a symbol?", "Set Id (default icon) and click Convert to symbol. Drawable children of <svg> move into <symbol> inside defs. A <use href=\"#id\"> is added so the graphic still paints."),
+            ("Why is there still a use after convert?", "A symbol in defs does not paint by itself. The leftover <use> is the instance. Inline SVG Use Elements if you need that instance turned back into real geometry."),
+            ("Does Convert to Symbol extract a single layer by id?", "No. The whole drawable body becomes one symbol. Extract SVG Element by Id if you need one node copied into its own file."),
+            ("What if that symbol id already exists?", "The tool suffixes -2, -3, … so it never overwrites an existing id. Title, desc, style, and defs stay on the root."),
+        ],
+        "Paste a plain icon (no symbol). Set Id, then click Convert to symbol.",
+        extra_inputs=[{
+            "id": "symbol-id-input",
+            "type": "text",
+            "label": "Id",
+            "default": "icon",
+            "aria": "Symbol id",
+            "maxlength": 64,
+        }],
+    ),
+    page(
+        "structure_sprite", "extract-svg-element-by-id",
+        "Extract SVG Element by Id — Free Tool | getsvgeditor.com",
+        "Extract SVG element by id. Keep only that node (and defs) in a new SVG — not a crop, not unused-id cleanup. Free, no upload.",
+        "Extract SVG Element by Id", "Extract by id",
+        "Build a new SVG that keeps only the node with that <code>id</code> — plus <code>defs</code>, not a crop and not unused-id cleanup",
+        "Extract SVG element by id in SVGEditor",
+        "Extract SVG Element by Id",
+        ["Extract SVG element by id", "Copy SVG node by id", "SVG getElementById export", "Isolate SVG element by id"],
+        "Free online tool to extract an SVG element by id. Sibling shapes are dropped; defs are kept so gradients and clips still resolve.",
+        ["Copies one id", "Keeps paint-server defs", "Drops sibling shapes", "No upload"],
+        "Extract SVG element by id",
+        "Keep one identified node and drop everything else in the body.",
+        "Enter the id and click Extract by id. The SVG body is replaced with a clone of that element.",
+        "Extract by id", "Extract the SVG element with this id",
+        [
+            ("How do I extract an SVG element by id?", "Type the id (the sample uses mark) and click Extract by id. Sibling body shapes are removed. defs stay so url(#…) paints on the extracted node still work."),
+            ("Does extract delete unused ids from the rest of the file?", "No. Remove unused ids walks the whole document and drops ids nothing references. This page copies one node into a smaller SVG and leaves other ids alone — they simply are not in the result."),
+            ("Does extract crop to the element's bounding box?", "No. viewBox is unchanged, so the shape stays at its original coordinates. Crop SVG to Bounding Box if you need the canvas tight around it."),
+            ("What if the id is a symbol in defs?", "The symbol’s children are promoted into the SVG body so the result still paints. Inline SVG Use Elements first if you would rather extract a painted instance."),
+        ],
+        "Paste SVG with id=\"mark\". Click Extract by id.",
+        extra_inputs=[{
+            "id": "extract-id-input",
+            "type": "text",
+            "label": "Id",
+            "default": "mark",
+            "aria": "Element id to extract",
+            "maxlength": 64,
+        }],
+    ),
+    page(
+        "structure_groups", "flatten-svg-nested-groups",
+        "Flatten SVG Nested Groups — Free Tool | getsvgeditor.com",
+        "Flatten SVG nested groups. Unwrap every <g> and bake group transforms into path data — unlike ungroup, no leftover transform=. Free, no upload.",
+        "Flatten SVG Nested Groups", "Flatten nested groups",
+        "Unwrap every nested <code>&lt;g&gt;</code> and bake group matrices into path geometry — not a copy of <code>transform=</code> onto children",
+        "Flatten SVG nested groups in SVGEditor",
+        "Flatten SVG Nested Groups",
+        ["Flatten SVG nested groups", "Collapse nested SVG g", "Bake nested SVG groups", "Flatten nested SVG g tags"],
+        "Free online tool to flatten nested SVG groups. Each <g> is removed and its transform is written into child path data, including stacked nested groups.",
+        ["Unwraps nested g", "Bakes group matrices into d", "Skips groups in defs", "No upload"],
+        "Flatten SVG nested groups",
+        "Collapse nested g wrappers and bake their transforms into geometry.",
+        "Click Flatten groups. Nested <g> tags are unwrapped deepest-first; group transforms are applied to child path data.",
+        "Flatten groups", "Flatten nested SVG groups into path data",
+        [
+            ("How do I flatten nested SVG groups?", "Click Flatten groups. Nested <g> wrappers are unwrapped deepest-first. Each group's transform is multiplied into child path data (and basic shapes), then the empty group is deleted."),
+            ("How is Flatten nested groups different from Ungroup SVG Paths?", "Ungroup lifts children and copies the group's transform= string onto them, so transform attributes remain. Flatten writes those matrices into d and deletes every body group in one pass."),
+            ("How is Flatten nested groups different from Bake SVG Transforms Into Path?", "Bake applies transform= onto path d but leaves the <g> elements in the tree. Flatten both bakes and unwraps, so the result is a flat list of shapes with no groups."),
+            ("Are groups inside defs or symbol also flattened?", "No. Wrappers in defs, symbol, clipPath, mask, pattern, or marker stay put so sprites and clips keep their structure. Body groups from Figma or Illustrator are the ones that collapse."),
+        ],
+        "Paste nested <g transform=…>. Click Flatten groups.",
+    ),
+    page(
+        "structure_sprite", "rename-svg-ids-sequentially",
+        "Rename SVG Ids Sequentially — Free Tool | getsvgeditor.com",
+        "Rename SVG ids sequentially. Rewrite every id to prefix-1, prefix-2 and update url(#) refs — unused ids are kept. Free, no upload.",
+        "Rename SVG Ids Sequentially", "Rename ids",
+        "Renumber every <code>id</code> to <code>prefix-1</code>, <code>prefix-2</code> … and rewrite <code>url(#)</code>, <code>href=\"#\"</code>, and clip-path refs",
+        "Rename SVG ids sequentially in SVGEditor",
+        "Rename SVG Ids Sequentially",
+        ["Rename SVG ids sequentially", "Renumber SVG id attributes", "Sequential SVG ids", "Prefix SVG ids in order"],
+        "Free online tool to rename SVG ids sequentially. Every id becomes prefix-N in document order; url(#), href, and clip-path references are rewritten to match.",
+        ["Sequential prefix-N ids", "Rewrites url(#) refs", "Does not delete unused ids", "No upload"],
+        "Rename SVG ids sequentially",
+        "Assign prefix-1, prefix-2, … and retarget every local id reference.",
+        "Set Prefix and click Rename ids. Each id is rewritten in tree order and matching references follow.",
+        "Rename ids", "Rename SVG ids sequentially",
+        [
+            ("How do I rename SVG ids sequentially?", "Set Prefix (default el) and click Rename ids. Elements are numbered in document order: el-1, el-2, el-3. Existing names from Figma or Illustrator are replaced."),
+            ("How is rename different from Remove unused ids?", "Remove unused ids deletes ids that nothing references. Rename keeps every id and only changes the names, which is what you want before merging two SVGs that both used id=\"Layer_1\"."),
+            ("Are url(#) and href=\"#id\" references updated?", "Yes. fill=\"url(#old)\", clip-path, mask, filter, marker-*, href=\"#old\", and xlink:href are rewritten to the new sequential ids so paints and clips still resolve."),
+            ("Does sequential rename inline use elements?", "No. <use href=\"#…\"> stays a use; only the target id string changes. Inline SVG Use Elements if you need clones instead of references."),
+        ],
+        "Paste SVG with long exporter ids. Set Prefix, then click Rename ids.",
+        extra_inputs=[{
+            "id": "id-prefix-input",
+            "type": "text",
+            "label": "Prefix",
+            "default": "el",
+            "aria": "Id prefix",
+            "maxlength": 32,
+        }],
+    ),
 ]
 
 
 def main():
-    assert len(PAGES) == 44, f"expected 44 pages, got {len(PAGES)}"
+    assert len(PAGES) == 49, f"expected 49 pages, got {len(PAGES)}"
     questions = [q for p in PAGES for q, _ in p["faqs"]]
     dups = sorted({q for q in questions if questions.count(q) > 1})
     assert len(questions) == len(set(questions)), f"duplicate FAQ questions: {dups}"
