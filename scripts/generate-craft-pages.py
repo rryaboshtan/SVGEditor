@@ -17,6 +17,7 @@ HREF_REWRITE = {
     "/clean-sketch-svg-export-online": "/clean-figma-svg-online",
     "/remove-unused-svg-namespaces-online": "/remove-inkscape-namespaces-from-svg",
     "/calculate-svg-bounding-box-online": "/calculate-svg-viewbox",
+    "/crop-svg-to-bounding-box": "/crop-svg-online",
 }
 
 CLUSTERS = {
@@ -133,6 +134,21 @@ CLUSTERS = {
         "/remove-unused-ids-from-svg",
         "/rename-svg-ids-sequentially",
     ],
+    "a11y_clean": [
+        "/remove-svg-title-and-desc",
+    ],
+    "markup_format": [
+        "/pretty-print-svg-markup",
+    ],
+    "viewbox_pad": [
+        "/pad-svg-viewbox",
+    ],
+    "pixel_snap": [
+        "/snap-svg-to-pixel-grid",
+    ],
+    "align_box": [
+        "/align-svg-to-left",
+    ],
 }
 
 LABEL = {
@@ -197,6 +213,17 @@ LABEL = {
     "/flatten-svg-nested-groups": "Flatten nested groups",
     "/rename-svg-ids-sequentially": "Rename ids",
     "/remove-unused-ids-from-svg": "Remove unused ids",
+    "/remove-svg-title-and-desc": "Remove title & desc",
+    "/pretty-print-svg-markup": "Pretty print markup",
+    "/pad-svg-viewbox": "Pad viewBox",
+    "/snap-svg-to-pixel-grid": "Snap to pixel grid",
+    "/align-svg-to-left": "Align to left",
+    "/strip-svg-metadata": "Strip metadata",
+    "/optimize-svg-file": "Optimize SVG",
+    "/remove-svg-viewbox-whitespace": "Remove viewBox whitespace",
+    "/change-svg-viewbox": "Change viewBox",
+    "/center-svg-path": "Center path",
+    "/translate-svg-path-coordinates-to-origin": "Move to origin",
 }
 
 FALLBACK = {
@@ -218,6 +245,36 @@ FALLBACK = {
         "/convert-svg-colors-to-currentcolor",
         "/change-svg-stroke-color",
         "/change-svg-fill-color-with-css",
+    ],
+    "a11y_clean": [
+        "/strip-svg-metadata",
+        "/remove-hidden-layers-from-svg",
+        "/remove-xml-declaration-from-svg",
+        "/optimize-svg-file",
+    ],
+    "markup_format": [
+        "/optimize-svg-file",
+        "/remove-xml-declaration-from-svg",
+        "/remove-empty-attributes-from-svg",
+        "/strip-svg-metadata",
+    ],
+    "viewbox_pad": [
+        "/remove-svg-viewbox-whitespace",
+        "/crop-svg-to-bounding-box",
+        "/change-svg-viewbox",
+        "/calculate-svg-viewbox",
+    ],
+    "pixel_snap": [
+        "/round-svg-path-decimals-online",
+        "/reduce-svg-path-nodes-online",
+        "/pad-svg-viewbox",
+        "/crop-svg-to-bounding-box",
+    ],
+    "align_box": [
+        "/center-svg-path",
+        "/translate-svg-path-coordinates-to-origin",
+        "/crop-svg-to-bounding-box",
+        "/pad-svg-viewbox",
     ],
 }
 
@@ -1525,11 +1582,146 @@ PAGES = [
             "maxlength": 32,
         }],
     ),
+    page(
+        "a11y_clean", "remove-svg-title-and-desc",
+        "Remove SVG Title and Desc — Free Tool | getsvgeditor.com",
+        "Remove SVG title and desc. Delete every <title> and <desc> node — not RDF metadata, not comments, not aria-label. Free, no upload.",
+        "Remove SVG Title and Desc", "Remove title & desc",
+        "Delete every <code>&lt;title&gt;</code> and <code>&lt;desc&gt;</code> — leave <code>metadata</code>, comments, and <code>aria-label</code> alone",
+        "Remove SVG title and desc in SVGEditor",
+        "Remove SVG Title and Desc",
+        ["Remove SVG title and desc", "Delete SVG title tags", "Strip SVG desc elements", "SVG without title desc"],
+        "Free online tool to remove SVG title and desc elements. Nested titles in groups are deleted; editor metadata and aria-label stay.",
+        ["Deletes <title> nodes", "Deletes <desc> nodes", "Leaves metadata/aria-label", "No upload"],
+        "Remove SVG title and desc",
+        "Drop title and desc elements from the SVG tree.",
+        "Click Remove title & desc. Every <title> and <desc> is deleted; the painted shapes do not change.",
+        "Remove title & desc", "Remove SVG title and desc elements",
+        [
+            ("How do I remove SVG title and desc?", "Click Remove title & desc. Every <title> and <desc> in the tree is deleted, including nested ones inside groups. The painted shapes stay put."),
+            ("Does this strip RDF, Inkscape, or editor metadata too?", "No. Strip SVG Metadata targets <metadata>, Inkscape/Illustrator attributes, and RDF. This page only removes the two accessibility/export nodes title and desc."),
+            ("Will the preview look different after removing title and desc?", "Usually no. Browsers do not paint those elements. You will see them disappear in the source — useful before embedding an icon in a button that already has accessible text."),
+            ("Are aria-label attributes removed as well?", "No. aria-label, aria-labelledby, and role stay. Optimize SVG File if you want a broader clean that also drops comments and unused ids."),
+        ],
+        "Paste SVG with title and desc tags. Click Remove title & desc.",
+    ),
+    page(
+        "markup_format", "pretty-print-svg-markup",
+        "Pretty Print SVG Markup — Free Tool | getsvgeditor.com",
+        "Pretty print SVG markup. Expand a minified one-liner onto one tag per line — no minify, no optimize, no path rewrite. Free, no upload.",
+        "Pretty Print SVG Markup", "Pretty print markup",
+        "Expand minified SVG onto <strong>one tag per line</strong> — do not minify, do not rewrite path data",
+        "Pretty print SVG markup in SVGEditor",
+        "Pretty Print SVG Markup",
+        ["Pretty print SVG markup", "Format SVG source", "Beautify SVG code", "Unminify SVG markup"],
+        "Free online tool to pretty print SVG markup. A compacted one-liner becomes readable indented tags; geometry and attributes are unchanged.",
+        ["One tag per line", "Does not minify", "Keeps path d as-is", "No upload"],
+        "Pretty print SVG markup",
+        "Reformat SVG source for reading without compacting it.",
+        "Click Pretty print. Tags split onto their own lines; width, height, and path data are not stripped or rounded.",
+        "Pretty print", "Pretty print this SVG markup",
+        [
+            ("How do I pretty print SVG markup?", "Click Pretty print. The serializer writes one element per line so a minified export is readable in the editor. Nothing in the tree is deleted."),
+            ("Is pretty print the same as Optimize SVG File?", "No. Optimize minifies: comments, unused ids, and metadata go away and the file shrinks. Pretty print is the opposite direction — readable source, same bytes of geometry."),
+            ("Does formatting change path data or viewBox?", "No. d, viewBox, fills, and width/height stay exactly as parsed. Round Path Decimals or Snap to Pixel Grid if you want numbers rewritten."),
+            ("Will pretty print minify the file?", "No. Output is usually a few bytes larger because of newlines. Use Optimize SVG File or Reduce SVG File Size to compact."),
+        ],
+        "Paste a minified SVG one-liner. Click Pretty print.",
+    ),
+    page(
+        "viewbox_pad", "pad-svg-viewbox",
+        "Pad SVG viewBox — Free Tool | getsvgeditor.com",
+        "Pad SVG viewBox. Set a uniform inset around the artwork — not a tight whitespace trim and not a stacking zoom-out. Free, no upload.",
+        "Pad SVG viewBox", "Pad viewBox",
+        "Set Pad empty units around the artwork — geometry stays; the same Pad does not stack",
+        "Pad SVG viewBox in SVGEditor",
+        "Pad SVG viewBox",
+        ["Pad SVG viewBox", "Add SVG viewBox padding", "Expand SVG canvas inset", "SVG viewBox margin"],
+        "Free online tool to pad an SVG viewBox. The window becomes the content box plus Pad on each side; a second click with the same Pad is a no-op.",
+        ["Pad around the artwork", "Same Pad does not stack", "Does not move geometry", "No upload"],
+        "Pad SVG viewBox",
+        "Widen the viewBox window without rewriting path data.",
+        "Set Pad and click Pad viewBox. The window becomes the content box plus Pad on each side.",
+        "Pad viewBox", "Pad this SVG viewBox",
+        [
+            ("How do I pad an SVG viewBox?", "Set Pad (user units, the same units as the viewBox) and click Pad viewBox. The window becomes the artwork’s box plus Pad on every side. Shapes keep their coordinates."),
+            ("How is Pad viewBox different from Remove SVG viewBox Whitespace?", "Remove whitespace tightens the window onto the artwork (inset 0). Pad leaves Pad user units of empty margin around that same box."),
+            ("Does padding crop to the bounding box first?", "It measures the art so the four margins equal Pad. Shapes are not clipped or moved. Crop SVG is the tool for cutting the frame by hand; Change viewBox if you need to type the four numbers."),
+            ("What units is the Pad value in?", "ViewBox user units, not CSS pixels. On a 24×24 icon, Pad 2 is a typical inset. The preview may look slightly smaller because the camera pulled back — clicking again with the same Pad does nothing."),
+        ],
+        "Paste a tight icon. Set Pad, then click Pad viewBox.",
+        extra_inputs=[{
+            "id": "viewbox-pad-input",
+            "label": "Pad",
+            "default": 12,
+            "min": 0,
+            "max": 128,
+            "step": 1,
+            "aria": "ViewBox padding in user units",
+            "unit": "",
+        }],
+    ),
+    page(
+        "pixel_snap", "snap-svg-to-pixel-grid",
+        "Snap SVG to Pixel Grid — Free Tool | getsvgeditor.com",
+        "Snap SVG to pixel grid. Round geometry (path d, x/y, viewBox) to the nearest Step — not decimal-place rounding of path d only. Free, no upload.",
+        "Snap SVG to Pixel Grid", "Snap to pixel grid",
+        "Round path coordinates, <code>x</code>/<code>y</code>, and <code>viewBox</code> to the nearest Step — leave stroke-width and paints alone",
+        "Snap SVG to pixel grid in SVGEditor",
+        "Snap SVG to Pixel Grid",
+        ["Snap SVG to pixel grid", "Round SVG to whole pixels", "SVG integer coordinates", "Align SVG to pixel grid"],
+        "Free online tool to snap SVG geometry to a pixel grid. Path data, shape x/y, and viewBox round to Step; stroke-width and colors are not touched.",
+        ["Snaps path d + x/y", "Snaps viewBox too", "Skips stroke-width", "No upload"],
+        "Snap SVG to pixel grid",
+        "Quantize geometry onto a regular grid.",
+        "Set Step and click Snap to grid. Coordinates land on multiples of Step so 1px strokes stay crisp.",
+        "Snap to grid", "Snap this SVG to the pixel grid",
+        [
+            ("How do I snap SVG to a pixel grid?", "Set Step (default 1) and click Snap to grid. Path commands, x/y/cx/cy/width/height, polygon points, and viewBox round to the nearest multiple of Step."),
+            ("How is snapping different from Round SVG Path Decimals?", "Round decimals only rewrites numbers inside d to N fractional digits (default 2). Snap uses a grid step and also hits shape attributes and viewBox, which is what you want for blurry 1px icons."),
+            ("Does snap rewrite stroke-width and colors?", "No. Paints, opacity, and stroke-width stay. Reduce Path Nodes if you want fewer points instead of rounding existing ones."),
+            ("What does the Step value mean?", "1 snaps to whole user units (typical CSS pixel grid). 0.5 is a half-pixel grid for 2× assets. Values already on the grid are left as-is."),
+        ],
+        "Paste SVG with fractional coordinates. Set Step, then click Snap to grid.",
+        extra_inputs=[{
+            "id": "pixel-grid-step-input",
+            "label": "Step",
+            "default": 1,
+            "min": 0.25,
+            "max": 8,
+            "step": 0.25,
+            "aria": "Pixel grid step in user units",
+            "unit": "px",
+        }],
+    ),
+    page(
+        "align_box", "align-svg-to-left",
+        "Align SVG to Left — Free Tool | getsvgeditor.com",
+        "Align SVG to left. Shift artwork so its left edge meets the viewBox min-x — not center, not origin (0,0), not preserveAspectRatio. Free, no upload.",
+        "Align SVG to Left", "Align to left",
+        "Translate geometry so the content’s left edge sits on the <code>viewBox</code> min-x — Y and the window stay put",
+        "Align SVG to left in SVGEditor",
+        "Align SVG to Left",
+        ["Align SVG to left", "Flush SVG left in viewBox", "Left-align SVG artwork", "Shift SVG to viewBox left"],
+        "Free online tool to align SVG artwork to the left of the viewBox. Content shifts on X only; viewBox, Y, and preserveAspectRatio do not change.",
+        ["Shifts X only", "Keeps viewBox", "Not origin 0,0", "No upload"],
+        "Align SVG to left",
+        "Nudge drawable content flush with the left of the viewBox.",
+        "Click Align left. Content is translated by (viewBox.minX − bbox.minX); vertical position is unchanged.",
+        "Align left", "Align this SVG to the left of the viewBox",
+        [
+            ("How do I align an SVG to the left?", "Click Align left. The tool measures the painted content, then translates it horizontally so the left edge meets the current viewBox min-x. Y does not move."),
+            ("How is Align to left different from Center SVG Path?", "Center shifts X and Y to the middle of the viewBox. Align left only flushes the left edge and leaves vertical position alone."),
+            ("Is this the same as moving a path to the origin?", "No. Move to origin puts the bounding box at (0, 0) and retightens viewBox. Align left keeps the existing viewBox — if it starts at 20, content lines up to 20, not 0."),
+            ("Does Align to left change preserveAspectRatio?", "No. xMinYMid meet would align the SVG inside a CSS box without moving path data. This page rewrites coordinates. Crop SVG if you want the window to follow the art instead."),
+        ],
+        "Paste SVG sitting to the right in its viewBox. Click Align left.",
+    ),
 ]
 
 
 def main():
-    assert len(PAGES) == 49, f"expected 49 pages, got {len(PAGES)}"
+    assert len(PAGES) == 54, f"expected 54 pages, got {len(PAGES)}"
     questions = [q for p in PAGES for q, _ in p["faqs"]]
     dups = sorted({q for q in questions if questions.count(q) > 1})
     assert len(questions) == len(set(questions)), f"duplicate FAQ questions: {dups}"

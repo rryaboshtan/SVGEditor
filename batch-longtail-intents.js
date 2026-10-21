@@ -574,6 +574,30 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <rect id="Layer_1_copy" x="16" y="20" width="72" height="70" rx="12" fill="url(#gradFill)"/>\n' +
     '  <circle id="path1234" cx="122" cy="55" r="28" fill="#f97316"/>\n' +
     "</svg>",
+  "remove-svg-title-and-desc":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Icon with exporter title and desc">\n' +
+    "  <title>Layer 1 / icon-export</title>\n" +
+    "  <desc>Exported from Figma — internal notes, not for UI</desc>\n" +
+    '  <rect x="22" y="28" width="76" height="64" rx="12" fill="#38bdf8"/>\n' +
+    '  <circle cx="60" cy="60" r="14" fill="#082f49"/>\n' +
+    "</svg>",
+  "pretty-print-svg-markup":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 90" width="120" height="90" role="img" aria-label="Minified house"><g fill="none"><rect x="8" y="18" width="104" height="58" rx="10" fill="#0ea5e9"/><path fill="#082f49" d="M24 48 L60 22 L96 48 V76 H72 V58 H48 V76 H24 Z"/></g></svg>',
+  "pad-svg-viewbox":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Tight icon to pad">\n' +
+    '  <rect x="8" y="12" width="64" height="56" rx="10" fill="#22c55e"/>\n' +
+    '  <circle cx="40" cy="40" r="12" fill="#052e16"/>\n' +
+    "</svg>",
+  "snap-svg-to-pixel-grid":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160.4 110.7" role="img" aria-label="Off-grid shape to snap">\n' +
+    '  <rect x="18.37" y="21.81" width="58.44" height="66.19" rx="9.6" fill="#38bdf8"/>\n' +
+    '  <path fill="#f97316" d="M96.28 88.41 L128.73 24.18 L151.09 88.41 Z"/>\n' +
+    "</svg>",
+  "align-svg-to-left":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Artwork sitting on the right">\n' +
+    '  <rect x="88" y="24" width="56" height="62" rx="10" fill="#f59e0b"/>\n' +
+    '  <circle cx="116" cy="55" r="14" fill="#431407"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -2558,6 +2582,87 @@ function craftSerializePath(tokens) {
 
 function craftRoundPt(n) {
   return Math.round(n * 1000) / 1000;
+}
+
+function craftSnapNum(n, step) {
+  if (!Number.isFinite(n) || !step) return n;
+  var v = Math.round(n / step) * step;
+  if (Object.is(v, -0)) v = 0;
+  return Math.round(v * 1000) / 1000;
+}
+
+function craftReadViewBox(svg) {
+  var raw = svg.getAttribute("viewBox");
+  if (raw) {
+    var p = String(raw)
+      .trim()
+      .split(/[\s,]+/)
+      .map(parseFloat);
+    if (p.length >= 4 && p[2] > 0 && p[3] > 0) {
+      return { x: p[0], y: p[1], w: p[2], h: p[3] };
+    }
+  }
+  if (typeof getSvgViewBoxBox === "function") {
+    var b = getSvgViewBoxBox(svg);
+    if (b && b.width > 0 && b.height > 0) {
+      return { x: b.minX, y: b.minY, w: b.width, h: b.height };
+    }
+  }
+  return null;
+}
+
+function craftNudgeEl(el, dx, dy) {
+  if (!el || el.nodeType !== 1 || (!dx && !dy)) return;
+  var tag = String(el.localName || "").toLowerCase();
+  if (tag === "path") {
+    var d = el.getAttribute("d");
+    if (d) el.setAttribute("d", craftApplyMatrixToPath(d, { a: 1, b: 0, c: 0, d: 1, e: dx, f: dy }));
+    return;
+  }
+  if (tag === "circle" || tag === "ellipse") {
+    var cx = parseFloat(el.getAttribute("cx") || 0) || 0;
+    var cy = parseFloat(el.getAttribute("cy") || 0) || 0;
+    el.setAttribute("cx", String(craftRoundPt(cx + dx)));
+    el.setAttribute("cy", String(craftRoundPt(cy + dy)));
+    return;
+  }
+  if (tag === "rect" || tag === "image" || tag === "use" || tag === "text") {
+    var x = parseFloat(el.getAttribute("x") || 0) || 0;
+    var y = parseFloat(el.getAttribute("y") || 0) || 0;
+    el.setAttribute("x", String(craftRoundPt(x + dx)));
+    el.setAttribute("y", String(craftRoundPt(y + dy)));
+    return;
+  }
+  if (tag === "line") {
+    ["x1", "x2"].forEach(function (a) {
+      el.setAttribute(a, String(craftRoundPt((parseFloat(el.getAttribute(a) || 0) || 0) + dx)));
+    });
+    ["y1", "y2"].forEach(function (a) {
+      el.setAttribute(a, String(craftRoundPt((parseFloat(el.getAttribute(a) || 0) || 0) + dy)));
+    });
+    return;
+  }
+  if (tag === "polygon" || tag === "polyline") {
+    var pts = String(el.getAttribute("points") || "")
+      .trim()
+      .split(/[\s,]+/)
+      .map(parseFloat);
+    var out = [];
+    for (var i = 0; i + 1 < pts.length; i += 2) {
+      out.push(craftRoundPt(pts[i] + dx) + "," + craftRoundPt(pts[i + 1] + dy));
+    }
+    if (out.length) el.setAttribute("points", out.join(" "));
+  }
+}
+
+function craftSnapAttr(el, name, step) {
+  if (!el.hasAttribute(name)) return 0;
+  var n = parseFloat(el.getAttribute(name));
+  if (!Number.isFinite(n)) return 0;
+  var next = craftSnapNum(n, step);
+  if (next === n) return 0;
+  el.setAttribute(name, String(next));
+  return 1;
 }
 
 function craftCubicPoint(x0, y0, x1, y1, x2, y2, x3, y3, t) {
@@ -4653,11 +4758,131 @@ function applyBatchCraftMarkup(markup, intent) {
       pairs.length > 0
         ? "Renamed " + pairs.length + " id" + (pairs.length === 1 ? "" : "s") + " to " + prefix + "-1…" + prefix + "-" + pairs.length
         : "No id attributes to rename";
+  } else if (intent === "remove-svg-title-and-desc") {
+    var killed = 0;
+    Array.from(svg.querySelectorAll("title,desc")).forEach(function (el) {
+      if (el.parentNode) {
+        el.parentNode.removeChild(el);
+        killed += 1;
+      }
+    });
+    status =
+      killed > 0
+        ? "Removed " + killed + " title/desc element" + (killed === 1 ? "" : "s")
+        : "No <title> or <desc> to remove";
+  } else if (intent === "pretty-print-svg-markup") {
+    status = "Pretty-printed SVG markup";
+  } else if (intent === "pad-svg-viewbox") {
+    var pad = craftNumInput("viewbox-pad-input", 12, 0, 128);
+    var box =
+      typeof measureSvgContentBBox === "function" ? measureSvgContentBBox(svg) : null;
+    if (!box || !(box.width > 0 && box.height > 0)) {
+      throw new Error("Could not measure content to pad");
+    }
+    var nx = box.x - pad;
+    var ny = box.y - pad;
+    var nw = box.width + pad * 2;
+    var nh = box.height + pad * 2;
+    var vbNow = craftReadViewBox(svg);
+    if (
+      vbNow &&
+      Math.abs(vbNow.x - nx) < 0.05 &&
+      Math.abs(vbNow.y - ny) < 0.05 &&
+      Math.abs(vbNow.w - nw) < 0.05 &&
+      Math.abs(vbNow.h - nh) < 0.05
+    ) {
+      status = "Already padded by " + pad;
+    } else {
+      var padded = batchSetViewBox(svg, nx, ny, nw, nh);
+      status = "Padded viewBox to " + padded;
+    }
+  } else if (intent === "snap-svg-to-pixel-grid") {
+    var grid = craftNumInput("pixel-grid-step-input", 1, 0.25, 8);
+    var snapped = 0;
+    var geomAttrs = ["x", "y", "cx", "cy", "r", "rx", "ry", "x1", "y1", "x2", "y2", "width", "height", "dx", "dy"];
+    Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+      if (craftClosestProtected(el) && String(el.localName || "").toLowerCase() !== "svg") return;
+      geomAttrs.forEach(function (name) {
+        snapped += craftSnapAttr(el, name, grid);
+      });
+      if (el.hasAttribute("d")) {
+        var d0 = el.getAttribute("d") || "";
+        var segs = craftTokenizePath(d0);
+        var changedD = false;
+        segs.forEach(function (seg) {
+          for (var si = 0; si < seg.nums.length; si += 1) {
+            var sn = craftSnapNum(seg.nums[si], grid);
+            if (sn !== seg.nums[si]) {
+              seg.nums[si] = sn;
+              changedD = true;
+            }
+          }
+        });
+        if (changedD) {
+          el.setAttribute("d", craftSerializePath(segs));
+          snapped += 1;
+        }
+      }
+      if (el.hasAttribute("points")) {
+        var rawPts = String(el.getAttribute("points") || "").trim();
+        var nums = rawPts.split(/[\s,]+/).map(parseFloat);
+        var nextPts = [];
+        var ptsChanged = false;
+        for (var pi = 0; pi + 1 < nums.length; pi += 2) {
+          var px = craftSnapNum(nums[pi], grid);
+          var py = craftSnapNum(nums[pi + 1], grid);
+          if (px !== nums[pi] || py !== nums[pi + 1]) ptsChanged = true;
+          nextPts.push(px + "," + py);
+        }
+        if (ptsChanged && nextPts.length) {
+          el.setAttribute("points", nextPts.join(" "));
+          snapped += 1;
+        }
+      }
+    });
+    if (svg.hasAttribute("viewBox")) {
+      var vbSnap = craftReadViewBox(svg);
+      if (vbSnap) {
+        var nx = craftSnapNum(vbSnap.x, grid);
+        var ny = craftSnapNum(vbSnap.y, grid);
+        var nw = craftSnapNum(vbSnap.w, grid);
+        var nh = craftSnapNum(vbSnap.h, grid);
+        if (nx !== vbSnap.x || ny !== vbSnap.y || nw !== vbSnap.w || nh !== vbSnap.h) {
+          batchSetViewBox(svg, nx, ny, nw, nh);
+          snapped += 1;
+        }
+      }
+    }
+    status =
+      snapped > 0
+        ? "Snapped " + snapped + " value" + (snapped === 1 ? "" : "s") + " to a " + grid + " grid"
+        : "Geometry already on the " + grid + " grid";
+  } else if (intent === "align-svg-to-left") {
+    craftEnsureViewBox(svg);
+    var vbAlign = craftReadViewBox(svg);
+    if (!vbAlign) throw new Error("Could not read viewBox to align");
+    var box =
+      typeof measureSvgContentBBox === "function" ? measureSvgContentBBox(svg) : null;
+    if (!box) throw new Error("Could not measure content to align");
+    var dx = vbAlign.x - box.x;
+    if (Math.abs(dx) < 0.001) {
+      status = "Already aligned to the left of the viewBox";
+    } else {
+      Array.from(svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line,text,use,image")).forEach(
+        function (el) {
+          if (craftClosestProtected(el)) return;
+          craftNudgeEl(el, dx, 0);
+        }
+      );
+      status = "Aligned to viewBox left (" + (dx > 0 ? "+" : "") + craftRoundPt(dx) + " on X)";
+    }
   } else {
     throw new Error("Unknown craft intent");
   }
 
-  batchStripRoot(svg);
+  if (intent !== "pretty-print-svg-markup") {
+    batchStripRoot(svg);
+  }
   return { markup: batchSerialize(svg), status: status };
 }
 

@@ -380,7 +380,7 @@ def build_page(p):
 
     text = text.replace(
         "Paste or upload an SVG in the Source panel. Download a transparent PNG from the PNG\n                    tab — or export to React and share a link.",
-        p["empty"],
+        esc(p["empty"]),
     )
     text = text.replace(
         '<a href="/blog/svg-to-png">PNG guide</a>',

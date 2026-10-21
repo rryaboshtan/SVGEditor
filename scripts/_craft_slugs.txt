@@ -47,3 +47,8 @@ convert-svg-to-symbol
 extract-svg-element-by-id
 flatten-svg-nested-groups
 rename-svg-ids-sequentially
+remove-svg-title-and-desc
+pretty-print-svg-markup
+pad-svg-viewbox
+snap-svg-to-pixel-grid
+align-svg-to-left
