@@ -52,3 +52,8 @@ pretty-print-svg-markup
 pad-svg-viewbox
 snap-svg-to-pixel-grid
 align-svg-to-left
+align-svg-to-center
+split-svg-text-into-glyphs
+set-svg-text-anchor
+convert-svg-tspan-to-text
+svg-path-morph-animation

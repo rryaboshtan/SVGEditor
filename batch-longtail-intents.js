@@ -598,6 +598,32 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <rect x="88" y="24" width="56" height="62" rx="10" fill="#f59e0b"/>\n' +
     '  <circle cx="116" cy="55" r="14" fill="#431407"/>\n' +
     "</svg>",
+  "align-svg-to-center":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Artwork sitting on the left">\n' +
+    '  <rect x="12" y="24" width="56" height="62" rx="10" fill="#38bdf8"/>\n' +
+    '  <circle cx="40" cy="55" r="14" fill="#082f49"/>\n' +
+    "</svg>",
+  "split-svg-text-into-glyphs":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 90" role="img" aria-label="Word to split into glyphs">\n' +
+    '  <text x="24" y="58" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">SVG</text>\n' +
+    "</svg>",
+  "set-svg-text-anchor":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 90" role="img" aria-label="Text on a center guide">\n' +
+    '  <line x1="100" y1="12" x2="100" y2="78" stroke="#64748b" stroke-width="1"/>\n' +
+    '  <text x="100" y="54" font-family="Syne, Segoe UI, sans-serif" font-size="28" font-weight="700" fill="#38bdf8" text-anchor="start">Anchor</text>\n' +
+    "</svg>",
+  "convert-svg-tspan-to-text":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Two tspans inside one text">\n' +
+    '  <text font-family="Syne, Segoe UI, sans-serif" font-size="26" font-weight="700" fill="#e2e8f0">\n' +
+    '    <tspan x="16" y="36">Line one</tspan>\n' +
+    '    <tspan x="16" y="68" fill="#38bdf8">Line two</tspan>\n' +
+    "  </text>\n" +
+    "</svg>",
+  "svg-path-morph-animation":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Circle and square paths to morph">\n' +
+    '  <path fill="#38bdf8" d="M80 24 C99.882 24 116 40.118 116 60 C116 79.882 99.882 96 80 96 C60.118 96 44 79.882 44 60 C44 40.118 60.118 24 80 24 Z"/>\n' +
+    '  <path fill="#f97316" opacity="0.35" d="M44 24 C80 24 116 24 116 24 C116 60 116 96 116 96 C80 96 44 96 44 96 C44 60 44 24 44 24 Z"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -2664,6 +2690,44 @@ function craftSnapAttr(el, name, step) {
   el.setAttribute(name, String(next));
   return 1;
 }
+
+function craftCopyAttrs(from, to, names) {
+  names.forEach(function (name) {
+    if (from && to && from.hasAttribute(name)) to.setAttribute(name, from.getAttribute(name));
+  });
+}
+
+function craftLiveMeasure(svg, fn) {
+  var host = document.createElement("div");
+  host.setAttribute("aria-hidden", "true");
+  host.style.cssText =
+    "position:absolute;left:-99999px;top:0;width:800px;height:400px;overflow:hidden;opacity:0;pointer-events:none";
+  var clone = svg.cloneNode(true);
+  clone.setAttribute("width", "800");
+  clone.setAttribute("height", "400");
+  document.body.appendChild(host);
+  host.appendChild(clone);
+  try {
+    return fn(clone);
+  } finally {
+    if (host.parentNode) host.parentNode.removeChild(host);
+  }
+}
+
+var CRAFT_TEXT_PAINT_ATTRS = [
+  "fill",
+  "stroke",
+  "stroke-width",
+  "font-size",
+  "font-family",
+  "font-weight",
+  "font-style",
+  "letter-spacing",
+  "opacity",
+  "class",
+  "text-anchor",
+  "dominant-baseline",
+];
 
 function craftCubicPoint(x0, y0, x1, y1, x2, y2, x3, y3, t) {
   var u = 1 - t;
@@ -4876,6 +4940,157 @@ function applyBatchCraftMarkup(markup, intent) {
       );
       status = "Aligned to viewBox left (" + (dx > 0 ? "+" : "") + craftRoundPt(dx) + " on X)";
     }
+  } else if (intent === "align-svg-to-center") {
+    craftEnsureViewBox(svg);
+    var vbMid = craftReadViewBox(svg);
+    if (!vbMid) throw new Error("Could not read viewBox to align");
+    var boxMid =
+      typeof measureSvgContentBBox === "function" ? measureSvgContentBBox(svg) : null;
+    if (!boxMid) throw new Error("Could not measure content to align");
+    var dxMid = vbMid.x + vbMid.w / 2 - (boxMid.x + boxMid.width / 2);
+    if (Math.abs(dxMid) < 0.001) {
+      status = "Already aligned to the horizontal center of the viewBox";
+    } else {
+      Array.from(svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line,text,use,image")).forEach(
+        function (el) {
+          if (craftClosestProtected(el)) return;
+          craftNudgeEl(el, dxMid, 0);
+        }
+      );
+      status = "Aligned to viewBox center (" + (dxMid > 0 ? "+" : "") + craftRoundPt(dxMid) + " on X)";
+    }
+  } else if (intent === "split-svg-text-into-glyphs") {
+    var glyphCount = 0;
+    Array.from(svg.querySelectorAll("text")).forEach(function (textEl, ti) {
+      if (craftClosestProtected(textEl)) return;
+      if (textEl.querySelector("textPath")) return;
+      var raw = textEl.textContent || "";
+      if (raw.replace(/\s/g, "").length < 2) return;
+      var key = "g" + ti;
+      textEl.setAttribute("data-craft-glyph", key);
+      var marks = craftLiveMeasure(svg, function (live) {
+        var liveText = live.querySelector('[data-craft-glyph="' + key + '"]');
+        var out = [];
+        if (!liveText) return out;
+        var chars = Array.from(raw);
+        for (var gi = 0; gi < chars.length; gi += 1) {
+          if (/\s/.test(chars[gi])) continue;
+          var gx = NaN;
+          var gy = NaN;
+          try {
+            var gp = liveText.getStartPositionOfChar(gi);
+            gx = gp.x;
+            gy = gp.y;
+          } catch (err) {
+            gx = NaN;
+          }
+          out.push({ ch: chars[gi], x: gx, y: gy });
+        }
+        return out;
+      });
+      textEl.removeAttribute("data-craft-glyph");
+      var parent = textEl.parentNode;
+      if (!parent || !marks.length) return;
+      var fs = parseFloat(textEl.getAttribute("font-size") || 16) || 16;
+      var x0 = parseFloat(String(textEl.getAttribute("x") || "0").split(/[\s,]/)[0]) || 0;
+      var y0 = parseFloat(String(textEl.getAttribute("y") || "0").split(/[\s,]/)[0]) || 0;
+      marks.forEach(function (mark, mi) {
+        if (!Number.isFinite(mark.x) || !Number.isFinite(mark.y)) {
+          mark.x = x0 + mi * fs * 0.62;
+          mark.y = y0;
+        }
+        var neu = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        craftCopyAttrs(textEl, neu, CRAFT_TEXT_PAINT_ATTRS);
+        neu.setAttribute("x", String(craftRoundPt(mark.x)));
+        neu.setAttribute("y", String(craftRoundPt(mark.y)));
+        neu.setAttribute("text-anchor", "start");
+        neu.textContent = mark.ch;
+        parent.insertBefore(neu, textEl);
+        glyphCount += 1;
+      });
+      parent.removeChild(textEl);
+    });
+    status =
+      glyphCount > 0
+        ? "Split into " + glyphCount + " glyph text element" + (glyphCount === 1 ? "" : "s")
+        : "No multi-character <text> to split";
+  } else if (intent === "set-svg-text-anchor") {
+    var anchor = craftSelectInput("text-anchor-input", "middle");
+    if (anchor !== "start" && anchor !== "middle" && anchor !== "end") anchor = "middle";
+    var anchorCount = 0;
+    var already = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prev = craftReadPaint(el, "text-anchor") || "start";
+      if (prev === anchor) {
+        already += 1;
+        return;
+      }
+      craftWritePaint(el, "text-anchor", anchor);
+      anchorCount += 1;
+    });
+    status =
+      anchorCount > 0
+        ? "text-anchor set to " + anchor
+        : already > 0
+          ? "Already text-anchor=" + anchor
+          : "No <text> to set text-anchor on";
+  } else if (intent === "convert-svg-tspan-to-text") {
+    var tspanCount = 0;
+    Array.from(svg.querySelectorAll("text")).forEach(function (textEl) {
+      if (craftClosestProtected(textEl)) return;
+      var spans = Array.from(textEl.children || []).filter(function (ch) {
+        return String(ch.localName || "").toLowerCase() === "tspan";
+      });
+      if (!spans.length) return;
+      var parent = textEl.parentNode;
+      if (!parent) return;
+      spans.forEach(function (sp) {
+        var neu = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        craftCopyAttrs(textEl, neu, CRAFT_TEXT_PAINT_ATTRS);
+        craftCopyAttrs(sp, neu, CRAFT_TEXT_PAINT_ATTRS);
+        var x = sp.getAttribute("x");
+        var y = sp.getAttribute("y");
+        if (x == null || x === "") x = textEl.getAttribute("x") || "0";
+        if (y == null || y === "") y = textEl.getAttribute("y") || "0";
+        neu.setAttribute("x", x);
+        neu.setAttribute("y", y);
+        if (sp.hasAttribute("dx")) neu.setAttribute("dx", sp.getAttribute("dx"));
+        if (sp.hasAttribute("dy")) neu.setAttribute("dy", sp.getAttribute("dy"));
+        neu.textContent = sp.textContent || "";
+        parent.insertBefore(neu, textEl);
+        tspanCount += 1;
+      });
+      parent.removeChild(textEl);
+    });
+    status =
+      tspanCount > 0
+        ? "Converted " + tspanCount + " tspan" + (tspanCount === 1 ? "" : "s") + " to <text>"
+        : "No <tspan> to convert";
+  } else if (intent === "svg-path-morph-animation") {
+    var dur = craftNumInput("morph-duration-input", 2, 0.2, 12);
+    var morphPaths = Array.from(svg.querySelectorAll("path")).filter(function (p) {
+      return !craftClosestProtected(p);
+    });
+    if (morphPaths.length < 2) throw new Error("Need two <path> elements (from and to)");
+    var fromPath = morphPaths[0];
+    var toPath = morphPaths[1];
+    var dFrom = fromPath.getAttribute("d") || "";
+    var dTo = toPath.getAttribute("d") || "";
+    if (!dFrom || !dTo) throw new Error("Both paths need d data to morph");
+    Array.from(fromPath.querySelectorAll("animate")).forEach(function (old) {
+      if (old.parentNode) old.parentNode.removeChild(old);
+    });
+    var anim = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+    anim.setAttribute("attributeName", "d");
+    anim.setAttribute("attributeType", "XML");
+    anim.setAttribute("dur", dur + "s");
+    anim.setAttribute("repeatCount", "indefinite");
+    anim.setAttribute("values", dFrom + ";" + dTo + ";" + dFrom);
+    fromPath.appendChild(anim);
+    toPath.setAttribute("opacity", "0");
+    toPath.setAttribute("aria-hidden", "true");
+    status = "Morphing path d over " + dur + "s";
   } else {
     throw new Error("Unknown craft intent");
   }
