@@ -1844,15 +1844,54 @@ function strokeOutsetForElement(el) {
   return outset;
 }
 
+function elementBoxInSvgSpace(el, svg) {
+  const b = el.getBBox();
+  if (!b) return null;
+  let minX = b.x;
+  let minY = b.y;
+  let maxX = b.x + b.width;
+  let maxY = b.y + b.height;
+  let scale = 1;
+  try {
+    const elCtm = el.getScreenCTM();
+    const svgCtm = svg.getScreenCTM();
+    if (elCtm && svgCtm) {
+      const m = svgCtm.inverse().multiply(elCtm);
+      const pts = [
+        [b.x, b.y],
+        [b.x + b.width, b.y],
+        [b.x, b.y + b.height],
+        [b.x + b.width, b.y + b.height],
+      ];
+      minX = Infinity;
+      minY = Infinity;
+      maxX = -Infinity;
+      maxY = -Infinity;
+      for (let i = 0; i < 4; i += 1) {
+        const x = m.a * pts[i][0] + m.c * pts[i][1] + m.e;
+        const y = m.b * pts[i][0] + m.d * pts[i][1] + m.f;
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+      scale = Math.sqrt(Math.abs(m.a * m.d - m.b * m.c)) || 1;
+    }
+  } catch (err) {
+    /* keep local box */
+  }
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY, scale: scale };
+}
+
 function measureSvgContentBBox(svg) {
   const host = document.createElement("div");
   host.setAttribute("aria-hidden", "true");
   host.style.cssText =
-    "position:absolute;left:-99999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none";
+    "position:absolute;left:-99999px;top:0;width:800px;height:400px;overflow:hidden;opacity:0;pointer-events:none";
   const clone = svg.cloneNode(true);
   clone.setAttribute("viewBox", "-100000 -100000 200000 200000");
-  clone.removeAttribute("width");
-  clone.removeAttribute("height");
+  clone.setAttribute("width", "800");
+  clone.setAttribute("height", "400");
   clone.style.overflow = "visible";
   document.body.appendChild(host);
   host.appendChild(clone);
@@ -1874,9 +1913,9 @@ function measureSvgContentBBox(svg) {
       ) {
         return;
       }
-      const b = el.getBBox();
+      const b = elementBoxInSvgSpace(el, clone);
       if (!b) return;
-      const pad = strokeOutsetForElement(el);
+      const pad = strokeOutsetForElement(el) * (b.scale || 1);
       // Lines / strokes can have zero width or height in the geometric box.
       if (!(b.width > 0 || b.height > 0 || pad > 0)) return;
       minX = Math.min(minX, b.x - pad);
