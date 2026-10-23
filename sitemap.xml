@@ -1531,6 +1531,36 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/convert-svg-polyline-to-path</loc>
+    <lastmod>2026-10-23T14:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/convert-svg-line-to-path</loc>
+    <lastmod>2026-10-23T14:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/convert-quadratic-to-cubic-bezier</loc>
+    <lastmod>2026-10-23T14:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/trim-svg-path-by-length</loc>
+    <lastmod>2026-10-23T14:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/normalize-svg-path-start-point</loc>
+    <lastmod>2026-10-23T14:35:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/privacy</loc>
     <lastmod>2026-08-25T21:03:26+03:00</lastmod>
     <changefreq>yearly</changefreq>

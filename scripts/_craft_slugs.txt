@@ -57,3 +57,8 @@ split-svg-text-into-glyphs
 set-svg-text-anchor
 convert-svg-tspan-to-text
 svg-path-morph-animation
+convert-svg-polyline-to-path
+convert-svg-line-to-path
+convert-quadratic-to-cubic-bezier
+trim-svg-path-by-length
+normalize-svg-path-start-point

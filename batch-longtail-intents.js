@@ -624,6 +624,27 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <path fill="#38bdf8" d="M80 24 C99.882 24 116 40.118 116 60 C116 79.882 99.882 96 80 96 C60.118 96 44 79.882 44 60 C44 40.118 60.118 24 80 24 Z"/>\n' +
     '  <path fill="#f97316" opacity="0.35" d="M44 24 C80 24 116 24 116 24 C116 60 116 96 116 96 C80 96 44 96 44 96 C44 60 44 24 44 24 Z"/>\n' +
     "</svg>",
+  "convert-svg-polyline-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Open polyline zigzag">\n' +
+    '  <polyline points="16,88 48,28 80,72 112,28 144,88" fill="none" stroke="#0ea5e9" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "convert-svg-line-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Two line elements as a chevron">\n' +
+    '  <line x1="28" y1="92" x2="80" y2="28" stroke="#f59e0b" stroke-width="8" stroke-linecap="round"/>\n' +
+    '  <line x1="80" y1="28" x2="132" y2="92" stroke="#f59e0b" stroke-width="8" stroke-linecap="round"/>\n' +
+    "</svg>",
+  "convert-quadratic-to-cubic-bezier":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Quadratic arch to raise to cubic">\n' +
+    '  <path fill="none" stroke="#a855f7" stroke-width="8" stroke-linecap="round" d="M16 96 Q 80 12 144 96"/>\n' +
+    "</svg>",
+  "trim-svg-path-by-length":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Long chevron to trim">\n' +
+    '  <path fill="none" stroke="#22c55e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" d="M20 96 L80 28 L140 96"/>\n' +
+    "</svg>",
+  "normalize-svg-path-start-point":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Closed triangle starting at the right">\n' +
+    '  <path fill="#38bdf8" d="M128 92 L 32 92 L 80 24 Z"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -3653,23 +3674,565 @@ function craftShapeToPath(el) {
     if (tag === "polygon") d += " Z";
     return d;
   }
+  if (tag === "line") {
+    return (
+      "M " +
+      (el.getAttribute("x1") || "0") +
+      " " +
+      (el.getAttribute("y1") || "0") +
+      " L " +
+      (el.getAttribute("x2") || "0") +
+      " " +
+      (el.getAttribute("y2") || "0")
+    );
+  }
   return "";
 }
 
 function craftReplaceWithPath(el, d) {
   var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("d", d);
-  ["fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "fill-rule", "opacity", "class"].forEach(
-    function (a) {
-      if (el.hasAttribute(a)) path.setAttribute(a, el.getAttribute(a));
-    }
-  );
+  [
+    "fill",
+    "stroke",
+    "stroke-width",
+    "stroke-linecap",
+    "stroke-linejoin",
+    "stroke-dasharray",
+    "stroke-dashoffset",
+    "fill-rule",
+    "opacity",
+    "class",
+    "style",
+    "transform",
+  ].forEach(function (a) {
+    if (el.hasAttribute(a)) path.setAttribute(a, el.getAttribute(a));
+  });
   if (el.parentNode) el.parentNode.replaceChild(path, el);
   return path;
 }
 
 function craftCollectPaths(svg) {
   return Array.from(svg.querySelectorAll("path"));
+}
+
+function craftRoundTokenNums(tokens) {
+  tokens.forEach(function (t) {
+    t.nums = t.nums.map(function (n, i) {
+      if (t.cmd === "A" && (i === 3 || i === 4)) return n ? 1 : 0;
+      return Number.isFinite(n) ? craftRoundPt(n) : n;
+    });
+  });
+  return tokens;
+}
+
+function craftQuadraticToCubic(d) {
+  var tokens = craftTokenizePath(d);
+  var x = 0;
+  var y = 0;
+  var sx = 0;
+  var sy = 0;
+  var oqx = null;
+  var oqy = null;
+  var ocx = null;
+  var ocy = null;
+  var out = [];
+  var changed = 0;
+  var clearQ = function () {
+    oqx = null;
+    oqy = null;
+  };
+  tokens.forEach(function (t) {
+    var c = t.cmd;
+    var n = t.nums;
+    var rel = c === c.toLowerCase() && c.toLowerCase() !== "z";
+    var C = c.toUpperCase();
+    var i = 0;
+    if (C === "Z") {
+      out.push({ cmd: "Z", nums: [] });
+      x = sx;
+      y = sy;
+      clearQ();
+      ocx = null;
+      ocy = null;
+      return;
+    }
+    if (C === "M") {
+      while (i + 1 < n.length) {
+        var mx = n[i] + (rel ? x : 0);
+        var my = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        if (i === 2) {
+          out.push({ cmd: "M", nums: [mx, my] });
+          sx = mx;
+          sy = my;
+        } else {
+          out.push({ cmd: "L", nums: [mx, my] });
+        }
+        x = mx;
+        y = my;
+        rel = true;
+      }
+      clearQ();
+      ocx = null;
+      ocy = null;
+      return;
+    }
+    if (C === "L") {
+      while (i + 1 < n.length) {
+        x = n[i] + (rel ? x : 0);
+        y = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        out.push({ cmd: "L", nums: [x, y] });
+      }
+      clearQ();
+      ocx = null;
+      ocy = null;
+      return;
+    }
+    if (C === "H") {
+      n.forEach(function (v) {
+        x = v + (rel ? x : 0);
+        out.push({ cmd: "L", nums: [x, y] });
+      });
+      clearQ();
+      ocx = null;
+      ocy = null;
+      return;
+    }
+    if (C === "V") {
+      n.forEach(function (v) {
+        y = v + (rel ? y : 0);
+        out.push({ cmd: "L", nums: [x, y] });
+      });
+      clearQ();
+      ocx = null;
+      ocy = null;
+      return;
+    }
+    if (C === "C") {
+      while (i + 5 < n.length) {
+        var c1x = n[i] + (rel ? x : 0);
+        var c1y = n[i + 1] + (rel ? y : 0);
+        var c2x = n[i + 2] + (rel ? x : 0);
+        var c2y = n[i + 3] + (rel ? y : 0);
+        x = n[i + 4] + (rel ? x : 0);
+        y = n[i + 5] + (rel ? y : 0);
+        i += 6;
+        out.push({ cmd: "C", nums: [c1x, c1y, c2x, c2y, x, y] });
+        ocx = c2x;
+        ocy = c2y;
+        clearQ();
+      }
+      return;
+    }
+    if (C === "S") {
+      while (i + 3 < n.length) {
+        var s2x = n[i] + (rel ? x : 0);
+        var s2y = n[i + 1] + (rel ? y : 0);
+        x = n[i + 2] + (rel ? x : 0);
+        y = n[i + 3] + (rel ? y : 0);
+        i += 4;
+        out.push({ cmd: "S", nums: [s2x, s2y, x, y] });
+        ocx = s2x;
+        ocy = s2y;
+        clearQ();
+      }
+      return;
+    }
+    if (C === "Q") {
+      while (i + 3 < n.length) {
+        var qx = n[i] + (rel ? x : 0);
+        var qy = n[i + 1] + (rel ? y : 0);
+        var x2 = n[i + 2] + (rel ? x : 0);
+        var y2 = n[i + 3] + (rel ? y : 0);
+        i += 4;
+        out.push({
+          cmd: "C",
+          nums: [
+            x + (2 / 3) * (qx - x),
+            y + (2 / 3) * (qy - y),
+            x2 + (2 / 3) * (qx - x2),
+            y2 + (2 / 3) * (qy - y2),
+            x2,
+            y2,
+          ],
+        });
+        oqx = qx;
+        oqy = qy;
+        ocx = null;
+        ocy = null;
+        x = x2;
+        y = y2;
+        changed += 1;
+      }
+      return;
+    }
+    if (C === "T") {
+      while (i + 1 < n.length) {
+        var tx = oqx == null ? x : 2 * x - oqx;
+        var ty = oqy == null ? y : 2 * y - oqy;
+        var x2t = n[i] + (rel ? x : 0);
+        var y2t = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        out.push({
+          cmd: "C",
+          nums: [
+            x + (2 / 3) * (tx - x),
+            y + (2 / 3) * (ty - y),
+            x2t + (2 / 3) * (tx - x2t),
+            y2t + (2 / 3) * (ty - y2t),
+            x2t,
+            y2t,
+          ],
+        });
+        oqx = tx;
+        oqy = ty;
+        ocx = null;
+        ocy = null;
+        x = x2t;
+        y = y2t;
+        changed += 1;
+      }
+      return;
+    }
+    if (C === "A") {
+      while (i + 6 < n.length) {
+        var nx = n[i + 5] + (rel ? x : 0);
+        var ny = n[i + 6] + (rel ? y : 0);
+        out.push({
+          cmd: "A",
+          nums: [n[i], n[i + 1], n[i + 2], n[i + 3], n[i + 4], nx, ny],
+        });
+        x = nx;
+        y = ny;
+        i += 7;
+      }
+      clearQ();
+      ocx = null;
+      ocy = null;
+    }
+  });
+  return { d: craftSerializePath(craftRoundTokenNums(out)), changed: changed };
+}
+
+function craftPathTotalLength(d) {
+  if (!d) return 0;
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", "1");
+  svg.setAttribute("height", "1");
+  svg.style.cssText = "position:absolute;left:-99999px;top:0;opacity:0;pointer-events:none";
+  var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d);
+  svg.appendChild(path);
+  document.body.appendChild(svg);
+  try {
+    return path.getTotalLength();
+  } catch (err) {
+    return 0;
+  } finally {
+    if (svg.parentNode) svg.parentNode.removeChild(svg);
+  }
+}
+
+function craftLerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function craftSplitCubic(x0, y0, x1, y1, x2, y2, x3, y3, t) {
+  var x01 = craftLerp(x0, x1, t);
+  var y01 = craftLerp(y0, y1, t);
+  var x12 = craftLerp(x1, x2, t);
+  var y12 = craftLerp(y1, y2, t);
+  var x23 = craftLerp(x2, x3, t);
+  var y23 = craftLerp(y2, y3, t);
+  var x012 = craftLerp(x01, x12, t);
+  var y012 = craftLerp(y01, y12, t);
+  var x123 = craftLerp(x12, x23, t);
+  var y123 = craftLerp(y12, y23, t);
+  return [x01, y01, x012, y012, craftLerp(x012, x123, t), craftLerp(y012, y123, t)];
+}
+
+function craftCubicTForLength(x0, y0, nums, target) {
+  var lo = 0;
+  var hi = 1;
+  var t = 1;
+  var i;
+  for (i = 0; i < 24; i++) {
+    t = (lo + hi) / 2;
+    var split = craftSplitCubic(x0, y0, nums[0], nums[1], nums[2], nums[3], nums[4], nums[5], t);
+    var len = craftPathTotalLength("M " + x0 + " " + y0 + " C " + split.join(" "));
+    if (len < target) lo = t;
+    else hi = t;
+  }
+  return hi;
+}
+
+function craftTrimPathByLength(d, keepLen) {
+  var segs = craftPathToAbsoluteCubics(d);
+  var total = craftPathTotalLength(d);
+  if (!(total > 0)) return { d: d, total: 0, trimmed: false };
+  if (keepLen >= total - 0.05) return { d: d, total: total, trimmed: false };
+  var out = [];
+  var cx = 0;
+  var cy = 0;
+  var sx = 0;
+  var sy = 0;
+  var remain = keepLen;
+  var i;
+  for (i = 0; i < segs.length; i++) {
+    var seg = segs[i];
+    if (seg.cmd === "M") {
+      if (remain <= 1e-6) break;
+      cx = seg.nums[0];
+      cy = seg.nums[1];
+      sx = cx;
+      sy = cy;
+      out.push({ cmd: "M", nums: [craftRoundPt(cx), craftRoundPt(cy)] });
+      continue;
+    }
+    if (remain <= 1e-6) break;
+    var piece;
+    var nx = cx;
+    var ny = cy;
+    if (seg.cmd === "L") {
+      nx = seg.nums[0];
+      ny = seg.nums[1];
+      piece = "M " + cx + " " + cy + " L " + nx + " " + ny;
+    } else if (seg.cmd === "C") {
+      nx = seg.nums[4];
+      ny = seg.nums[5];
+      piece = "M " + cx + " " + cy + " C " + seg.nums.join(" ");
+    } else if (seg.cmd === "Z") {
+      nx = sx;
+      ny = sy;
+      piece = "M " + cx + " " + cy + " L " + nx + " " + ny;
+    } else {
+      out.push(seg);
+      continue;
+    }
+    var len = craftPathTotalLength(piece);
+    if (len <= remain + 0.05) {
+      if (seg.cmd === "Z") out.push({ cmd: "Z", nums: [] });
+      else if (seg.cmd === "L") out.push({ cmd: "L", nums: [craftRoundPt(nx), craftRoundPt(ny)] });
+      else {
+        out.push({
+          cmd: "C",
+          nums: seg.nums.map(function (n) {
+            return craftRoundPt(n);
+          }),
+        });
+      }
+      remain -= len;
+      cx = nx;
+      cy = ny;
+      continue;
+    }
+    var t = len > 0 ? remain / len : 1;
+    if (seg.cmd === "C") {
+      t = craftCubicTForLength(cx, cy, seg.nums, remain);
+      var cut = craftSplitCubic(cx, cy, seg.nums[0], seg.nums[1], seg.nums[2], seg.nums[3], seg.nums[4], seg.nums[5], t);
+      out.push({
+        cmd: "C",
+        nums: cut.map(function (n) {
+          return craftRoundPt(n);
+        }),
+      });
+    } else {
+      out.push({
+        cmd: "L",
+        nums: [craftRoundPt(cx + t * (nx - cx)), craftRoundPt(cy + t * (ny - cy))],
+      });
+    }
+    remain = 0;
+    break;
+  }
+  return { d: craftSerializePath(out), total: total, trimmed: true };
+}
+
+function craftPathEndpoint(cmd, x, y) {
+  var C = cmd.cmd.toUpperCase();
+  var n = cmd.nums;
+  if (C === "H") return { x: n[n.length - 1], y: y };
+  if (C === "V") return { x: x, y: n[n.length - 1] };
+  if (C === "A") return { x: n[5], y: n[6] };
+  if (n.length >= 2) return { x: n[n.length - 2], y: n[n.length - 1] };
+  return { x: x, y: y };
+}
+
+function craftNormalizePathStart(d) {
+  var tokens = craftTokenizePath(d);
+  var x = 0;
+  var y = 0;
+  var abs = [];
+  tokens.forEach(function (t) {
+    var c = t.cmd;
+    var n = t.nums.slice();
+    var rel = c === c.toLowerCase() && c.toLowerCase() !== "z";
+    var C = c.toUpperCase();
+    var i = 0;
+    if (C === "Z") {
+      abs.push({ cmd: "Z", nums: [] });
+      return;
+    }
+    if (C === "M" || C === "L") {
+      var first = true;
+      while (i + 1 < n.length) {
+        x = n[i] + (rel ? x : 0);
+        y = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        abs.push({ cmd: first && C === "M" ? "M" : "L", nums: [x, y] });
+        first = false;
+      }
+      return;
+    }
+    if (C === "H") {
+      n.forEach(function (v) {
+        x = v + (rel ? x : 0);
+        abs.push({ cmd: "L", nums: [x, y] });
+      });
+      return;
+    }
+    if (C === "V") {
+      n.forEach(function (v) {
+        y = v + (rel ? y : 0);
+        abs.push({ cmd: "L", nums: [x, y] });
+      });
+      return;
+    }
+    if (C === "C") {
+      while (i + 5 < n.length) {
+        var c1x = n[i] + (rel ? x : 0);
+        var c1y = n[i + 1] + (rel ? y : 0);
+        var c2x = n[i + 2] + (rel ? x : 0);
+        var c2y = n[i + 3] + (rel ? y : 0);
+        x = n[i + 4] + (rel ? x : 0);
+        y = n[i + 5] + (rel ? y : 0);
+        i += 6;
+        abs.push({ cmd: "C", nums: [c1x, c1y, c2x, c2y, x, y] });
+      }
+      return;
+    }
+    if (C === "S") {
+      while (i + 3 < n.length) {
+        var s2x = n[i] + (rel ? x : 0);
+        var s2y = n[i + 1] + (rel ? y : 0);
+        x = n[i + 2] + (rel ? x : 0);
+        y = n[i + 3] + (rel ? y : 0);
+        i += 4;
+        abs.push({ cmd: "S", nums: [s2x, s2y, x, y] });
+      }
+      return;
+    }
+    if (C === "Q") {
+      while (i + 3 < n.length) {
+        var qx = n[i] + (rel ? x : 0);
+        var qy = n[i + 1] + (rel ? y : 0);
+        x = n[i + 2] + (rel ? x : 0);
+        y = n[i + 3] + (rel ? y : 0);
+        i += 4;
+        abs.push({ cmd: "Q", nums: [qx, qy, x, y] });
+      }
+      return;
+    }
+    if (C === "T") {
+      while (i + 1 < n.length) {
+        x = n[i] + (rel ? x : 0);
+        y = n[i + 1] + (rel ? y : 0);
+        i += 2;
+        abs.push({ cmd: "T", nums: [x, y] });
+      }
+      return;
+    }
+    if (C === "A") {
+      while (i + 6 < n.length) {
+        x = n[i + 5] + (rel ? x : 0);
+        y = n[i + 6] + (rel ? y : 0);
+        abs.push({
+          cmd: "A",
+          nums: [n[i], n[i + 1], n[i + 2], n[i + 3], n[i + 4], x, y],
+        });
+        i += 7;
+      }
+    }
+  });
+  var out = [];
+  var rotated = 0;
+  var closedCount = 0;
+  var i = 0;
+  while (i < abs.length) {
+    if (abs[i].cmd !== "M") {
+      out.push(abs[i]);
+      i += 1;
+      continue;
+    }
+    var sub = [abs[i]];
+    i += 1;
+    while (i < abs.length && abs[i].cmd !== "M") {
+      sub.push(abs[i]);
+      i += 1;
+    }
+    var closed = sub.length > 1 && sub[sub.length - 1].cmd === "Z";
+    if (!closed) {
+      var last = sub[sub.length - 1];
+      var end = craftPathEndpoint(last, sub[0].nums[0], sub[0].nums[1]);
+      if (Math.abs(end.x - sub[0].nums[0]) < 0.05 && Math.abs(end.y - sub[0].nums[1]) < 0.05) closed = true;
+    }
+    if (!closed) {
+      sub.forEach(function (s) {
+        out.push(s);
+      });
+      continue;
+    }
+    closedCount += 1;
+    var verts = [{ x: sub[0].nums[0], y: sub[0].nums[1] }];
+    var cmds = [];
+    var j;
+    var hasZ = false;
+    for (j = 1; j < sub.length; j++) {
+      if (sub[j].cmd === "Z") {
+        hasZ = true;
+        continue;
+      }
+      var ep = craftPathEndpoint(sub[j], verts[verts.length - 1].x, verts[verts.length - 1].y);
+      cmds.push(sub[j]);
+      verts.push(ep);
+    }
+    if (verts.length > 1) {
+      var lastV = verts[verts.length - 1];
+      if (Math.abs(lastV.x - verts[0].x) < 0.05 && Math.abs(lastV.y - verts[0].y) < 0.05) {
+        verts.pop();
+      }
+    }
+    if (verts.length < 2 || cmds.length < 1) {
+      sub.forEach(function (s) {
+        out.push(s);
+      });
+      continue;
+    }
+    var k = 0;
+    for (j = 1; j < verts.length; j++) {
+      if (verts[j].x < verts[k].x - 1e-6 || (Math.abs(verts[j].x - verts[k].x) < 1e-6 && verts[j].y < verts[k].y)) {
+        k = j;
+      }
+    }
+    if (k === 0) {
+      sub.forEach(function (s) {
+        out.push(s);
+      });
+      continue;
+    }
+    var nVerts = verts.length;
+    out.push({ cmd: "M", nums: [verts[k].x, verts[k].y] });
+    for (j = 0; j < nVerts - 1; j++) {
+      var from = (k + j) % nVerts;
+      if (from < cmds.length) out.push(cmds[from]);
+      else out.push({ cmd: "L", nums: [verts[0].x, verts[0].y] });
+    }
+    if (hasZ) out.push({ cmd: "Z", nums: [] });
+    rotated += 1;
+  }
+  return { d: craftSerializePath(craftRoundTokenNums(out)), rotated: rotated, closed: closedCount };
 }
 
 /** Split compound path data into absolute, drawable subpaths (skips bare movetos). */
@@ -5091,6 +5654,98 @@ function applyBatchCraftMarkup(markup, intent) {
     toPath.setAttribute("opacity", "0");
     toPath.setAttribute("aria-hidden", "true");
     status = "Morphing path d over " + dur + "s";
+  } else if (intent === "convert-svg-polyline-to-path") {
+    var polyCount = 0;
+    Array.from(svg.querySelectorAll("polyline")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var d = craftShapeToPath(el);
+      if (!d) return;
+      craftReplaceWithPath(el, d);
+      polyCount += 1;
+    });
+    status =
+      polyCount > 0
+        ? "Converted " + polyCount + " polyline" + (polyCount === 1 ? "" : "s") + " to path"
+        : "No polyline elements to convert";
+  } else if (intent === "convert-svg-line-to-path") {
+    var lineCount = 0;
+    Array.from(svg.querySelectorAll("line")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var d = craftShapeToPath(el);
+      if (!d) return;
+      craftReplaceWithPath(el, d);
+      lineCount += 1;
+    });
+    status =
+      lineCount > 0
+        ? "Converted " + lineCount + " line" + (lineCount === 1 ? "" : "s") + " to path"
+        : "No line elements to convert";
+  } else if (intent === "convert-quadratic-to-cubic-bezier") {
+    var quadCount = 0;
+    craftCollectPaths(svg).forEach(function (p) {
+      if (craftClosestProtected(p)) return;
+      var d = p.getAttribute("d");
+      if (!d || !/[QqTt]/.test(d)) return;
+      var next = craftQuadraticToCubic(d);
+      if (!next.changed) return;
+      p.setAttribute("d", next.d);
+      quadCount += next.changed;
+    });
+    status =
+      quadCount > 0
+        ? "Converted " + quadCount + " quadratic command" + (quadCount === 1 ? "" : "s") + " to cubics"
+        : "No Q/T commands to convert";
+  } else if (intent === "trim-svg-path-by-length") {
+    var keepLen = craftNumInput("path-trim-length-input", 80, 1, 2000);
+    var trimCount = 0;
+    var alreadyShort = 0;
+    craftCollectPaths(svg).forEach(function (p) {
+      if (craftClosestProtected(p)) return;
+      var d = p.getAttribute("d");
+      if (!d) return;
+      var next = craftTrimPathByLength(d, keepLen);
+      if (!next.total) return;
+      if (!next.trimmed) {
+        alreadyShort += 1;
+        return;
+      }
+      p.setAttribute("d", next.d);
+      trimCount += 1;
+    });
+    status =
+      trimCount > 0
+        ? "Trimmed " + trimCount + " path" + (trimCount === 1 ? "" : "s") + " to length " + keepLen
+        : alreadyShort > 0
+          ? "Path already shorter than Length " + keepLen
+          : "No path data to trim";
+  } else if (intent === "normalize-svg-path-start-point") {
+    var normCount = 0;
+    var alreadyNorm = 0;
+    var openOnly = 0;
+    craftCollectPaths(svg).forEach(function (p) {
+      if (craftClosestProtected(p)) return;
+      var d = p.getAttribute("d");
+      if (!d) return;
+      var next = craftNormalizePathStart(d);
+      if (!next.closed) {
+        openOnly += 1;
+        return;
+      }
+      if (!next.rotated) {
+        alreadyNorm += 1;
+        return;
+      }
+      p.setAttribute("d", next.d);
+      normCount += 1;
+    });
+    status =
+      normCount > 0
+        ? "Start point moved to the leftmost vertex"
+        : alreadyNorm > 0
+          ? "Start already at the leftmost vertex"
+          : openOnly > 0
+            ? "Open paths already start at their first M"
+            : "No closed path to rotate";
   } else {
     throw new Error("Unknown craft intent");
   }
