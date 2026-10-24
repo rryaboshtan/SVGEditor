@@ -645,6 +645,26 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Closed triangle starting at the right">\n' +
     '  <path fill="#38bdf8" d="M128 92 L 32 92 L 80 24 Z"/>\n' +
     "</svg>",
+  "close-open-svg-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Open chevron to close">\n' +
+    '  <path fill="none" stroke="#ea580c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" d="M28 28 L80 96 L132 28"/>\n' +
+    "</svg>",
+  "convert-svg-rect-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Rounded rect to convert">\n' +
+    '  <rect x="24" y="28" width="112" height="64" rx="16" fill="#38bdf8"/>\n' +
+    "</svg>",
+  "convert-svg-circle-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Circle to convert">\n' +
+    '  <circle cx="80" cy="60" r="36" fill="#f59e0b"/>\n' +
+    "</svg>",
+  "convert-svg-ellipse-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Ellipse to convert">\n' +
+    '  <ellipse cx="80" cy="60" rx="56" ry="28" fill="#a855f7"/>\n' +
+    "</svg>",
+  "convert-svg-polygon-to-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Closed polygon triangle">\n' +
+    '  <polygon points="80,16 144,104 16,104" fill="#22c55e"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -3655,12 +3675,98 @@ function craftShapeToPath(el) {
     var r = parseFloat(el.getAttribute("r") || 0);
     return "M " + cx + " " + (cy - r) + " A " + r + " " + r + " 0 1 1 " + cx + " " + (cy + r) + " A " + r + " " + r + " 0 1 1 " + cx + " " + (cy - r) + " Z";
   }
+  if (tag === "ellipse") {
+    var ecx = parseFloat(el.getAttribute("cx") || 0);
+    var ecy = parseFloat(el.getAttribute("cy") || 0);
+    var erx = parseFloat(el.getAttribute("rx") || 0);
+    var ery = parseFloat(el.getAttribute("ry") || 0);
+    return (
+      "M " +
+      craftRoundPt(ecx - erx) +
+      " " +
+      craftRoundPt(ecy) +
+      " A " +
+      craftRoundPt(erx) +
+      " " +
+      craftRoundPt(ery) +
+      " 0 1 1 " +
+      craftRoundPt(ecx + erx) +
+      " " +
+      craftRoundPt(ecy) +
+      " A " +
+      craftRoundPt(erx) +
+      " " +
+      craftRoundPt(ery) +
+      " 0 1 1 " +
+      craftRoundPt(ecx - erx) +
+      " " +
+      craftRoundPt(ecy) +
+      " Z"
+    );
+  }
   if (tag === "rect") {
-    var x = parseFloat(el.getAttribute("x") || 0);
-    var y = parseFloat(el.getAttribute("y") || 0);
-    var w = parseFloat(el.getAttribute("width") || 0);
-    var h = parseFloat(el.getAttribute("height") || 0);
-    return "M " + x + " " + y + " H " + (x + w) + " V " + (y + h) + " H " + x + " Z";
+    var x = parseFloat(el.getAttribute("x") || 0) || 0;
+    var y = parseFloat(el.getAttribute("y") || 0) || 0;
+    var w = parseFloat(el.getAttribute("width") || 0) || 0;
+    var h = parseFloat(el.getAttribute("height") || 0) || 0;
+    var rxAttr = el.getAttribute("rx");
+    var ryAttr = el.getAttribute("ry");
+    var rx = rxAttr != null && rxAttr !== "" ? parseFloat(rxAttr) : NaN;
+    var ry = ryAttr != null && ryAttr !== "" ? parseFloat(ryAttr) : NaN;
+    if (!Number.isFinite(rx)) rx = Number.isFinite(ry) ? ry : 0;
+    if (!Number.isFinite(ry)) ry = rx;
+    rx = Math.max(0, Math.min(Math.abs(rx), w / 2));
+    ry = Math.max(0, Math.min(Math.abs(ry), h / 2));
+    if (!rx || !ry) {
+      return "M " + x + " " + y + " H " + (x + w) + " V " + (y + h) + " H " + x + " Z";
+    }
+    return (
+      "M " +
+      craftRoundPt(x + rx) +
+      " " +
+      y +
+      " H " +
+      craftRoundPt(x + w - rx) +
+      " A " +
+      craftRoundPt(rx) +
+      " " +
+      craftRoundPt(ry) +
+      " 0 0 1 " +
+      craftRoundPt(x + w) +
+      " " +
+      craftRoundPt(y + ry) +
+      " V " +
+      craftRoundPt(y + h - ry) +
+      " A " +
+      craftRoundPt(rx) +
+      " " +
+      craftRoundPt(ry) +
+      " 0 0 1 " +
+      craftRoundPt(x + w - rx) +
+      " " +
+      craftRoundPt(y + h) +
+      " H " +
+      craftRoundPt(x + rx) +
+      " A " +
+      craftRoundPt(rx) +
+      " " +
+      craftRoundPt(ry) +
+      " 0 0 1 " +
+      x +
+      " " +
+      craftRoundPt(y + h - ry) +
+      " V " +
+      craftRoundPt(y + ry) +
+      " A " +
+      craftRoundPt(rx) +
+      " " +
+      craftRoundPt(ry) +
+      " 0 0 1 " +
+      craftRoundPt(x + rx) +
+      " " +
+      y +
+      " Z"
+    );
   }
   if (tag === "polygon" || tag === "polyline") {
     var pts = String(el.getAttribute("points") || "")
@@ -3714,6 +3820,18 @@ function craftReplaceWithPath(el, d) {
 
 function craftCollectPaths(svg) {
   return Array.from(svg.querySelectorAll("path"));
+}
+
+function craftConvertTagToPath(svg, tag) {
+  var n = 0;
+  Array.from(svg.querySelectorAll(tag)).forEach(function (el) {
+    if (craftClosestProtected(el)) return;
+    var d = craftShapeToPath(el);
+    if (!d) return;
+    craftReplaceWithPath(el, d);
+    n += 1;
+  });
+  return n;
 }
 
 function craftRoundTokenNums(tokens) {
@@ -4622,21 +4740,35 @@ function applyBatchCraftMarkup(markup, intent) {
       p.setAttribute("d", craftApplyMatrixToPath(d, mat));
     });
     status = "Path skewed around center (skewX baked into d)";
-  } else if (intent === "close-open-svg-paths-online") {
+  } else if (intent === "close-open-svg-paths-online" || intent === "close-open-svg-path") {
+    var closedCount = 0;
+    var alreadyClosed = 0;
     craftCollectPaths(svg).forEach(function (p) {
+      if (craftClosestProtected(p)) return;
       var d = String(p.getAttribute("d") || "").trim();
       if (!d) return;
       var parts = d.split(/(?=[Mm])/).filter(Boolean);
-      p.setAttribute(
-        "d",
-        parts
-          .map(function (part) {
-            return /[Zz]\s*$/.test(part) ? part : part.replace(/\s+$/, "") + " Z";
-          })
-          .join(" ")
-      );
+      if (!parts.length) return;
+      var didClose = 0;
+      var next = parts.map(function (part) {
+        if (/[Zz]\s*$/.test(part)) {
+          alreadyClosed += 1;
+          return part;
+        }
+        didClose += 1;
+        return part.replace(/\s+$/, "") + " Z";
+      });
+      if (didClose) {
+        p.setAttribute("d", next.join(" "));
+        closedCount += didClose;
+      }
     });
-    status = "Open subpaths closed with Z";
+    status =
+      closedCount > 0
+        ? "Closed " + closedCount + " open subpath" + (closedCount === 1 ? "" : "s") + " with Z"
+        : alreadyClosed > 0
+          ? "Path already closed with Z"
+          : "No path data to close";
   } else if (
     intent === "merge-svg-paths-online" ||
     intent === "unite-svg-paths-online" ||
@@ -5746,6 +5878,30 @@ function applyBatchCraftMarkup(markup, intent) {
           : openOnly > 0
             ? "Open paths already start at their first M"
             : "No closed path to rotate";
+  } else if (intent === "convert-svg-rect-to-path") {
+    var rectCount = craftConvertTagToPath(svg, "rect");
+    status =
+      rectCount > 0
+        ? "Converted " + rectCount + " rect" + (rectCount === 1 ? "" : "s") + " to path"
+        : "No rect elements to convert";
+  } else if (intent === "convert-svg-circle-to-path") {
+    var circleCount = craftConvertTagToPath(svg, "circle");
+    status =
+      circleCount > 0
+        ? "Converted " + circleCount + " circle" + (circleCount === 1 ? "" : "s") + " to path"
+        : "No circle elements to convert";
+  } else if (intent === "convert-svg-ellipse-to-path") {
+    var ellipseCount = craftConvertTagToPath(svg, "ellipse");
+    status =
+      ellipseCount > 0
+        ? "Converted " + ellipseCount + " ellipse" + (ellipseCount === 1 ? "" : "s") + " to path"
+        : "No ellipse elements to convert";
+  } else if (intent === "convert-svg-polygon-to-path") {
+    var gonCount = craftConvertTagToPath(svg, "polygon");
+    status =
+      gonCount > 0
+        ? "Converted " + gonCount + " polygon" + (gonCount === 1 ? "" : "s") + " to path"
+        : "No polygon elements to convert";
   } else {
     throw new Error("Unknown craft intent");
   }

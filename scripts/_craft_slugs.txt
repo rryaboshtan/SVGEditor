@@ -62,3 +62,8 @@ convert-svg-line-to-path
 convert-quadratic-to-cubic-bezier
 trim-svg-path-by-length
 normalize-svg-path-start-point
+close-open-svg-path
+convert-svg-rect-to-path
+convert-svg-circle-to-path
+convert-svg-ellipse-to-path
+convert-svg-polygon-to-path
