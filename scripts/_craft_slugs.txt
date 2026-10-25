@@ -67,3 +67,8 @@ convert-svg-rect-to-path
 convert-svg-circle-to-path
 convert-svg-ellipse-to-path
 convert-svg-polygon-to-path
+remove-svg-mask
+remove-svg-filters
+convert-svg-mask-to-clip-path
+svg-fade-in-animation
+svg-slide-in-animation

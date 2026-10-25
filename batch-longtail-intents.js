@@ -665,6 +665,57 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Closed polygon triangle">\n' +
     '  <polygon points="80,16 144,104 16,104" fill="#22c55e"/>\n' +
     "</svg>",
+  "remove-svg-mask":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Masked circle plus a clipped bar">\n' +
+    "  <defs>\n" +
+    '    <mask id="half-mask">\n' +
+    '      <rect x="0" y="0" width="80" height="120" fill="white"/>\n' +
+    "    </mask>\n" +
+    '    <clipPath id="keep-clip">\n' +
+    '      <rect x="108" y="24" width="36" height="72"/>\n' +
+    "    </clipPath>\n" +
+    "  </defs>\n" +
+    '  <rect x="12" y="16" width="136" height="88" rx="10" fill="#0f172a"/>\n' +
+    '  <circle cx="72" cy="60" r="36" fill="#38bdf8" mask="url(#half-mask)"/>\n' +
+    '  <rect x="100" y="20" width="48" height="80" fill="#f59e0b" clip-path="url(#keep-clip)"/>\n' +
+    "</svg>",
+  "remove-svg-filters":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Blurred card plus a masked disc">\n' +
+    "  <defs>\n" +
+    '    <filter id="soft-blur" x="-20%" y="-20%" width="140%" height="140%">\n' +
+    '      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>\n' +
+    "    </filter>\n" +
+    '    <mask id="keep-half">\n' +
+    '      <rect x="0" y="0" width="80" height="120" fill="white"/>\n' +
+    "    </mask>\n" +
+    "  </defs>\n" +
+    '  <rect x="20" y="24" width="120" height="72" rx="14" fill="#38bdf8" filter="url(#soft-blur)"/>\n' +
+    '  <circle cx="80" cy="60" r="18" fill="#082f49" mask="url(#keep-half)"/>\n' +
+    "</svg>",
+  "convert-svg-mask-to-clip-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Soft luminance mask over a card">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="fade-mask" x1="0" y1="0" x2="1" y2="0">\n' +
+    '      <stop offset="0" stop-color="#ffffff"/>\n' +
+    '      <stop offset="1" stop-color="#000000"/>\n' +
+    "    </linearGradient>\n" +
+    '    <mask id="soft-mask">\n' +
+    '      <rect x="16" y="20" width="128" height="80" fill="url(#fade-mask)"/>\n' +
+    "    </mask>\n" +
+    "  </defs>\n" +
+    '  <rect x="8" y="8" width="144" height="104" rx="12" fill="#0f172a"/>\n' +
+    '  <rect x="16" y="20" width="128" height="80" rx="8" fill="#38bdf8" mask="url(#soft-mask)"/>\n' +
+    "</svg>",
+  "svg-fade-in-animation":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Icon to fade in">\n' +
+    '  <rect x="28" y="24" width="104" height="72" rx="14" fill="#0ea5e9"/>\n' +
+    '  <path fill="#e0f2fe" d="M80 40 L96 72 H64 Z"/>\n' +
+    "</svg>",
+  "svg-slide-in-animation":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Icon to slide in">\n' +
+    '  <rect x="36" y="28" width="88" height="64" rx="12" fill="#22c55e"/>\n' +
+    '  <circle cx="80" cy="60" r="16" fill="#14532d"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -2993,6 +3044,163 @@ function craftWritePaint(el, prop, value) {
   }
   if (value == null) el.removeAttribute(prop);
   else el.setAttribute(prop, value);
+}
+
+function craftEachElement(svg, fn) {
+  fn(svg);
+  Array.from(svg.querySelectorAll("*")).forEach(fn);
+}
+
+function craftUrlFrag(value) {
+  var m = String(value || "").match(/url\(\s*['"]?#([^)'"]+)['"]?\s*\)/i);
+  return m ? m[1] : "";
+}
+
+function craftIsMaskHideFill(el) {
+  var f = String(craftReadPaint(el, "fill") || "").trim().toLowerCase();
+  if (!f || f === "none") return true;
+  if (f === "black" || f === "#000" || f === "#000000") return true;
+  return /^rgb\(\s*0\s*,\s*0\s*,\s*0\s*\)$/.test(f);
+}
+
+function craftPruneEmptyDefs(svg) {
+  Array.from(svg.querySelectorAll("defs")).forEach(function (d) {
+    if (!d.children || !d.children.length) {
+      if (d.parentNode) d.parentNode.removeChild(d);
+    }
+  });
+}
+
+function craftStripPaintProp(svg, prop) {
+  var attrs = 0;
+  craftEachElement(svg, function (el) {
+    var tag = String(el.localName || "").toLowerCase();
+    if (tag === prop) return;
+    var raw = craftReadPaint(el, prop);
+    if (raw) {
+      craftWritePaint(el, prop, null);
+      attrs += 1;
+    }
+    if (prop === "mask") {
+      if (el.hasAttribute("mask-type")) el.removeAttribute("mask-type");
+      var sm = batchParseStyleDecl(el.getAttribute("style") || "");
+      var dirty = false;
+      ["-webkit-mask", "mask-image", "-webkit-mask-image"].forEach(function (k) {
+        if (Object.prototype.hasOwnProperty.call(sm, k)) {
+          delete sm[k];
+          dirty = true;
+        }
+      });
+      if (dirty) {
+        var next = batchStyleToString(sm);
+        if (next) el.setAttribute("style", next);
+        else el.removeAttribute("style");
+      }
+    }
+  });
+  var nodes = 0;
+  Array.from(svg.querySelectorAll(prop)).forEach(function (el) {
+    if (el.parentNode) el.parentNode.removeChild(el);
+    nodes += 1;
+  });
+  craftPruneEmptyDefs(svg);
+  return { attrs: attrs, nodes: nodes };
+}
+
+function craftMaskInsideMask(el) {
+  var p = el.parentNode;
+  while (p && p.nodeType === 1) {
+    if (String(p.localName || "").toLowerCase() === "mask") return true;
+    p = p.parentNode;
+  }
+  return false;
+}
+
+function craftConvertMasksToClipPaths(svg) {
+  var clips = 0;
+  Array.from(svg.querySelectorAll("mask")).forEach(function (mask) {
+    if (craftMaskInsideMask(mask)) return;
+    var id = mask.getAttribute("id") || "clip-from-mask-" + clips;
+    var clip = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+    clip.setAttribute("id", id);
+    var units = mask.getAttribute("maskContentUnits") || "";
+    if (units === "objectBoundingBox") clip.setAttribute("clipPathUnits", "objectBoundingBox");
+    var kids = Array.from(mask.children);
+    var keep = kids.filter(function (k) {
+      var t = String(k.localName || "").toLowerCase();
+      if (
+        ["path", "rect", "circle", "ellipse", "polygon", "polyline", "line", "text", "g"].indexOf(
+          t
+        ) < 0
+      ) {
+        return false;
+      }
+      if (t === "g") return true;
+      return !craftIsMaskHideFill(k);
+    });
+    if (!keep.length) {
+      keep = kids.filter(function (k) {
+        return k.nodeType === 1;
+      });
+    }
+    keep.forEach(function (k) {
+      clip.appendChild(k.cloneNode(true));
+    });
+    if (mask.parentNode) mask.parentNode.replaceChild(clip, mask);
+    else batchEnsureDefs(svg).appendChild(clip);
+    clips += 1;
+  });
+  var refs = 0;
+  craftEachElement(svg, function (el) {
+    if (String(el.localName || "").toLowerCase() === "mask") return;
+    var raw = craftReadPaint(el, "mask");
+    if (!raw) return;
+    var id = craftUrlFrag(raw);
+    craftWritePaint(el, "mask", null);
+    if (el.hasAttribute("mask-type")) el.removeAttribute("mask-type");
+    if (id) craftWritePaint(el, "clip-path", "url(#" + id + ")");
+    refs += 1;
+  });
+  return { clips: clips, refs: refs };
+}
+
+function craftEnterAnimCss(kind, dur, from) {
+  var hold = Math.max(0.35, Math.min(0.55, 0.45));
+  var sec = Number(dur);
+  if (!Number.isFinite(sec) || sec <= 0) sec = 1;
+  var secStr = String(Math.round(sec * 10) / 10);
+  if (kind === "fade") {
+    return (
+      "@keyframes svgeditor-fade-in {\n" +
+      "  0% { opacity: 0; }\n" +
+      "  " +
+      Math.round(hold * 100) +
+      "% { opacity: 1; }\n" +
+      "  100% { opacity: 1; }\n" +
+      "}\n" +
+      ".svgeditor-anim { animation: svgeditor-fade-in " +
+      secStr +
+      "s ease-out infinite; }\n"
+    );
+  }
+  var tx = "translateX(-48px)";
+  if (from === "right") tx = "translateX(48px)";
+  else if (from === "top") tx = "translateY(-48px)";
+  else if (from === "bottom") tx = "translateY(48px)";
+  return (
+    "@keyframes svgeditor-slide-in {\n" +
+    "  0% { transform: " +
+    tx +
+    "; }\n" +
+    "  " +
+    Math.round(hold * 100) +
+    "% { transform: none; }\n" +
+    "  100% { transform: none; }\n" +
+    "}\n" +
+    ".svgeditor-anim { animation: svgeditor-slide-in " +
+    secStr +
+    "s ease-out infinite; }\n"
+  );
 }
 
 var CRAFT_NAMED_COLORS = {
@@ -5902,6 +6110,48 @@ function applyBatchCraftMarkup(markup, intent) {
       gonCount > 0
         ? "Converted " + gonCount + " polygon" + (gonCount === 1 ? "" : "s") + " to path"
         : "No polygon elements to convert";
+  } else if (intent === "remove-svg-mask") {
+    var maskStrip = craftStripPaintProp(svg, "mask");
+    status =
+      maskStrip.nodes > 0 || maskStrip.attrs > 0
+        ? "Removed " +
+          maskStrip.nodes +
+          " mask" +
+          (maskStrip.nodes === 1 ? "" : "s") +
+          (maskStrip.attrs ? " and " + maskStrip.attrs + " mask=" : "")
+        : "No mask to remove";
+  } else if (intent === "remove-svg-filters") {
+    var filterStrip = craftStripPaintProp(svg, "filter");
+    status =
+      filterStrip.nodes > 0 || filterStrip.attrs > 0
+        ? "Removed " +
+          filterStrip.nodes +
+          " filter" +
+          (filterStrip.nodes === 1 ? "" : "s") +
+          (filterStrip.attrs ? " and " + filterStrip.attrs + " filter=" : "")
+        : "No filter to remove";
+  } else if (intent === "convert-svg-mask-to-clip-path") {
+    var maskConv = craftConvertMasksToClipPaths(svg);
+    status =
+      maskConv.clips > 0 || maskConv.refs > 0
+        ? "Converted " +
+          maskConv.clips +
+          " mask" +
+          (maskConv.clips === 1 ? "" : "s") +
+          " to clipPath"
+        : "No mask to convert";
+  } else if (intent === "svg-fade-in-animation") {
+    var fadeDur = craftNumInput("fade-in-duration-input", 1.2, 0.2, 12);
+    batchEnsureAnimStyle(svg, craftEnterAnimCss("fade", fadeDur));
+    batchWrapAnimGroup(svg);
+    status = "Fade-in opacity animation applied";
+  } else if (intent === "svg-slide-in-animation") {
+    var slideDur = craftNumInput("slide-in-duration-input", 0.8, 0.2, 12);
+    var slideFrom = craftSelectInput("slide-in-direction-input", "left");
+    batchEnsureAnimStyle(svg, craftEnterAnimCss("slide", slideDur, slideFrom));
+    batchWrapAnimGroup(svg);
+    svg.setAttribute("overflow", "hidden");
+    status = "Slide-in from " + slideFrom + " applied";
   } else {
     throw new Error("Unknown craft intent");
   }
