@@ -72,3 +72,8 @@ remove-svg-filters
 convert-svg-mask-to-clip-path
 svg-fade-in-animation
 svg-slide-in-animation
+add-svg-drop-shadow
+add-svg-inner-shadow
+add-svg-blur-filter
+flatten-svg-clip-path
+remove-svg-clip-path

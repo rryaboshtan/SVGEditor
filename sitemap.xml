@@ -1621,6 +1621,36 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/add-svg-drop-shadow</loc>
+    <lastmod>2026-10-26T16:15:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/add-svg-inner-shadow</loc>
+    <lastmod>2026-10-26T16:15:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/add-svg-blur-filter</loc>
+    <lastmod>2026-10-26T16:15:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/flatten-svg-clip-path</loc>
+    <lastmod>2026-10-26T16:15:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/remove-svg-clip-path</loc>
+    <lastmod>2026-10-26T16:15:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/privacy</loc>
     <lastmod>2026-08-25T21:03:26+03:00</lastmod>
     <changefreq>yearly</changefreq>

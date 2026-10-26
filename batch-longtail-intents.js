@@ -716,6 +716,42 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <rect x="36" y="28" width="88" height="64" rx="12" fill="#22c55e"/>\n' +
     '  <circle cx="80" cy="60" r="16" fill="#14532d"/>\n' +
     "</svg>",
+  "add-svg-drop-shadow":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Sharp card for a drop shadow">\n' +
+    '  <rect x="28" y="22" width="104" height="76" rx="14" fill="#0ea5e9"/>\n' +
+    '  <path fill="#e0f2fe" d="M80 38 L98 74 H62 Z"/>\n' +
+    "</svg>",
+  "add-svg-inner-shadow":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Filled card for an inner shadow">\n' +
+    '  <rect x="24" y="20" width="112" height="80" rx="16" fill="#f59e0b"/>\n' +
+    "</svg>",
+  "add-svg-blur-filter":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Sharp badge to blur">\n' +
+    '  <circle cx="80" cy="60" r="36" fill="#a855f7"/>\n' +
+    '  <circle cx="80" cy="60" r="14" fill="#faf5ff"/>\n' +
+    "</svg>",
+  "flatten-svg-clip-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Full rect clipped to a triangle">\n' +
+    "  <defs>\n" +
+    '    <clipPath id="tri-clip">\n' +
+    '      <polygon points="80,16 144,104 16,104"/>\n' +
+    "    </clipPath>\n" +
+    "  </defs>\n" +
+    '  <rect x="8" y="8" width="144" height="104" fill="#38bdf8" clip-path="url(#tri-clip)"/>\n' +
+    "</svg>",
+  "remove-svg-clip-path":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Clipped circle plus a masked bar">\n' +
+    "  <defs>\n" +
+    '    <clipPath id="chip-clip">\n' +
+    '      <rect x="48" y="28" width="64" height="64"/>\n' +
+    "    </clipPath>\n" +
+    '    <mask id="keep-mask">\n' +
+    '      <rect x="0" y="0" width="80" height="120" fill="white"/>\n' +
+    "    </mask>\n" +
+    "  </defs>\n" +
+    '  <circle cx="80" cy="60" r="40" fill="#f59e0b" clip-path="url(#chip-clip)"/>\n' +
+    '  <rect x="12" y="16" width="40" height="88" fill="#0ea5e9" mask="url(#keep-mask)"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -3201,6 +3237,184 @@ function craftEnterAnimCss(kind, dur, from) {
     secStr +
     "s ease-out infinite; }\n"
   );
+}
+
+function craftWrapFilterRoot(svg) {
+  var existing = svg.querySelector("g[data-svgeditor-filter-root]");
+  if (existing) return existing;
+  var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.setAttribute("data-svgeditor-filter-root", "1");
+  var kids = Array.from(svg.childNodes).filter(function (n) {
+    if (n.nodeType !== 1) return true;
+    var t = String(n.localName || "").toLowerCase();
+    return t !== "defs" && t !== "style" && t !== "title" && t !== "desc";
+  });
+  kids.forEach(function (n) {
+    g.appendChild(n);
+  });
+  svg.appendChild(g);
+  return g;
+}
+
+function craftFilterRegion(filter) {
+  filter.setAttribute("x", "-50%");
+  filter.setAttribute("y", "-50%");
+  filter.setAttribute("width", "200%");
+  filter.setAttribute("height", "200%");
+  filter.setAttribute("color-interpolation-filters", "sRGB");
+}
+
+function craftUpsertFilter(svg, id, build) {
+  var defs = batchEnsureDefs(svg);
+  var prev = craftFindById(svg, id);
+  if (prev && String(prev.localName || "").toLowerCase() === "filter") {
+    while (prev.firstChild) prev.removeChild(prev.firstChild);
+    craftFilterRegion(prev);
+    build(prev);
+    return prev;
+  }
+  var filter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+  filter.setAttribute("id", id);
+  craftFilterRegion(filter);
+  build(filter);
+  defs.appendChild(filter);
+  return filter;
+}
+
+function craftFe(parent, name, attrs) {
+  var el = document.createElementNS("http://www.w3.org/2000/svg", name);
+  Object.keys(attrs).forEach(function (k) {
+    el.setAttribute(k, attrs[k]);
+  });
+  parent.appendChild(el);
+  return el;
+}
+
+function craftApplyNamedFilter(svg, id) {
+  var g = craftWrapFilterRoot(svg);
+  craftWritePaint(g, "filter", "url(#" + id + ")");
+  svg.setAttribute("overflow", "visible");
+  return g;
+}
+
+function craftFirstPaintEl(el) {
+  var tag = String(el.localName || "").toLowerCase();
+  if (
+    ["path", "circle", "ellipse", "rect", "polygon", "polyline", "line", "text"].indexOf(tag) >= 0
+  ) {
+    return el;
+  }
+  var hit = el.querySelector && el.querySelector("path,circle,ellipse,rect,polygon,polyline,line,text");
+  return hit || el;
+}
+
+function craftCopyPaintOnto(from, to) {
+  var src = craftFirstPaintEl(from);
+  [
+    "fill",
+    "stroke",
+    "stroke-width",
+    "stroke-linecap",
+    "stroke-linejoin",
+    "opacity",
+    "fill-opacity",
+    "stroke-opacity",
+    "fill-rule",
+  ].forEach(function (prop) {
+    var v = craftReadPaint(src, prop);
+    if (v) craftWritePaint(to, prop, v);
+  });
+  if (!craftReadPaint(to, "fill")) {
+    var srcFill = craftReadPaint(src, "fill");
+    craftWritePaint(to, "fill", srcFill || "black");
+  }
+}
+
+function craftStripClipPath(svg) {
+  var attrs = 0;
+  craftEachElement(svg, function (el) {
+    var tag = String(el.localName || "").toLowerCase();
+    if (tag === "clippath") return;
+    if (craftReadPaint(el, "clip-path")) {
+      craftWritePaint(el, "clip-path", null);
+      attrs += 1;
+    }
+    if (el.hasAttribute("clipPath")) {
+      el.removeAttribute("clipPath");
+      attrs += 1;
+    }
+    if (el.hasAttribute("clip-rule")) el.removeAttribute("clip-rule");
+  });
+  var nodes = 0;
+  Array.from(svg.querySelectorAll("clipPath")).forEach(function (el) {
+    if (el.parentNode) el.parentNode.removeChild(el);
+    nodes += 1;
+  });
+  craftPruneEmptyDefs(svg);
+  return { attrs: attrs, nodes: nodes };
+}
+
+function craftClipIdStillUsed(svg, id) {
+  var used = false;
+  craftEachElement(svg, function (el) {
+    if (used) return;
+    var tag = String(el.localName || "").toLowerCase();
+    if (tag === "clippath") return;
+    var raw = craftReadPaint(el, "clip-path") || el.getAttribute("clipPath") || "";
+    if (craftUrlFrag(raw) === id) used = true;
+  });
+  return used;
+}
+
+function craftFlattenClipPath(svg) {
+  var converted = 0;
+  var jobs = [];
+  craftEachElement(svg, function (el) {
+    var tag = String(el.localName || "").toLowerCase();
+    if (tag === "clippath" || tag === "defs" || tag === "mask" || tag === "filter") return;
+    var raw = craftReadPaint(el, "clip-path") || el.getAttribute("clipPath") || "";
+    if (!raw) return;
+    var id = craftUrlFrag(raw);
+    if (!id) return;
+    var clip = craftFindById(svg, id);
+    if (!clip || String(clip.localName || "").toLowerCase() !== "clippath") return;
+    jobs.push({ el: el, clip: clip, id: id });
+  });
+  jobs.forEach(function (job) {
+    var kids = Array.from(job.clip.children).filter(function (k) {
+      var t = String(k.localName || "").toLowerCase();
+      return (
+        ["path", "rect", "circle", "ellipse", "polygon", "polyline", "line", "text", "g"].indexOf(
+          t
+        ) >= 0
+      );
+    });
+    if (!kids.length) {
+      craftWritePaint(job.el, "clip-path", null);
+      if (job.el.hasAttribute("clipPath")) job.el.removeAttribute("clipPath");
+      converted += 1;
+      return;
+    }
+    var parent = job.el.parentNode;
+    if (!parent) return;
+    var xf = job.el.getAttribute("transform");
+    kids.forEach(function (k) {
+      var clone = k.cloneNode(true);
+      craftCopyPaintOnto(job.el, clone);
+      craftWritePaint(clone, "clip-path", null);
+      if (xf && !clone.getAttribute("transform")) clone.setAttribute("transform", xf);
+      parent.insertBefore(clone, job.el);
+    });
+    parent.removeChild(job.el);
+    converted += 1;
+  });
+  Array.from(svg.querySelectorAll("clipPath")).forEach(function (cp) {
+    var id = cp.getAttribute("id");
+    if (id && craftClipIdStillUsed(svg, id)) return;
+    if (cp.parentNode) cp.parentNode.removeChild(cp);
+  });
+  craftPruneEmptyDefs(svg);
+  return converted;
 }
 
 var CRAFT_NAMED_COLORS = {
@@ -6152,6 +6366,75 @@ function applyBatchCraftMarkup(markup, intent) {
     batchWrapAnimGroup(svg);
     svg.setAttribute("overflow", "hidden");
     status = "Slide-in from " + slideFrom + " applied";
+  } else if (intent === "add-svg-drop-shadow") {
+    var dropBlur = craftNumInput("drop-shadow-blur-input", 3, 0, 24);
+    var dropDx = craftNumInput("drop-shadow-dx-input", 4, -32, 32);
+    var dropDy = craftNumInput("drop-shadow-dy-input", 4, -32, 32);
+    craftUpsertFilter(svg, "svgeditor-drop-shadow", function (filter) {
+      craftFe(filter, "feDropShadow", {
+        dx: String(dropDx),
+        dy: String(dropDy),
+        stdDeviation: String(dropBlur),
+        "flood-color": "#000000",
+        "flood-opacity": "0.45",
+      });
+    });
+    craftApplyNamedFilter(svg, "svgeditor-drop-shadow");
+    status = "Drop shadow applied";
+  } else if (intent === "add-svg-inner-shadow") {
+    var innerBlur = craftNumInput("inner-shadow-blur-input", 3, 0, 24);
+    var innerDx = craftNumInput("inner-shadow-dx-input", 2, -32, 32);
+    var innerDy = craftNumInput("inner-shadow-dy-input", 2, -32, 32);
+    craftUpsertFilter(svg, "svgeditor-inner-shadow", function (filter) {
+      craftFe(filter, "feOffset", { dx: String(innerDx), dy: String(innerDy) });
+      craftFe(filter, "feGaussianBlur", { stdDeviation: String(innerBlur), result: "offset-blur" });
+      craftFe(filter, "feComposite", {
+        operator: "out",
+        in: "SourceGraphic",
+        in2: "offset-blur",
+        result: "inverse",
+      });
+      craftFe(filter, "feFlood", {
+        "flood-color": "#000000",
+        "flood-opacity": "0.55",
+        result: "color",
+      });
+      craftFe(filter, "feComposite", {
+        operator: "in",
+        in: "color",
+        in2: "inverse",
+        result: "shadow",
+      });
+      craftFe(filter, "feComposite", { operator: "over", in: "shadow", in2: "SourceGraphic" });
+    });
+    craftApplyNamedFilter(svg, "svgeditor-inner-shadow");
+    status = "Inner shadow applied";
+  } else if (intent === "add-svg-blur-filter") {
+    var blurStd = craftNumInput("blur-filter-std-input", 4, 0, 24);
+    craftUpsertFilter(svg, "svgeditor-blur", function (filter) {
+      craftFe(filter, "feGaussianBlur", {
+        in: "SourceGraphic",
+        stdDeviation: String(blurStd),
+      });
+    });
+    craftApplyNamedFilter(svg, "svgeditor-blur");
+    status = "Blur filter applied";
+  } else if (intent === "flatten-svg-clip-path") {
+    var flatCount = craftFlattenClipPath(svg);
+    status =
+      flatCount > 0
+        ? "Flattened " + flatCount + " clipPath" + (flatCount === 1 ? "" : "s") + " into painted shapes"
+        : "No clipPath to flatten";
+  } else if (intent === "remove-svg-clip-path") {
+    var clipStrip = craftStripClipPath(svg);
+    status =
+      clipStrip.nodes > 0 || clipStrip.attrs > 0
+        ? "Removed " +
+          clipStrip.nodes +
+          " clipPath" +
+          (clipStrip.nodes === 1 ? "" : "s") +
+          (clipStrip.attrs ? " and " + clipStrip.attrs + " clip-path=" : "")
+        : "No clipPath to remove";
   } else {
     throw new Error("Unknown craft intent");
   }
