@@ -77,3 +77,8 @@ add-svg-inner-shadow
 add-svg-blur-filter
 flatten-svg-clip-path
 remove-svg-clip-path
+grayscale-svg-colors
+darken-svg-colors
+lighten-svg-colors
+remove-svg-fill
+set-svg-opacity

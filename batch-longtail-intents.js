@@ -752,6 +752,39 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <circle cx="80" cy="60" r="40" fill="#f59e0b" clip-path="url(#chip-clip)"/>\n' +
     '  <rect x="12" y="16" width="40" height="88" fill="#0ea5e9" mask="url(#keep-mask)"/>\n' +
     "</svg>",
+  "grayscale-svg-colors":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Colorful bars and a gradient">\n' +
+    "  <defs>\n" +
+    '    <linearGradient id="tone" x1="0" y1="0" x2="1" y2="0">\n' +
+    '      <stop offset="0" stop-color="#0ea5e9"/>\n' +
+    '      <stop offset="1" stop-color="#f59e0b"/>\n' +
+    "    </linearGradient>\n" +
+    "  </defs>\n" +
+    '  <rect x="12" y="20" width="72" height="80" rx="10" fill="url(#tone)"/>\n' +
+    '  <circle cx="124" cy="60" r="28" fill="#22c55e" stroke="#14532d" stroke-width="6"/>\n' +
+    "</svg>",
+  "darken-svg-colors":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Bright sky, amber, and lime">\n' +
+    '  <rect x="12" y="22" width="42" height="76" rx="8" fill="#38bdf8"/>\n' +
+    '  <rect x="62" y="22" width="42" height="76" rx="8" fill="#fbbf24"/>\n' +
+    '  <rect x="112" y="22" width="36" height="76" rx="8" fill="#4ade80"/>\n' +
+    "</svg>",
+  "lighten-svg-colors":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Deep navy, crimson, and forest">\n' +
+    '  <rect x="12" y="22" width="42" height="76" rx="8" fill="#0f172a"/>\n' +
+    '  <rect x="62" y="22" width="42" height="76" rx="8" fill="#9f1239"/>\n' +
+    '  <rect x="112" y="22" width="36" height="76" rx="8" fill="#14532d"/>\n' +
+    "</svg>",
+  "remove-svg-fill":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Filled shapes with visible strokes">\n' +
+    '  <rect x="16" y="24" width="56" height="72" rx="12" fill="#0ea5e9" stroke="#082f49" stroke-width="6"/>\n' +
+    '  <circle cx="116" cy="60" r="32" fill="#f59e0b" stroke="#7c2d12" stroke-width="6"/>\n' +
+    "</svg>",
+  "set-svg-opacity":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Opaque badge">\n' +
+    '  <rect x="28" y="22" width="104" height="76" rx="14" fill="#6366f1"/>\n' +
+    '  <circle cx="80" cy="60" r="18" fill="#e0e7ff"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -3673,6 +3706,67 @@ function craftHexifyPaintValue(v) {
   return hex || v;
 }
 
+function craftRgbFromPaint(v) {
+  var hex = craftColorToHex(v);
+  if (!hex || hex.charAt(0) !== "#") return null;
+  var s = hex.slice(1);
+  if (s.length < 6) return null;
+  var a = s.length >= 8 ? parseInt(s.slice(6, 8), 16) / 255 : null;
+  if (s.length >= 8 && !Number.isFinite(a)) a = null;
+  var r = parseInt(s.slice(0, 2), 16);
+  var g = parseInt(s.slice(2, 4), 16);
+  var b = parseInt(s.slice(4, 6), 16);
+  if (![r, g, b].every(Number.isFinite)) return null;
+  return { r: r, g: g, b: b, a: a };
+}
+
+function craftInsideClipOrMask(el) {
+  var n = el;
+  while (n && n.nodeType === 1) {
+    var t = String(n.localName || "").toLowerCase();
+    if (t === "mask" || t === "clippath" || t === "pattern" || t === "marker") return true;
+    n = n.parentNode;
+  }
+  return false;
+}
+
+var CRAFT_COLOR_PROPS = ["fill", "stroke", "stop-color", "flood-color", "lighting-color", "color"];
+
+function craftMapSvgPaints(svg, mapper) {
+  var n = 0;
+  Array.from(svg.querySelectorAll("*")).forEach(function (el) {
+    if (craftInsideClipOrMask(el)) return;
+    CRAFT_COLOR_PROPS.forEach(function (prop) {
+      var v = craftReadPaint(el, prop);
+      if (!v) return;
+      var next = mapper(v);
+      if (!next || next === v) return;
+      craftWritePaint(el, prop, next);
+      n += 1;
+    });
+  });
+  return n;
+}
+
+function craftGrayscalePaint(v) {
+  var c = craftRgbFromPaint(v);
+  if (!c) return null;
+  var y = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+  return craftChannelsToHex(y, y, y, c.a);
+}
+
+function craftMixPaintToward(v, tr, tg, tb, amount) {
+  var c = craftRgbFromPaint(v);
+  if (!c) return null;
+  var t = Math.max(0, Math.min(1, amount));
+  return craftChannelsToHex(
+    c.r + (tr - c.r) * t,
+    c.g + (tg - c.g) * t,
+    c.b + (tb - c.b) * t,
+    c.a
+  );
+}
+
 function craftDist(a, b) {
   var dx = b.x - a.x;
   var dy = b.y - a.y;
@@ -6435,6 +6529,50 @@ function applyBatchCraftMarkup(markup, intent) {
           (clipStrip.nodes === 1 ? "" : "s") +
           (clipStrip.attrs ? " and " + clipStrip.attrs + " clip-path=" : "")
         : "No clipPath to remove";
+  } else if (intent === "grayscale-svg-colors") {
+    var grayCount = craftMapSvgPaints(svg, craftGrayscalePaint);
+    status =
+      grayCount > 0
+        ? "Grayscaled " + grayCount + " paint" + (grayCount === 1 ? "" : "s")
+        : "No parseable colors to grayscale";
+  } else if (intent === "darken-svg-colors") {
+    var darkAmt = craftNumInput("darken-amount-input", 30, 5, 90) / 100;
+    var darkCount = craftMapSvgPaints(svg, function (v) {
+      return craftMixPaintToward(v, 0, 0, 0, darkAmt);
+    });
+    status =
+      darkCount > 0
+        ? "Darkened " + darkCount + " paint" + (darkCount === 1 ? "" : "s")
+        : "No parseable colors to darken";
+  } else if (intent === "lighten-svg-colors") {
+    var lightAmt = craftNumInput("lighten-amount-input", 30, 5, 90) / 100;
+    var lightCount = craftMapSvgPaints(svg, function (v) {
+      return craftMixPaintToward(v, 255, 255, 255, lightAmt);
+    });
+    status =
+      lightCount > 0
+        ? "Lightened " + lightCount + " paint" + (lightCount === 1 ? "" : "s")
+        : "No parseable colors to lighten";
+  } else if (intent === "remove-svg-fill") {
+    var fillOff = 0;
+    Array.from(
+      svg.querySelectorAll("path,circle,ellipse,rect,polygon,polyline,line,text,g")
+    ).forEach(function (el) {
+      if (craftInsideClipOrMask(el)) return;
+      var fill = craftReadPaint(el, "fill");
+      if (!fill || fill === "none") return;
+      craftWritePaint(el, "fill", "none");
+      fillOff += 1;
+    });
+    status =
+      fillOff > 0
+        ? "Removed fill from " + fillOff + " element" + (fillOff === 1 ? "" : "s")
+        : "No fills to remove";
+  } else if (intent === "set-svg-opacity") {
+    var opac = craftNumInput("svg-opacity-input", 0.45, 0.05, 1);
+    opac = Math.round(opac * 100) / 100;
+    craftWritePaint(svg, "opacity", String(opac));
+    status = "Root opacity set to " + opac;
   } else {
     throw new Error("Unknown craft intent");
   }
