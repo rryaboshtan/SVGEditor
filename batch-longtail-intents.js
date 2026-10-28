@@ -785,6 +785,32 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '  <rect x="28" y="22" width="104" height="76" rx="14" fill="#6366f1"/>\n' +
     '  <circle cx="80" cy="60" r="18" fill="#e0e7ff"/>\n' +
     "</svg>",
+  "subtract-svg-paths":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 120" role="img" aria-label="Moon subtract sample">\n' +
+    '  <path fill="#334155" d="M70 20 A40 40 0 1 1 70 100 A40 40 0 1 1 70 20 Z"/>\n' +
+    '  <path fill="#f8fafc" d="M82 36 A24 24 0 1 1 82 84 A24 24 0 1 1 82 36 Z"/>\n' +
+    "</svg>",
+  "exclude-svg-paths":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" role="img" aria-label="Overlapping discs to exclude">\n' +
+    '  <path fill="#0ea5e9" d="M58 20 A36 36 0 1 1 58 92 A36 36 0 1 1 58 20 Z"/>\n' +
+    '  <path fill="#f43f5e" d="M102 20 A36 36 0 1 1 102 92 A36 36 0 1 1 102 20 Z"/>\n' +
+    "</svg>",
+  "round-svg-path-corners":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Sharp house path">\n' +
+    '  <path fill="#0ea5e9" d="M20 108 L20 56 L80 16 L140 56 L140 108 L96 108 L96 72 L64 72 L64 108 Z"/>\n' +
+    "</svg>",
+  "convert-svg-named-colors-to-hex":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Named fills plus one hex">\n' +
+    '  <rect x="12" y="22" width="42" height="76" rx="8" fill="crimson"/>\n' +
+    '  <rect x="62" y="22" width="42" height="76" rx="8" fill="navy"/>\n' +
+    '  <rect x="112" y="22" width="36" height="76" rx="8" fill="#22c55e"/>\n' +
+    "</svg>",
+  "replace-svg-color":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Sky fills and an amber bar">\n' +
+    '  <rect x="12" y="22" width="42" height="76" rx="8" fill="#0ea5e9"/>\n' +
+    '  <rect x="62" y="22" width="42" height="76" rx="8" fill="#0ea5e9"/>\n' +
+    '  <rect x="112" y="22" width="36" height="76" rx="8" fill="#f59e0b"/>\n' +
+    "</svg>",
   "fix-svg-stretching-in-flexbox":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" preserveAspectRatio="none" role="img" aria-label="Wide mark that flex will stretch">\n' +
     '  <rect x="8" y="12" width="184" height="56" rx="12" fill="#0ea5e9"/>\n' +
@@ -3767,6 +3793,329 @@ function craftMixPaintToward(v, tr, tg, tb, amount) {
   );
 }
 
+function craftNamedPaintToHex(v) {
+  var lower = String(v || "").trim().toLowerCase();
+  if (!CRAFT_NAMED_COLORS[lower]) return null;
+  return CRAFT_NAMED_COLORS[lower];
+}
+
+function craftPaintsEqual(a, b) {
+  var ha = craftColorToHex(a);
+  var hb = craftColorToHex(b);
+  if (ha && hb) return ha.toLowerCase() === hb.toLowerCase();
+  return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+}
+
+function craftAllocId(svg, base) {
+  var id = base;
+  var i = 2;
+  while (craftFindById(svg, id)) {
+    id = base + "-" + i;
+    i += 1;
+  }
+  return id;
+}
+
+function craftPathEl(d) {
+  var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  p.setAttribute("d", d || "");
+  return p;
+}
+
+function craftDrawablePaths(svg) {
+  return craftCollectPaths(svg).filter(function (p) {
+    return !craftClosestProtected(p);
+  });
+}
+
+function craftStripNamedMasks(svg, idBase) {
+  Array.from(svg.querySelectorAll("mask")).forEach(function (mask) {
+    var id = String(mask.getAttribute("id") || "");
+    if (id !== idBase && id.indexOf(idBase + "-") !== 0) return;
+    if (mask.parentNode) mask.parentNode.removeChild(mask);
+  });
+  craftDrawablePaths(svg).forEach(function (p) {
+    var v = String(p.getAttribute("mask") || "");
+    if (v.indexOf("#" + idBase) !== -1) p.removeAttribute("mask");
+  });
+}
+
+function craftMaskPunch(svg, id, keepPath, cutPaths) {
+  var defs = batchEnsureDefs(svg);
+  var mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+  mask.setAttribute("id", id);
+  mask.setAttribute("maskUnits", "userSpaceOnUse");
+  mask.setAttribute("maskContentUnits", "userSpaceOnUse");
+  var white = craftPathEl(keepPath.getAttribute("d") || "");
+  white.setAttribute("fill", "#ffffff");
+  white.setAttribute("stroke", "none");
+  mask.appendChild(white);
+  cutPaths.forEach(function (src) {
+    var black = craftPathEl(src.getAttribute("d") || "");
+    black.setAttribute("fill", "#000000");
+    black.setAttribute("stroke", "none");
+    mask.appendChild(black);
+  });
+  defs.appendChild(mask);
+  return id;
+}
+
+function craftVecLen(x, y) {
+  return Math.sqrt(x * x + y * y);
+}
+
+function craftFilletSubpath(verts, closed, radius) {
+  var pts = verts.slice();
+  if (closed && pts.length > 1) {
+    var a = pts[0];
+    var b = pts[pts.length - 1];
+    if (Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6) pts.pop();
+  }
+  var n = pts.length;
+  var passthrough = function () {
+    var raw = [{ cmd: "M", nums: [verts[0].x, verts[0].y] }];
+    verts.slice(1).forEach(function (p) {
+      raw.push({ cmd: "L", nums: [p.x, p.y] });
+    });
+    if (closed) raw.push({ cmd: "Z", nums: [] });
+    return raw;
+  };
+  if (n < 3) return passthrough();
+  var V = function (i) {
+    return pts[(i + n) % n];
+  };
+  var fillets = [];
+  var i;
+  for (i = 0; i < n; i++) {
+    if (!closed && (i === 0 || i === n - 1)) {
+      fillets[i] = null;
+      continue;
+    }
+    var prev = V(i - 1);
+    var cur = V(i);
+    var next = V(i + 1);
+    var ux = prev.x - cur.x;
+    var uy = prev.y - cur.y;
+    var vx = next.x - cur.x;
+    var vy = next.y - cur.y;
+    var lu = craftVecLen(ux, uy);
+    var lv = craftVecLen(vx, vy);
+    if (lu < 1e-6 || lv < 1e-6) {
+      fillets[i] = null;
+      continue;
+    }
+    ux /= lu;
+    uy /= lu;
+    vx /= lv;
+    vy /= lv;
+    var dot = Math.max(-1, Math.min(1, ux * vx + uy * vy));
+    var ang = Math.acos(dot);
+    if (!(ang > 0.12) || ang > Math.PI - 0.12) {
+      fillets[i] = null;
+      continue;
+    }
+    var dist = radius / Math.tan(ang / 2);
+    dist = Math.min(dist, lu * 0.45, lv * 0.45);
+    if (!(dist > 0.5)) {
+      fillets[i] = null;
+      continue;
+    }
+    fillets[i] = {
+      from: { x: cur.x + ux * dist, y: cur.y + uy * dist },
+      ctrl: cur,
+      to: { x: cur.x + vx * dist, y: cur.y + vy * dist },
+    };
+  }
+  var out = [];
+  var started = false;
+  var emitM = function (x, y) {
+    out.push({ cmd: "M", nums: [craftRoundPt(x), craftRoundPt(y)] });
+    started = true;
+  };
+  var emitL = function (x, y) {
+    if (!started) emitM(x, y);
+    else out.push({ cmd: "L", nums: [craftRoundPt(x), craftRoundPt(y)] });
+  };
+  var emitQ = function (cx, cy, x, y) {
+    out.push({
+      cmd: "Q",
+      nums: [craftRoundPt(cx), craftRoundPt(cy), craftRoundPt(x), craftRoundPt(y)],
+    });
+  };
+  if (closed) {
+    var f0 = fillets[0];
+    emitM(f0 ? f0.to.x : pts[0].x, f0 ? f0.to.y : pts[0].y);
+    for (i = 1; i < n; i++) {
+      var f = fillets[i];
+      if (f) {
+        emitL(f.from.x, f.from.y);
+        emitQ(f.ctrl.x, f.ctrl.y, f.to.x, f.to.y);
+      } else {
+        emitL(pts[i].x, pts[i].y);
+      }
+    }
+    if (f0) {
+      emitL(f0.from.x, f0.from.y);
+      emitQ(f0.ctrl.x, f0.ctrl.y, f0.to.x, f0.to.y);
+    }
+    out.push({ cmd: "Z", nums: [] });
+  } else {
+    emitM(pts[0].x, pts[0].y);
+    for (i = 1; i < n; i++) {
+      var fo = fillets[i];
+      if (fo) {
+        emitL(fo.from.x, fo.from.y);
+        emitQ(fo.ctrl.x, fo.ctrl.y, fo.to.x, fo.to.y);
+      } else {
+        emitL(pts[i].x, pts[i].y);
+      }
+    }
+  }
+  return out;
+}
+
+function craftPathAbsoluteMLQ(d) {
+  var tokens = craftTokenizePath(d);
+  var x = 0;
+  var y = 0;
+  var sx = 0;
+  var sy = 0;
+  var out = [];
+  var i;
+  for (i = 0; i < tokens.length; i++) {
+    var t = tokens[i];
+    var n = t.nums;
+    var rel = t.cmd === t.cmd.toLowerCase() && t.cmd.toLowerCase() !== "z";
+    var C = t.cmd.toUpperCase();
+    var k = 0;
+    if (C === "C" || C === "S" || C === "T" || C === "A") return null;
+    if (C === "Z") {
+      out.push({ cmd: "Z", nums: [] });
+      x = sx;
+      y = sy;
+      continue;
+    }
+    if (C === "M") {
+      while (k + 1 < n.length) {
+        x = n[k] + (rel ? x : 0);
+        y = n[k + 1] + (rel ? y : 0);
+        k += 2;
+        if (k === 2) {
+          out.push({ cmd: "M", nums: [x, y] });
+          sx = x;
+          sy = y;
+        } else {
+          out.push({ cmd: "L", nums: [x, y] });
+        }
+        rel = true;
+      }
+      continue;
+    }
+    if (C === "L") {
+      while (k + 1 < n.length) {
+        x = n[k] + (rel ? x : 0);
+        y = n[k + 1] + (rel ? y : 0);
+        k += 2;
+        out.push({ cmd: "L", nums: [x, y] });
+      }
+      continue;
+    }
+    if (C === "H") {
+      n.forEach(function (v) {
+        x = v + (rel ? x : 0);
+        out.push({ cmd: "L", nums: [x, y] });
+      });
+      continue;
+    }
+    if (C === "V") {
+      n.forEach(function (v) {
+        y = v + (rel ? y : 0);
+        out.push({ cmd: "L", nums: [x, y] });
+      });
+      continue;
+    }
+    if (C === "Q") {
+      while (k + 3 < n.length) {
+        var qx = n[k] + (rel ? x : 0);
+        var qy = n[k + 1] + (rel ? y : 0);
+        x = n[k + 2] + (rel ? x : 0);
+        y = n[k + 3] + (rel ? y : 0);
+        k += 4;
+        out.push({ cmd: "Q", nums: [qx, qy, x, y] });
+      }
+    }
+  }
+  return out;
+}
+
+function craftRecoverSharpVerts(d) {
+  var segs = craftPathAbsoluteMLQ(d);
+  if (!segs || !segs.length) return null;
+  var closed = segs.some(function (s) {
+    return s.cmd === "Z";
+  });
+  var start = segs[0];
+  var lastDraw = null;
+  var i;
+  for (i = segs.length - 1; i >= 0; i--) {
+    if (segs[i].cmd !== "Z") {
+      lastDraw = segs[i];
+      break;
+    }
+  }
+  var skipStartM =
+    closed &&
+    start &&
+    start.cmd === "M" &&
+    lastDraw &&
+    lastDraw.cmd === "Q" &&
+    Math.abs(lastDraw.nums[2] - start.nums[0]) < 1e-3 &&
+    Math.abs(lastDraw.nums[3] - start.nums[1]) < 1e-3;
+  var verts = [];
+  for (i = 0; i < segs.length; i++) {
+    var t = segs[i];
+    var next = segs[i + 1];
+    var nC = next && next.cmd;
+    if (t.cmd === "Z") continue;
+    if (t.cmd === "Q") {
+      verts.push({ x: t.nums[0], y: t.nums[1] });
+      continue;
+    }
+    if (t.cmd === "M" || t.cmd === "L") {
+      if (nC === "Q") continue;
+      if (t.cmd === "M" && skipStartM && i === 0) continue;
+      verts.push({ x: t.nums[0], y: t.nums[1] });
+    }
+  }
+  if (verts.length < 3) return null;
+  if (skipStartM) verts.unshift(verts.pop());
+  return { verts: verts, closed: closed };
+}
+
+function craftRoundPathCorners(d, radius) {
+  var tokens = craftTokenizePath(d);
+  if (!tokens.length) return d;
+  var out = [];
+  var cur = [];
+  var flush = function () {
+    if (!cur.length) return;
+    var raw = craftSerializePath(cur);
+    var recovered = craftRecoverSharpVerts(raw);
+    if (recovered) {
+      out.push.apply(out, craftFilletSubpath(recovered.verts, recovered.closed, radius));
+    } else {
+      out.push.apply(out, cur);
+    }
+    cur = [];
+  };
+  tokens.forEach(function (t) {
+    if (t.cmd.toUpperCase() === "M" && cur.length) flush();
+    cur.push(t);
+  });
+  flush();
+  return craftSerializePath(out);
+}
+
 function craftDist(a, b) {
   var dx = b.x - a.x;
   var dy = b.y - a.y;
@@ -6573,6 +6922,77 @@ function applyBatchCraftMarkup(markup, intent) {
     opac = Math.round(opac * 100) / 100;
     craftWritePaint(svg, "opacity", String(opac));
     status = "Root opacity set to " + opac;
+  } else if (intent === "subtract-svg-paths") {
+    var subPaths = craftDrawablePaths(svg);
+    if (subPaths.length >= 2) {
+      craftStripNamedMasks(svg, "subtract-mask");
+      var subId = craftAllocId(svg, "subtract-mask");
+      craftMaskPunch(svg, subId, subPaths[0], subPaths.slice(1, 2));
+      subPaths[0].setAttribute("mask", "url(#" + subId + ")");
+      subPaths.slice(1).forEach(function (p) {
+        if (p.parentNode) p.parentNode.removeChild(p);
+      });
+      status = "Second path subtracted from the first";
+    } else {
+      status = "Need two paths to subtract";
+    }
+  } else if (intent === "exclude-svg-paths") {
+    var xorPaths = craftDrawablePaths(svg);
+    if (xorPaths.length >= 2) {
+      craftStripNamedMasks(svg, "exclude-mask");
+      xorPaths.forEach(function (p, i) {
+        var cuts = xorPaths.filter(function (_c, j) {
+          return j !== i;
+        });
+        var xorId = craftAllocId(svg, "exclude-mask");
+        craftMaskPunch(svg, xorId, p, cuts);
+        p.setAttribute("mask", "url(#" + xorId + ")");
+      });
+      status = "Overlap excluded — both leftovers kept";
+    } else {
+      status = "Need two paths to exclude";
+    }
+  } else if (intent === "round-svg-path-corners") {
+    var filletR = craftNumInput("round-corners-radius-input", 16, 2, 48);
+    craftConvertTagToPath(svg, "polygon");
+    craftConvertTagToPath(svg, "polyline");
+    var filletN = 0;
+    var alreadyRounded = 0;
+    craftCollectPaths(svg).forEach(function (p) {
+      if (craftClosestProtected(p)) return;
+      var d0 = String(p.getAttribute("d") || "").trim();
+      if (!d0) return;
+      var d1 = craftRoundPathCorners(d0, filletR);
+      if (d1 && d1 !== d0) {
+        p.setAttribute("d", d1);
+        filletN += 1;
+      } else if (/[CcSsQqTtAa]/.test(d0)) {
+        alreadyRounded += 1;
+      }
+    });
+    status =
+      filletN > 0
+        ? "Rounded corners on " + filletN + " path" + (filletN === 1 ? "" : "s")
+        : alreadyRounded > 0
+          ? "Corners already rounded"
+          : "No sharp L corners to round";
+  } else if (intent === "convert-svg-named-colors-to-hex") {
+    var namedN = craftMapSvgPaints(svg, craftNamedPaintToHex);
+    status =
+      namedN > 0
+        ? "Converted " + namedN + " named color" + (namedN === 1 ? "" : "s") + " to hex"
+        : "No CSS named colors to convert";
+  } else if (intent === "replace-svg-color") {
+    var findPaint = craftTextInput("replace-color-from-input", "#0ea5e9");
+    var toPaint = craftTextInput("replace-color-to-input", "#7c3aed");
+    var toWrite = craftColorToHex(toPaint) || toPaint;
+    var replN = craftMapSvgPaints(svg, function (v) {
+      return craftPaintsEqual(v, findPaint) ? toWrite : null;
+    });
+    status =
+      replN > 0
+        ? "Replaced " + replN + " paint" + (replN === 1 ? "" : "s")
+        : "No paints matched Find";
   } else {
     throw new Error("Unknown craft intent");
   }

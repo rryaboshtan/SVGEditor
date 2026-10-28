@@ -1681,6 +1681,36 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/subtract-svg-paths</loc>
+    <lastmod>2026-10-28T14:40:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/exclude-svg-paths</loc>
+    <lastmod>2026-10-28T14:40:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/round-svg-path-corners</loc>
+    <lastmod>2026-10-28T14:40:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/convert-svg-named-colors-to-hex</loc>
+    <lastmod>2026-10-28T14:40:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/replace-svg-color</loc>
+    <lastmod>2026-10-28T14:40:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/privacy</loc>
     <lastmod>2026-08-25T21:03:26+03:00</lastmod>
     <changefreq>yearly</changefreq>

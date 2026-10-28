@@ -82,3 +82,8 @@ darken-svg-colors
 lighten-svg-colors
 remove-svg-fill
 set-svg-opacity
+subtract-svg-paths
+exclude-svg-paths
+round-svg-path-corners
+convert-svg-named-colors-to-hex
+replace-svg-color
