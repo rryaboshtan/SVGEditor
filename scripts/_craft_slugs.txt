@@ -56,6 +56,11 @@ align-svg-to-center
 split-svg-text-into-glyphs
 set-svg-text-anchor
 convert-svg-tspan-to-text
+set-svg-dominant-baseline
+set-svg-letter-spacing
+add-svg-textpath
+convert-svg-textpath-to-text
+set-svg-textpath-startoffset
 svg-path-morph-animation
 convert-svg-polyline-to-path
 convert-svg-line-to-path

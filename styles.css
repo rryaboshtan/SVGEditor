@@ -4738,10 +4738,10 @@ body.animation-editor-page {
 }
 
 .scale-path-factor-select {
-  width: 5.6rem;
+  width: max-content;
   min-width: 5.6rem;
-  max-width: 5.6rem;
-  padding-inline: .15rem;
+  max-width: 13rem;
+  padding-inline: .4rem .28rem;
   cursor: pointer;
   appearance: auto;
   -moz-appearance: auto;
@@ -4793,6 +4793,12 @@ body.animation-editor-page {
     max-width: 100%;
     margin-left: 0;
     min-height: 2.15rem;
+  }
+  .craft-tool-page .scale-path-factor-select {
+    flex: 1 1 9rem;
+    width: auto;
+    min-width: 7.2rem;
+    max-width: 100%;
   }
 }
 

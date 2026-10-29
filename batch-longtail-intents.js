@@ -619,6 +619,34 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '    <tspan x="16" y="68" fill="#38bdf8">Line two</tspan>\n' +
     "  </text>\n" +
     "</svg>",
+  "set-svg-dominant-baseline":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Text on a horizontal y guide">\n' +
+    '  <line x1="12" y1="48" x2="208" y2="48" stroke="#64748b" stroke-width="1"/>\n' +
+    '  <text x="24" y="48" font-family="Syne, Segoe UI, sans-serif" font-size="28" font-weight="700" fill="#38bdf8">Baseline</text>\n' +
+    "</svg>",
+  "set-svg-letter-spacing":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Tight word to track">\n' +
+    '  <text x="24" y="56" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">SVG</text>\n' +
+    "</svg>",
+  "add-svg-textpath":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Curve and a free text node">\n' +
+    '  <path fill="none" stroke="#64748b" stroke-width="2" d="M24 88 Q 110 16 196 88"/>\n' +
+    '  <text x="24" y="110" font-family="Syne, Segoe UI, sans-serif" font-size="22" font-weight="700" fill="#38bdf8">Along the curve</text>\n' +
+    "</svg>",
+  "convert-svg-textpath-to-text":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Text already on a curve">\n' +
+    '  <path id="curve" fill="none" stroke="#64748b" stroke-width="2" d="M24 88 Q 110 16 196 88"/>\n' +
+    '  <text font-family="Syne, Segoe UI, sans-serif" font-size="22" font-weight="700" fill="#38bdf8">\n' +
+    '    <textPath href="#curve">Along the curve</textPath>\n' +
+    "  </text>\n" +
+    "</svg>",
+  "set-svg-textpath-startoffset":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="TextPath to slide along">\n' +
+    '  <path id="slide" fill="none" stroke="#64748b" stroke-width="2" d="M24 88 Q 110 16 196 88"/>\n' +
+    '  <text font-family="Syne, Segoe UI, sans-serif" font-size="22" font-weight="700" fill="#38bdf8">\n' +
+    '    <textPath href="#slide">Go</textPath>\n' +
+    "  </text>\n" +
+    "</svg>",
   "svg-path-morph-animation":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Circle and square paths to morph">\n' +
     '  <path fill="#38bdf8" d="M80 24 C99.882 24 116 40.118 116 60 C116 79.882 99.882 96 80 96 C60.118 96 44 79.882 44 60 C44 40.118 60.118 24 80 24 Z"/>\n' +
@@ -6627,6 +6655,152 @@ function applyBatchCraftMarkup(markup, intent) {
       tspanCount > 0
         ? "Converted " + tspanCount + " tspan" + (tspanCount === 1 ? "" : "s") + " to <text>"
         : "No <tspan> to convert";
+  } else if (intent === "set-svg-dominant-baseline") {
+    var base = craftSelectInput("dominant-baseline-input", "middle");
+    var baseOk = {
+      alphabetic: 1,
+      middle: 1,
+      central: 1,
+      hanging: 1,
+      ideographic: 1,
+      "text-before-edge": 1,
+    };
+    if (!baseOk[base]) base = "middle";
+    var baseN = 0;
+    var baseAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prev = craftReadPaint(el, "dominant-baseline") || "alphabetic";
+      if (prev === base) {
+        baseAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "dominant-baseline", base);
+      baseN += 1;
+    });
+    status =
+      baseN > 0
+        ? "dominant-baseline set to " + base
+        : baseAlready > 0
+          ? "Already dominant-baseline=" + base
+          : "No <text> to set dominant-baseline on";
+  } else if (intent === "set-svg-letter-spacing") {
+    var tracking = craftNumInput("letter-spacing-input", 4, -40, 200);
+    tracking = Math.round(tracking * 10) / 10;
+    var trackEl = document.getElementById("letter-spacing-input");
+    if (trackEl) trackEl.value = String(tracking);
+    var trackN = 0;
+    var trackAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prev = craftReadPaint(el, "letter-spacing");
+      var prevN = prev == null || prev === "" ? 0 : parseFloat(prev);
+      if (Number.isFinite(prevN) && Math.abs(prevN - tracking) < 0.05) {
+        trackAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "letter-spacing", String(tracking));
+      trackN += 1;
+    });
+    status =
+      trackN > 0
+        ? "letter-spacing set to " + tracking
+        : trackAlready > 0
+          ? "Already letter-spacing=" + tracking
+          : "No <text> to set letter-spacing on";
+  } else if (intent === "add-svg-textpath") {
+    var trackPaths = craftDrawablePaths(svg);
+    var looseText = Array.from(svg.querySelectorAll("text")).filter(function (t) {
+      if (craftClosestProtected(t)) return false;
+      return !t.querySelector("textPath");
+    });
+    if (!trackPaths.length) {
+      status = "Need a <path> to place text on";
+    } else if (!looseText.length) {
+      var hadTp = svg.querySelector("textPath");
+      status = hadTp ? "Already on a textPath" : "No <text> to place on a path";
+    } else {
+      var track = trackPaths[0];
+      var trackId = track.getAttribute("id");
+      if (!trackId) {
+        trackId = craftAllocId(svg, "text-path");
+        track.setAttribute("id", trackId);
+      }
+      looseText.forEach(function (textEl) {
+        var tp = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+        tp.setAttribute("href", "#" + trackId);
+        while (textEl.firstChild) tp.appendChild(textEl.firstChild);
+        textEl.appendChild(tp);
+        textEl.removeAttribute("x");
+        textEl.removeAttribute("y");
+      });
+      status =
+        "textPath added on " +
+        looseText.length +
+        " text node" +
+        (looseText.length === 1 ? "" : "s");
+    }
+  } else if (intent === "convert-svg-textpath-to-text") {
+    var tpCount = 0;
+    Array.from(svg.querySelectorAll("textPath")).forEach(function (tp) {
+      var textEl = tp.parentNode;
+      if (!textEl || String(textEl.localName || "").toLowerCase() !== "text") return;
+      if (craftClosestProtected(textEl)) return;
+      var key = "tp" + tpCount;
+      textEl.setAttribute("data-craft-tp", key);
+      var origin = craftLiveMeasure(svg, function (live) {
+        var liveText = live.querySelector('[data-craft-tp="' + key + '"]');
+        if (!liveText) return null;
+        try {
+          var p0 = liveText.getStartPositionOfChar(0);
+          return { x: p0.x, y: p0.y };
+        } catch (err) {
+          return null;
+        }
+      });
+      textEl.removeAttribute("data-craft-tp");
+      if (!origin) {
+        var href = String(tp.getAttribute("href") || tp.getAttributeNS("http://www.w3.org/1999/xlink", "href") || "");
+        var pid = href.replace(/^#/, "");
+        var pathEl = pid ? craftFindById(svg, pid) : null;
+        var d0 = pathEl ? String(pathEl.getAttribute("d") || "") : "";
+        var mm = d0.match(/[Mm]\s*(-?[\d.eE+-]+)[\s,]+(-?[\d.eE+-]+)/);
+        origin = mm
+          ? { x: parseFloat(mm[1]), y: parseFloat(mm[2]) }
+          : { x: 0, y: 0 };
+      }
+      while (tp.firstChild) textEl.insertBefore(tp.firstChild, tp);
+      if (tp.parentNode) tp.parentNode.removeChild(tp);
+      textEl.setAttribute("x", String(craftRoundPt(origin.x)));
+      textEl.setAttribute("y", String(craftRoundPt(origin.y)));
+      tpCount += 1;
+    });
+    status =
+      tpCount > 0
+        ? "Converted " + tpCount + " textPath" + (tpCount === 1 ? "" : "s") + " to <text>"
+        : "No <textPath> to convert";
+  } else if (intent === "set-svg-textpath-startoffset") {
+    var off = craftNumInput("textpath-startoffset-input", 20, 0, 90);
+    off = Math.round(off);
+    var offStr = off + "%";
+    var offN = 0;
+    var offAlready = 0;
+    Array.from(svg.querySelectorAll("textPath")).forEach(function (tp) {
+      if (craftClosestProtected(tp)) return;
+      var prev = String(tp.getAttribute("startOffset") || "0").trim();
+      if (prev === offStr || prev === String(off)) {
+        offAlready += 1;
+        return;
+      }
+      tp.setAttribute("startOffset", offStr);
+      offN += 1;
+    });
+    status =
+      offN > 0
+        ? "startOffset set to " + offStr
+        : offAlready > 0
+          ? "Already startOffset=" + offStr
+          : "No <textPath> to set startOffset on";
   } else if (intent === "svg-path-morph-animation") {
     var dur = craftNumInput("morph-duration-input", 2, 0.2, 12);
     var morphPaths = Array.from(svg.querySelectorAll("path")).filter(function (p) {
