@@ -628,6 +628,34 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Tight word to track">\n' +
     '  <text x="24" y="56" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">SVG</text>\n' +
     "</svg>",
+  "set-svg-word-spacing":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 90" role="img" aria-label="Two words to gap">\n' +
+    '  <text x="16" y="56" font-family="Syne, Segoe UI, sans-serif" font-size="32" font-weight="700" fill="#38bdf8">SVG Type</text>\n' +
+    "</svg>",
+  "set-svg-text-length":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 90" role="img" aria-label="Short word to stretch">\n' +
+    '  <line x1="24" y1="72" x2="184" y2="72" stroke="#64748b" stroke-width="1"/>\n' +
+    '  <text x="24" y="56" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">SVG</text>\n' +
+    "</svg>",
+  "set-svg-writing-mode-vertical":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 180" role="img" aria-label="Two lines to stack as columns">\n' +
+    "  <style>\n" +
+    "    text:nth-of-type(2){transform-box:view-box;transform-origin:110px 84px}\n" +
+    '    text:nth-of-type(2)[writing-mode="vertical-rl"],text:nth-of-type(2)[writing-mode="tb"]{transform:translate(-44px,-44px)}\n' +
+    '    text:nth-of-type(2)[writing-mode="vertical-lr"]{transform:translate(44px,-44px)}\n' +
+    "  </style>\n" +
+    '  <line x1="110" y1="16" x2="110" y2="164" stroke="#64748b" stroke-width="1"/>\n' +
+    '  <text x="110" y="40" text-anchor="middle" font-family="Syne, Segoe UI, sans-serif" font-size="26" font-weight="700" fill="#38bdf8">One</text>\n' +
+    '  <text x="110" y="84" text-anchor="middle" font-family="Syne, Segoe UI, sans-serif" font-size="26" font-weight="700" fill="#7dd3fc">Two</text>\n' +
+    "</svg>",
+  "svg-text-direction":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 90" role="img" aria-label="Latin phrase to run rtl">\n' +
+    '  <text x="120" y="56" text-anchor="middle" font-family="Syne, Segoe UI, sans-serif" font-size="32" font-weight="700" fill="#38bdf8">Hello SVG</text>\n' +
+    "</svg>",
+  "set-svg-font-family":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Serif word to reface">\n' +
+    '  <text x="24" y="56" font-family="Georgia, Times New Roman, serif" font-size="36" font-weight="700" fill="#38bdf8">Type</text>\n' +
+    "</svg>",
   "add-svg-textpath":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Curve and a free text node">\n' +
     '  <path fill="none" stroke="#64748b" stroke-width="2" d="M24 88 Q 110 16 196 88"/>\n' +
@@ -2938,10 +2966,14 @@ var CRAFT_TEXT_PAINT_ATTRS = [
   "font-weight",
   "font-style",
   "letter-spacing",
+  "word-spacing",
   "opacity",
   "class",
   "text-anchor",
   "dominant-baseline",
+  "writing-mode",
+  "direction",
+  "unicode-bidi",
 ];
 
 function craftCubicPoint(x0, y0, x1, y1, x2, y2, x3, y3, t) {
@@ -6708,6 +6740,135 @@ function applyBatchCraftMarkup(markup, intent) {
         : trackAlready > 0
           ? "Already letter-spacing=" + tracking
           : "No <text> to set letter-spacing on";
+  } else if (intent === "set-svg-word-spacing") {
+    var wordGap = craftNumInput("word-spacing-input", 16, -20, 200);
+    wordGap = Math.round(wordGap * 10) / 10;
+    var wordEl = document.getElementById("word-spacing-input");
+    if (wordEl) wordEl.value = String(wordGap);
+    var wordN = 0;
+    var wordAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prev = craftReadPaint(el, "word-spacing");
+      var prevN = prev == null || prev === "" ? 0 : parseFloat(prev);
+      if (Number.isFinite(prevN) && Math.abs(prevN - wordGap) < 0.05) {
+        wordAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "word-spacing", String(wordGap));
+      wordN += 1;
+    });
+    status =
+      wordN > 0
+        ? "word-spacing set to " + wordGap
+        : wordAlready > 0
+          ? "Already word-spacing=" + wordGap
+          : "No <text> to set word-spacing on";
+  } else if (intent === "set-svg-text-length") {
+    var tlen = craftNumInput("text-length-input", 160, 20, 400);
+    tlen = Math.round(tlen * 10) / 10;
+    var tlenEl = document.getElementById("text-length-input");
+    if (tlenEl) tlenEl.value = String(tlen);
+    var adj = craftSelectInput("text-length-adjust-input", "spacing");
+    if (adj !== "spacing" && adj !== "spacingAndGlyphs") adj = "spacing";
+    var tlenN = 0;
+    var tlenAlready = 0;
+    Array.from(svg.querySelectorAll("text")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      if (!(el.textContent || "").replace(/\s/g, "")) return;
+      var prev = el.getAttribute("textLength");
+      var prevN = prev == null || prev === "" ? NaN : parseFloat(prev);
+      var prevAdj = el.getAttribute("lengthAdjust") || "spacing";
+      if (Number.isFinite(prevN) && Math.abs(prevN - tlen) < 0.05 && prevAdj === adj) {
+        tlenAlready += 1;
+        return;
+      }
+      el.setAttribute("textLength", String(tlen));
+      el.setAttribute("lengthAdjust", adj);
+      tlenN += 1;
+    });
+    status =
+      tlenN > 0
+        ? "textLength set to " + tlen + " (" + adj + ")"
+        : tlenAlready > 0
+          ? "Already textLength=" + tlen
+          : "No <text> to set textLength on";
+  } else if (intent === "set-svg-writing-mode-vertical") {
+    var wmode = craftSelectInput("writing-mode-input", "vertical-rl");
+    var wmodeOk = { "vertical-rl": 1, "vertical-lr": 1, tb: 1 };
+    if (!wmodeOk[wmode]) wmode = "vertical-rl";
+    var wmodeN = 0;
+    var wmodeAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prev = craftReadPaint(el, "writing-mode") || "";
+      if (prev === wmode) {
+        wmodeAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "writing-mode", wmode);
+      wmodeN += 1;
+    });
+    status =
+      wmodeN > 0
+        ? "writing-mode set to " + wmode
+        : wmodeAlready > 0
+          ? "Already writing-mode=" + wmode
+          : "No <text> to set writing-mode on";
+  } else if (intent === "svg-text-direction") {
+    var tdir = craftSelectInput("text-direction-input", "rtl");
+    if (tdir !== "ltr" && tdir !== "rtl") tdir = "rtl";
+    var bidi = tdir === "rtl" ? "bidi-override" : "normal";
+    var tdirN = 0;
+    var tdirAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prevDir = craftReadPaint(el, "direction") || "ltr";
+      var prevBidi = craftReadPaint(el, "unicode-bidi") || "normal";
+      if (prevDir === tdir && prevBidi === bidi) {
+        tdirAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "direction", tdir);
+      craftWritePaint(el, "unicode-bidi", bidi);
+      tdirN += 1;
+    });
+    status =
+      tdirN > 0
+        ? "direction set to " + tdir
+        : tdirAlready > 0
+          ? "Already direction=" + tdir
+          : "No <text> to set direction on";
+  } else if (intent === "set-svg-font-family") {
+    var fam = craftSelectInput("font-family-input", "Syne, Segoe UI, sans-serif");
+    var famNorm = String(fam || "")
+      .replace(/['"]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!famNorm) famNorm = "Syne, Segoe UI, sans-serif";
+    var famN = 0;
+    var famAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      var prev = craftReadPaint(el, "font-family") || "";
+      var prevNorm = String(prev)
+        .replace(/['"]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+      if (prevNorm === famNorm.toLowerCase()) {
+        famAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "font-family", famNorm);
+      famN += 1;
+    });
+    status =
+      famN > 0
+        ? "font-family set"
+        : famAlready > 0
+          ? "Already font-family=" + famNorm
+          : "No <text> to set font-family on";
   } else if (intent === "add-svg-textpath") {
     var trackPaths = craftDrawablePaths(svg);
     var looseText = Array.from(svg.querySelectorAll("text")).filter(function (t) {

@@ -170,9 +170,13 @@ def action_button_html(p):
             for val, lab in sel["options"]:
                 selected = " selected" if str(val) == str(sel.get("default", "")) else ""
                 opts.append(f'<option value="{esc(val)}"{selected}>{esc(lab)}</option>')
+            lab_html = (
+                f'<label class="scale-path-factor-label" for="{esc(sel["id"])}">{esc(sel["label"])}</label>\n              '
+                if sel.get("label")
+                else ""
+            )
             fields.append(
-                f'''<label class="scale-path-factor-label" for="{esc(sel["id"])}">{esc(sel["label"])}</label>
-              <select id="{esc(sel["id"])}" class="scale-path-factor-input scale-path-factor-select" aria-label="{esc(sel["aria"])}">
+                f'''{lab_html}<select id="{esc(sel["id"])}" class="scale-path-factor-input scale-path-factor-select" aria-label="{esc(sel["aria"])}">
                 {" ".join(opts)}
               </select>'''
             )
