@@ -656,6 +656,27 @@ var BATCH_CRAFT_DEFAULT_SVGS = {
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Serif word to reface">\n' +
     '  <text x="24" y="56" font-family="Georgia, Times New Roman, serif" font-size="36" font-weight="700" fill="#38bdf8">Type</text>\n' +
     "</svg>",
+  "set-svg-font-size":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 110" role="img" aria-label="Small word to enlarge">\n' +
+    '  <text x="24" y="72" font-family="Syne, Segoe UI, sans-serif" font-size="22" font-weight="700" fill="#38bdf8">Type</text>\n' +
+    "</svg>",
+  "set-svg-font-weight":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Regular Arial word to bold">\n' +
+    '  <text x="24" y="56" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="400" fill="#38bdf8">Type</text>\n' +
+    "</svg>",
+  "set-svg-font-style":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 90" role="img" aria-label="Upright word to italicize">\n' +
+    '  <text x="24" y="56" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">Type</text>\n' +
+    "</svg>",
+  "set-svg-baseline-shift":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 110" role="img" aria-label="Formula with a tspan to shift">\n' +
+    '  <line x1="16" y1="72" x2="224" y2="72" stroke="#64748b" stroke-width="1"/>\n' +
+    '  <text x="24" y="72" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">H<tspan font-size="22">2</tspan>O</text>\n' +
+    "</svg>",
+  "add-underline-to-svg-text":
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90" role="img" aria-label="Word to underline">\n' +
+    '  <text x="24" y="56" font-family="Syne, Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">Type</text>\n' +
+    "</svg>",
   "add-svg-textpath":
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Curve and a free text node">\n' +
     '  <path fill="none" stroke="#64748b" stroke-width="2" d="M24 88 Q 110 16 196 88"/>\n' +
@@ -2971,6 +2992,8 @@ var CRAFT_TEXT_PAINT_ATTRS = [
   "class",
   "text-anchor",
   "dominant-baseline",
+  "baseline-shift",
+  "text-decoration",
   "writing-mode",
   "direction",
   "unicode-bidi",
@@ -3023,6 +3046,53 @@ function craftSelectInput(id, fallback) {
   var el = document.getElementById(id);
   var v = el && el.value ? String(el.value).trim() : fallback;
   return v || fallback;
+}
+
+function craftNormWeight(v) {
+  var s = String(v || "")
+    .trim()
+    .toLowerCase();
+  if (s === "bold") return "700";
+  if (s === "normal") return "400";
+  if (s === "lighter") return "300";
+  if (s === "bolder") return "800";
+  var n = parseFloat(s);
+  return Number.isFinite(n) ? String(Math.round(n)) : "";
+}
+
+function craftNormDecor(v) {
+  var s = String(v || "")
+    .trim()
+    .toLowerCase();
+  if (!s || s === "none") return "none";
+  if (/\bunderline\b/.test(s)) return "underline";
+  return "none";
+}
+
+function craftStripTextDecorStyle(el) {
+  if (!el || el.nodeType !== 1) return;
+  el.removeAttribute("text-decoration");
+  var sm = batchParseStyleDecl(el.getAttribute("style") || "");
+  [
+    "text-decoration",
+    "text-decoration-line",
+    "text-decoration-skip-ink",
+    "text-underline-offset",
+    "text-decoration-thickness",
+    "text-decoration-color",
+  ].forEach(function (k) {
+    if (Object.prototype.hasOwnProperty.call(sm, k)) delete sm[k];
+  });
+  var next = batchStyleToString(sm);
+  if (next) el.setAttribute("style", next);
+  else el.removeAttribute("style");
+}
+
+function craftTextUnderlineRuns(svg) {
+  return Array.from(svg.querySelectorAll("text")).filter(function (el) {
+    if (craftClosestProtected(el)) return false;
+    return !!(el.textContent || "").replace(/\s/g, "");
+  });
 }
 
 function craftTextInput(id, fallback) {
@@ -6869,6 +6939,165 @@ function applyBatchCraftMarkup(markup, intent) {
         : famAlready > 0
           ? "Already font-family=" + famNorm
           : "No <text> to set font-family on";
+  } else if (intent === "set-svg-font-size") {
+    var fsize = craftNumInput("font-size-input", 48, 8, 120);
+    fsize = Math.round(fsize * 10) / 10;
+    var fsizeEl = document.getElementById("font-size-input");
+    if (fsizeEl) fsizeEl.value = String(fsize);
+    var fsizeN = 0;
+    var fsizeAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      if (!(el.textContent || "").replace(/\s/g, "")) return;
+      var prev = craftReadPaint(el, "font-size");
+      var prevN = prev == null || prev === "" ? NaN : parseFloat(prev);
+      if (Number.isFinite(prevN) && Math.abs(prevN - fsize) < 0.05) {
+        fsizeAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "font-size", String(fsize));
+      fsizeN += 1;
+    });
+    status =
+      fsizeN > 0
+        ? "font-size set to " + fsize
+        : fsizeAlready > 0
+          ? "Already font-size=" + fsize
+          : "No <text> to set font-size on";
+  } else if (intent === "set-svg-font-weight") {
+    var fw = craftSelectInput("font-weight-input", "700");
+    var fwOk = { "300": 1, "400": 1, "700": 1, "800": 1 };
+    if (!fwOk[fw]) fw = "700";
+    var fwN = 0;
+    var fwAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      if (!(el.textContent || "").replace(/\s/g, "")) return;
+      var prevW = craftNormWeight(craftReadPaint(el, "font-weight"));
+      if (prevW === fw) {
+        fwAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "font-weight", fw);
+      fwN += 1;
+    });
+    status =
+      fwN > 0
+        ? "font-weight set to " + fw
+        : fwAlready > 0
+          ? "Already font-weight=" + fw
+          : "No <text> to set font-weight on";
+  } else if (intent === "set-svg-font-style") {
+    var fstyle = craftSelectInput("font-style-input", "italic");
+    var fstyleOk = { italic: 1, oblique: 1, normal: 1 };
+    if (!fstyleOk[fstyle]) fstyle = "italic";
+    var fstyleN = 0;
+    var fstyleAlready = 0;
+    Array.from(svg.querySelectorAll("text,tspan")).forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      if (!(el.textContent || "").replace(/\s/g, "")) return;
+      var prevS = String(craftReadPaint(el, "font-style") || "normal")
+        .trim()
+        .toLowerCase();
+      if (prevS === fstyle) {
+        fstyleAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "font-style", fstyle);
+      fstyleN += 1;
+    });
+    status =
+      fstyleN > 0
+        ? "font-style set to " + fstyle
+        : fstyleAlready > 0
+          ? "Already font-style=" + fstyle
+          : "No <text> to set font-style on";
+  } else if (intent === "set-svg-baseline-shift") {
+    var bshift = craftSelectInput("baseline-shift-input", "super");
+    var bshiftOk = { super: 1, sub: 1, baseline: 1 };
+    if (!bshiftOk[bshift]) bshift = "super";
+    var shiftNodes = Array.from(svg.querySelectorAll("tspan"));
+    if (!shiftNodes.length) shiftNodes = Array.from(svg.querySelectorAll("text"));
+    var bshiftN = 0;
+    var bshiftAlready = 0;
+    shiftNodes.forEach(function (el) {
+      if (craftClosestProtected(el)) return;
+      if (!(el.textContent || "").replace(/\s/g, "")) return;
+      var prevB = String(craftReadPaint(el, "baseline-shift") || "baseline")
+        .trim()
+        .toLowerCase();
+      if (prevB === "0" || prevB === "0px") prevB = "baseline";
+      if (prevB === bshift) {
+        bshiftAlready += 1;
+        return;
+      }
+      craftWritePaint(el, "baseline-shift", bshift);
+      bshiftN += 1;
+    });
+    status =
+      bshiftN > 0
+        ? "baseline-shift set to " + bshift
+        : bshiftAlready > 0
+          ? "Already baseline-shift=" + bshift
+          : "No <text> to set baseline-shift on";
+  } else if (intent === "add-underline-to-svg-text") {
+    var udec = craftSelectInput("text-decoration-input", "underline");
+    if (udec !== "underline" && udec !== "none") udec = "underline";
+    var udecRuns = craftTextUnderlineRuns(svg);
+    var udecBars = Array.from(svg.querySelectorAll("[data-svgeditor-text-underline]"));
+    udecRuns.forEach(craftStripTextDecorStyle);
+    if (udec === "none") {
+      if (!udecBars.length) {
+        status = udecRuns.length ? "Already underline=none" : "No <text> to underline";
+      } else {
+        udecBars.forEach(function (bar) {
+          if (bar.parentNode) bar.parentNode.removeChild(bar);
+        });
+        status = "underline removed";
+      }
+    } else if (!udecRuns.length) {
+      status = "No <text> to underline";
+    } else if (udecBars.length === udecRuns.length) {
+      status = "Already underlined";
+    } else {
+      udecBars.forEach(function (bar) {
+        if (bar.parentNode) bar.parentNode.removeChild(bar);
+      });
+      var udecBoxes = craftLiveMeasure(svg, function (clone) {
+        var cloneRuns = craftTextUnderlineRuns(clone);
+        return udecRuns.map(function (_, i) {
+          var c = cloneRuns[i];
+          if (!c || typeof c.getBBox !== "function") return null;
+          try {
+            return c.getBBox();
+          } catch (err) {
+            return null;
+          }
+        });
+      });
+      var udecN = 0;
+      udecRuns.forEach(function (el, i) {
+        var box = udecBoxes[i];
+        if (!box || !Number.isFinite(box.width) || box.width < 0.5) return;
+        var fs =
+          parseFloat(craftReadPaint(el, "font-size") || el.getAttribute("font-size") || "") ||
+          box.height ||
+          16;
+        var thick = Math.max(1, craftRoundPt(fs * 0.07));
+        var gap = craftRoundPt(fs * 0.04);
+        var x = craftRoundPt(box.x);
+        var y = craftRoundPt(box.y + box.height + gap);
+        var w = craftRoundPt(box.width);
+        var fill = craftReadPaint(el, "fill") || el.getAttribute("fill") || "currentColor";
+        var bar = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        bar.setAttribute("data-svgeditor-text-underline", "1");
+        bar.setAttribute("d", "M" + x + " " + y + "h" + w + "v" + thick + "h" + -w + "z");
+        bar.setAttribute("fill", fill);
+        el.parentNode.insertBefore(bar, el.nextSibling);
+        udecN += 1;
+      });
+      status = udecN > 0 ? "underline added" : "No <text> to underline";
+    }
   } else if (intent === "add-svg-textpath") {
     var trackPaths = craftDrawablePaths(svg);
     var looseText = Array.from(svg.querySelectorAll("text")).filter(function (t) {

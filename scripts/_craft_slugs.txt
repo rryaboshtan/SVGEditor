@@ -63,6 +63,11 @@ set-svg-text-length
 set-svg-writing-mode-vertical
 svg-text-direction
 set-svg-font-family
+set-svg-font-size
+set-svg-font-weight
+set-svg-font-style
+set-svg-baseline-shift
+add-underline-to-svg-text
 add-svg-textpath
 convert-svg-textpath-to-text
 set-svg-textpath-startoffset

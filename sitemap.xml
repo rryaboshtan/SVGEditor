@@ -1771,6 +1771,36 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://getsvgeditor.com/set-svg-font-size</loc>
+    <lastmod>2026-10-31T14:13:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/set-svg-font-weight</loc>
+    <lastmod>2026-10-31T14:13:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/set-svg-font-style</loc>
+    <lastmod>2026-10-31T14:13:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/set-svg-baseline-shift</loc>
+    <lastmod>2026-10-31T14:13:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://getsvgeditor.com/add-underline-to-svg-text</loc>
+    <lastmod>2026-10-31T14:13:00+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://getsvgeditor.com/privacy</loc>
     <lastmod>2026-08-25T21:03:26+03:00</lastmod>
     <changefreq>yearly</changefreq>
